@@ -37,7 +37,9 @@ impl JavaClient {
         }
 
         let (item_id, _item) = (item_in_hand.item.id, item_in_hand.item);
-        player.increment_stat(StatisticCategory::Used, item_id as i32, 1);
+        if item_id != Item::FIREWORK_ROCKET.id || player.get_entity().is_fall_flying() {
+            player.increment_stat(StatisticCategory::Used, item_id as i32, 1);
+        }
 
         let hit_result = player.world().raycast(
             player.eye_position(),
