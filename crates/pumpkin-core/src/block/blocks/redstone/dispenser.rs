@@ -845,7 +845,14 @@ impl DispenserBlock {
             true
         } else {
             if front_state.replaceable() {
-                ctx.world.break_block(&front, None, BlockFlags::NOTIFY_ALL);
+                if !front_state.is_air()
+                    && ctx
+                        .world
+                        .break_block(&front, None, BlockFlags::NOTIFY_ALL)
+                        .is_none()
+                {
+                    return;
+                }
                 ctx.world.set_block_state(
                     &front,
                     Block::AIR.default_state.id,
