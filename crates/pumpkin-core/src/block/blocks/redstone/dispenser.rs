@@ -843,16 +843,26 @@ impl DispenserBlock {
         {
             play_bucket_evaporation(ctx.world, &front.to_f64());
             true
-        } else if try_place_filled_bucket(
-            ctx.world,
-            item.item,
-            *ctx.position,
-            ctx.facing.to_block_direction(),
-        ) {
-            play_empty_sound(ctx.world, item.item, front);
-            true
         } else {
-            false
+            if front_state.replaceable() {
+                ctx.world.break_block(&front, None, BlockFlags::NOTIFY_ALL);
+                ctx.world.set_block_state(
+                    &front,
+                    Block::AIR.default_state.id,
+                    BlockFlags::NOTIFY_ALL,
+                );
+            }
+            if try_place_filled_bucket(
+                ctx.world,
+                item.item,
+                *ctx.position,
+                ctx.facing.to_block_direction(),
+            ) {
+                play_empty_sound(ctx.world, item.item, front);
+                true
+            } else {
+                false
+            }
         };
 
         if emptied {
