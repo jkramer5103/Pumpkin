@@ -67,7 +67,8 @@ impl BlockBehaviour for BambooSaplingBlock {
         let state_above = args.world.get_block_state(&args.position.up());
         if !state_above.is_air()
             || args.world.get_raw_brightness(&args.position.up(), 0) < 9
-            || rand::rng().random_range(0..3) > 0 {
+            || rand::rng().random_range(0..3) > 0
+        {
             return;
         }
         grow_bamboo(args.world, args.position);

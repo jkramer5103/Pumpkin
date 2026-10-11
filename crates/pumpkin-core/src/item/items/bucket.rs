@@ -147,7 +147,8 @@ pub(crate) fn create_filled_result(
     limit_creative_stack_size: bool,
 ) {
     let mut filled_stack = ItemStack::new(1, filled);
-    if limit_creative_stack_size && player.gamemode.load() == GameMode::Creative {        let has_item = {
+    if limit_creative_stack_size && player.gamemode.load() == GameMode::Creative {
+        let has_item = {
             let inv = player
                 .inventory
                 .main_inventory

@@ -44,8 +44,11 @@ impl BlockBehaviour for CoralPlantBlock {
                 props.waterlogged = false;
                 props.to_state_id(get_dead_type(args.block.id).unwrap_or_default().to_block())
             };
-            args.world
-                .set_block_state(args.position, dead_block_state_id, BlockFlags::NOTIFY_LISTENERS);
+            args.world.set_block_state(
+                args.position,
+                dead_block_state_id,
+                BlockFlags::NOTIFY_LISTENERS,
+            );
         }
     }
     fn can_place_at(&self, args: CanPlaceAtArgs<'_>) -> bool {

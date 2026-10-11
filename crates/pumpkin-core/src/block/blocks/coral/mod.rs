@@ -1,5 +1,3 @@
-use std::sync::Arc;
-
 use pumpkin_data::Block;
 use pumpkin_data::BlockDirection;
 use pumpkin_data::tag::Taggable;
@@ -12,7 +10,7 @@ pub mod coral_block;
 pub mod coral_fan;
 pub mod coral_plant;
 
-pub fn scan_for_water(world: &Arc<World>, pos: &BlockPos) -> bool {
+pub fn scan_for_water(world: &World, pos: &BlockPos) -> bool {
     if world.get_block_state_id(pos).is_waterlogged() {
         return true;
     }
@@ -47,7 +45,7 @@ fn is_dead_coral(block: &Block) -> bool {
         || block == &Block::DEAD_TUBE_CORAL_FAN
         || block == &Block::DEAD_TUBE_CORAL_WALL_FAN
 }
-pub fn try_schedule_die_tick(block: &Block, world: &Arc<World>, pos: &BlockPos) {
+pub fn try_schedule_die_tick(block: &Block, world: &World, pos: &BlockPos) {
     let tick_delay = 60 + rand::rng().random_range(0..40);
     world.schedule_block_tick(
         block,

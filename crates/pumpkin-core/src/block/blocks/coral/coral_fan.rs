@@ -123,8 +123,11 @@ impl BlockBehaviour for CoralFanBlock {
                 props.to_state_id(dead_block)
             };
 
-            args.world
-                .set_block_state(args.position, dead_block_state_id, BlockFlags::NOTIFY_LISTENERS);
+            args.world.set_block_state(
+                args.position,
+                dead_block_state_id,
+                BlockFlags::NOTIFY_LISTENERS,
+            );
         }
     }
 

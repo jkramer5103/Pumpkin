@@ -107,7 +107,8 @@ impl BlockBehaviour for BambooBlock {
 
     fn random_tick(&self, args: RandomTickArgs<'_>) {
         if rand::rng().random_range(0..3) == 0
-            && args.world.get_raw_brightness(&args.position.up(), 0) >= 9 {
+            && args.world.get_raw_brightness(&args.position.up(), 0) >= 9
+        {
             update_leaves_and_grow(args.world, args.position);
         }
     }
