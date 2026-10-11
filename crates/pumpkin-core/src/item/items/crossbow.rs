@@ -26,9 +26,9 @@ impl ItemBehaviour for CrossbowItem {
         &self,
         _item: &Item,
         player: &Player,
-        hand: Hand,
         _yaw: f32,
         _pitch: f32,
+        hand: Hand,
     ) {
         let inventory = player.inventory();
         let stack = inventory.get_stack_in_hand(hand);

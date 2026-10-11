@@ -67,9 +67,9 @@ impl ItemBehaviour for FireworkRocketItem {
         &self,
         _item: &Item,
         player: &Player,
-        hand: Hand,
         _yaw: f32,
         _pitch: f32,
+        hand: Hand,
     ) {
         if !player.get_entity().is_fall_flying() {
             return;
