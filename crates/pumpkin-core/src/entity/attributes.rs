@@ -45,9 +45,7 @@ pub struct Modifier {
     pub id: String,
     pub amount: f64,
     pub operation: ModifierOperation,
-    /// Mirrors vanilla's permanent modifiers: only these are saved to NBT.
-    /// Modifiers from effects and commands are permanent, while ones from
-    /// equipment and movement state are transient.
+    /// Only permanent modifiers are saved to NBT.
     pub permanent: bool,
 }
 
