@@ -1587,16 +1587,7 @@ impl LivingEntity {
                 {
                     0.0
                 } else {
-                    let block_restitution = if block == &Block::SLIME_BLOCK {
-                        1.0
-                    } else if block.has_tag(&tag::Block::MINECRAFT_BEDS)
-                        || block == &Block::SHELF_MUSHROOM
-                    {
-                        0.75
-                    } else {
-                        0.0
-                    };
-                    restitution.max(block_restitution)
+                    restitution.max(f64::from(block.get_bounce_restitution()))
                 };
             }
             let (gravity_compensation, drag) = if restitution > 0.0 {
@@ -2034,12 +2025,17 @@ impl LivingEntity {
                 let pumpkin_block = world.block_registry.get_pumpkin_block(block.id);
                 if let Some(pumpkin_block) = pumpkin_block {
                     pumpkin_block.on_landed_upon(OnLandedUponArgs {
+                        block,
                         world: &world,
                         fall_distance,
                         entity: caller,
                     });
                 } else {
-                    self.handle_fall_damage(caller, fall_distance, 1.0);
+                    self.handle_fall_damage(
+                        caller,
+                        fall_distance * (1.0 - block.get_fall_distance_reduction()),
+                        1.0,
+                    );
                 }
             }
             self.climbing_pos.store(None);

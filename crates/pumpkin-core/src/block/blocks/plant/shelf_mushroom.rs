@@ -9,8 +9,8 @@ use pumpkin_util::math::position::BlockPos;
 use pumpkin_world::world::{BlockAccessor, BlockFlags};
 
 use crate::block::{
-    BlockBehaviour, BonemealArgs, CanPlaceAtArgs, GetStateForNeighborUpdateArgs, OnLandedUponArgs,
-    OnPlaceArgs, UpdateEntityMovementAfterFallOnArgs, bounce_entity_after_fall,
+    BlockBehaviour, BonemealArgs, CanPlaceAtArgs, GetStateForNeighborUpdateArgs, OnPlaceArgs,
+    UpdateEntityMovementAfterFallOnArgs, bounce_entity_after_fall,
 };
 use crate::entity::EntityBase;
 
@@ -109,14 +109,8 @@ impl BlockBehaviour for ShelfMushroomBlock {
         }
     }
 
-    fn on_landed_upon(&self, args: OnLandedUponArgs<'_>) {
-        if let Some(living) = args.entity.get_living_entity() {
-            living.handle_fall_damage(args.entity, args.fall_distance, 0.0);
-        }
-    }
-
     fn update_entity_movement_after_fall_on(&self, args: UpdateEntityMovementAfterFallOnArgs<'_>) {
-        bounce_entity_after_fall(args.entity, 0.8);
+        bounce_entity_after_fall(args.entity, f64::from(args.block.get_bounce_restitution()));
         if args.entity.get_living_entity().is_some() {
             let entity = args.entity.get_entity();
             entity.world.load().play_sound(

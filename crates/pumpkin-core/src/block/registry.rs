@@ -1208,6 +1208,7 @@ impl BlockRegistry {
         let pumpkin_block = self.get_pumpkin_block(block.id);
         if let Some(pumpkin_block) = pumpkin_block {
             pumpkin_block.on_landed_upon(OnLandedUponArgs {
+                block,
                 world,
                 fall_distance,
                 entity,
@@ -1218,7 +1219,7 @@ impl BlockRegistry {
     pub fn update_entity_movement_after_fall_on(&self, block: &Block, entity: &dyn EntityBase) {
         if let Some(pumpkin_block) = self.get_pumpkin_block(block.id) {
             pumpkin_block.update_entity_movement_after_fall_on(
-                UpdateEntityMovementAfterFallOnArgs { entity },
+                UpdateEntityMovementAfterFallOnArgs { block, entity },
             );
         } else {
             stop_vertical_movement_after_fall(entity);
