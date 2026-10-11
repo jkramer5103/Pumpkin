@@ -233,6 +233,18 @@ fn fill_blocks(
         .collect::<Vec<_>>();
     world.queue_block_updates(&client_updates);
 
+    for &(pos, old_id, new_id) in &changed_positions {
+        if pumpkin_world::lighting::LightEngine::has_different_light_properties(
+            old_id.to_state(),
+            new_id.to_state(),
+        ) {
+            world
+                .level
+                .light_engine
+                .update_lighting_at(&world.level, pos);
+        }
+    }
+
     // Vanilla runs onPlace for every placed block unless strict sets UPDATE_SKIP_ON_PLACE.
     if !strict {
         for (pos, old_id, new_id) in changed_positions {
