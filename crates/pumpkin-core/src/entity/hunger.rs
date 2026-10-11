@@ -125,9 +125,10 @@ impl HungerManager {
     }
 
     /// Add hunger manually
-    pub fn add_hunger(&self, hunger: u8) {
-        let current = self.level.load();
-        self.level.store((current + hunger).min(MAX_FOOD));
+    pub fn add_hunger(&self, hunger: u16) {
+        let current = u16::from(self.level.load());
+        self.level
+            .store(current.saturating_add(hunger).min(u16::from(MAX_FOOD)) as u8);
     }
 
     /// Add saturation manually
@@ -182,3 +183,18 @@ impl NBTStorage for HungerManager {
 }
 
 impl NBTStorageInit for HungerManager {}
+
+#[cfg(test)]
+mod tests {
+    use super::HungerManager;
+
+    #[test]
+    fn high_amplifier_food_is_clamped_without_overflow() {
+        let hunger = HungerManager::default();
+        for food in [236, 255, 256] {
+            hunger.set_level(19);
+            hunger.add_hunger(food);
+            assert_eq!(hunger.level.load(), 20);
+        }
+    }
+}
