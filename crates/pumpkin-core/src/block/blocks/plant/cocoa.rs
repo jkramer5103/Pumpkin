@@ -6,6 +6,7 @@ use pumpkin_data::{
 use pumpkin_macros::pumpkin_block;
 use pumpkin_util::math::position::BlockPos;
 use pumpkin_world::world::{BlockAccessor, BlockFlags};
+use rand::RngExt;
 
 use crate::block::{
     BlockBehaviour, BonemealArgs, CanPlaceAtArgs, GetStateForNeighborUpdateArgs, OnPlaceArgs,
@@ -84,7 +85,7 @@ impl BlockBehaviour for CocoaBlock {
     }
 
     fn random_tick(&self, args: RandomTickArgs<'_>) {
-        if rand::random::<u8>().is_multiple_of(5) {
+        if rand::rng().random_range(0..5) == 0 {
             let state_id = args.world.get_block_state_id(args.position);
             let mut props = CocoaProperties::from_state_id(state_id);
             if props.age < MAX_AGE {
@@ -92,7 +93,7 @@ impl BlockBehaviour for CocoaBlock {
                 args.world.set_block_state(
                     args.position,
                     props.to_state_id(args.block),
-                    BlockFlags::NOTIFY_ALL,
+                    BlockFlags::NOTIFY_LISTENERS,
                 );
             }
         }
@@ -115,7 +116,7 @@ impl BlockBehaviour for CocoaBlock {
                 args.world.set_block_state(
                     args.position,
                     props.to_state_id(args.block),
-                    BlockFlags::NOTIFY_ALL,
+                    BlockFlags::NOTIFY_LISTENERS,
                 );
             }
         }
