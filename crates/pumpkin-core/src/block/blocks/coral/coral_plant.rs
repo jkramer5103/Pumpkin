@@ -40,16 +40,17 @@ impl BlockBehaviour for CoralPlantBlock {
         if !scan_for_water(args.world, args.position) && !is_dead_coral(args.block) {
             let current_state = args.world.get_block_state(args.position);
             let dead_block_state_id = {
-                let props = CoralPlantLikeProperties::from_state_id(current_state.id);
+                let mut props = CoralPlantLikeProperties::from_state_id(current_state.id);
+                props.waterlogged = false;
                 props.to_state_id(get_dead_type(args.block.id).unwrap_or_default().to_block())
             };
             args.world
-                .set_block_state(args.position, dead_block_state_id, BlockFlags::NOTIFY_ALL);
+                .set_block_state(args.position, dead_block_state_id, BlockFlags::NOTIFY_LISTENERS);
         }
     }
     fn can_place_at(&self, args: CanPlaceAtArgs<'_>) -> bool {
         let support_block = args.block_accessor.get_block_state(&args.position.down());
-        if support_block.is_center_solid(BlockDirection::Up) {
+        if support_block.is_side_solid(BlockDirection::Up) {
             return true;
         }
         false
@@ -61,9 +62,12 @@ impl BlockBehaviour for CoralPlantBlock {
     ) -> BlockStateId {
         if args.direction == BlockDirection::Down {
             let support_block = args.world.get_block_state(&args.position.down());
-            if !support_block.is_center_solid(BlockDirection::Up) {
+            if !support_block.is_side_solid(BlockDirection::Up) {
                 return BlockStateId::AIR;
             }
+        }
+        if !is_dead_coral(args.block) && !scan_for_water(args.world, args.position) {
+            try_schedule_die_tick(args.block, args.world, args.position);
         }
         args.state_id
     }
