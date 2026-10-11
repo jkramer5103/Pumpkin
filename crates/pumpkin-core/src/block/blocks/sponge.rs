@@ -39,15 +39,16 @@ impl SpongeBlock {
                         | pumpkin_data::BlockId::SEAGRASS
                         | pumpkin_data::BlockId::TALL_SEAGRASS
                 );
-                let replacement = if block == &Block::WATER || aquatic_plant {
-                    BlockStateId::AIR
-                } else if let Some(dry_state) = block.set_waterlogged(state, false)
-                    && state.is_waterlogged()
-                {
-                    dry_state
-                } else {
-                    continue;
-                };
+                let replacement =
+                    if block == &Block::WATER || block == &Block::BUBBLE_COLUMN || aquatic_plant {
+                        BlockStateId::AIR
+                    } else if let Some(dry_state) = block.set_waterlogged(state, false)
+                        && state.is_waterlogged()
+                    {
+                        dry_state
+                    } else {
+                        continue;
+                    };
                 water_blocks.push((next_pos, block, state, replacement, aquatic_plant));
                 queue.push_back((next_pos, depth + 1));
             }
