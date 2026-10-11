@@ -727,13 +727,13 @@ fn check_blocks_match(context: &CommandContext, masked: bool) -> Result<bool, Co
                 for x in min_x..=max_x {
                     let src_pos = BlockPos::new(x, y, z);
                     let dst_pos = BlockPos::new(x + dx, y + dy, z + dz);
-                    let src_block = world.get_block(&src_pos);
-                    let dst_block = world.get_block(&dst_pos);
+                    let src_state = world.get_block_state_id(&src_pos);
+                    let dst_state = world.get_block_state_id(&dst_pos);
 
-                    if masked && src_block.is_air() {
+                    if masked && src_state == pumpkin_data::BlockStateId::AIR {
                         continue;
                     }
-                    if src_block != dst_block {
+                    if src_state != dst_state {
                         return Ok(false);
                     }
                 }
