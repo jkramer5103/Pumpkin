@@ -1704,22 +1704,31 @@ impl Player {
 
         let mut stack = self.inventory.get_slot(slot_index);
         let original_item = stack.item;
+        if amount <= 0 || !stack.is_damageable() || stack.is_unbreakable() {
+            return false;
+        }
+        let mut amount = amount;
+        if let Some(server) = self.world().server.upgrade()
+            && let Some(player_arc) = self.world().get_player_by_uuid(self.gameprofile.id)
+        {
+            let mut event =
+                crate::plugin::api::events::player::player_item_damage::PlayerItemDamageEvent::new(
+                    player_arc,
+                    original_item.registry_key.to_string(),
+                    amount,
+                );
+            server.plugin_manager.fire_blocking(&server, &mut event);
+            if event.cancelled {
+                return false;
+            }
+            amount = event.damage;
+        }
         let result = stack.damage_item(amount);
         let updated = (result != pumpkin_data::item_stack::DamageResult::Untouched)
             .then_some((result, stack.clone()));
 
         if let Some((result, updated_stack)) = updated {
             self.inventory.set_slot(slot_index, updated_stack.clone());
-            if let Some(server) = self.world().server.upgrade()
-                && let Some(player_arc) = self.world().get_player_by_uuid(self.gameprofile.id)
-            {
-                let mut event = crate::plugin::api::events::player::player_item_damage::PlayerItemDamageEvent::new(
-                    player_arc,
-                    original_item.registry_key.to_string(),
-                    amount,
-                );
-                server.plugin_manager.fire_blocking(&server, &mut event);
-            }
             if result == pumpkin_data::item_stack::DamageResult::Broken {
                 if let Some(server) = self.world().server.upgrade()
                     && let Some(player_arc) = self.world().get_player_by_uuid(self.gameprofile.id)
