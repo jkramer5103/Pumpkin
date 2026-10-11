@@ -251,6 +251,19 @@ impl EnchantmentHelper {
         strength
     }
 
+    #[must_use]
+    pub fn pick_trident_sound(trident: &ItemStack) -> Option<pumpkin_data::sound::Sound> {
+        let mut picked = None;
+        Self::run_iteration_on_item(trident, |enchantment, level| {
+            let sounds = enchantment.effects.trident_sound;
+            if level > 0 && !sounds.is_empty() && picked.is_none_or(|(_, highest)| level > highest)
+            {
+                picked = Some((sounds[(level as usize).min(sounds.len()) - 1], level));
+            }
+        });
+        picked.map(|(sound, _)| sound)
+    }
+
     /// Modifies fishing time reduction using data-driven effects (e.g. Lure).
     #[must_use]
     pub fn modify_fishing_time_reduction(rod: &ItemStack, base_reduction: f32) -> f32 {

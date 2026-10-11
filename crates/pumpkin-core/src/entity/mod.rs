@@ -1407,7 +1407,7 @@ impl Entity {
     }
 
     #[expect(clippy::float_cmp)]
-    fn adjust_movement_for_collisions(
+    pub(crate) fn adjust_movement_for_collisions(
         &self,
         movement: Vector3<f64>,
         caller: &dyn EntityBase,
@@ -2786,6 +2786,20 @@ impl Entity {
     #[must_use]
     pub fn is_in_water(&self) -> bool {
         self.touching_water.load(Ordering::Relaxed)
+    }
+
+    pub fn is_in_water_or_rain(&self) -> bool {
+        if self.is_in_water() {
+            return true;
+        }
+        let pos = self.block_pos.load();
+        let head = BlockPos::floored(
+            f64::from(pos.0.x),
+            self.bounding_box.load().max.y,
+            f64::from(pos.0.z),
+        );
+        let world = self.world.load();
+        world.is_raining_at(&pos) || world.is_raining_at(&head)
     }
 
     #[must_use]

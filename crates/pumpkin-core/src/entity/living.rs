@@ -136,6 +136,10 @@ pub struct LivingEntity {
 
     water_movement_speed_multiplier: f32,
     livings_flags: AtomicU8,
+    auto_spin_attack_ticks: AtomicI32,
+    pub auto_spin_attack_damage: AtomicCell<f32>,
+    pub auto_spin_attack_item: std::sync::Mutex<Option<ItemStack>>,
+    auto_spin_attack_box: AtomicCell<Option<BoundingBox>>,
 
     /// The last block position the entity occupied, used to trigger location changed effects.
     pub last_block_pos: AtomicCell<Option<BlockPos>>,
@@ -229,7 +233,6 @@ impl LivingEntity {
     const USING_ITEM_FLAG: u8 = 1;
     const OFF_HAND_ACTIVE_FLAG: u8 = 2;
     const RANDOM_TELEPORT_ATTEMPTS: usize = 16;
-    #[expect(dead_code)]
     const USING_RIPTIDE_FLAG: u8 = 4;
 
     const PREVENT_AREA_FALL_DAMAGE_BLOCKS: [&'static Block; 4] = [
@@ -297,6 +300,10 @@ impl LivingEntity {
             active_hand: std::sync::Mutex::new(None),
             recent_kinetic_enemies: std::sync::Mutex::new(FxHashMap::default()),
             livings_flags: AtomicU8::new(0),
+            auto_spin_attack_ticks: AtomicI32::new(0),
+            auto_spin_attack_damage: AtomicCell::new(0.0),
+            auto_spin_attack_item: std::sync::Mutex::new(None),
+            auto_spin_attack_box: AtomicCell::new(None),
             active_effects: std::sync::Mutex::new(FxHashMap::default()),
             entity_equipment: Arc::new(std::sync::Mutex::new(EntityEquipment::new())),
             equipment_drop_chances: Arc::new(std::sync::Mutex::new(FxHashMap::default())),
@@ -713,6 +720,72 @@ impl LivingEntity {
             .set_synced_data(tracked_data::living_entity::DATA_LIVING_ENTITY_FLAGS, b);
         if let Some(bedrock_meta) = &bedrock_meta {
             self.entity.send_bedrock_actor_data(bedrock_meta);
+        }
+    }
+
+    pub fn is_auto_spin_attack(&self) -> bool {
+        self.livings_flags.load(Relaxed) & Self::USING_RIPTIDE_FLAG != 0
+    }
+
+    pub fn start_auto_spin_attack(&self, ticks: i32, damage: f32, stack: ItemStack) {
+        self.auto_spin_attack_ticks.store(ticks, Relaxed);
+        self.auto_spin_attack_damage.store(damage);
+        *self
+            .auto_spin_attack_item
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner) = Some(stack);
+        self.auto_spin_attack_box
+            .store(Some(self.entity.bounding_box.load()));
+        self.set_living_flag(Self::USING_RIPTIDE_FLAG, true);
+    }
+
+    fn check_auto_spin_attack(&self, caller: &dyn EntityBase) {
+        if self.auto_spin_attack_ticks.load(Relaxed) <= 0 {
+            return;
+        }
+        self.auto_spin_attack_ticks.fetch_sub(1, Relaxed);
+        let current = self.entity.bounding_box.load();
+        let old = self
+            .auto_spin_attack_box
+            .swap(Some(current))
+            .unwrap_or(current);
+        let bounds = BoundingBox {
+            min: Vector3::new(
+                old.min.x.min(current.min.x),
+                old.min.y.min(current.min.y),
+                old.min.z.min(current.min.z),
+            ),
+            max: Vector3::new(
+                old.max.x.max(current.max.x),
+                old.max.y.max(current.max.y),
+                old.max.z.max(current.max.z),
+            ),
+        };
+        let world = self.entity.world.load();
+        let mut targets = Vec::new();
+        world.extend_entities_in_box_where(&mut targets, 1, bounds, |entity| {
+            entity.get_entity().entity_id != self.entity.entity_id
+                && entity.get_living_entity().is_some()
+        });
+        if let Some(target) = targets.first() {
+            if let Some(player) = caller.get_player() {
+                player.attack(target);
+            }
+            self.auto_spin_attack_ticks.store(0, Relaxed);
+            self.entity
+                .velocity
+                .store(self.entity.velocity.load() * -0.2);
+        } else if self.entity.horizontal_collision.load(Relaxed) {
+            self.auto_spin_attack_ticks.store(0, Relaxed);
+        }
+        if self.auto_spin_attack_ticks.load(Relaxed) <= 0 {
+            self.set_living_flag(Self::USING_RIPTIDE_FLAG, false);
+            self.auto_spin_attack_damage.store(0.0);
+            *self
+                .auto_spin_attack_item
+                .lock()
+                .unwrap_or_else(std::sync::PoisonError::into_inner) = None;
+            self.auto_spin_attack_box.store(None);
         }
     }
 
@@ -3758,6 +3831,7 @@ impl EntityBase for LivingEntity {
             self.on_changed_block(caller, current_block_pos);
         }
 
+        self.check_auto_spin_attack(caller);
         self.tick_effects();
 
         if let Some(player) = caller.get_player() {

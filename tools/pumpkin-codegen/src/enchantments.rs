@@ -1113,6 +1113,18 @@ pub fn build() -> TokenStream {
         );
         let trident_spin_attack_strength =
             parse_optional_value_effect(effects_map.get("minecraft:trident_spin_attack_strength"));
+        let trident_sounds: Vec<_> = effects_map
+            .get("minecraft:trident_sound")
+            .and_then(serde_json::Value::as_array)
+            .into_iter()
+            .flatten()
+            .map(|sound| {
+                let name = sound.as_str().expect("Invalid trident sound");
+                let name = name.strip_prefix("minecraft:").unwrap_or(name);
+                let ident = format_ident!("{}", name.to_pascal_case());
+                quote! { crate::sound::Sound::#ident }
+            })
+            .collect();
         let crossbow_charge_time =
             parse_optional_value_effect(effects_map.get("minecraft:crossbow_charge_time"));
         let location_changed =
@@ -1143,6 +1155,7 @@ pub fn build() -> TokenStream {
                 smash_damage_per_fallen_block: #smash_damage_per_fallen_block,
                 trident_return_acceleration: #trident_return_acceleration,
                 trident_spin_attack_strength: #trident_spin_attack_strength,
+                trident_sound: &[#(#trident_sounds),*],
                 crossbow_charge_time: #crossbow_charge_time,
                 location_changed: #location_changed,
                 prevent_armor_change: #prevent_armor_change,
@@ -1599,6 +1612,7 @@ pub fn build() -> TokenStream {
             pub smash_damage_per_fallen_block: &'static [ConditionalEffect<EnchantmentValueEffect>],
             pub trident_return_acceleration: &'static [ConditionalEffect<EnchantmentValueEffect>],
             pub trident_spin_attack_strength: Option<EnchantmentValueEffect>,
+            pub trident_sound: &'static [crate::sound::Sound],
             pub crossbow_charge_time: Option<EnchantmentValueEffect>,
             pub location_changed: &'static [ConditionalEffect<EnchantmentEntityEffect>],
             pub prevent_armor_change: bool,

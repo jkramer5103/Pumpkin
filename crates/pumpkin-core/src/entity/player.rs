@@ -1325,7 +1325,16 @@ impl Player {
         let config = &server.advanced_config.pvp;
 
         let inventory = self.inventory();
-        let item_stack = inventory.held_item();
+        let item_stack = if self.living_entity.is_auto_spin_attack() {
+            self.living_entity
+                .auto_spin_attack_item
+                .lock()
+                .unwrap_or_else(std::sync::PoisonError::into_inner)
+                .clone()
+                .unwrap_or_else(|| inventory.held_item())
+        } else {
+            inventory.held_item()
+        };
         if !item_stack.is_empty() {
             self.increment_stat(
                 statistics::StatisticCategory::Used,
@@ -1334,9 +1343,12 @@ impl Player {
             );
         }
 
-        let base_damage = self
-            .living_entity
-            .get_attribute_value(&Attributes::ATTACK_DAMAGE);
+        let base_damage = if self.living_entity.is_auto_spin_attack() {
+            f64::from(self.living_entity.auto_spin_attack_damage.load())
+        } else {
+            self.living_entity
+                .get_attribute_value(&Attributes::ATTACK_DAMAGE)
+        };
         let base_attack_speed = 4.0;
 
         let mut damage_multiplier = 1.0;
@@ -2267,11 +2279,6 @@ impl Player {
         }
     }
 
-    const fn is_auto_spin_attack() -> bool {
-        // TODO: Track active auto-spin/riptide state and return true while it is active.
-        false
-    }
-
     fn can_fit_pose(&self, pose: EntityPose) -> bool {
         let entity = self.get_entity();
         let dimensions = Entity::get_entity_dimensions(pose);
@@ -2317,7 +2324,7 @@ impl Player {
             EntityPose::Swimming
         } else if entity.is_fall_flying() {
             EntityPose::FallFlying
-        } else if Self::is_auto_spin_attack() {
+        } else if self.living_entity.is_auto_spin_attack() {
             EntityPose::SpinAttack
         } else if entity.is_sneaking() && !self.is_flying() {
             EntityPose::Crouching
