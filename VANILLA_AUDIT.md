@@ -12,6 +12,8 @@ The branch started at upstream master `3ad20f428`. Duplicate fixes are included 
 
 ## New fixes and integration corrections
 
+- Saturation: widen the amplifier before adding one, so amplifier 255 restores food and saturation instead of wrapping to zero. Clamp food after widened addition to prevent high effect levels from wrapping a partially full hunger bar.
+- Riptide: reject dry charging and passenger launches; accept flowing water and exposed rain using the entity's water state and feet/head rain checks. Use generated enchantment strength and sound data, add the impulse to existing velocity, and track the 20-tick spin flag, pose and collision attack. Preserve client prediction for the owner, synchronize velocity to observers, and use the active hand for durability and throwing. Normal throws damage the trident before spawning it and use creative-only pickup for creative throws.
 - Crops: wheat, carrots, potatoes, beetroot and torchflowers require the vanilla brightness threshold before random growth. Sweet berry growth checks brightness above the bush instead of treating an overhead solid block as the deciding condition.
 - Cocoa and nether wart: match vanilla growth/update flags; cocoa uses a uniform one-in-five roll instead of biased modulo arithmetic.
 - Bamboo: correct sapling and stalk light checks, the stalk's one-in-three growth chance, total-height counting, and the age test against the stalk two blocks below. Correct the cactus height-loop typo and cap handling.
@@ -20,7 +22,7 @@ The branch started at upstream master `3ad20f428`. Duplicate fixes are included 
 - Block bouncing: generate bounce restitution and fall-distance reduction from Extractor data, using the two fields supplied by upstream PR #3741 rather than replacing the rest of the block snapshot. Beds and shelf mushrooms use restitution 0.75. Shelf mushrooms now halve effective fall distance instead of making falls harmless. Elytra collision restitution also uses generated properties.
 - `/fill` lighting: update light propagation after batch writes, including strict fills. A live reproduction found a filled stone enclosure still saving skylight 15 and allowing its crop to grow; the fix queues lighting checks for changed light properties.
 - `/execute if/unless blocks`: compare complete block states rather than only block types. Masked comparison skips ordinary air as vanilla does. This fixes false matches between blocks with different properties; existing block-entity data comparison limitations remain.
-- Native plugins: bump the API version to 3 because the combined changes add fields to public server types. Existing native plugins must be rebuilt against this branch; the public Wasm WIT is unchanged.
+- Native plugins: bump the API version to 4 because the combined changes add fields to public server types. Existing native plugins must be rebuilt against this branch; the public Wasm WIT is unchanged.
 - Integration: adapt firework/crossbow item use to the current hand API, remove an overlapping fall-distance helper in favour of the vanilla-shaped flight update, reconcile bucket/dispenser changes, and satisfy the current world-reference and chest control-flow APIs.
 
 ## Existing fixes integrated
@@ -60,6 +62,8 @@ PR #3633's VarInt guard was already present on master and was not duplicated. Up
 
 ## Validation
 
+The Saturation/Riptide follow-up passed 535 selected server, data and plugin tests, including regression coverage for food overflow, Riptide strength/direction and sound-level selection. Saturation was compared with `SaturationMobEffect` and `FoodData`; Riptide was traced through `TridentItem`, enchantment selection, entity rain checks, player spin startup and living-entity spin expiry/collision. An optimized scratch reproduction of the old Saturation handler left food at 19 and saturation at 0 for amplifier 255; the fixed handler produced 20 and 20. On the running server, the user's amplifier-5 command raised saturation from 1.8 to 20. The final core suite was repeated against the committed code: 437 tests passed. Final Clippy covered pumpkin-core, pumpkin-data and pumpkin-codegen with all targets/features; format, dependency and typo checks passed. The installed optimized server loaded the existing three dimensions and answered a protocol-777 status request on localhost:25565. Riptide launch, sound and animation still require a real-client check.
+
 - `cargo fmt --check`, `git diff --check`, `cargo machete`, and `typos` passed.
 - `cargo clippy --workspace --all-targets --all-features --locked` passed. Core Clippy was repeated after the final gameplay changes and passed. The only reported warning is the existing dependency future-compatibility notice for `proc-macro-error2`.
 - Nextest: 1,018 tests across core, command, protocol, data, NBT, world, inventory and codegen passed; all 10 selected server/Wasm host tests passed. The core suite was repeated after the fill changes: 435 passed. Repeated tests are not counted as additional unique tests.
@@ -75,7 +79,7 @@ Earlier intermediate failure logs are retained as investigation evidence and are
 
 ## Server and source
 
-The combined source is on [the fork branch](https://github.com/jkramer5103/Pumpkin/tree/t3code/audit-vanilla-parity-bugs). The local server package is `~/Desktop/Programming_Stuff/Pumpkin-audited-26.3/`; run `start.sh`, then connect using a Java Edition 26.3 client at `localhost:25585`. Console `stop` saves and shuts down. The package uses a separate world and online authentication.
+The combined source is on [the fork branch](https://github.com/jkramer5103/Pumpkin/tree/t3code/audit-vanilla-parity-bugs). The local server package is `~/Desktop/Programming_Stuff/Pumpkin-audited-26.3/`; run `start.sh`, then connect using a Java Edition 26.3 client at `localhost:25565`. Console `stop` saves and shuts down. The package uses a separate world and online authentication.
 
 The complete decompiled reference, intermediate evidence and final logs are kept at `~/.local/share/pumpkin-audits/26.3-2026-10-11/`. Investigation tools, vanilla JARs/source and test worlds were not added to the fork.
 
@@ -89,6 +93,8 @@ CARGO_BUILD_JOBS=1 CARGO_INCREMENTAL=0 CARGO_PROFILE_RELEASE_LTO=false cargo bui
 
 Use a Minecraft Java Edition 26.3 client. The headless client library checked during this audit did not advertise 26.3 support. Console and codec checks do not demonstrate client prediction, sound, animation or GUI correctness.
 
+- In Survival, apply Saturation with amplifier 5 and then 255 while hungry; expect hunger to refill without wrapping or flickering. Saturation itself has no visible HUD bar.
+- Charge a Riptide III trident in clear weather outside water; expect use to be rejected. Repeat in exposed rain and flowing water, including with the off hand; expect a launch in the look direction, the Riptide sound and a short spin animation. A dry roofed area must not count as rain. During a spin, hitting a living entity or a wall should end the spin.
 - Fly with an elytra, boost with a rocket, collide with a wall and land; verify smooth movement, expected sounds/durability, then die and respawn and start flying again.
 - Launch fireworks by hand, crossbow and dispenser; verify trajectory, launch/explosion sounds and nearby damage. Test multishot with limited ammunition and both hands.
 - Fall onto a bed, shelf mushroom and slime block; verify bounce and damage, including while sneaking.
