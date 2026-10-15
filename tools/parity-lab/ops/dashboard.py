@@ -57,6 +57,21 @@ def status():
         concise = {k: lane.get(k) for k in ("status", "task_title", "task_index", "total_tasks", "completed_tasks", "retry_at", "error")}
         accounts.append({"id": key, "label": label, **concise, "quota": quotas.get(key, {}),
                          "fork": {k: fork.get(k) for k in ("branch", "head", "pushed_at", "validation", "findings", "limitations")}})
+    routes = read_json(RUNTIME / "account-routing.json", {})
+    grouped = {}
+    for lane in accounts:
+        target = routes.get(lane["id"], lane["id"])
+        if target not in grouped:
+            grouped[target] = {**lane, "id": target, "label": ACCOUNTS.get(target, target), "worker_count": 1}
+        else:
+            group = grouped[target]
+            group["worker_count"] += 1
+            group["completed_tasks"] = (group.get("completed_tasks") or 0) + (lane.get("completed_tasks") or 0)
+            group["total_tasks"] = (group.get("total_tasks") or 0) + (lane.get("total_tasks") or 0)
+            if lane.get("status") == "working": group["status"] = "working"
+    accounts = list(grouped.values())
+    for group in accounts:
+        if group["worker_count"] > 1: group["task_title"] = "{} workers sharing this subscription".format(group["worker_count"])
     run_paths = reports()
     latest_report = read_json(run_paths[0], {}) if run_paths else {}
     latest = {k: latest_report.get(k) for k in ("run_id", "summary", "confirmed_mismatch_count", "complete")} if latest_report else None

@@ -260,3 +260,24 @@ in `runtime/manifest.json.source_baseline_attempts` and
 `artifacts/jaron-upstream-deployment.json`. No source-baseline parity pass or
 50-case source-baseline failure is claimed. The partial artifact
 `artifacts/jaron-upstream-catalog50.json` contains zero completed results.
+
+## Current-source fill fix
+
+`701809df211b0dcfa6996595f99ff7327cad8d78` changes fill filters to compare supplied
+properties against each actual block state, for both named blocks and tags.
+Unspecified properties remain unconstrained; block-entity NBT filtering remains
+a separate gap. The regression failed with original current-upstream matching,
+then all **81 command unit tests and 5 doc tests** passed after the fix. Workspace
+formatting, command-crate clippy and the full patched binary build passed.
+
+Because current upstream has no RCON, a separate bounded console comparison held
+the engine lock and used resource-capped scratch servers. A private one-block
+loader fixture made one chunk writable after the embedded fixture failed its
+palette schema. Original failed attempts are retained. Named and tag filters
+were each exercised twice with positive initial-state, negative branch,
+nonmatching preservation and matching replacement controls. Vanilla and patched
+code passed all checks; clean upstream failed preservation in all four attempts.
+This confirms one state-filter defect and its fix, without claiming full catalog
+parity or a passing GameTest. Raw logs/report are in
+`artifacts/jaron-fill-console-20261015T212702.924070Z/`. The released RCON candidate
+remains active; no patched deployment or real-client visual test is claimed.

@@ -170,6 +170,13 @@ def main():
                           "poll build logs with model turns. Complete the current task and validate it. "
                           "Remain on gpt-6.1-sol.\nCurrent queue assignment:\n" + files[index].read_text()
                           if resuming else files[index].read_text())
+                routes = read_json(RUNTIME / "account-routing.json", {})
+                route = routes.get(account, account)
+                expected = read_json(AUTH_ROOT / route / "auth.json", {}).get("tokens", {}).get("account_id") if route in ACCOUNTS else None
+                actual = read_json(AUTH_ROOT / account / "auth.json", {}).get("tokens", {}).get("account_id")
+                if not expected or actual != expected:
+                    lane.update(status="needs_attention", error="Account routing mismatch; inference blocked")
+                    continue
                 output = ROOT / "artifacts" / f"{account}-task-{index:03d}-completion.md"
                 environment = dict(os.environ, CODEX_HOME=str(AUTH_ROOT / account),
                                    GH_CONFIG_DIR="/root/.config/gh")

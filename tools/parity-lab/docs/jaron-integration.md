@@ -21,9 +21,9 @@ independent gameplay defects.
 Files owned by the engine lane were read but not edited. The attempted bounded
 engine run is retained at
 `artifacts/runs/20261015T210048.698585Z-0275a6be`; it exited 2 after the first
-scenario, with candidate environment errors. The CLI accepts a single `--id`;
-repeated flags select only the final value, so this invocation did not execute
-all four requested IDs. Use a scenario directory subset or individual invocations.
+scenario, with candidate environment errors. At that time the CLI accepted a single `--id`, so this invocation did not execute
+all four requested IDs. Christine subsequently fixed repeated ID selection;
+the historical report still contains only the final selected scenario.
 
 Current upstream block command findings for integration:
 
@@ -46,6 +46,8 @@ Open-upstream overlap review found existing issue [#2592](https://github.com/Pum
 
 The engine treats intentional failing mutations as command problems even when the final state expectation passes (occupied keep, rejected overlap and nonmatching fills). This remains visible. Supporting an explicit expected-failure schema belongs to the engine lane; Jaron does not hide or weaken these cases to obtain engine passes.
 
-Fill-filter regression reproduced on current source: the focused test failed with original matching (`minecraft:oak_log[axis=x]` incorrectly returned true for a default y-axis log). The source patch adds state-aware matching and changes fill to pass each cell's actual state ID. Named and tag constraints check only supplied properties using generated metadata. Full command-crate tests are running; source-binary validation is still pending. Block-entity NBT filtering remains outside this patch.
+Fill-filter regression reproduced on current source: the focused test failed with original matching (`minecraft:oak_log[axis=x]` incorrectly returned true for a default y-axis log). The source patch adds state-aware matching and changes fill to pass each cell's actual state ID. Named and tag constraints check only supplied properties using generated metadata. All 81 command-crate unit tests and 5 doc tests passed. Command-crate clippy and workspace formatting passed; the patched full binary built after rebuilding the relevant shared command cache. Block-entity NBT filtering remains outside this patch.
 
 Build consistency: the shared target reused an older command library while compiling the changed fill caller, producing a missing-method error despite passing command tests/clippy. The relevant command package is being rebuilt under the shared lock before the full binary is accepted; this failed build remains recorded. Source fix is committed locally as `701809df211b0dcfa6996595f99ff7327cad8d78`; no push has been claimed yet. A bounded console probe is being attempted on separate fresh flat metadata, with the engine lock and scratch server resource cap. It is not the RCON catalog.
+
+Final bounded live source validation: `artifacts/jaron-fill-console-20261015T212702.924070Z/report.json`. Vanilla, clean upstream and the immutable patched binary ran identical named/tag filter operations, twice each. Initial-state, deliberately false branch, nonmatching preservation, and matching replacement checks all passed on vanilla and patched code. Clean upstream failed preservation on both repetitions of both forms. Source bug reproduced and fix validated live; this is one defect, not a new catalog count or full RCON catalog pass. The scratch loader uses a private one-block fixture because the embedded fixture failed its palette schema; original failed/incomplete attempts are retained. No engine-lane code or embedded assets were edited.

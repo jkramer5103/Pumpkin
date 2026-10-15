@@ -18,7 +18,7 @@ from pathlib import Path
 
 from lab.rcon import packet
 from lab.runner import atomic_json, run
-from lab.shrink import shrink_scenario
+from lab.shrink import replay_reproducer, shrink_scenario
 
 
 class FixtureServer(socketserver.ThreadingTCPServer):
@@ -128,6 +128,13 @@ def fixture_scenario():
                       for command in ("noise-a", "create", "noise-b", "trigger", "probe", "noise-c")]}
 
 
+def shrink_inputs(root):
+    atomic_json(root / "reset.json", {"commands": ["reset"]})
+    atomic_json(root / "versions.json", {name: {"version": "synthetic TCP fixture", "transport": "rcon"}
+                                        for name in ("vanilla", "pumpkin")})
+    return {"reset_path": root / "reset.json", "versions_path": root / "versions.json"}
+
+
 class TcpIntegrationTests(unittest.TestCase):
     def setUp(self):
         # These endpoints are synthetic. Give parent and CLI subprocesses the
@@ -171,7 +178,7 @@ class TcpIntegrationTests(unittest.TestCase):
             root = Path(temporary)
             atomic_json(root / "case.json", fixture_scenario())
             atomic_json(root / "targets.json", targets)
-            directory, report, code = shrink_scenario(root / "case.json", root / "targets.json", root / "shrinks", timeout=2)
+            directory, report, code = shrink_scenario(root / "case.json", root / "targets.json", root / "shrinks", timeout=2, **shrink_inputs(root))
             self.assertEqual(code, 0, report)
             self.assertTrue(report["minimized"])
             self.assertEqual(report["retained_indices"], [1, 3, 4])
@@ -185,12 +192,72 @@ class TcpIntegrationTests(unittest.TestCase):
             for server in servers:
                 self.assertEqual(server.commands.count("probe"), 2 * len(report["probes"]))
 
+    def test_shrink_cli_pins_observations_resets_every_attempt_and_replays(self):
+        with tempfile.TemporaryDirectory() as temporary, fixture_pair() as (servers, targets):
+            root = Path(temporary)
+            case = fixture_scenario()
+            # Even an observation irrelevant to the mismatch must remain.
+            case["steps"].insert(1, {"command": "observe-always", "observe": True, "expect_contains": "OK"})
+            # Required setup is independent of the explicitly recorded reset.
+            case["setup"] = ["prepare"]
+            atomic_json(root / "case.json", case)
+            atomic_json(root / "targets.json", targets)
+            shrink_inputs(root)
+            result = subprocess.run([sys.executable, "-m", "lab", "shrink",
+                "--scenario", str(root / "case.json"), "--targets", str(root / "targets.json"),
+                "--reset", str(root / "reset.json"), "--versions", str(root / "versions.json"),
+                "--keep-step", "0", "--output", str(root / "reproducers"), "--timeout", "2"],
+                capture_output=True, text=True, timeout=30)
+            self.assertEqual(result.returncode, 0, result.stderr)
+            directory = Path(result.stdout.strip())
+            report = json.loads((directory / "shrink-report.json").read_text())
+            reduced = json.loads((directory / "reproducer.json").read_text())
+            self.assertEqual([s["command"] for s in reduced["steps"]],
+                             ["noise-a", "observe-always", "create", "trigger", "probe"])
+            self.assertEqual(reduced["setup"], ["prepare"])
+            self.assertEqual(report["pinned_indices"], [0, 1, 5])
+            self.assertIn("synthetic", report["target_versions"]["pumpkin"]["version"])
+            self.assertEqual(json.loads((directory / "attempts.json").read_text()), report["probes"])
+            # Every removable single deletion was actually rerun on both TCP servers.
+            for index in set(report["retained_indices"]) - set(report["pinned_indices"]):
+                deletion = [i for i in report["retained_indices"] if i != index]
+                self.assertTrue(any(p["indices"] == deletion and not p["accepted"] for p in report["probes"]))
+            replay = subprocess.run(report["replay_argv"], capture_output=True, text=True, timeout=10)
+            self.assertEqual(replay.returncode, 1, replay.stderr)
+            replay_report = json.loads((Path(replay.stdout.strip()) / "report.json").read_text())
+            self.assertTrue(replay_report["results"][0]["confirmed_mismatch"])
+            for server in servers:
+                self.assertEqual(server.commands.count("prepare"), 2 * (len(report["probes"]) + 1))
+                # Mutating setup is always immediately preceded by an arena reset
+                # (and the RCON read-only fence).
+                for index, command in enumerate(server.commands):
+                    if command == "prepare":
+                        self.assertEqual(server.commands[index-2:index], ["reset", "list"])
+            self.assertNotIn("fixture-only", (directory / "shrink-report.json").read_text())
+
+    def test_budget_exhaustion_retains_best_verified_candidate_without_minimality(self):
+        with tempfile.TemporaryDirectory() as temporary, fixture_pair() as (_, targets):
+            root = Path(temporary)
+            atomic_json(root / "case.json", fixture_scenario())
+            atomic_json(root / "targets.json", targets)
+            directory, report, code = shrink_scenario(root / "case.json", root / "targets.json", root / "shrinks",
+                                                     timeout=2, max_probes=2, **shrink_inputs(root))
+            self.assertEqual(code, 2)
+            self.assertFalse(report["minimized"])
+            self.assertIsNone(report["minimality"])
+            self.assertEqual(len(report["probes"]), 2)
+            self.assertTrue((directory / "candidate.json").is_file())
+            self.assertFalse((directory / "reproducer.json").exists())
+            _, replay, code = replay_reproducer(directory, root / "targets.json")
+            self.assertEqual(code, 1)
+            self.assertTrue(replay["results"][0]["confirmed_mismatch"])
+
     def test_unsupported_scenario_is_never_labeled_minimized(self):
         with tempfile.TemporaryDirectory() as temporary, fixture_pair("unsupported") as (_, targets):
             root = Path(temporary)
             atomic_json(root / "case.json", fixture_scenario())
             atomic_json(root / "targets.json", targets)
-            directory, report, code = shrink_scenario(root / "case.json", root / "targets.json", root / "shrinks", timeout=2)
+            directory, report, code = shrink_scenario(root / "case.json", root / "targets.json", root / "shrinks", timeout=2, **shrink_inputs(root))
             self.assertEqual(code, 2)
             self.assertFalse(report["minimized"])
             self.assertFalse((directory / "reproducer.json").exists())

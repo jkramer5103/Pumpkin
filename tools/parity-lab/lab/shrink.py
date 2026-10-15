@@ -11,9 +11,13 @@ validation and stable failure identity are required. No server is mocked here.
 from __future__ import annotations
 
 import copy
+import hashlib
+import shlex
+import sys
+import tempfile
 from pathlib import Path
 
-from .runner import atomic_json, run
+from .runner import atomic_json, interruption_signals, run, utc_now
 from .schema import SchemaError, load_targets, read_json, validate_scenario
 
 
@@ -75,7 +79,7 @@ def ddmin(sequence, fails):
 
 def failure_identity(result):
     """Stable behavioral failure identity; infra, flaky, unsupported are rejected."""
-    if result["status"] != "different" or result.get("flaky") or result.get("repeat_count", 0) < 2:
+    if not result.get("confirmed_mismatch") or result.get("flaky") or result.get("repeat_count", 0) < 2:
         return None
     attempts = result["attempts"]
     if any(not t["completed"] or t["errors"] for a in attempts for t in a["targets"].values()):
@@ -96,46 +100,118 @@ def failure_identity(result):
     left, right = (first["targets"][name]["observations"] for name in ("vanilla", "pumpkin"))
     for vanilla, pumpkin in zip(left, right):
         if vanilla["normalized"] != pumpkin["normalized"]:
-            identity.append(("observation_mismatch", "both", vanilla["command"], ""))
-    return sorted(set(identity)) or None
+            identity.append(("observation_mismatch", "both", vanilla["command"],
+                             vanilla["normalized"], pumpkin["normalized"]))
+    return sorted(set(identity), key=repr) or None
 
 
-def shrink_scenario(scenario_path, targets_path, output, *, repeat=2, timeout=10.0, max_probes=100):
+def load_reset(path):
+    value = read_json(path)
+    if set(value) != {"commands"} or not isinstance(value["commands"], list) or not value["commands"]:
+        raise ShrinkError('Reset file must contain a nonempty "commands" array')
+    # Reuse the command grammar without extending the scenario schema.
+    validate_scenario({"schema_version": 1, "id": "reset", "title": "Reset", "category": "reset",
+        "description": "Reset validation", "tags": [], "setup": value["commands"], "cleanup": [],
+        "steps": [{"command": "say validate", "observe": True, "expect_contains": "validate"}]})
+    return value["commands"]
+
+
+def load_versions(path):
+    """Explicit provenance, with local binary hashes verified before execution.
+
+    No arbitrary manifest copying: manifests may contain credentials. Version
+    strings are declarations; local hashes establish which file was checked,
+    not that an existing remote service is running that file.
+    """
+    value = read_json(path)
+    if set(value) != {"vanilla", "pumpkin"}:
+        raise ShrinkError("Versions must contain exactly vanilla and pumpkin")
+    for name, version in value.items():
+        if not isinstance(version, dict) or not version.get("version"):
+            raise ShrinkError(f"{name} requires a version")
+        if set(version) - {"version", "source_commit", "binary", "sha256", "transport"}:
+            raise ShrinkError("Unrecognized version metadata; do not include credentials")
+        if any(not isinstance(v, str) or not v.strip() for v in version.values()):
+            raise ShrinkError("Version metadata values must be nonempty strings")
+        if "binary" in version:
+            binary = Path(version["binary"]).resolve()
+            with binary.open('rb') as handle:
+                digest = hashlib.file_digest(handle, "sha256").hexdigest()
+            if "sha256" in version and version["sha256"] != digest:
+                raise ShrinkError(f"{name} binary hash differs from recorded version")
+            version.update(binary=str(binary), sha256=digest)
+    return value
+
+
+def _console_version(versions, pumpkin_console):
+    if pumpkin_console is None:
+        return
+    if not versions or versions["pumpkin"].get("binary") != str(Path(pumpkin_console).resolve()):
+        raise ShrinkError("Console binary must match the Pumpkin versions record")
+
+
+def shrink_scenario(scenario_path, targets_path, output, *, repeat=2, timeout=10.0, max_probes=100,
+                    reset_path=None, versions_path=None, keep_steps=(), lock_timeout=30.0,
+                    pumpkin_console=None):
     if repeat < 2:
         raise ShrinkError("Scenario shrinking requires at least two repeats per candidate")
     if max_probes < 2:
         raise ShrinkError("max_probes must be at least 2")
+    if reset_path is None or versions_path is None:
+        raise ShrinkError("Shrinking requires explicit reset and target versions files")
     original = validate_scenario(read_json(scenario_path), str(scenario_path))
     targets = load_targets(targets_path)
+    reset = load_reset(reset_path)
+    versions = load_versions(versions_path)
+    _console_version(versions, pumpkin_console)
+    pinned = set(keep_steps) | {i for i, step in enumerate(original["steps"]) if step.get("observe")}
+    if any(type(i) is not int or not 0 <= i < len(original["steps"]) for i in pinned):
+        raise ShrinkError("keep-step indices must be valid zero-based step indices")
     output = Path(output).resolve()
     output.mkdir(parents=True, exist_ok=True)
-    # A unique session directory avoids overwriting previous reproducers.
-    import tempfile
     directory = Path(tempfile.mkdtemp(prefix="shrink-", dir=output))
     state = {"schema_version": 1, "state": "running", "minimized": False,
-             "minimality": None, "original_step_count": len(original["steps"]), "probes": []}
+             "started_at": utc_now(), "finished_at": None, "minimality": None,
+             "original_step_count": len(original["steps"]), "probes": [], "pinned_indices": sorted(pinned),
+             "target_versions": versions, "repeat": repeat, "timeout": timeout,
+             "lock_timeout": lock_timeout,
+             "pumpkin_console": str(Path(pumpkin_console).resolve()) if pumpkin_console else None,
+             "evidence_kind": "live differential comparison; inspect target version declarations",
+             "version_limitations": "RCON service binary identity is declared, not remotely attested. Local file hashes are verified."}
     atomic_json(directory / "original.json", original)
+    atomic_json(directory / "reset.json", {"commands": reset})
+    atomic_json(directory / "target-versions.json", versions)
+    replay_argv = [sys.executable, "-m", "lab", "replay", "--reproducer", str(directory),
+                   "--targets", str(Path(targets_path).resolve())]
+    state["replay_argv"] = replay_argv
+    state["replay_command"] = shlex.join(replay_argv)
+    (directory / "replay.txt").write_text(state["replay_command"] + "\n", encoding="utf-8")
 
     def save():
         atomic_json(directory / "shrink-report.json", state)
+        atomic_json(directory / "attempts.json", state["probes"])
 
     baseline = None
 
-    def predicate(indices):
+    def predicate(removable):
         nonlocal baseline
+        indices = sorted(pinned | set(removable))
         scenario = copy.deepcopy(original)
         scenario["steps"] = [original["steps"][i] for i in indices]
-        try:
-            validate_scenario(scenario)
-        except SchemaError:
-            return False
+        validate_scenario(scenario)
         if len(state["probes"]) >= max_probes:
             raise ShrinkError("Probe budget exhausted; no minimized claim")
-        run_dir, report, code = run([scenario], targets, directory / "runs", repeat=repeat, timeout=timeout)
+        # Detect changed binaries between candidates, rather than silently
+        # shrinking across two source versions. Never cache predicate outcomes.
+        load_versions(directory / "target-versions.json")
+        probe = {"indices": indices, "state": "running", "accepted": False}
+        state["probes"].append(probe)
+        save()
+        run_dir, report, code = run([scenario], targets, directory / "runs", repeat=repeat, timeout=timeout,
+            reset_commands=reset, lock_timeout=lock_timeout, pumpkin_console=pumpkin_console)
         result = report["results"][0]
         identity = failure_identity(result)
-        state["probes"].append({"indices": list(indices), "run": str(run_dir), "exit_code": code,
-                                "failure_identity": identity})
+        probe.update(state="finished", run=str(run_dir), exit_code=code, failure_identity=identity)
         save()
         if code == 2:
             raise ShrinkError("Infrastructure failure during shrinking; evidence preserved")
@@ -143,23 +219,46 @@ def shrink_scenario(scenario_path, targets_path, output, *, repeat=2, timeout=10
             raise ShrinkError("Flaky candidate encountered; no minimized claim")
         if baseline is None:
             if identity is None:
-                raise ShrinkError("Initial scenario lacks a stable supported behavioral failure")
+                raise ShrinkError("Initial scenario lacks a stable supported behavioral mismatch")
             baseline = identity
-        return identity == baseline
+            state["failure_identity"] = identity
+        accepted = identity == baseline
+        probe["accepted"] = accepted
+        if accepted and len(indices) <= state.get("step_count", len(original["steps"])):
+            atomic_json(directory / "candidate.json", scenario)
+            state.update(retained_indices=indices, step_count=len(indices), verified_run=str(run_dir))
+        save()
+        return accepted
 
     save()
     try:
-        indices = ddmin(range(len(original["steps"])), predicate)
-        reproducer = copy.deepcopy(original)
-        reproducer["steps"] = [original["steps"][i] for i in indices]
-        atomic_json(directory / "reproducer.json", reproducer)
-        state.update(state="finished", minimized=True, minimality="1-minimal subsequence of steps",
-                     retained_indices=indices, step_count=len(indices),
-                     verified_run=state["probes"][-1]["run"],
-                     limitations="Setup and cleanup are retained. 1-minimal does not mean globally shortest.")
+        with interruption_signals():
+            removable = ddmin([i for i in range(len(original["steps"])) if i not in pinned], predicate)
+            indices = sorted(pinned | set(removable))
+            reproducer = copy.deepcopy(original)
+            reproducer["steps"] = [original["steps"][i] for i in indices]
+            atomic_json(directory / "reproducer.json", reproducer)
+            state.update(state="finished", minimized=True,
+                minimality="1-minimal deletion of unpinned steps; all single deletions checked on both targets",
+                limitations="Reset, setup, cleanup, observations and explicitly pinned steps are fixed. Not globally shortest.")
     except (Exception, KeyboardInterrupt) as exc:
         state.update(state="interrupted" if isinstance(exc, KeyboardInterrupt) else "failed",
                      error={"kind": type(exc).__name__, "reason": str(exc)})
     finally:
+        state["finished_at"] = utc_now()
         save()
     return directory, state, 0 if state["minimized"] else 2
+
+
+def replay_reproducer(directory, targets_path, *, output=None, timeout=None, lock_timeout=None):
+    """Replay the saved candidate, reset policy and transport; never re-shrink."""
+    directory = Path(directory).resolve()
+    state = read_json(directory / "shrink-report.json")
+    versions = load_versions(directory / "target-versions.json")
+    _console_version(versions, state["pumpkin_console"])
+    path = directory / ("reproducer.json" if state["minimized"] else "candidate.json")
+    scenario = validate_scenario(read_json(path), str(path))
+    return run([scenario], load_targets(targets_path), output or directory / "replays",
+        repeat=state["repeat"], timeout=state["timeout"] if timeout is None else timeout,
+        lock_timeout=state["lock_timeout"] if lock_timeout is None else lock_timeout,
+        reset_commands=load_reset(directory / "reset.json"), pumpkin_console=state["pumpkin_console"])

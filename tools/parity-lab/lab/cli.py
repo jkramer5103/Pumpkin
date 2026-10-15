@@ -6,7 +6,7 @@ import sys
 
 from .runner import run
 from .schema import SchemaError, load_scenarios, load_targets
-from .shrink import ShrinkError, shrink_scenario
+from .shrink import ShrinkError, replay_reproducer, shrink_scenario
 
 
 def _positive_int(value):
@@ -41,10 +41,22 @@ def parser():
     shrink = commands.add_parser("shrink", help="delta debug steps with real two-server verification and retained evidence")
     shrink.add_argument("--targets", required=True)
     shrink.add_argument("--scenario", required=True)
-    shrink.add_argument("--output", default="artifacts/shrinks")
+    shrink.add_argument("--output", default="artifacts/reproducers")
     shrink.add_argument("--repeat", type=_positive_int, default=2)
     shrink.add_argument("--timeout", type=_timeout, default=10.0)
     shrink.add_argument("--max-probes", type=_positive_int, default=100)
+    shrink.add_argument("--reset", required=True, help='JSON {"commands": [...]} arena reset before every target/repeat')
+    shrink.add_argument("--versions", required=True, help="explicit vanilla/Pumpkin version metadata JSON")
+    shrink.add_argument("--keep-step", type=int, action="append", default=[],
+                        help="preserve a zero-based step index in addition to all observations")
+    shrink.add_argument("--lock-timeout", type=_timeout, default=30.0)
+    shrink.add_argument("--pumpkin-console", help="explicit current-source binary; uses a fresh scratch console, not RCON")
+    replay = commands.add_parser("replay", help="rerun a saved reproducer with its reset and transport policy")
+    replay.add_argument("--reproducer", required=True)
+    replay.add_argument("--targets", required=True)
+    replay.add_argument("--output")
+    replay.add_argument("--timeout", type=_timeout)
+    replay.add_argument("--lock-timeout", type=_timeout)
     return root
 
 
@@ -57,7 +69,12 @@ def main(argv=None):
             return 0
         if args.action == "shrink":
             directory, report, code = shrink_scenario(args.scenario, args.targets, args.output,
-                repeat=args.repeat, timeout=args.timeout, max_probes=args.max_probes)
+                repeat=args.repeat, timeout=args.timeout, max_probes=args.max_probes,
+                reset_path=args.reset, versions_path=args.versions, keep_steps=args.keep_step,
+                lock_timeout=args.lock_timeout, pumpkin_console=args.pumpkin_console)
+        elif args.action == "replay":
+            directory, report, code = replay_reproducer(args.reproducer, args.targets,
+                output=args.output, timeout=args.timeout, lock_timeout=args.lock_timeout)
         else:
             targets = load_targets(args.targets)
             scenarios = load_scenarios(args.scenarios, args.scenario_id)

@@ -12,3 +12,6 @@ Do not modify unrelated services or projects on the server.
 Workers run with `danger-full-access` and approval policy `never` (YOLO).
 Read `ops/FORK.md` before making Pumpkin source changes or pushing commits.
 
+
+## Latest account restriction
+Both worker lanes now use ONLY Christine (christine.funke@hamburg.de). The Jaron lane name is retained for its task history; it contains Christine credentials. Never switch back to the Jaron subscription or use its disabled login. The user needs that quota for other work.
