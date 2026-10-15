@@ -197,7 +197,7 @@ The initial run is preserved at
 `artifacts/runs/20261015T204803.409413Z-ab3dc416/`: exit **2**, RCON disconnection /
 response-boundary infrastructure errors. It is **not** a parity pass or confirmed
 block mismatch. No `lab/` files were changed. Engine transport fixes and follow-up
-engine runs belong to the concurrent engine worker.
+engine runs belong to the concurrent engine worker. A second attempted subset, `score-add-remove --repeat 2`, also exited 2 and is preserved at `artifacts/runs/20261015T205446.178407Z-8229b64e/`.
 
 Additional evidence: `artifacts/game-status.json`,
 `artifacts/independent-rcon-smoke.json`, `artifacts/provision-repeatability.json`,
@@ -207,7 +207,7 @@ folders. Reprovisioning was exercised with unchanged credentials, preserved worl
 directory identity/marker files, and a vanilla diamond-block state surviving the
 restart. The probe block and marker files were removed afterward.
 
-These are immediate command-state scenarios, not simulation timing tests. Client
+Each scenario freezes simulation in setup and unfreezes it in cleanup; both tick commands were exercised on both servers. These are immediate command-state scenarios, not simulation timing tests. Client
 login/gameplay, movement physics, inventories, combat, visual behavior, elapsed
 tick behavior, and Pumpkin generated-terrain equivalence remain untested. No
 scenario claims a tick advance from wall-clock sleep.

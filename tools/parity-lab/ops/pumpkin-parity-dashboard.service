@@ -1,0 +1,19 @@
+[Unit]
+Description=Pumpkin Parity Lab LAN dashboard
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/root/pumpkin-parity-lab
+ExecStart=/usr/bin/python3 /root/pumpkin-parity-lab/ops/dashboard.py --host 192.168.2.223 --port 8787
+Restart=on-failure
+RestartSec=5
+MemoryMax=256M
+CPUQuota=50%
+NoNewPrivileges=true
+PrivateTmp=true
+UMask=0077
+
+[Install]
+WantedBy=multi-user.target

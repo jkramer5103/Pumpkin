@@ -27,6 +27,8 @@ class ScenarioCatalogTests(unittest.TestCase):
 
     def test_every_observation_is_a_positive_state_predicate(self):
         for scenario in self.scenarios:
+            self.assertEqual(scenario['setup'][0],'tick freeze')
+            self.assertEqual(scenario['cleanup'][-1],'tick unfreeze')
             observed=[s for s in scenario['steps'] if s.get('observe')]
             self.assertTrue(observed,scenario['id'])
             for step in observed:

@@ -1,0 +1,19 @@
+[Unit]
+Description=Pumpkin Parity Lab two-subscription campaign
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/root/pumpkin-parity-lab
+ExecStart=/usr/bin/python3 /root/pumpkin-parity-lab/ops/supervisor.py
+Restart=on-failure
+RestartSec=15
+MemoryMax=6G
+CPUQuota=300%
+KillMode=control-group
+TimeoutStopSec=30
+UMask=0077
+
+[Install]
+WantedBy=multi-user.target

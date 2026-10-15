@@ -14,8 +14,8 @@ def case(id,title,category,description,commands,probes,setup=(),cleanup=(),notes
     steps += [{'command':c,'observe':True,'expect_contains':'Test passed'} for c in probes]
     value={'schema_version':1,'id':id,'title':title,'category':category,
            'description':description,'tags':['command','deterministic','state-observation'],
-           'setup':[CLEAR,*setup],'steps':steps,'cleanup':[*cleanup,CLEAR],
-           'notes':('Arena is preloaded by provisioning. Immediate command-state assertions; no client or elapsed-tick claim. '
+           'setup':['tick freeze',CLEAR,*setup],'steps':steps,'cleanup':[*cleanup,CLEAR,'tick unfreeze'],
+           'notes':('Provisioning requests arena force-loading; Pumpkin readiness limitations remain visible. Simulation is frozen for immediate command-state assertions and unfrozen in cleanup; no client or elapsed-tick claim. '
                     'Positive execute predicates return Test passed on vanilla 26.3; errors and empty output fail expectations. '+notes)}
     CASES.append(value)
 

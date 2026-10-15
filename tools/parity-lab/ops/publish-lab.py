@@ -32,6 +32,11 @@ def main():
     origin = git("remote", "get-url", "--push", "origin", capture=True).stdout.strip()
     if origin != "https://github.com/jkramer5103/Pumpkin.git":
         raise SystemExit("Unexpected fork destination")
+    # Reject a transient partial edit rather than publishing it while another lane writes.
+    check = subprocess.run([sys.executable, "-m", "unittest", "discover", "-s", "tests", "-q"],
+                           cwd=ROOT, capture_output=True, text=True)
+    if check.returncode:
+        raise SystemExit("Lab verification failed; publication deferred. " + check.stderr[-1800:])
     sources = []
     for file in ROOT.rglob("*"):
         relative = file.relative_to(ROOT)
@@ -45,6 +50,12 @@ def main():
         sources.append((relative, data))
     destination = REPO / "tools" / "parity-lab"
     destination.mkdir(parents=True, exist_ok=True)
+    present = {str(relative) for relative, _ in sources}
+    tracked = git("ls-files", "--", "tools/parity-lab", capture=True).stdout.splitlines()
+    for entry in tracked:
+        relative = str(Path(entry).relative_to("tools/parity-lab"))
+        if relative not in present:
+            (REPO / entry).unlink(missing_ok=True)
     for relative, data in sources:
         target = destination / relative
         target.parent.mkdir(parents=True, exist_ok=True)

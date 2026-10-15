@@ -10,7 +10,7 @@ from pathlib import Path
 from lab.cli import main
 from lab.normalize import command_problem, normalize_response
 from lab.rcon import AuthenticationError, RconError
-from lab.runner import LockError, atomic_json, process_lock, run
+from lab.runner import TickController, UnsupportedTicks, atomic_json, process_lock, run
 from lab.schema import SchemaError, load_scenarios, load_targets, read_json, validate_scenario, validate_targets
 from lab.shrink import ShrinkError, ddmin
 
@@ -99,6 +99,9 @@ class SchemaTests(unittest.TestCase):
                 validate_targets(value)
         value = targets()
         value["targets"]["pumpkin"] = value["targets"]["vanilla"].copy()
+        with self.assertRaises(SchemaError):
+            validate_targets(value)
+        value["targets"]["pumpkin"]["host"] = "localhost"
         with self.assertRaises(SchemaError):
             validate_targets(value)
 
@@ -238,6 +241,29 @@ class RunnerTests(unittest.TestCase):
         self.assertFalse(report["results"][0]["confirmed_mismatch"])
         self.assertEqual(report["command_coverage"]["targets"]["vanilla"]["setblock"]["unsupported"], 2)
 
+    def test_equal_blank_secondary_probe_does_not_pass(self):
+        self.case["steps"].append({"command": "another-probe", "observe": True})
+        fixtures = Fixtures({(name, "another-probe"): "" for name in ("vanilla", "pumpkin")})
+        _, report, code = self.execute(fixtures)
+        self.assertEqual(code, 1)
+        self.assertIn("empty_observation", report["results"][0]["reason"])
+
+    def test_environment_failure_is_infra_even_with_good_probe(self):
+        fixtures = Fixtures({("pumpkin", self.case["setup"][0]): "That position is not loaded"})
+        _, report, code = self.execute(fixtures, repeat=2)
+        self.assertEqual(code, 2)
+        self.assertEqual(report["results"][0]["status"], "error")
+        self.assertEqual(report["confirmed_mismatch_count"], 0)
+
+    def test_failed_setup_or_cleanup_cannot_pass_positive_probe(self):
+        for phase in ("setup", "cleanup"):
+            with self.subTest(phase=phase):
+                command = self.case[phase][0]
+                fixtures = Fixtures({("pumpkin", command): "Failed to fill blocks"})
+                _, report, code = self.execute(fixtures)
+                self.assertEqual(code, 1)
+                self.assertIn("command_failed", report["results"][0]["reason"])
+
     def test_interruption_preserves_atomic_report_and_pending_transcript(self):
         fixtures = Fixtures({("vanilla", self.observe): KeyboardInterrupt()})
         second = scenario()
@@ -286,6 +312,46 @@ class RunnerTests(unittest.TestCase):
         self.assertEqual(code, 0)
         for target in report["results"][0]["attempts"][0]["targets"].values():
             self.assertTrue(any(c["command"] == "tick unfreeze" for c in target["commands"]))
+
+    def test_actual_26_3_time_response_grammars_and_unknown_format(self):
+        for raw in ("The time is 42", "The game time is 42 tick(s)", "Gametime is 42"):
+            ticks = TickController(lambda command, phase: raw, 1)
+            self.assertEqual(ticks.game_time(), 42)
+        ticks = TickController(lambda command, phase: "Some unrelated count: 42", 1)
+        with self.assertRaises(UnsupportedTicks):
+            ticks.game_time()
+
+    def test_tick_restoration_attempted_after_cleanup_disconnect(self):
+        self.case["steps"][0]["wait_ticks"] = 1
+        self.case["cleanup"] = ["cleanup"]
+        fixtures = Fixtures({(name, command): response for name in ("vanilla", "pumpkin")
+            for command, response in (("tick query", "The game is running normally"),
+                ("tick freeze", "The game is frozen"), ("tick unfreeze", "The game is running normally"),
+                ("time query gametime", "unexpected format"), ("cleanup", RconError("disconnect")))})
+        _, report, code = self.execute(fixtures)
+        self.assertEqual(code, 2)
+        for name in ("vanilla", "pumpkin"):
+            self.assertIn((name, "tick unfreeze"), fixtures.calls)
+
+    def test_explicit_unfreeze_cleanup_continues_after_disconnect(self):
+        self.case["setup"].insert(0, "tick freeze")
+        self.case["cleanup"] = ["failing-cleanup", "tick unfreeze"]
+        fixtures = Fixtures({("vanilla", "failing-cleanup"): RconError("lost response")})
+        _, report, code = self.execute(fixtures)
+        self.assertEqual(code, 2)
+        self.assertIn(("vanilla", "tick unfreeze"), fixtures.calls)
+        self.assertEqual(fixtures.calls.count(("vanilla", "failing-cleanup")), 1, "never replay a possibly applied command")
+
+    def test_lock_timeout_creates_incomplete_error_artifact_without_connections(self):
+        with process_lock(self.lock):
+            fixture = Fixtures()
+            directory, report, code = run([self.case], targets(), self.output, client_factory=fixture.factory,
+                                         lock_path=self.lock, lock_timeout=0.01)
+        self.assertEqual(code, 2)
+        self.assertFalse(report["complete"])
+        self.assertEqual(report["error"]["kind"], "LockError")
+        self.assertEqual(fixture.connections, {"vanilla": 0, "pumpkin": 0})
+        self.assertTrue((directory / "report.json").is_file())
 
     def test_global_lock_blocks_another_process(self):
         script = "from lab.runner import process_lock,LockError\nimport sys\ntry:\n with process_lock(sys.argv[1],0.05): pass\nexcept LockError: sys.exit(7)\n"

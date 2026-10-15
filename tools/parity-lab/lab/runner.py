@@ -180,6 +180,8 @@ def _target_record():
 def _attempt_target(scenario, target, target_name, repeat, transcript, factory, timeout, record):
     client = None
     ticks = None
+    connected_once = False
+    transport_broken = False
 
     def execute(command, phase, index=None):
         event = {"scenario_id": scenario["id"], "repeat": repeat, "target": target_name,
@@ -208,7 +210,10 @@ def _attempt_target(scenario, target, target_name, repeat, transcript, factory, 
 
     try:
         client = factory(target["host"], target["port"], target["password"], timeout=timeout)
+        transcript.write({"scenario_id": scenario["id"], "repeat": repeat, "target": target_name,
+                          "event": "connecting", "host": target["host"], "port": target["port"]})
         client.connect()
+        connected_once = True
         transcript.write({"scenario_id": scenario["id"], "repeat": repeat, "target": target_name, "event": "connected"})
         if any(step.get("wait_ticks", 0) for step in scenario["steps"]):
             ticks = TickController(execute, timeout)
@@ -229,37 +234,50 @@ def _attempt_target(scenario, target, target_name, repeat, transcript, factory, 
     except UnsupportedTicks as exc:
         record["problems"].append({"phase": "timing", "kind": "unsupported", "reason": str(exc)})
     except RconError as exc:
+        transport_broken = True
         record["errors"].append({"kind": type(exc).__name__, "reason": str(exc)})
+        transcript.write({"scenario_id": scenario["id"], "repeat": repeat, "target": target_name,
+                          "event": "target_error", "error_type": type(exc).__name__, "error": str(exc)})
     except BaseException as exc:
+        transport_broken = True
         record["errors"].append({"kind": type(exc).__name__, "reason": "Interrupted" if isinstance(exc, KeyboardInterrupt) else str(exc)})
         raise
     finally:
-        # Best effort cleanup is attempted even after setup/expectation failure.
-        # On a broken transport use a fresh authenticated connection.
+        # Continue cleanup after a failed command, reconnecting before the next
+        # one. In particular, a final explicit tick unfreeze must not be skipped
+        # just because an earlier cleanup command lost its connection.
+        # Commands with lost responses are never replayed automatically.
         if client is not None:
-            cleanup_broken = False
-            try:
-                if record["errors"]:
+            def reconnect_if_broken():
+                nonlocal client, transport_broken
+                if transport_broken:
                     client.close()
                     client = factory(target["host"], target["port"], target["password"], timeout=timeout)
                     client.connect()
+                    transport_broken = False
+
+            try:
+                if not connected_once:
+                    return record  # Failed authentication/connection cannot have mutated the world.
                 for index, command in enumerate(scenario["cleanup"]):
-                    execute(command, "cleanup", index)
-            except RconError as exc:
-                cleanup_broken = True
-                record["errors"].append({"kind": type(exc).__name__, "reason": "Cleanup: " + str(exc)})
-            finally:
+                    try:
+                        reconnect_if_broken()
+                    except RconError as exc:
+                        record["errors"].append({"kind": type(exc).__name__, "reason": "Cleanup connection: " + str(exc)})
+                        break
+                    try:
+                        execute(command, "cleanup", index)
+                    except RconError as exc:
+                        transport_broken = True
+                        record["errors"].append({"kind": type(exc).__name__, "reason": "Cleanup: " + str(exc)})
                 try:
                     if ticks and ticks.restore:
-                        if cleanup_broken:
-                            client.close()
-                            client = factory(target["host"], target["port"], target["password"], timeout=timeout)
-                            client.connect()
+                        reconnect_if_broken()
                         ticks.close()
                 except RconError as exc:
                     record["errors"].append({"kind": type(exc).__name__, "reason": "Tick restoration: " + str(exc)})
-                finally:
-                    client.close()
+            finally:
+                client.close()
     return record
 
 

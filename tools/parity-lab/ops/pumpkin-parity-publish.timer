@@ -1,0 +1,11 @@
+[Unit]
+Description=Keep the authorized fork updated as the parity lab evolves
+
+[Timer]
+OnBootSec=10min
+OnUnitInactiveSec=10min
+Persistent=true
+Unit=pumpkin-parity-publish.service
+
+[Install]
+WantedBy=timers.target

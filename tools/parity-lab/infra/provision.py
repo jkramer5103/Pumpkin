@@ -225,6 +225,8 @@ def provision(args):
     if hashlib.sha1(raw).hexdigest()!=entry['sha1']:
         raise RuntimeError('Mojang version metadata checksum mismatch')
     version=json.loads(raw)
+    if version['id'] != '26.3':
+        raise RuntimeError('Mojang metadata has an unexpected version id')
     release=json.loads(document(RELEASE,'pumpkin-release.json'))
     if release['tag_name'] != PUMPKIN:
         raise RuntimeError(f'Official latest release changed to {release["tag_name"]}; review pin explicitly')

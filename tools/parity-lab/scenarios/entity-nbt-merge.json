@@ -10,6 +10,7 @@
     "state-observation"
   ],
   "setup": [
+    "tick freeze",
     "fill 0 60 0 8 75 8 minecraft:air",
     "execute if entity @e[type=minecraft:marker,tag=pp,x=-32,y=48,z=-32,dx=64,dy=48,dz=64] run kill @e[type=minecraft:marker,tag=pp,x=-32,y=48,z=-32,dx=64,dy=48,dz=64]"
   ],
@@ -28,7 +29,8 @@
   ],
   "cleanup": [
     "execute if entity @e[type=minecraft:marker,tag=pp,x=-32,y=48,z=-32,dx=64,dy=48,dz=64] run kill @e[type=minecraft:marker,tag=pp,x=-32,y=48,z=-32,dx=64,dy=48,dz=64]",
-    "fill 0 60 0 8 75 8 minecraft:air"
+    "fill 0 60 0 8 75 8 minecraft:air",
+    "tick unfreeze"
   ],
-  "notes": "Arena is preloaded by provisioning. Immediate command-state assertions; no client or elapsed-tick claim. Positive execute predicates return Test passed on vanilla 26.3; errors and empty output fail expectations. Requires marker entities and selectors; missing support remains a visible mismatch. No UUID or entity display-name output is compared."
+  "notes": "Provisioning requests arena force-loading; Pumpkin readiness limitations remain visible. Simulation is frozen for immediate command-state assertions and unfrozen in cleanup; no client or elapsed-tick claim. Positive execute predicates return Test passed on vanilla 26.3; errors and empty output fail expectations. Requires marker entities and selectors; missing support remains a visible mismatch. No UUID or entity display-name output is compared."
 }

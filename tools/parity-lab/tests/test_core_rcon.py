@@ -65,7 +65,7 @@ class RconTests(unittest.TestCase):
         self.assertTrue(sock.closed)
 
     def test_auth_unexpected_packet(self):
-        for wire in (packet(9, 2, ""), packet(1, 0, "not empty"), packet(1, 4, "")):
+        for wire in (packet(9, 2, ""), packet(1, 0, "not empty"), packet(1, 4, ""), packet(1, 2, "unexpected body")):
             client, sock = client_for(wire)
             with self.assertRaises(ProtocolError):
                 client.connect()
@@ -112,6 +112,33 @@ class RconTests(unittest.TestCase):
         with self.assertRaises(RconTimeout):
             client.command("test")
         self.assertTrue(sock.closed)
+        self.assertEqual(client.last_response_packets, [b"partial"])
+        self.assertEqual(bytes(client.last_wire_bytes), packet(2, 0, "partial"))
+        self.assertNotIn(b"secret-never-log", client.last_wire_bytes)
+
+    def test_fence_is_sent_after_first_response_is_read(self):
+        class SequentialSocket(FakeSocket):
+            def sendall(self, data):
+                if len(self.sent) == 2:
+                    self.assert_first_read()
+                super().sendall(data)
+
+            def assert_first_read(self):
+                # Auth and the complete first output packet have been read.
+                if self.incoming != bytearray(packet(3, 0, "There are 0 of a max of 2 players online: ")):
+                    raise AssertionError("Fence was sent before the first command reply")
+        client, _ = client_for(packet(1, 2, "") + packet(2, 0, "first") + packet(3, 0, "There are 0 of a max of 2 players online: "), socket_type=SequentialSocket)
+        with client:
+            self.assertEqual(client.command("probe"), "first")
+
+    def test_incomplete_unsupported_or_oversized_fence_is_error(self):
+        for raw in ("Unknown command", "There are 2 of a max of 2 players online: one",
+                    "There are 0 of a max of 2 players online: extra",
+                    "There are 1 of a max of 2 players online: " + "x" * 4096):
+            client, _ = client_for(packet(1, 2, "") + packet(2, 0, "output") + packet(3, 0, raw))
+            with client:
+                with self.assertRaises(ProtocolError):
+                    client.command("probe")
 
     def test_auth_timeout(self):
         class TimeoutSocket(FakeSocket):
