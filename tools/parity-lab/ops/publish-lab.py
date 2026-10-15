@@ -72,7 +72,9 @@ def main():
     sys.path.insert(0, str(ROOT / "ops"))
     from common import atomic_json, utc
     atomic_json(ROOT / "runtime" / "published.json", {"branch": "parity-lab", "head": head,
-        "pushed_at": utc(), "url": "https://github.com/jkramer5103/Pumpkin/tree/parity-lab/tools/parity-lab"})
+        "pushed_at": utc(),
+        "unit_tests_passed": int(re.search(r"Ran (\d+) tests?", check.stderr).group(1)) if re.search(r"Ran (\d+) tests?", check.stderr) else None,
+        "url": "https://github.com/jkramer5103/Pumpkin/tree/parity-lab/tools/parity-lab"})
     print("Published parity-lab at " + head)
 
 

@@ -5,6 +5,9 @@ Wants=network-online.target
 
 [Service]
 Type=simple
+User=root
+Environment=GH_CONFIG_DIR=/root/.config/gh
+Environment=PATH=/root/.cargo/bin:/root/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin
 WorkingDirectory=/root/pumpkin-parity-lab
 ExecStart=/usr/bin/python3 /root/pumpkin-parity-lab/ops/supervisor.py
 Restart=on-failure

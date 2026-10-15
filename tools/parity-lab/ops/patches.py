@@ -20,7 +20,7 @@ def git(path, *arguments):
 
 def collect():
     remote = git(WORKTREES / "repo", "ls-remote", "origin",
-                 "refs/heads/parity-lab-christine", "refs/heads/parity-lab-jaron")
+                 "refs/heads/parity-lab", "refs/heads/parity-lab-christine", "refs/heads/parity-lab-jaron")
     if remote.returncode:
         previous = read_json(RUNTIME / "patches.json", {"patches": []})
         previous["remote_verified"] = False
@@ -60,12 +60,32 @@ def collect():
             if not isinstance(validation, str):
                 validation = json.dumps(validation) if validation else "Validation summary not recorded yet."
             title = detail.get("title") or re.sub(r"^[a-z]+(?:\([^)]*\))?!?:\s*", "", subject)
-            rows.append({"id": f"{account}:{sha}", "account": label, "branch": branch,
+            rows.append({"id": f"{account}:{sha}", "account": label, "kind": "Pumpkin", "branch": branch,
                 "commit": sha, "title": title[:250],
                 "summary": str(detail.get("summary") or "Changed " + ", ".join(source_files[:3]) + (" and other files." if len(source_files) > 3 else "."))[:700],
                 "validation": validation[:1200], "validated": detail.get("validated") is True,
                 "pushed": pushed, "timestamp": int(timestamp), "files": source_files,
                 "url": f"https://github.com/jkramer5103/Pumpkin/commit/{sha}" if pushed else None})
+    # The user wants everything patched, including real fixes to the testing lab.
+    repo = WORKTREES / "repo"
+    history = git(repo, "log", "--format=%H%x00%s%x00%ct", "upstream/master..HEAD")
+    published = read_json(RUNTIME / "published.json", {})
+    for line in history.stdout.splitlines():
+        fields = line.split("\x00")
+        if len(fields) != 3 or not fields[1].startswith("fix(parity):"):
+            continue
+        sha, subject, timestamp = fields
+        files = git(repo, "diff-tree", "--no-commit-id", "--name-only", "-r", sha).stdout.splitlines()
+        if not any(f.startswith("tools/parity-lab/") for f in files):
+            continue
+        pushed = bool(heads.get("parity-lab") and git(repo, "merge-base", "--is-ancestor", sha, heads["parity-lab"]).returncode == 0)
+        checks = published.get("unit_tests_passed")
+        rows.append({"id": "lab:" + sha, "account": "Lab", "kind": "Lab", "branch": "parity-lab",
+            "commit": sha, "title": subject.removeprefix("fix(parity): "),
+            "summary": "Testing-lab fix; this does not change Pumpkin gameplay.",
+            "validation": f"Current published lab snapshot: {checks} unit tests passed." if checks else "Lab publication is gated on passing unit tests.",
+            "validated": bool(checks), "pushed": pushed, "timestamp": int(timestamp), "files": files,
+            "url": f"https://github.com/jkramer5103/Pumpkin/commit/{sha}" if pushed else None})
     rows.sort(key=lambda row: row["timestamp"], reverse=True)
     result = {"updated_at": utc(), "remote_verified": remote.returncode == 0, "patches": rows}
     atomic_json(RUNTIME / "patches.json", result)

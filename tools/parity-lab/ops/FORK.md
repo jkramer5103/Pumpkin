@@ -59,4 +59,10 @@ The user wants concise patch summaries instead of live commands. Also include
 when the fix has meaningful passing validation). Keep all earlier patch entries.
 The dashboard cross-checks commits and pushed branches against Git itself.
 
+Do not spend inference repeatedly polling an active compiler or a test waiting
+for the shared build lock. If no independent useful work remains, checkpoint:
+`python3 ops/wait-for-build.py --account YOUR_ACCOUNT --unit BUILD_OR_TEST.scope --reason "short reason"`
+Then finish the turn. The supervisor keeps the same thread and waits without
+inference until that exact scope exits, then resumes you to inspect its result.
+
 Continue the finite queue, prioritizing real fixes over cosmetic test growth.

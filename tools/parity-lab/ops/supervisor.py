@@ -35,6 +35,10 @@ def initial_active(account):
                           check=False).returncode == 0
 
 
+def dependency_active(unit):
+    return subprocess.run(["systemctl", "is-active", "--quiet", unit], check=False).returncode == 0
+
+
 def refresh_quotas(previous):
     for account in ACCOUNTS:
         try:
@@ -98,6 +102,13 @@ def main():
                 if child or lane.get("adopted"):
                     children.pop(account, None)
                     lane["adopted"] = False
+                    wait_path = RUNTIME / "worker-waits" / f"{account}.json"
+                    wait = read_json(wait_path, {})
+                    unit = wait.get("unit", "")
+                    if unit.startswith("pumpkin-parity-") and unit.endswith(".scope"):
+                        lane.update(status="waiting_for_build", waiting_for=unit,
+                                    completed_baseline=snapshot["completed_turns"], retry_at=None)
+                        continue
                     if snapshot["completed_turns"] > lane.get("completed_baseline", 0) and snapshot["last_error"] is None:
                         advance(lane, snapshot)
                         index = lane["task_index"]
@@ -119,6 +130,12 @@ def main():
                 if index >= len(files):
                     lane["status"] = "complete"
                     continue
+                if lane.get("waiting_for"):
+                    if dependency_active(lane["waiting_for"]):
+                        lane["status"] = "waiting_for_build"
+                        continue
+                    (RUNTIME / "worker-waits" / f"{account}.json").unlink(missing_ok=True)
+                    lane.update(waiting_for=None, status="queued", retry_at=None)
                 if lane["status"] == "needs_attention":
                     continue
                 reset = quota_reset(quotas.get(account, {}), now)
@@ -143,10 +160,19 @@ def main():
                           "The quota reset has been checked. Read AGENTS.md and CONTRACT.md. "
                           "Read ops/FORK.md: the user has additionally authorized autonomous "
                           "Pumpkin source fixes and pushes to jkramer5103/Pumpkin in YOLO mode. "
-                          "Complete the current task and validate it. Remain on gpt-6.1-sol."
+                          "GitHub authentication has been repaired: repository-local credentials "
+                          "and GH_CONFIG_DIR are configured. Recheck pushes instead of asking for login. "
+                          "If a build or test scope blocks further useful work, run "
+                          "python3 ops/wait-for-build.py --account " + account +
+                          " --unit THE_SCOPE --reason 'short reason', then end your turn. "
+                          "The supervisor waits without inference and resumes this exact thread "
+                          "when the scope exits; inspect its actual result then. Do not repeatedly "
+                          "poll build logs with model turns. Complete the current task and validate it. "
+                          "Remain on gpt-6.1-sol.\nCurrent queue assignment:\n" + files[index].read_text()
                           if resuming else files[index].read_text())
                 output = ROOT / "artifacts" / f"{account}-task-{index:03d}-completion.md"
-                environment = dict(os.environ, CODEX_HOME=str(AUTH_ROOT / account))
+                environment = dict(os.environ, CODEX_HOME=str(AUTH_ROOT / account),
+                                   GH_CONFIG_DIR="/root/.config/gh")
                 for name in ("OPENAI_API_KEY", "CODEX_API_KEY", "OPENAI_BASE_URL", "OPENAI_ORG_ID"):
                     environment.pop(name, None)
                 log = (ROOT / "artifacts" / f"{account}-events.jsonl").open("a")
