@@ -105,3 +105,9 @@ Missing RCON remains an infrastructure failure. Separate scratch-console probes
 can establish targeted source behavior, but do not establish full RCON catalog
 parity. Current upstream also rejects terminal `execute if entity` assertions;
 that command rejection is a separate capability gap from the absent transport.
+
+The campaign's positioned-anchor source fix was tested separately against vanilla,
+unmodified upstream and the patched binary, with two repeats and the shared engine
+lock. Both vanilla and the patch placed the marker at Y=64.25; upstream placed it
+at Y=66.0275000333786. This targeted console validation is documented on
+[`parity-lab-christine`](https://github.com/jkramer5103/Pumpkin/blob/parity-lab-christine/tools/parity-lab/docs/christine-positioned-anchor.md).
