@@ -1,0 +1,42 @@
+{
+  "schema_version": 1,
+  "id": "selector-score-count",
+  "title": "Execute as counts selected entities",
+  "category": "scoreboard",
+  "description": "Execute as runs once per marker and increments a fake-player score twice.",
+  "tags": [
+    "command",
+    "deterministic",
+    "state-observation"
+  ],
+  "setup": [
+    "fill 0 60 0 8 75 8 minecraft:air",
+    "execute if entity @e[type=minecraft:marker,tag=pp,x=-32,y=48,z=-32,dx=64,dy=48,dz=64] run kill @e[type=minecraft:marker,tag=pp,x=-32,y=48,z=-32,dx=64,dy=48,dz=64]",
+    "scoreboard objectives add pp dummy"
+  ],
+  "steps": [
+    {
+      "command": "summon minecraft:marker 2 64 2 {Tags:[\"pp\"]}"
+    },
+    {
+      "command": "summon minecraft:marker 4 64 2 {Tags:[\"pp\"]}"
+    },
+    {
+      "command": "scoreboard players set count pp 0"
+    },
+    {
+      "command": "execute as @e[type=minecraft:marker,tag=pp,x=-32,y=48,z=-32,dx=64,dy=48,dz=64] run scoreboard players add count pp 1"
+    },
+    {
+      "command": "execute if score count pp matches 2",
+      "observe": true,
+      "expect_contains": "Test passed"
+    }
+  ],
+  "cleanup": [
+    "execute if entity @e[type=minecraft:marker,tag=pp,x=-32,y=48,z=-32,dx=64,dy=48,dz=64] run kill @e[type=minecraft:marker,tag=pp,x=-32,y=48,z=-32,dx=64,dy=48,dz=64]",
+    "scoreboard objectives remove pp",
+    "fill 0 60 0 8 75 8 minecraft:air"
+  ],
+  "notes": "Arena is preloaded by provisioning. Immediate command-state assertions; no client or elapsed-tick claim. Positive execute predicates return Test passed on vanilla 26.3; errors and empty output fail expectations. Requires marker entities and selectors; missing support remains a visible mismatch. No UUID or entity display-name output is compared."
+}

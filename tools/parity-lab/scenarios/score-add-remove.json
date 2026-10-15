@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "id": "score-add-remove",
+  "title": "Score addition and subtraction",
+  "category": "scoreboard",
+  "description": "Set, add and remove must produce the expected signed score.",
+  "tags": [
+    "command",
+    "deterministic",
+    "state-observation"
+  ],
+  "setup": [
+    "fill 0 60 0 8 75 8 minecraft:air",
+    "scoreboard objectives add pp dummy"
+  ],
+  "steps": [
+    {
+      "command": "scoreboard players set value pp -4"
+    },
+    {
+      "command": "scoreboard players add value pp 13"
+    },
+    {
+      "command": "scoreboard players remove value pp 2"
+    },
+    {
+      "command": "execute if score value pp matches 7",
+      "observe": true,
+      "expect_contains": "Test passed"
+    }
+  ],
+  "cleanup": [
+    "scoreboard objectives remove pp",
+    "fill 0 60 0 8 75 8 minecraft:air"
+  ],
+  "notes": "Arena is preloaded by provisioning. Immediate command-state assertions; no client or elapsed-tick claim. Positive execute predicates return Test passed on vanilla 26.3; errors and empty output fail expectations. "
+}

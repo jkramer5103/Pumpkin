@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "id": "positioned-relative",
+  "title": "Execute positioned changes relative origin",
+  "category": "execute",
+  "description": "A relative setblock under positioned execution writes at the translated coordinate.",
+  "tags": [
+    "command",
+    "deterministic",
+    "state-observation"
+  ],
+  "setup": [
+    "fill 0 60 0 8 75 8 minecraft:air"
+  ],
+  "steps": [
+    {
+      "command": "execute positioned 2 64 2 run setblock ~1 ~ ~-1 minecraft:stone"
+    },
+    {
+      "command": "execute if block 3 64 1 minecraft:stone if block 2 64 2 minecraft:air",
+      "observe": true,
+      "expect_contains": "Test passed"
+    }
+  ],
+  "cleanup": [
+    "fill 0 60 0 8 75 8 minecraft:air"
+  ],
+  "notes": "Arena is preloaded by provisioning. Immediate command-state assertions; no client or elapsed-tick claim. Positive execute predicates return Test passed on vanilla 26.3; errors and empty output fail expectations. "
+}

@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "id": "replace-existing",
+  "title": "Replace an occupied block",
+  "category": "blocks",
+  "description": "Replacing dirt with gold changes material and removes the old material.",
+  "tags": [
+    "command",
+    "deterministic",
+    "state-observation"
+  ],
+  "setup": [
+    "fill 0 60 0 8 75 8 minecraft:air"
+  ],
+  "steps": [
+    {
+      "command": "setblock 2 64 2 minecraft:dirt"
+    },
+    {
+      "command": "setblock 2 64 2 minecraft:gold_block replace"
+    },
+    {
+      "command": "execute if block 2 64 2 minecraft:gold_block unless block 2 64 2 minecraft:dirt",
+      "observe": true,
+      "expect_contains": "Test passed"
+    }
+  ],
+  "cleanup": [
+    "fill 0 60 0 8 75 8 minecraft:air"
+  ],
+  "notes": "Arena is preloaded by provisioning. Immediate command-state assertions; no client or elapsed-tick claim. Positive execute predicates return Test passed on vanilla 26.3; errors and empty output fail expectations. "
+}

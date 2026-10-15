@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "id": "tag-intersection",
+  "title": "Multiple tags intersect selectors",
+  "category": "entities",
+  "description": "Intersecting chosen and !excluded isolates one entity before adding selected.",
+  "tags": [
+    "command",
+    "deterministic",
+    "state-observation"
+  ],
+  "setup": [
+    "fill 0 60 0 8 75 8 minecraft:air",
+    "execute if entity @e[type=minecraft:marker,tag=pp,x=-32,y=48,z=-32,dx=64,dy=48,dz=64] run kill @e[type=minecraft:marker,tag=pp,x=-32,y=48,z=-32,dx=64,dy=48,dz=64]"
+  ],
+  "steps": [
+    {
+      "command": "summon minecraft:marker 2 64 2 {Tags:[\"pp\",\"chosen\"]}"
+    },
+    {
+      "command": "summon minecraft:marker 4 64 2 {Tags:[\"pp\",\"chosen\"],data:{excluded:1b}}"
+    },
+    {
+      "command": "tag @e[type=minecraft:marker,tag=pp,x=4,y=64,z=2,distance=..0.1,limit=1] add excluded"
+    },
+    {
+      "command": "tag @e[type=minecraft:marker,tag=pp,x=-32,y=48,z=-32,dx=64,dy=48,dz=64,tag=chosen,tag=!excluded] add selected"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:marker,tag=pp,x=-32,y=48,z=-32,dx=64,dy=48,dz=64,tag=selected,tag=!excluded] unless entity @e[type=minecraft:marker,tag=pp,x=-32,y=48,z=-32,dx=64,dy=48,dz=64,tag=selected,tag=excluded]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    }
+  ],
+  "cleanup": [
+    "execute if entity @e[type=minecraft:marker,tag=pp,x=-32,y=48,z=-32,dx=64,dy=48,dz=64] run kill @e[type=minecraft:marker,tag=pp,x=-32,y=48,z=-32,dx=64,dy=48,dz=64]",
+    "fill 0 60 0 8 75 8 minecraft:air"
+  ],
+  "notes": "Arena is preloaded by provisioning. Immediate command-state assertions; no client or elapsed-tick claim. Positive execute predicates return Test passed on vanilla 26.3; errors and empty output fail expectations. Requires marker entities and selectors; missing support remains a visible mismatch. No UUID or entity display-name output is compared."
+}

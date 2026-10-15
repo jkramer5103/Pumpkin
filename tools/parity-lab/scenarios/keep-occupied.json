@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "id": "keep-occupied",
+  "title": "Keep mode preserves occupied cells",
+  "category": "blocks",
+  "description": "Keep must leave an occupied stone cell intact even when asked to place gold.",
+  "tags": [
+    "command",
+    "deterministic",
+    "state-observation"
+  ],
+  "setup": [
+    "fill 0 60 0 8 75 8 minecraft:air",
+    "setblock 2 64 2 minecraft:stone",
+    "setblock 2 64 2 minecraft:gold_block keep"
+  ],
+  "steps": [
+    {
+      "command": "execute if block 2 64 2 minecraft:stone unless block 2 64 2 minecraft:gold_block",
+      "observe": true,
+      "expect_contains": "Test passed"
+    }
+  ],
+  "cleanup": [
+    "fill 0 60 0 8 75 8 minecraft:air"
+  ],
+  "notes": "Arena is preloaded by provisioning. Immediate command-state assertions; no client or elapsed-tick claim. Positive execute predicates return Test passed on vanilla 26.3; errors and empty output fail expectations. The keep mutation intentionally reports failure; its state preservation is the observation."
+}

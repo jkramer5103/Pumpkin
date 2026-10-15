@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark"><title>Pumpkin / Parity Lab</title>
+  <link rel="stylesheet" href="/style.css"><script src="/app.js" defer></script>
+</head>
+<body>
+  <aside class="rail"><a class="brand" href="/" aria-label="Parity Lab home"><span class="brand-mark">P<span>↔</span></span><span>PUMPKIN<br><b>PARITY LAB</b></span></a><div class="rail-label">WORKSPACE</div><nav aria-label="Main navigation"><button class="nav active" data-tab="overview"><span>◫</span> Overview</button><button class="nav" data-tab="scenarios"><span>☷</span> Scenarios <small id="nav-count">0</small></button><button class="nav" data-tab="runs"><span>↗</span> Test runs</button></nav><div class="rail-bottom"><span class="dot green"></span> Private network<br><small>codexserver · 192.168.2.223</small></div></aside>
+  <main>
+    <header><div class="crumb">WORKSPACE <span>/</span> <b id="page-label">Overview</b></div><div class="connection"><span class="dot" id="connection-dot"></span><span id="connection-label">Connecting</span><span class="clock" id="clock"></span></div></header>
+    <div class="page-head"><div><div class="eyebrow">MINECRAFT 26.3 · DIFFERENTIAL TESTING</div><h1 id="page-title">Same world. <span>Different engine.</span></h1><p id="page-description">Two subscriptions. One question: does Pumpkin behave like vanilla?</p></div><div class="model-badge"><span class="dot green"></span> GPT-6.1-Sol <small>2 workers</small></div></div>
+    <div class="notice" id="offline" hidden>Connection lost. Showing the last received state; retrying automatically.</div>
+    <section id="overview" class="tab-panel">
+      <div class="stats"><article><span>SCENARIOS</span><strong id="stat-scenarios">—</strong><small>Distinct behavior checks</small></article><article><span>PASSING</span><strong id="stat-passing">—</strong><small>Latest completed run</small></article><article><span>DIFFERENCES</span><strong class="orange" id="stat-different">—</strong><small>Require investigation</small></article><article><span>ERRORS</span><strong id="stat-errors">—</strong><small>Infrastructure or invalid probes</small></article></div>
+      <div class="section-title"><h2>Worker fleet</h2><span><span class="dot green"></span> Automatic quota recovery</span></div>
+      <div class="workers" id="workers"><div class="skeleton">Waiting for worker telemetry…</div></div>
+      <div class="lower-grid"><section class="panel"><div class="panel-heading"><h2>Live activity</h2><div class="segmented" id="activity-filter"><button class="selected" data-account="all">All</button><button data-account="christine">Christine</button><button data-account="jaron">Jaron</button></div></div><div id="activity" class="activity"><div class="empty">Worker activity will appear here.</div></div></section><section class="panel"><div class="panel-heading"><h2>Test bench</h2><span class="label">26.3</span></div><div id="services"></div><div class="bench-note"><span>↻</span><div><b>Work resumes after reset</b><p>Interrupted tasks retain their conversation and continue when the account has capacity.</p></div></div><dl class="policy"><div><dt>Banked resets</dt><dd>Manual only</dd></div><div><dt>Paid overage</dt><dd>Disabled</dd></div><div><dt>Coverage</dt><dd>Command-observable behavior</dd></div><div><dt>Disk available</dt><dd id="disk">—</dd></div></dl></section></div>
+      <section class="panel results-panel"><div class="panel-heading"><h2>Latest results</h2><button class="text-button" id="view-runs">All test runs ↗</button></div><div id="latest-results" class="table-wrap"><div class="empty">The first comparison run will appear when both servers and the engine are ready.</div></div></section>
+      <section class="panel results-panel"><div class="panel-heading"><h2>Fork activity</h2><span class="subtle">jkramer5103 / Pumpkin</span></div><div id="fork-activity"><div class="empty">Preparing the first source snapshot.</div></div></section>
+    </section>
+    <section id="scenarios" class="tab-panel" hidden><section class="panel"><div class="panel-heading"><h2>Scenario catalog</h2><input id="scenario-search" type="search" placeholder="Search behaviors, categories…" aria-label="Search scenarios"></div><div id="scenario-list" class="scenario-grid"></div></section></section>
+    <section id="runs" class="tab-panel" hidden><section class="panel"><div class="panel-heading"><h2>Comparison history</h2><span class="subtle">Evidence is saved for every run</span></div><div id="run-list" class="table-wrap"></div></section><section class="panel results-panel" id="selected-run" hidden><div class="panel-heading"><h2 id="selected-run-title">Run results</h2></div><div id="selected-run-results" class="table-wrap"></div></section></section>
+    <footer><span><span class="dot green"></span> LAN only · no public deployment</span><span id="last-update">Waiting for first update</span></footer>
+  </main>
+  <dialog id="evidence-dialog"><div class="dialog-head"><div><div class="eyebrow">COMPARISON EVIDENCE</div><h2 id="evidence-title"></h2></div><button id="close-evidence" aria-label="Close evidence">×</button></div><div id="evidence-body"></div></dialog>
+</body>
+</html>

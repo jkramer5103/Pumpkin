@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "id": "fill-hollow",
+  "title": "Hollow fill clears the interior",
+  "category": "fill",
+  "description": "Hollow constructs the shell and replaces an existing interior block with air.",
+  "tags": [
+    "command",
+    "deterministic",
+    "state-observation"
+  ],
+  "setup": [
+    "fill 0 60 0 8 75 8 minecraft:air"
+  ],
+  "steps": [
+    {
+      "command": "setblock 1 65 1 minecraft:gold_block"
+    },
+    {
+      "command": "fill 0 64 0 2 66 2 minecraft:stone hollow"
+    },
+    {
+      "command": "execute if block 0 65 1 minecraft:stone if block 1 65 1 minecraft:air if block 2 66 2 minecraft:stone",
+      "observe": true,
+      "expect_contains": "Test passed"
+    }
+  ],
+  "cleanup": [
+    "fill 0 60 0 8 75 8 minecraft:air"
+  ],
+  "notes": "Arena is preloaded by provisioning. Immediate command-state assertions; no client or elapsed-tick claim. Positive execute predicates return Test passed on vanilla 26.3; errors and empty output fail expectations. "
+}

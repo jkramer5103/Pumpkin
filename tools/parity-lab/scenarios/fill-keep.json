@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "id": "fill-keep",
+  "title": "Fill keep preserves occupied holes",
+  "category": "fill",
+  "description": "A keep fill occupies air cells around a gold exception without overwriting it.",
+  "tags": [
+    "command",
+    "deterministic",
+    "state-observation"
+  ],
+  "setup": [
+    "fill 0 60 0 8 75 8 minecraft:air"
+  ],
+  "steps": [
+    {
+      "command": "setblock 1 64 1 minecraft:gold_block"
+    },
+    {
+      "command": "fill 0 64 0 2 64 2 minecraft:stone keep"
+    },
+    {
+      "command": "execute if block 0 64 0 minecraft:stone if block 1 64 1 minecraft:gold_block if block 2 64 2 minecraft:stone",
+      "observe": true,
+      "expect_contains": "Test passed"
+    }
+  ],
+  "cleanup": [
+    "fill 0 60 0 8 75 8 minecraft:air"
+  ],
+  "notes": "Arena is preloaded by provisioning. Immediate command-state assertions; no client or elapsed-tick claim. Positive execute predicates return Test passed on vanilla 26.3; errors and empty output fail expectations. "
+}

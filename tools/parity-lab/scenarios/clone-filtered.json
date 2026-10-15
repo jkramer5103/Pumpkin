@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "id": "clone-filtered",
+  "title": "Filtered clone selects material",
+  "category": "clone",
+  "description": "Only stone is copied; a dirt source cell must not replace destination gold.",
+  "tags": [
+    "command",
+    "deterministic",
+    "state-observation"
+  ],
+  "setup": [
+    "fill 0 60 0 8 75 8 minecraft:air"
+  ],
+  "steps": [
+    {
+      "command": "setblock 0 64 0 minecraft:stone"
+    },
+    {
+      "command": "setblock 1 64 0 minecraft:dirt"
+    },
+    {
+      "command": "fill 4 64 0 5 64 0 minecraft:gold_block"
+    },
+    {
+      "command": "clone 0 64 0 1 64 0 4 64 0 filtered minecraft:stone normal"
+    },
+    {
+      "command": "execute if block 4 64 0 minecraft:stone if block 5 64 0 minecraft:gold_block if block 1 64 0 minecraft:dirt",
+      "observe": true,
+      "expect_contains": "Test passed"
+    }
+  ],
+  "cleanup": [
+    "fill 0 60 0 8 75 8 minecraft:air"
+  ],
+  "notes": "Arena is preloaded by provisioning. Immediate command-state assertions; no client or elapsed-tick claim. Positive execute predicates return Test passed on vanilla 26.3; errors and empty output fail expectations. "
+}

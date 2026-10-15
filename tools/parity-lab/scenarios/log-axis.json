@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "id": "log-axis",
+  "title": "Preserve explicit log axis",
+  "category": "block-states",
+  "description": "A horizontal log retains axis z and fails the incompatible axis predicate.",
+  "tags": [
+    "command",
+    "deterministic",
+    "state-observation"
+  ],
+  "setup": [
+    "fill 0 60 0 8 75 8 minecraft:air"
+  ],
+  "steps": [
+    {
+      "command": "setblock 2 64 2 minecraft:oak_log[axis=z]"
+    },
+    {
+      "command": "execute if block 2 64 2 minecraft:oak_log[axis=z] unless block 2 64 2 minecraft:oak_log[axis=y]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    }
+  ],
+  "cleanup": [
+    "fill 0 60 0 8 75 8 minecraft:air"
+  ],
+  "notes": "Arena is preloaded by provisioning. Immediate command-state assertions; no client or elapsed-tick claim. Positive execute predicates return Test passed on vanilla 26.3; errors and empty output fail expectations. "
+}

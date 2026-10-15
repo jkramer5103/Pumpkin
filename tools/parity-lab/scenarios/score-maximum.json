@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "id": "score-maximum",
+  "title": "Score maximum operation",
+  "category": "scoreboard",
+  "description": "The > operation selects the larger signed value.",
+  "tags": [
+    "command",
+    "deterministic",
+    "state-observation"
+  ],
+  "setup": [
+    "fill 0 60 0 8 75 8 minecraft:air",
+    "scoreboard objectives add pp dummy"
+  ],
+  "steps": [
+    {
+      "command": "scoreboard players set a pp -12"
+    },
+    {
+      "command": "scoreboard players set b pp -2"
+    },
+    {
+      "command": "scoreboard players operation a pp > b pp"
+    },
+    {
+      "command": "execute if score a pp matches -2 if score b pp matches -2",
+      "observe": true,
+      "expect_contains": "Test passed"
+    }
+  ],
+  "cleanup": [
+    "scoreboard objectives remove pp",
+    "fill 0 60 0 8 75 8 minecraft:air"
+  ],
+  "notes": "Arena is preloaded by provisioning. Immediate command-state assertions; no client or elapsed-tick claim. Positive execute predicates return Test passed on vanilla 26.3; errors and empty output fail expectations. "
+}

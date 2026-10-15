@@ -1,0 +1,16 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pumpkin-parity-lab"
+version = "0.1.0"
+description = "Evidence-preserving Minecraft command parity runner"
+requires-python = ">=3.11"
+dependencies = []
+
+[project.scripts]
+pumpkin-parity-lab = "lab.cli:main"
+
+[tool.setuptools]
+packages = ["lab"]

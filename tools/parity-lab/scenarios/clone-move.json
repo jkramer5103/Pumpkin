@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "id": "clone-move",
+  "title": "Moving clone clears source",
+  "category": "clone",
+  "description": "Move transports an oriented pillar and clears the original cells.",
+  "tags": [
+    "command",
+    "deterministic",
+    "state-observation"
+  ],
+  "setup": [
+    "fill 0 60 0 8 75 8 minecraft:air"
+  ],
+  "steps": [
+    {
+      "command": "setblock 0 64 0 minecraft:quartz_pillar[axis=x]"
+    },
+    {
+      "command": "clone 0 64 0 1 64 0 4 64 0 replace move"
+    },
+    {
+      "command": "execute if block 0 64 0 minecraft:air if block 4 64 0 minecraft:quartz_pillar[axis=x]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    }
+  ],
+  "cleanup": [
+    "fill 0 60 0 8 75 8 minecraft:air"
+  ],
+  "notes": "Arena is preloaded by provisioning. Immediate command-state assertions; no client or elapsed-tick claim. Positive execute predicates return Test passed on vanilla 26.3; errors and empty output fail expectations. "
+}

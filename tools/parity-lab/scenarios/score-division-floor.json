@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "id": "score-division-floor",
+  "title": "Negative score division rounds down",
+  "category": "scoreboard",
+  "description": "Integer scoreboard division uses floor division for a negative dividend.",
+  "tags": [
+    "command",
+    "deterministic",
+    "state-observation"
+  ],
+  "setup": [
+    "fill 0 60 0 8 75 8 minecraft:air",
+    "scoreboard objectives add pp dummy"
+  ],
+  "steps": [
+    {
+      "command": "scoreboard players set a pp -7"
+    },
+    {
+      "command": "scoreboard players set b pp 3"
+    },
+    {
+      "command": "scoreboard players operation a pp /= b pp"
+    },
+    {
+      "command": "execute if score a pp matches -3 if score b pp matches 3",
+      "observe": true,
+      "expect_contains": "Test passed"
+    }
+  ],
+  "cleanup": [
+    "scoreboard objectives remove pp",
+    "fill 0 60 0 8 75 8 minecraft:air"
+  ],
+  "notes": "Arena is preloaded by provisioning. Immediate command-state assertions; no client or elapsed-tick claim. Positive execute predicates return Test passed on vanilla 26.3; errors and empty output fail expectations. "
+}

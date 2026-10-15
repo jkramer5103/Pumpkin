@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "id": "fill-solid-bounds",
+  "title": "Fill a bounded solid cuboid",
+  "category": "fill",
+  "description": "Fill includes both endpoint cells and the center, leaving the adjacent outside cell empty.",
+  "tags": [
+    "command",
+    "deterministic",
+    "state-observation"
+  ],
+  "setup": [
+    "fill 0 60 0 8 75 8 minecraft:air"
+  ],
+  "steps": [
+    {
+      "command": "fill 0 64 0 2 66 2 minecraft:stone"
+    },
+    {
+      "command": "execute if block 0 64 0 minecraft:stone if block 1 65 1 minecraft:stone if block 2 66 2 minecraft:stone if block 3 65 1 minecraft:air",
+      "observe": true,
+      "expect_contains": "Test passed"
+    }
+  ],
+  "cleanup": [
+    "fill 0 60 0 8 75 8 minecraft:air"
+  ],
+  "notes": "Arena is preloaded by provisioning. Immediate command-state assertions; no client or elapsed-tick claim. Positive execute predicates return Test passed on vanilla 26.3; errors and empty output fail expectations. "
+}
