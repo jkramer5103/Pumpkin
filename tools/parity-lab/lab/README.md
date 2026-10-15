@@ -95,3 +95,13 @@ contract. RCON framing uses a short standard English `list` response as its
 read-only fence after the first response packet; nonstandard or oversized fences
 are explicit protocol errors. The provisioned clientless servers cap players at
 two. Report persistence cannot be guaranteed if the output storage itself fails.
+
+The live campaign checked upstream `5b53f064` as well as the older released
+candidate. That upstream revision has no RCON implementation or configuration;
+its successful build and boot do not establish RCON readiness. The provisioning
+lane restored the release after that readiness check failed. A catalog run on
+the restored candidate therefore validates the release, not a source patch.
+Missing RCON remains an infrastructure failure. Separate scratch-console probes
+can establish targeted source behavior, but do not establish full RCON catalog
+parity. Current upstream also rejects terminal `execute if entity` assertions;
+that command rejection is a separate capability gap from the absent transport.
