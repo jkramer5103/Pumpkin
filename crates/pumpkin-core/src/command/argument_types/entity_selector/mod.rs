@@ -432,6 +432,12 @@ fn matches_nbt(expected: &NbtTag, actual: &NbtTag) -> bool {
             true
         }
         (NbtTag::List(expected_list), NbtTag::List(actual_list)) => {
+            if expected_list.is_empty() {
+                return actual_list.is_empty();
+            }
+            if actual_list.len() < expected_list.len() {
+                return false;
+            }
             for expected_val in expected_list {
                 if !actual_list
                     .iter()
@@ -578,5 +584,31 @@ impl EntitySelectorPredicate {
             }
             Self::AllOf(predicates) => predicates.iter().all(|predicate| predicate.test(entity)),
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::matches_nbt;
+    use pumpkin_nbt::tag::NbtTag;
+
+    #[test]
+    fn empty_nbt_list_matches_only_an_empty_list() {
+        let empty = NbtTag::List(vec![]);
+        let tagged = NbtTag::List(vec![NbtTag::String("pp".into())]);
+        assert!(matches_nbt(&empty, &empty));
+        assert!(!matches_nbt(&empty, &tagged));
+        assert!(!matches_nbt(&tagged, &empty));
+    }
+
+    #[test]
+    fn nonempty_nbt_list_is_an_unordered_subset() {
+        let expected = NbtTag::List(vec![NbtTag::Int(4), NbtTag::Int(2)]);
+        let actual = NbtTag::List(vec![NbtTag::Int(2), NbtTag::Int(4), NbtTag::Int(8)]);
+        assert!(matches_nbt(&expected, &actual));
+        assert!(!matches_nbt(&actual, &expected));
+        let repeated = NbtTag::List(vec![NbtTag::Int(2), NbtTag::Int(2)]);
+        assert!(!matches_nbt(&repeated, &NbtTag::List(vec![NbtTag::Int(2)])));
+        assert!(matches_nbt(&repeated, &expected));
     }
 }
