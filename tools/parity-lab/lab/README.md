@@ -7,6 +7,7 @@ python3 -m lab list --scenarios scenarios
 python3 -m lab run --targets runtime/targets.json --scenarios scenarios --output artifacts/runs
 python3 -m lab run --targets runtime/targets.json --scenarios scenarios --output artifacts/runs --id stone-placement --repeat 2
 python3 -m lab run --targets runtime/targets.json --id stone-placement --id positioned-relative --repeat 2
+python3 -m lab run --targets runtime/targets.json --repeat 3 --order shuffle --order-seed 17 --probe-ticks
 python3 -m lab shrink --targets runtime/targets.json --scenario case.json --reset reset.json --versions versions.json --output artifacts/reproducers --repeat 2
 python3 -m lab replay --targets runtime/targets.json --reproducer artifacts/reproducers/shrink-SESSION
 python3 -m unittest discover -s tests -p 'test_core*.py' -v
@@ -46,6 +47,15 @@ The contract report fields are retained. Additional fields include:
   command and raw response before concluding a feature is unimplemented.
 - `complete`, `state`, and run metadata: completion must be checked alongside
   the summary. Not-yet-run scenarios start with error status, never pass status.
+- `trial_schedule` records every suite-wide trial's scenario order and zero-based
+  position. `trial_details` records completion of the requested series, outcome
+  counts, distinct observation/failure outcomes, per-target variability, and a
+  classification such as `confirmed_mismatch`, `non_deterministic`,
+  `stable_unsupported`, `stable_failure` or `incomplete`.
+- `isolation` records the declared reset policy, ordering and seed. It explicitly
+  states that arbitrary state restoration is not proven and no world snapshot is
+  used. `timing_capabilities` records the optional standalone probe separately
+  from scenario verdicts; per-attempt `timing` records verified simulation ticks.
 
 Normalization removes only `[Rcon] `, `[RCON] ` and `[Server] ` wrappers at the
 start of each line, optionally preceded by `[Not Secure] `. It preserves all
@@ -57,7 +67,21 @@ Transport failures preserve received command wire bytes, including incomplete
 frames, without capturing authentication traffic. No target password is copied
 into reports, scenario snapshots or transport diagnostics.
 
-Each repeat reruns setup and cleanup independently on vanilla, then Pumpkin.
+Each trial runs the entire selected suite, with each scenario's setup and cleanup
+on vanilla, then Pumpkin. By default, odd trials use sorted scenario IDs and even
+trials reverse that order, exposing some dependencies on earlier tests. `--order
+sorted` retains the same order each trial; `--order shuffle --order-seed N` uses
+a local seeded generator and records the exact schedule. Ordering is reproducible;
+it does not make random gameplay or elapsed time deterministic. A scenario keeps
+an error/provisional verdict until every requested trial completes, including when
+another scenario interrupts the suite. Duration sums that scenario's own attempts.
+
+`run --reset reset.json` accepts the same commands-array format as shrinking and
+executes those commands before setup on each target/trial. A failed reset prevents
+candidate execution. Define resets for all state the scenarios share; reversing
+order alone neither cleans worlds nor proves order independence. Scratch-console
+attempts use fresh Pumpkin worlds; vanilla retains its configured world.
+
 Every scenario needs an observed step with a nonempty `expect_contains`; that
 expectation is checked on both targets after prefix normalization. Empty observed
 responses and recognized failed probes cannot pass even if both outputs agree.
@@ -78,6 +102,22 @@ state is retained; a running server is restored even after a cleanup transport
 failure when a new authenticated connection can be established. Unsupported
 timing commands or unrecognized state/time replies are visible capability gaps;
 there is no wall-clock simulation fallback.
+
+`run --probe-ticks` checks each target once under the shared lock before the suite:
+query state, freeze if running, request one step, verify exactly one game-time
+tick, then restore the previous frozen/running state. Reports preserve every raw
+response and report `supported`, `unsupported` or `error`; without the explicit
+probe this top-level field stays `untested`, even if individual timing scenarios
+have their own evidence. Acknowledging `tick step` without actual advancement is
+an error. Probe rejection exits 1 and probe infrastructure failure exits 2, even
+when all scenario verdicts pass. Probe commands live in `timing_capabilities` and
+transcripts; the existing command-coverage counters describe scenario attempts.
+Freeze/step support establishes tick control only, not deterministic entity
+iteration, random seeds or broader gameplay simulation.
+
+`run --pumpkin-console /absolute/path/pumpkin` selects the same explicit fresh-world
+transport as shrinking. It can be combined with order/reset/timing options and
+does not change the configured candidate service or establish upstream RCON support.
 
 Shrinking delta-debugs ordered **unobserved steps**. All observations, setup,
 cleanup and metadata are retained. Use repeated `--keep-step N` arguments to pin
