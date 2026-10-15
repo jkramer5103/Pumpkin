@@ -1,4 +1,5 @@
 import io
+import itertools
 import json
 import random
 import subprocess
@@ -443,6 +444,22 @@ class RunnerTests(unittest.TestCase):
             self.assertEqual(capability["timing"]["verified_ticks"], 1)
         self.assertNotIn((25585, "tick unfreeze"), calls)
         self.assertIn((25586, "tick unfreeze"), calls)
+
+    def test_tick_step_acknowledgment_without_advancement_is_an_error(self):
+        fixture = Fixtures({(name, command): response for name in ("vanilla", "pumpkin")
+            for command, response in (("tick query", "The game is running normally"),
+                ("tick freeze", "The game is frozen"), ("tick unfreeze", "The game is running normally"),
+                ("tick step 1", "Stepping 1 tick(s)"), ("time query gametime", "The time is 42"))})
+        with mock.patch("lab.runner.time.monotonic", side_effect=itertools.count()):
+            _, report, code = run([self.case], targets(), self.output, timeout=0.01, probe_ticks=True,
+                client_factory=fixture.factory, lock_path=self.lock)
+        self.assertEqual(code, 2)
+        self.assertEqual(report["summary"]["passed"], 1)
+        for name, capability in report["timing_capabilities"].items():
+            self.assertEqual(capability["status"], "error")
+            self.assertEqual(capability["timing"]["verified_ticks"], 0)
+            self.assertIn((name, "tick unfreeze"), fixture.calls)
+            self.assertIn("Timed out verifying", capability["errors"][0]["reason"])
 
     def test_tick_steps_verified_with_game_time_and_restored(self):
         self.case["steps"][0]["wait_ticks"] = 2
