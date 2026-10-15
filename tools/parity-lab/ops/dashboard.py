@@ -54,10 +54,12 @@ def status():
     for key, label in ACCOUNTS.items():
         lane = campaign.get("accounts", {}).get(key, {})
         fork = read_json(ROOT / "artifacts" / f"{key}-fork-status.json", {})
-        accounts.append({"id": key, "label": label, **lane, "quota": quotas.get(key, {}),
+        concise = {k: lane.get(k) for k in ("status", "task_title", "task_index", "total_tasks", "completed_tasks", "retry_at", "error")}
+        accounts.append({"id": key, "label": label, **concise, "quota": quotas.get(key, {}),
                          "fork": {k: fork.get(k) for k in ("branch", "head", "pushed_at", "validation", "findings", "limitations")}})
     run_paths = reports()
-    latest = read_json(run_paths[0], {}) if run_paths else None
+    latest_report = read_json(run_paths[0], {}) if run_paths else {}
+    latest = {k: latest_report.get(k) for k in ("run_id", "summary", "confirmed_mismatch_count", "complete")} if latest_report else None
     usage = shutil.disk_usage(ROOT)
     return {"updated_at": utc(), "campaign_updated_at": campaign.get("updated_at"),
             "model": "gpt-6.1-sol", "accounts": accounts,
@@ -66,6 +68,7 @@ def status():
             "disk_free_gb": round(usage.free / 1024 ** 3, 1),
             "versions": read_json(RUNTIME / "manifest.json", {}),
             "published": read_json(RUNTIME / "published.json", {}),
+            "patch_ledger": read_json(RUNTIME / "patches.json", {"patches": []}),
             "policy": {"network": "LAN only", "auto_resume": True, "banked_resets": "manual",
                        "paid_overage": False, "scope": "Command-observable server behavior"}}
 

@@ -1,0 +1,10 @@
+[Unit]
+Description=Refresh the concise patch ledger
+
+[Timer]
+OnBootSec=30s
+OnUnitInactiveSec=60s
+Unit=pumpkin-parity-patches.service
+
+[Install]
+WantedBy=timers.target

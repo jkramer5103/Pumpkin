@@ -5,9 +5,10 @@ The live deployment is on `ssh codex`, in `/root/pumpkin-parity-lab`.
 
 **LAN dashboard:** <http://192.168.2.223:8787>
 
-The dashboard is read-only and binds to the server's LAN address. It has live
-worker updates, per-subscription quota, reset countdowns, scenario search, run
-history, and raw side-by-side observations. Neither Minecraft server nor RCON
+The dashboard is read-only and binds to the server's LAN address. It shows
+per-subscription quota, reset countdowns, and a concise summary of actual Pumpkin
+patches with validation and commit links. Pushes are cross-checked against Git;
+the interface does not stream commands or count findings as fixes. Neither server nor RCON
 listens outside loopback. No public hosting or tunnel is configured by this lab.
 
 ## What it actually tests

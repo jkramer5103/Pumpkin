@@ -141,7 +141,9 @@ def main():
                 resuming = bool(lane.get("thread_id"))
                 prompt = ("Continue the interrupted task from the current files and conversation. "
                           "The quota reset has been checked. Read AGENTS.md and CONTRACT.md. "
-                          "Complete the original task and validate it. Remain on gpt-6.1-sol."
+                          "Read ops/FORK.md: the user has additionally authorized autonomous "
+                          "Pumpkin source fixes and pushes to jkramer5103/Pumpkin in YOLO mode. "
+                          "Complete the current task and validate it. Remain on gpt-6.1-sol."
                           if resuming else files[index].read_text())
                 output = ROOT / "artifacts" / f"{account}-task-{index:03d}-completion.md"
                 environment = dict(os.environ, CODEX_HOME=str(AUTH_ROOT / account))

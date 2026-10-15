@@ -9,7 +9,8 @@ client gameplay, movement, inventories, or visual correctness unless actual clie
 are implemented and exercised. Report command coverage separately.
 
 Root: `/root/pumpkin-parity-lab`. Python 3.13 standard library preferred. Java 25
-is installed. No Rust builds. Neither server nor RCON may bind publicly.
+is installed. The initial release bootstrap needs no Rust build; subsequent
+source-patch builds follow `ops/FORK.md`. Neither server nor RCON may bind publicly.
 
 ## File ownership during initial parallel implementation
 

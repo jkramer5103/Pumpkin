@@ -1,0 +1,12 @@
+[Unit]
+Description=Summarize actual Pumpkin patches and verify fork pushes
+After=network-online.target
+
+[Service]
+Type=oneshot
+WorkingDirectory=/root/pumpkin-parity-lab
+ExecStart=/usr/bin/python3 /root/pumpkin-parity-lab/ops/patches.py
+MemoryMax=256M
+CPUQuota=50%
+TimeoutStartSec=120
+UMask=0077

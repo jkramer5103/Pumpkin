@@ -52,4 +52,11 @@ Update the live `artifacts/<account>-fork-status.json` (safe JSON, no secrets)
 with `branch`, `head`, `pushed_at`, `validation`, `findings`, and `limitations` so
 the dashboard can show what was actually pushed. No unsupported claims.
 
+The user wants concise patch summaries instead of live commands. Also include
+`patches`, an accumulating list of objects with `commit` (full hash), `title`,
+`summary` (one or two plain sentences explaining the behavior fixed),
+`validation` (brief actual checks plus limitations), and `validated` (true only
+when the fix has meaningful passing validation). Keep all earlier patch entries.
+The dashboard cross-checks commits and pushed branches against Git itself.
+
 Continue the finite queue, prioritizing real fixes over cosmetic test growth.
