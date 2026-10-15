@@ -9,12 +9,17 @@ import datetime
 import fcntl
 import json
 import os
+import sys
 from pathlib import Path
 import tempfile
 try:
     from .rcon_probe import ROOT, Rcon
 except ImportError:
     from rcon_probe import ROOT, Rcon
+
+# Direct script execution and module execution share the same schema checks.
+sys.path.insert(0,str(ROOT))
+from infra.catalog import load_catalog
 
 
 def main():
@@ -25,7 +30,7 @@ def main():
     parser.add_argument('--output',type=Path,required=True)
     args=parser.parse_args()
     targets=json.loads((ROOT/'runtime/targets.json').read_text())['targets']
-    scenarios=[json.loads(p.read_text()) for p in sorted((ROOT/'scenarios').glob('*.json'))]
+    scenarios=load_catalog(ROOT/'scenarios')
     if args.id:
         scenarios=[s for s in scenarios if s['id'] in args.id]
         if {s['id'] for s in scenarios} != set(args.id):

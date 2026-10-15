@@ -156,7 +156,7 @@ def _console_version(versions, pumpkin_console):
 
 def shrink_scenario(scenario_path, targets_path, output, *, repeat=2, timeout=10.0, max_probes=100,
                     reset_path=None, versions_path=None, keep_steps=(), lock_timeout=30.0,
-                    pumpkin_console=None):
+                    pumpkin_console=None, console_arena=False):
     if repeat < 2:
         raise ShrinkError("Scenario shrinking requires at least two repeats per candidate")
     if max_probes < 2:
@@ -177,7 +177,7 @@ def shrink_scenario(scenario_path, targets_path, output, *, repeat=2, timeout=10
     state = {"schema_version": 1, "state": "running", "minimized": False,
              "started_at": utc_now(), "finished_at": None, "minimality": None,
              "original_step_count": len(original["steps"]), "probes": [], "pinned_indices": sorted(pinned),
-             "target_versions": versions, "repeat": repeat, "timeout": timeout,
+             "target_versions": versions, "repeat": repeat, "timeout": timeout, "console_arena": console_arena,
              "lock_timeout": lock_timeout,
              "pumpkin_console": str(Path(pumpkin_console).resolve()) if pumpkin_console else None,
              "evidence_kind": "live differential comparison; inspect target version declarations",
@@ -213,7 +213,7 @@ def shrink_scenario(scenario_path, targets_path, output, *, repeat=2, timeout=10
         state["probes"].append(probe)
         save()
         run_dir, report, code = run([scenario], targets, directory / "runs", repeat=repeat, timeout=timeout,
-            reset_commands=reset, lock_timeout=lock_timeout, pumpkin_console=pumpkin_console)
+            reset_commands=reset, lock_timeout=lock_timeout, pumpkin_console=pumpkin_console, console_arena=console_arena)
         result = report["results"][0]
         identity = failure_identity(result)
         probe.update(state="finished", run=str(run_dir), exit_code=code, failure_identity=identity)
@@ -266,4 +266,4 @@ def replay_reproducer(directory, targets_path, *, output=None, timeout=None, loc
     return run([scenario], load_targets(targets_path), output or directory / "replays",
         repeat=state["repeat"], timeout=state["timeout"] if timeout is None else timeout,
         lock_timeout=state["lock_timeout"] if lock_timeout is None else lock_timeout,
-        reset_commands=load_reset(directory / "reset.json"), pumpkin_console=state["pumpkin_console"])
+        reset_commands=load_reset(directory / "reset.json"), pumpkin_console=state["pumpkin_console"], console_arena=state.get("console_arena", False))

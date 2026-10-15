@@ -1,0 +1,52 @@
+{
+  "schema_version": 1,
+  "id": "selector-score-range",
+  "title": "Score selector includes both interval endpoints",
+  "category": "scoreboard",
+  "description": "Scores at two and four are selected by 2..4; an exterior score is preserved as an excluded control.",
+  "tags": [
+    "command",
+    "deterministic",
+    "state-observation",
+    "execution-campaign"
+  ],
+  "setup": [
+    "tick freeze",
+    "execute if entity @e[type=minecraft:marker,tag=pp,x=-32,y=48,z=-32,dx=64,dy=48,dz=64] run kill @e[type=minecraft:marker,tag=pp,x=-32,y=48,z=-32,dx=64,dy=48,dz=64]",
+    "scoreboard objectives add pp_exec dummy"
+  ],
+  "steps": [
+    {
+      "command": "summon minecraft:marker 2 64 2 {Tags:[\"pp\",\"lower\"]}"
+    },
+    {
+      "command": "summon minecraft:marker 4 64 2 {Tags:[\"pp\",\"upper\"]}"
+    },
+    {
+      "command": "summon minecraft:marker 6 64 2 {Tags:[\"pp\",\"outside\"]}"
+    },
+    {
+      "command": "scoreboard players set @e[type=minecraft:marker,tag=pp,x=-32,y=48,z=-32,dx=64,dy=48,dz=64,tag=lower] pp_exec 2"
+    },
+    {
+      "command": "scoreboard players set @e[type=minecraft:marker,tag=pp,x=-32,y=48,z=-32,dx=64,dy=48,dz=64,tag=upper] pp_exec 4"
+    },
+    {
+      "command": "scoreboard players set @e[type=minecraft:marker,tag=pp,x=-32,y=48,z=-32,dx=64,dy=48,dz=64,tag=outside] pp_exec 5"
+    },
+    {
+      "command": "tag @e[type=minecraft:marker,tag=pp,x=-32,y=48,z=-32,dx=64,dy=48,dz=64,scores={pp_exec=2..4}] add selected"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:marker,tag=pp,x=-32,y=48,z=-32,dx=64,dy=48,dz=64,tag=lower,tag=selected] if entity @e[type=minecraft:marker,tag=pp,x=-32,y=48,z=-32,dx=64,dy=48,dz=64,tag=upper,tag=selected] if entity @e[type=minecraft:marker,tag=pp,x=-32,y=48,z=-32,dx=64,dy=48,dz=64,tag=outside,tag=!selected]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    }
+  ],
+  "cleanup": [
+    "execute if entity @e[type=minecraft:marker,tag=pp,x=-32,y=48,z=-32,dx=64,dy=48,dz=64] run kill @e[type=minecraft:marker,tag=pp,x=-32,y=48,z=-32,dx=64,dy=48,dz=64]",
+    "scoreboard objectives remove pp_exec",
+    "tick unfreeze"
+  ],
+  "notes": "Vanilla 26.3 reference expectations are checked live; raw responses remain in campaign artifacts. Simulation is frozen and restored in cleanup. Positive state probes fail on empty or rejected output. Current-source console validation is separate from RCON support. No client or elapsed-tick claim."
+}

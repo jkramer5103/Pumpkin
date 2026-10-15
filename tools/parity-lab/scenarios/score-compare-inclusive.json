@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "id": "score-compare-inclusive",
+  "title": "Inclusive comparisons accept equality and ordered values",
+  "category": "scoreboard",
+  "description": "Both inclusive operators accept equal operands but reject reversed inequalities.",
+  "tags": [
+    "command",
+    "deterministic",
+    "state-observation",
+    "execution-campaign"
+  ],
+  "setup": [
+    "tick freeze",
+    "scoreboard objectives add pp_exec dummy"
+  ],
+  "steps": [
+    {
+      "command": "scoreboard players set a pp_exec -1"
+    },
+    {
+      "command": "scoreboard players set b pp_exec 0"
+    },
+    {
+      "command": "execute if score a pp_exec <= a pp_exec if score b pp_exec >= b pp_exec if score a pp_exec <= b pp_exec if score b pp_exec >= a pp_exec unless score a pp_exec >= b pp_exec unless score b pp_exec <= a pp_exec",
+      "observe": true,
+      "expect_contains": "Test passed"
+    }
+  ],
+  "cleanup": [
+    "scoreboard objectives remove pp_exec",
+    "tick unfreeze"
+  ],
+  "notes": "Vanilla 26.3 reference expectations are checked live; raw responses remain in campaign artifacts. Simulation is frozen and restored in cleanup. Positive state probes fail on empty or rejected output. Current-source console validation is separate from RCON support. No client or elapsed-tick claim."
+}

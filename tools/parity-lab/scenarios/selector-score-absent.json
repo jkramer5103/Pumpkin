@@ -1,0 +1,82 @@
+{
+  "schema_version": 1,
+  "id": "selector-score-absent",
+  "title": "Score selectors distinguish absent from zero",
+  "category": "scoreboard",
+  "description": "Two observed fixtures are excluded with missing scores, selected with explicit zero scores, and excluded again after reset.",
+  "tags": [
+    "command",
+    "deterministic",
+    "state-observation",
+    "execution-campaign"
+  ],
+  "setup": [
+    "tick freeze",
+    "execute if entity @e[type=minecraft:marker,tag=pp,x=-32,y=48,z=-32,dx=64,dy=48,dz=64] run kill @e[type=minecraft:marker,tag=pp,x=-32,y=48,z=-32,dx=64,dy=48,dz=64]",
+    "scoreboard objectives add pp_exec dummy"
+  ],
+  "steps": [
+    {
+      "command": "summon minecraft:marker 2 64 2 {Tags:[\"pp\",\"fixture\"]}"
+    },
+    {
+      "command": "summon minecraft:marker 4 64 2 {Tags:[\"pp\",\"fixture\"]}"
+    },
+    {
+      "command": "scoreboard players set count pp_exec 0"
+    },
+    {
+      "command": "execute as @e[type=minecraft:marker,tag=pp,x=-32,y=48,z=-32,dx=64,dy=48,dz=64] run scoreboard players add count pp_exec 1"
+    },
+    {
+      "command": "execute if score count pp_exec matches 2",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "scoreboard players set count pp_exec 0"
+    },
+    {
+      "command": "execute as @e[type=minecraft:marker,tag=pp,x=-32,y=48,z=-32,dx=64,dy=48,dz=64,scores={pp_exec=0}] run scoreboard players add count pp_exec 1"
+    },
+    {
+      "command": "execute if score count pp_exec matches 0",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "scoreboard players set @e[type=minecraft:marker,tag=pp,x=-32,y=48,z=-32,dx=64,dy=48,dz=64] pp_exec 0"
+    },
+    {
+      "command": "scoreboard players set count pp_exec 0"
+    },
+    {
+      "command": "execute as @e[type=minecraft:marker,tag=pp,x=-32,y=48,z=-32,dx=64,dy=48,dz=64,scores={pp_exec=0}] run scoreboard players add count pp_exec 1"
+    },
+    {
+      "command": "execute if score count pp_exec matches 2",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "scoreboard players reset @e[type=minecraft:marker,tag=pp,x=-32,y=48,z=-32,dx=64,dy=48,dz=64] pp_exec"
+    },
+    {
+      "command": "scoreboard players set count pp_exec 0"
+    },
+    {
+      "command": "execute as @e[type=minecraft:marker,tag=pp,x=-32,y=48,z=-32,dx=64,dy=48,dz=64,scores={pp_exec=0}] run scoreboard players add count pp_exec 1"
+    },
+    {
+      "command": "execute if score count pp_exec matches 0",
+      "observe": true,
+      "expect_contains": "Test passed"
+    }
+  ],
+  "cleanup": [
+    "execute if entity @e[type=minecraft:marker,tag=pp,x=-32,y=48,z=-32,dx=64,dy=48,dz=64] run kill @e[type=minecraft:marker,tag=pp,x=-32,y=48,z=-32,dx=64,dy=48,dz=64]",
+    "scoreboard objectives remove pp_exec",
+    "tick unfreeze"
+  ],
+  "notes": "Vanilla 26.3 reference expectations are checked live; raw responses remain in campaign artifacts. Simulation is frozen and restored in cleanup. Positive state probes fail on empty or rejected output. Current-source console validation is separate from RCON support. No client or elapsed-tick claim."
+}

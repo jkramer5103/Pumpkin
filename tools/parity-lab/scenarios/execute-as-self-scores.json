@@ -1,0 +1,46 @@
+{
+  "schema_version": 1,
+  "id": "execute-as-self-scores",
+  "title": "Execute as keeps a separate score for each self",
+  "category": "execute",
+  "description": "Two marker executors each receive and increment their own score while a tagged third marker stays unchanged.",
+  "tags": [
+    "command",
+    "deterministic",
+    "state-observation",
+    "execution-campaign"
+  ],
+  "setup": [
+    "tick freeze",
+    "execute if entity @e[type=minecraft:marker,tag=pp,x=-32,y=48,z=-32,dx=64,dy=48,dz=64] run kill @e[type=minecraft:marker,tag=pp,x=-32,y=48,z=-32,dx=64,dy=48,dz=64]",
+    "scoreboard objectives add pp_exec dummy"
+  ],
+  "steps": [
+    {
+      "command": "summon minecraft:marker 2 64 2 {Tags:[\"pp\",\"first\"]}"
+    },
+    {
+      "command": "summon minecraft:marker 4 64 2 {Tags:[\"pp\",\"second\"]}"
+    },
+    {
+      "command": "summon minecraft:marker 6 64 2 {Tags:[\"pp\",\"other\"]}"
+    },
+    {
+      "command": "scoreboard players set @e[type=minecraft:marker,tag=pp,x=-32,y=48,z=-32,dx=64,dy=48,dz=64] pp_exec 3"
+    },
+    {
+      "command": "execute as @e[type=minecraft:marker,tag=pp,x=-32,y=48,z=-32,dx=64,dy=48,dz=64,tag=!other] run scoreboard players add @s pp_exec 2"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:marker,tag=pp,x=-32,y=48,z=-32,dx=64,dy=48,dz=64,tag=first,scores={pp_exec=5}] if entity @e[type=minecraft:marker,tag=pp,x=-32,y=48,z=-32,dx=64,dy=48,dz=64,tag=second,scores={pp_exec=5}] if entity @e[type=minecraft:marker,tag=pp,x=-32,y=48,z=-32,dx=64,dy=48,dz=64,tag=other,scores={pp_exec=3}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    }
+  ],
+  "cleanup": [
+    "execute if entity @e[type=minecraft:marker,tag=pp,x=-32,y=48,z=-32,dx=64,dy=48,dz=64] run kill @e[type=minecraft:marker,tag=pp,x=-32,y=48,z=-32,dx=64,dy=48,dz=64]",
+    "scoreboard objectives remove pp_exec",
+    "tick unfreeze"
+  ],
+  "notes": "Vanilla 26.3 reference expectations are checked live; raw responses remain in campaign artifacts. Simulation is frozen and restored in cleanup. Positive state probes fail on empty or rejected output. Current-source console validation is separate from RCON support. No client or elapsed-tick claim."
+}

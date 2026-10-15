@@ -57,6 +57,19 @@ def parser():
                         help="preserve a zero-based step index in addition to all observations")
     shrink.add_argument("--lock-timeout", type=_timeout, default=30.0)
     shrink.add_argument("--pumpkin-console", help="explicit current-source binary; uses a fresh scratch console, not RCON")
+    fuzz = commands.add_parser("fuzz", help="finite seeded arithmetic/block differential fuzzing with reduction")
+    fuzz.add_argument("--targets", required=True)
+    fuzz.add_argument("--versions", required=True)
+    fuzz.add_argument("--output", default="artifacts/fuzz")
+    fuzz.add_argument("--seed", type=int, required=True)
+    fuzz.add_argument("--seeds", type=_positive_int, default=10)
+    fuzz.add_argument("--actions", type=_positive_int, default=12)
+    fuzz.add_argument("--mode", choices=("mixed", "scoreboard", "blocks"), default="mixed")
+    fuzz.add_argument("--max-seconds", type=float, default=300)
+    fuzz.add_argument("--max-probes", type=_positive_int, default=30)
+    fuzz.add_argument("--timeout", type=_timeout, default=3)
+    fuzz.add_argument("--lock-timeout", type=_timeout, default=10)
+    fuzz.add_argument("--pumpkin-console")
     replay = commands.add_parser("replay", help="rerun a saved reproducer with its reset and transport policy")
     replay.add_argument("--reproducer", required=True)
     replay.add_argument("--targets", required=True)
@@ -73,7 +86,13 @@ def main(argv=None):
             scenarios = load_scenarios(args.scenarios)
             print(json.dumps({"schema_version": 1, "scenarios": scenarios}, ensure_ascii=False, indent=2))
             return 0
-        if args.action == "shrink":
+        if args.action == "fuzz":
+            from .fuzz import fuzz
+            directory, report, code = fuzz(args.targets, args.output, seed=args.seed, seeds=args.seeds,
+                actions=args.actions, mode=args.mode, max_seconds=args.max_seconds, max_probes=args.max_probes,
+                timeout=args.timeout, lock_timeout=args.lock_timeout, versions_path=args.versions,
+                pumpkin_console=args.pumpkin_console)
+        elif args.action == "shrink":
             directory, report, code = shrink_scenario(args.scenario, args.targets, args.output,
                 repeat=args.repeat, timeout=args.timeout, max_probes=args.max_probes,
                 reset_path=args.reset, versions_path=args.versions, keep_steps=args.keep_step,

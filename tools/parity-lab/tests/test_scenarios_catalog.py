@@ -14,6 +14,8 @@ class ScenarioCatalogTests(unittest.TestCase):
     def test_distinct_semantic_cases_and_contract_schema(self):
         from lab.schema import validate_scenario
         self.assertGreaterEqual(len(self.scenarios),50)
+        from infra.catalog import validate_catalog
+        validate_catalog(self.scenarios)
         ids=set(); sequences=set()
         for scenario in self.scenarios:
             validate_scenario(scenario)
@@ -58,7 +60,7 @@ class ScenarioCatalogTests(unittest.TestCase):
                     self.assertIn('x=',selector)
                     self.assertIn('y=',selector)
                     self.assertIn('z=',selector)
-                    coordinates={k:float(v) for k,v in re.findall(r'(x|y|z|dx|dy|dz)=(-?\d+(?:\.\d+)?)',selector)}
+                    coordinates={k:float(v) for k,v in re.findall(r'(?:^|,)(x|y|z|dx|dy|dz)=(-?\d+(?:\.\d+)?)',selector)}
                     if 'dx' in coordinates:
                         for axis,low,high in [('x',-32,32),('y',48,96),('z',-32,32)]:
                             start=coordinates[axis]; delta=coordinates.get('d'+axis,0)

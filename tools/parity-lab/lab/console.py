@@ -46,10 +46,11 @@ enabled = false
 
 
 class ConsoleClient:
-    def __init__(self, binary, directory, *, timeout=10):
+    def __init__(self, binary, directory, *, timeout=10, arena=False):
         self.binary = Path(binary).resolve()
         self.directory = Path(directory)
         self.timeout = timeout
+        self.arena = arena
         self.process = None
         self.log = None
         self.reader = None
@@ -57,6 +58,9 @@ class ConsoleClient:
 
     def connect(self):
         self.directory.mkdir(parents=True, exist_ok=False)
+        if self.arena:
+            from .arena import seed_arena
+            seed_arena(self.directory)
         (self.directory / 'pumpkin.toml').write_text(CONFIG)
         self.log = (self.directory / 'console.log').open('x', encoding='utf-8')
         try:
@@ -79,6 +83,32 @@ class ConsoleClient:
             deadline = time.monotonic() + max(20, self.timeout)
             while 'Server is now running' not in self._receive(deadline):
                 pass
+            if self.arena:
+                from .runner import atomic_json
+                evidence = {'fixture': 'parity_arena:load', 'ready': False, 'commands': []}
+                def probe(command):
+                    entry = {'command': command, 'state': 'pending'}
+                    evidence['commands'].append(entry)
+                    atomic_json(self.directory / 'arena-bootstrap.json', evidence)
+                    raw = self.command(command)
+                    entry.update(state='finished', raw=raw)
+                    atomic_json(self.directory / 'arena-bootstrap.json', evidence)
+                    return raw
+                probe('forceload add 0 0')
+                probe('test run parity_arena:load')
+                deadline = time.monotonic() + 12
+                while time.monotonic() < deadline:
+                    if 'Changed the block' in probe('setblock 0 80 0 minecraft:barrier'):
+                        evidence['ready'] = True
+                        break
+                    time.sleep(0.1)
+                probe('test stop')
+                frozen = probe('tick freeze')
+                if 'frozen' not in frozen:
+                    raise RconError('Scratch arena freeze was not acknowledged')
+                atomic_json(self.directory / 'arena-bootstrap.json', evidence)
+                if not evidence['ready']:
+                    raise RconError('Bounded scratch arena failed its positive readiness probe')
         except (OSError, RconError):
             self.close()
             raise

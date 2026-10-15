@@ -358,6 +358,13 @@ effect_case('entity-effect-clear-selective','Clearing one effect preserves anoth
             [f'execute if entity {select("nbt={active_effects:[{id:\"minecraft:glowing\"}]}",kind="minecraft:armor_stand")} unless entity {select("nbt={active_effects:[{id:\"minecraft:speed\"}]}",kind="minecraft:armor_stand")}'])
 
 if __name__=='__main__':
+    # Keep the execution expansion reproducible through the original entry point.
+    import sys
+    sys.path.insert(0,str(ROOT))
+    from infra.author_execution_scenarios import execution_cases
+    from infra.catalog import validate_catalog
+    CASES.extend(execution_cases())
+    validate_catalog(CASES)
     directory=ROOT/'scenarios';directory.mkdir(exist_ok=True)
     for scenario in CASES:
         (directory/(scenario['id']+'.json')).write_text(json.dumps(scenario,indent=2)+'\n')

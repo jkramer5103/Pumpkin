@@ -1,0 +1,44 @@
+{
+  "schema_version": 1,
+  "id": "execute-condition-chain",
+  "title": "Every condition gates the final mutation",
+  "category": "execute",
+  "description": "A false early condition and a false late condition each block mutation; the all-true control runs once.",
+  "tags": [
+    "command",
+    "deterministic",
+    "state-observation",
+    "execution-campaign"
+  ],
+  "setup": [
+    "tick freeze",
+    "scoreboard objectives add pp_exec dummy"
+  ],
+  "steps": [
+    {
+      "command": "scoreboard players set gate pp_exec 1"
+    },
+    {
+      "command": "scoreboard players set count pp_exec 0"
+    },
+    {
+      "command": "execute if score gate pp_exec matches 0 if score gate pp_exec matches 1 run scoreboard players add count pp_exec 10"
+    },
+    {
+      "command": "execute if score gate pp_exec matches 1 if score gate pp_exec matches 0 run scoreboard players add count pp_exec 100"
+    },
+    {
+      "command": "execute if score gate pp_exec matches 1 if score gate pp_exec matches 1 run scoreboard players add count pp_exec 1"
+    },
+    {
+      "command": "execute if score count pp_exec matches 1 if score gate pp_exec matches 1",
+      "observe": true,
+      "expect_contains": "Test passed"
+    }
+  ],
+  "cleanup": [
+    "scoreboard objectives remove pp_exec",
+    "tick unfreeze"
+  ],
+  "notes": "Vanilla 26.3 reference expectations are checked live; raw responses remain in campaign artifacts. Simulation is frozen and restored in cleanup. Positive state probes fail on empty or rejected output. Current-source console validation is separate from RCON support. No client or elapsed-tick claim."
+}

@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "id": "score-operation-creates-source",
+  "title": "Assignment creates absent source and target scores",
+  "category": "scoreboard",
+  "description": "After proving both holders absent, assignment materializes both scores as zero.",
+  "tags": [
+    "command",
+    "deterministic",
+    "state-observation",
+    "execution-campaign"
+  ],
+  "setup": [
+    "tick freeze",
+    "scoreboard objectives add pp_exec dummy"
+  ],
+  "steps": [
+    {
+      "command": "scoreboard players set control pp_exec 1"
+    },
+    {
+      "command": "execute if score control pp_exec matches 1 unless score source pp_exec matches -2147483648..2147483647 unless score target pp_exec matches -2147483648..2147483647",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "scoreboard players operation target pp_exec = source pp_exec"
+    },
+    {
+      "command": "execute if score source pp_exec matches 0 if score target pp_exec matches 0",
+      "observe": true,
+      "expect_contains": "Test passed"
+    }
+  ],
+  "cleanup": [
+    "scoreboard objectives remove pp_exec",
+    "tick unfreeze"
+  ],
+  "notes": "Vanilla 26.3 reference expectations are checked live; raw responses remain in campaign artifacts. Simulation is frozen and restored in cleanup. Positive state probes fail on empty or rejected output. Current-source console validation is separate from RCON support. No client or elapsed-tick claim."
+}

@@ -1,0 +1,44 @@
+{
+  "schema_version": 1,
+  "id": "execute-store-success",
+  "title": "Store success records both successful and failed conditions",
+  "category": "execute",
+  "description": "A true terminal condition stores one and a false terminal condition overwrites a sentinel with zero.",
+  "tags": [
+    "command",
+    "deterministic",
+    "state-observation",
+    "execution-campaign"
+  ],
+  "setup": [
+    "tick freeze",
+    "scoreboard objectives add pp_exec dummy"
+  ],
+  "steps": [
+    {
+      "command": "scoreboard players set gate pp_exec 1"
+    },
+    {
+      "command": "scoreboard players set yes pp_exec 99"
+    },
+    {
+      "command": "scoreboard players set no pp_exec 99"
+    },
+    {
+      "command": "execute store success score yes pp_exec if score gate pp_exec matches 1"
+    },
+    {
+      "command": "execute store success score no pp_exec if score gate pp_exec matches 0"
+    },
+    {
+      "command": "execute if score yes pp_exec matches 1 if score no pp_exec matches 0 if score gate pp_exec matches 1",
+      "observe": true,
+      "expect_contains": "Test passed"
+    }
+  ],
+  "cleanup": [
+    "scoreboard objectives remove pp_exec",
+    "tick unfreeze"
+  ],
+  "notes": "Vanilla 26.3 reference expectations are checked live; raw responses remain in campaign artifacts. Simulation is frozen and restored in cleanup. Positive state probes fail on empty or rejected output. Current-source console validation is separate from RCON support. No client or elapsed-tick claim."
+}

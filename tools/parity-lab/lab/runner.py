@@ -413,7 +413,7 @@ def _update_summary(report):
 
 def run(scenarios, targets, output, *, repeat=1, timeout=10.0, lock_timeout=30.0,
         client_factory=RconClient, lock_path=None, reset_commands=(), pumpkin_console=None,
-        order="alternating", order_seed=0, probe_ticks=False):
+        order="alternating", order_seed=0, probe_ticks=False, console_arena=False):
     """Return (run_directory, report, exit_code). No connection before validation/lock."""
     validate_targets(targets)
     if type(repeat) is not int or repeat < 1:
@@ -454,7 +454,7 @@ def run(scenarios, targets, output, *, repeat=1, timeout=10.0, lock_timeout=30.0
     report = {"schema_version": 1, "run_id": run_id, "started_at": utc_now(), "finished_at": None,
               "engine_version": __version__, "python_version": sys.version.split()[0],
               "minecraft_version": targets["minecraft_version"], "state": "running", "complete": False,
-              "repeat": repeat, "normalization": NORMALIZATION,
+              "repeat": repeat, "normalization": NORMALIZATION, "console_arena": console_arena,
               "reset_commands": list(reset_commands),
               "isolation": {"policy": "declared_reset" if reset_commands else "scenario_setup_cleanup",
                             "world_snapshot": False, "order": order, "order_seed": order_seed,
@@ -493,7 +493,7 @@ def run(scenarios, targets, output, *, repeat=1, timeout=10.0, lock_timeout=30.0
                     from .console import ConsoleClient
                     console_directory = directory / "console" / (scenario_id + "-" + str(number))
                     return lambda host, port, password, timeout: ConsoleClient(
-                        pumpkin_console, console_directory, timeout=timeout)
+                        pumpkin_console, console_directory, timeout=timeout, arena=console_arena)
                 return client_factory
 
             if probe_ticks:

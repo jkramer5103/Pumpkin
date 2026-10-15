@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "id": "score-match-range-endpoints",
+  "title": "Score ranges include endpoints and open extremes",
+  "category": "scoreboard",
+  "description": "Closed endpoints, open lower and upper bounds, and full signed extremes accept only the intended scores.",
+  "tags": [
+    "command",
+    "deterministic",
+    "state-observation",
+    "execution-campaign"
+  ],
+  "setup": [
+    "tick freeze",
+    "scoreboard objectives add pp_exec dummy"
+  ],
+  "steps": [
+    {
+      "command": "scoreboard players set lo pp_exec -2147483648"
+    },
+    {
+      "command": "scoreboard players set mid pp_exec -2"
+    },
+    {
+      "command": "scoreboard players set hi pp_exec 2147483647"
+    },
+    {
+      "command": "execute if score lo pp_exec matches ..-2 if score mid pp_exec matches -2..-2 if score hi pp_exec matches -2.. unless score mid pp_exec matches ..-3 unless score mid pp_exec matches -1..",
+      "observe": true,
+      "expect_contains": "Test passed"
+    }
+  ],
+  "cleanup": [
+    "scoreboard objectives remove pp_exec",
+    "tick unfreeze"
+  ],
+  "notes": "Vanilla 26.3 reference expectations are checked live; raw responses remain in campaign artifacts. Simulation is frozen and restored in cleanup. Positive state probes fail on empty or rejected output. Current-source console validation is separate from RCON support. No client or elapsed-tick claim."
+}
