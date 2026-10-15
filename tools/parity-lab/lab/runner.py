@@ -368,7 +368,10 @@ def _update_summary(report):
                     entry["responses"] += 1
                     entry["unsupported"] += event["problem"] == "unsupported"
                     entry["failed"] += event["problem"] == "command_failed"
-    report["command_coverage"] = {"scope": "RCON command observations only; no client gameplay coverage", "targets": coverage}
+    scope = ("RCON and scratch-console command observations only; no client gameplay coverage"
+             if report.get("transports", {}).get("pumpkin") == "scratch-console"
+             else "RCON command observations only; no client gameplay coverage")
+    report["command_coverage"] = {"scope": scope, "targets": coverage}
     report["unsupported_commands"] = {name: sorted({event["command"] for result in report["results"]
         for attempt in result["attempts"] for event in attempt["targets"].get(name, {}).get("commands", [])
         if event["problem"] == "unsupported"}) for name in TARGET_NAMES}
@@ -411,6 +414,9 @@ def run(scenarios, targets, output, *, repeat=1, timeout=10.0, lock_timeout=30.0
                            "status": "error", "observations": {name: [] for name in TARGET_NAMES},
                            "reason": "Not run", "duration_seconds": 0.0, "attempts": [],
                            "flaky": False, "confirmed_mismatch": False} for s in scenarios]}
+
+    if pumpkin_console:
+        report["targets"]["pumpkin"] = {"binary": str(pumpkin_console), "transport": "scratch-console"}
 
     def save():
         _update_summary(report)

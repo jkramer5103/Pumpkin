@@ -18,7 +18,7 @@ import tempfile
 from pathlib import Path
 
 from .runner import atomic_json, interruption_signals, run, utc_now
-from .schema import SchemaError, load_targets, read_json, validate_scenario
+from .schema import load_targets, read_json, validate_scenario
 
 
 class ShrinkError(ValueError):
@@ -144,6 +144,10 @@ def load_versions(path):
 
 
 def _console_version(versions, pumpkin_console):
+    for name in ("vanilla", "pumpkin"):
+        transport = "scratch-console" if name == "pumpkin" and pumpkin_console else "rcon"
+        if versions[name].get("transport", transport) != transport:
+            raise ShrinkError(f"{name} version transport differs from selected transport")
     if pumpkin_console is None:
         return
     if not versions or versions["pumpkin"].get("binary") != str(Path(pumpkin_console).resolve()):
@@ -184,7 +188,8 @@ def shrink_scenario(scenario_path, targets_path, output, *, repeat=2, timeout=10
     replay_argv = [sys.executable, "-m", "lab", "replay", "--reproducer", str(directory),
                    "--targets", str(Path(targets_path).resolve())]
     state["replay_argv"] = replay_argv
-    state["replay_command"] = shlex.join(replay_argv)
+    state["replay_cwd"] = str(Path(__file__).resolve().parents[1])
+    state["replay_command"] = "cd " + shlex.quote(state["replay_cwd"]) + " && " + shlex.join(replay_argv)
     (directory / "replay.txt").write_text(state["replay_command"] + "\n", encoding="utf-8")
 
     def save():

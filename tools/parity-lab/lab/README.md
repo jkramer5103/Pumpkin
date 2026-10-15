@@ -7,7 +7,8 @@ python3 -m lab list --scenarios scenarios
 python3 -m lab run --targets runtime/targets.json --scenarios scenarios --output artifacts/runs
 python3 -m lab run --targets runtime/targets.json --scenarios scenarios --output artifacts/runs --id stone-placement --repeat 2
 python3 -m lab run --targets runtime/targets.json --id stone-placement --id positioned-relative --repeat 2
-python3 -m lab shrink --targets runtime/targets.json --scenario scenarios/stone-placement.json --output artifacts/shrinks --repeat 2
+python3 -m lab shrink --targets runtime/targets.json --scenario case.json --reset reset.json --versions versions.json --output artifacts/reproducers --repeat 2
+python3 -m lab replay --targets runtime/targets.json --reproducer artifacts/reproducers/shrink-SESSION
 python3 -m unittest discover -s tests -p 'test_core*.py' -v
 ```
 
@@ -78,16 +79,73 @@ failure when a new authenticated connection can be established. Unsupported
 timing commands or unrecognized state/time replies are visible capability gaps;
 there is no wall-clock simulation fallback.
 
-Shrinking delta-debugs ordered **steps**, retaining setup, cleanup and metadata.
-Each valid candidate runs against both targets with at least two repeats and
-preserved evidence. A stable failure identity must match the initial failure;
-infra, unsupported commands and flaky candidates cannot produce a minimized claim.
-The algorithm checks single-step deletion minimality and reruns the final
-reproducer on both targets before writing `reproducer.json` and `minimized=true`.
-This is 1-minimality among valid step subsequences, not a globally shortest
-scenario. A probe budget failure leaves `minimized=false` and all evidence.
+Shrinking delta-debugs ordered **unobserved steps**. All observations, setup,
+cleanup and metadata are retained. Use repeated `--keep-step N` arguments to pin
+additional zero-based step indices. Required behavioral dependencies are retained
+when their deletion breaks the original mismatch or a vanilla positive oracle.
+Every candidate, including repeated candidates and the final verification, runs
+both actual targets at least twice. Nothing uses cached predicate outcomes.
 
-This engine observes RCON command behavior only. It does not implement clients or
+`--reset reset.json` is required and contains `{"commands": ["..."]}`. Write
+scenario-specific, idempotent commands that reset every state the scenario
+changes, including its arena entities, blocks and scoreboard values. Reset runs
+before setup on **each target and each repeat**, under the shared engine lock.
+A recognized reset failure aborts that target's candidate and prevents a minimized
+claim; cleanup and raw reset evidence remain. Empty entity kills are idempotent.
+The engine validates command structure, but cannot prove arbitrary reset commands
+restore every state. Use bounded arena commands and split large fills to respect
+the server's fill limit. No universal world wipe is inferred.
+
+`--versions versions.json` is required. It contains exactly `vanilla` and
+`pumpkin` objects with a nonempty `version`. Optional fields are `source_commit`,
+`binary`, `sha256` and `transport`; arbitrary manifest fields are rejected.
+For example:
+
+```json
+{
+  "vanilla": {"version": "Minecraft Java 26.3", "binary": "/absolute/path/server.jar", "transport": "rcon"},
+  "pumpkin": {"version": "upstream COMMIT", "source_commit": "FULL_HASH", "binary": "/absolute/path/pumpkin", "transport": "scratch-console"}
+}
+```
+
+Local binary SHA-256 values are computed and recorded, then verified again before
+every candidate and replay. An explicitly supplied incorrect hash is rejected.
+For existing RCON services the version is declared provenance, not remote binary
+attestation. Verify deployment against the runtime manifest before making a
+current-source claim. Passwords remain in the separate targets file.
+
+Each session under `artifacts/reproducers/` saves `original.json`, the best actually
+verified `candidate.json`, `reset.json`, `target-versions.json`, `attempts.json`,
+`shrink-report.json`, and an exact `replay.txt` command. Every probe points to its
+full run report, scenario snapshot, raw response/packet transcripts and any
+scratch console logs. `lab replay` reruns the saved case, reset and transport
+policy with two or more repeats; exit 1 means a difference was observed, as with
+`lab run`. It does not rerun the shrink algorithm or claim new minimality.
+
+A candidate must preserve the original failure's commands and exact normalized
+divergent responses. Infrastructure errors, unsupported commands, flaky repeats
+and failed vanilla positive oracles cannot produce a minimized claim. The
+algorithm actually checks every remaining unpinned single deletion and reruns the
+final case before writing `reproducer.json` and `minimized=true`. This is
+1-minimality within those fixed boundaries, not a globally shortest scenario.
+`--max-probes` bounds live candidate runs (default 100). Exhaustion or interruption
+leaves `minimized=false`, with the best previously verified case still replayable.
+The TCP integration demonstrations are explicitly synthetic fixtures, not
+Minecraft coverage.
+
+`shrink --pumpkin-console /absolute/path/pumpkin` explicitly enables targeted
+source validation when an upstream binary has no RCON. Its path must match the
+Pumpkin version record. Every attempt launches and cleanly stops a fresh scratch
+world under the engine lock. Networking binds only to an ephemeral loopback port;
+plugins, telemetry, LAN broadcast, query and management are disabled. Startup and
+shutdown have bounded waits. Console output is retained without prefix or log
+stripping. A unique read-only scoreboard lookup fences each command, including
+silent conditions; the expected unknown-objective framing lines remain in the
+full console log. Reports explicitly identify this as scratch console, and no
+current-source RCON coverage is claimed. A different console grammar is a visible
+transport error. This option does not replace the configured released candidate.
+
+This engine observes RCON and explicitly selected scratch-console command behavior only. It does not implement clients or
 claim movement, inventory, rendering or general gameplay coverage. Schema
 validation checks the shared JSON structure, not the full Minecraft command
 grammar or arbitrary command coordinate bounds. Scenarios must follow the arena

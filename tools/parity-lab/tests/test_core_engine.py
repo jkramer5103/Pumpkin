@@ -182,6 +182,23 @@ class RunnerTests(unittest.TestCase):
         # Each target runs its whole attempt serially, then the other target.
         self.assertEqual([n for n, _ in self.fixture.calls], ["vanilla"] * 4 + ["pumpkin"] * 4 + ["vanilla"] * 4 + ["pumpkin"] * 4)
 
+    def test_failed_reset_aborts_candidate_but_keeps_cleanup_and_raw_evidence(self):
+        fixture = Fixtures({("pumpkin", "arena-reset"): "That position is not loaded"})
+        directory, report, code = run([self.case], targets(), self.output, repeat=2,
+            reset_commands=["arena-reset"], client_factory=fixture.factory, lock_path=self.lock)
+        self.assertEqual(code, 2)
+        result = report["results"][0]
+        self.assertFalse(result["confirmed_mismatch"])
+        self.assertNotIn(("pumpkin", self.observe), fixture.calls)
+        self.assertEqual(fixture.calls.count(("pumpkin", self.case["cleanup"][0])), 2)
+        for attempt in result["attempts"]:
+            record = attempt["targets"]["pumpkin"]
+            self.assertEqual(record["commands"][0]["phase"], "reset")
+            self.assertEqual(record["commands"][0]["raw"], "That position is not loaded")
+            self.assertFalse(record["completed"])
+        transcript = (directory / "transcripts/pumpkin.jsonl").read_text()
+        self.assertIn("That position is not loaded", transcript)
+
     def test_two_equal_empty_or_failed_probes_never_pass(self):
         for raw in ("", "Test failed", "[Server] Unknown or incomplete command"):
             with self.subTest(raw=raw):

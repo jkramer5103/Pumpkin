@@ -11,6 +11,7 @@ import queue
 import subprocess
 import threading
 import time
+import uuid
 
 from .rcon import RconError
 
@@ -93,9 +94,12 @@ class ConsoleClient:
 
     def command(self, command):
         try:
-            # A read-only list fence follows every command, including silent
-            # conditions. Raw console lines before the fence are not normalized.
-            self.process.stdin.write(command + '\nlist\n')
+            # A unique read-only lookup fences even silent commands and list
+            # observations. The random objective does not exist in a fresh
+            # scratch world; its error is transport framing, retained in the
+            # console log but excluded from the command's raw response.
+            fence = "pf" + uuid.uuid4().hex[:14]
+            self.process.stdin.write(command + "\nscoreboard players get #parity_fence " + fence + "\n")
             self.process.stdin.flush()
         except (OSError, ValueError) as exc:
             raise RconError('Could not write scratch console command') from exc
@@ -103,7 +107,7 @@ class ConsoleClient:
         output = []
         while True:
             line = self._receive(deadline)
-            if line.startswith('There are 0 of a max of 2 players online:'):
+            if line == "Unknown scoreboard objective '" + fence + "'":
                 return '\n'.join(output)
             output.append(line)
 

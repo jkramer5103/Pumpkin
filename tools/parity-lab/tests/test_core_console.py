@@ -20,7 +20,9 @@ while True:
     command = input()
     if command == "stop": break
     if command == "silent": continue
-    if command == "list": print("There are 0 of a max of 2 players online: ", flush=True)
+    if command.startswith("scoreboard players get #parity_fence "):
+        print("Unknown scoreboard objective '" + command.split()[-1] + "'", flush=True)
+    elif command == "list": print("There are 0 of a max of 2 players online: ", flush=True)
     else: print("raw first\\nraw second", flush=True)
 ''')
             binary.chmod(0o700)
@@ -28,6 +30,7 @@ while True:
             try:
                 client.connect()
                 self.assertEqual(client.command("silent"), "")
+                self.assertEqual(client.command("list"), "There are 0 of a max of 2 players online: ")
                 self.assertEqual(client.command("multiline"), "raw first\nraw second")
             finally:
                 client.close()
