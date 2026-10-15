@@ -1,9 +1,16 @@
 # Jaron integration notes
 
-The current upstream baseline is being built in the Jaron worktree from
+The current upstream baseline built successfully in 9m39s from
 `5b53f064af8708ba33fcaa533b81ca29a53a3310`, under the shared cargo lock and
-the required resource limits. Candidate deployment takes the engine run lock.
-See `artifacts/jaron-fork-status.json` for the current build/deployment outcome.
+required resource limits. It booted as the candidate, but this upstream revision
+has no RCON implementation or configuration (no references in pumpkin,
+pumpkin-core or pumpkin-config). Port 25586 never opened. After the interrupted
+readiness attempt, the original released binary/configuration was restored
+under the engine lock and RCON/gamerules were verified again. Source-baseline
+command parity is **untested**, not 0/50. Attempt provenance is recorded in
+`runtime/manifest.json.source_baseline_attempts` and
+`artifacts/jaron-upstream-deployment.json`; the incomplete comparison artifact
+has zero completed results. See `artifacts/jaron-fork-status.json` for patch status.
 
 The catalog now contains 50 behaviors. All 50 met positive expectations twice
 on live vanilla (`artifacts/jaron-catalog50-vanilla.json`). The released candidate

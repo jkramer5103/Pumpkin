@@ -249,3 +249,14 @@ Readiness verifies RCON and controlled gamerules; it does not claim block readin
 Existing source-candidate provenance survives normal reprovisioning. The released
 binary and old logs/worlds remain available. See [integration notes](jaron-integration.md)
 and `artifacts/jaron-fork-status.json` for current source validation and limitations.
+
+The clean current-upstream build at `5b53f064` completed in **9m39s** and booted
+successfully. This revision contains **no RCON implementation/configuration**;
+the candidate listened on game port 25576 but never on RCON 25586. Readiness and
+the source-baseline comparison could not complete. The released binary and
+private configuration were restored under the engine lock, and RCON/gamerules
+were verified again. The exact source/hash/build/deployment attempt is retained
+in `runtime/manifest.json.source_baseline_attempts` and
+`artifacts/jaron-upstream-deployment.json`. No source-baseline parity pass or
+50-case source-baseline failure is claimed. The partial artifact
+`artifacts/jaron-upstream-catalog50.json` contains zero completed results.

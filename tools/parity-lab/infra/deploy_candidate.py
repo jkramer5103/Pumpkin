@@ -7,6 +7,7 @@ import json
 import os
 from pathlib import Path
 import shutil
+import signal
 import subprocess
 import tempfile
 
@@ -17,6 +18,9 @@ DROPIN=Path('/etc/systemd/system/pumpkin-parity-pumpkin.service.d/50-source-buil
 
 
 def main():
+    def interrupted(signum,frame):
+        raise InterruptedError('Candidate deployment interrupted')
+    signal.signal(signal.SIGTERM,interrupted)
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--binary',type=Path,required=True)
     parser.add_argument('--build-command',required=True)
@@ -50,7 +54,7 @@ def main():
             systemctl('daemon-reload')
             systemctl('start','pumpkin')
             targets=json.loads((RUNTIME/'targets.json').read_text())['targets']
-            control('pumpkin',targets['pumpkin'])
+            control('pumpkin',targets['pumpkin'],readiness_seconds=20)
             manifest=json.loads((RUNTIME/'manifest.json').read_text())
             manifest['active_candidate']={
                 'kind':'source-build','source_commit':head,'branch':'parity-lab-jaron',

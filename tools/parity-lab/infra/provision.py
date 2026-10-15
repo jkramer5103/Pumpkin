@@ -176,8 +176,8 @@ def ready(target, seconds=180):
             time.sleep(2)
     raise RuntimeError('Server RCON did not become ready; inspect runtime server service.log')
 
-def control(name, target):
-    client = ready(target)
+def control(name, target, readiness_seconds=180):
+    client = ready(target,seconds=readiness_seconds)
     records = []
     try:
         for cmd in ['list', *[f'gamerule {k} {v}' for k,v in RULES.items()],
@@ -219,8 +219,7 @@ def main():
 
 def provision(args):
     previous_manifest=RUNTIME/'manifest.json'
-    active_candidate=(json.loads(previous_manifest.read_text()).get('active_candidate')
-                      if previous_manifest.exists() else None)
+    previous=(json.loads(previous_manifest.read_text()) if previous_manifest.exists() else {})
     (RUNTIME/'downloads').mkdir(exist_ok=True)
     metadata=json.loads(document(MOJANG,'mojang-manifest.json'))
     entry=next(v for v in metadata['versions'] if v['id']=='26.3' and v['type']=='release')
@@ -298,7 +297,7 @@ def provision(args):
     if config['networking']['java']['address']!='127.0.0.1:25576' or config['networking']['rcon']['address']!='127.0.0.1:25586':
         raise RuntimeError('Generated Pumpkin bindings disagree with contract')
     write(RUNTIME/'manifest.json',json.dumps({
-        **({'active_candidate':active_candidate} if active_candidate else {}),
+        **{k:previous[k] for k in ('active_candidate','source_baseline_attempts') if k in previous},
         'schema_version':1,'provisioned_at':datetime.datetime.now(datetime.UTC).isoformat(),
         'minecraft_version':'26.3','pumpkin_version':PUMPKIN,
         'mojang_manifest_url':MOJANG,'mojang_version_url':entry['url'],
