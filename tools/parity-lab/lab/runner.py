@@ -177,7 +177,7 @@ def _target_record():
     return {"observations": [], "commands": [], "problems": [], "errors": [], "completed": False}
 
 
-def _attempt_target(scenario, target, target_name, repeat, transcript, factory, timeout, record):
+def _attempt_target(scenario, target, target_name, repeat, transcript, factory, timeout, record, reset_commands=()):
     client = None
     ticks = None
     connected_once = False
@@ -202,7 +202,7 @@ def _attempt_target(scenario, target, target_name, repeat, transcript, factory, 
         if problem == "environment_error":
             record["errors"].append({"kind": "EnvironmentError", "phase": phase, "command": command, "reason": raw})
         # kill of an already-empty arena is an expected idempotent setup/cleanup.
-        benign_empty_kill = (phase in ("setup", "cleanup") and command.lstrip("/").startswith("kill ")
+        benign_empty_kill = (phase in ("reset", "setup", "cleanup") and command.lstrip("/").startswith("kill ")
                              and re.match(r"No (?:entity|entities) (?:was |were )?found", strip_sender(raw)))
         if problem in ("unsupported", "command_failed") and not benign_empty_kill:
             record["problems"].append({"phase": phase, "index": index, "command": command, "kind": problem})
@@ -218,6 +218,11 @@ def _attempt_target(scenario, target, target_name, repeat, transcript, factory, 
         if any(step.get("wait_ticks", 0) for step in scenario["steps"]):
             ticks = TickController(execute, timeout)
             ticks.freeze()
+        for index, command in enumerate(reset_commands):
+            raw = execute(command, "reset", index)
+            # A failed reset leaves unknown state; never execute the candidate.
+            if command_problem(raw) and record["problems"] + record["errors"]:
+                raise RconError("Arena reset failed; candidate was not executed")
         for index, command in enumerate(scenario["setup"]):
             execute(command, "setup", index)
         for index, step in enumerate(scenario["steps"]):
@@ -370,7 +375,7 @@ def _update_summary(report):
 
 
 def run(scenarios, targets, output, *, repeat=1, timeout=10.0, lock_timeout=30.0,
-        client_factory=RconClient, lock_path=None):
+        client_factory=RconClient, lock_path=None, reset_commands=(), pumpkin_console=None):
     """Return (run_directory, report, exit_code). No connection before validation/lock."""
     validate_targets(targets)
     if type(repeat) is not int or repeat < 1:
@@ -383,6 +388,12 @@ def run(scenarios, targets, output, *, repeat=1, timeout=10.0, lock_timeout=30.0
         validate_scenario(scenario)
     if len({s["id"] for s in scenarios}) != len(scenarios):
         raise ValueError("duplicate scenario ids")
+    if reset_commands:
+        validate_scenario({**scenarios[0], "setup": list(reset_commands)})
+    if pumpkin_console is not None:
+        pumpkin_console = Path(pumpkin_console).resolve()
+        if not pumpkin_console.is_file() or not os.access(pumpkin_console, os.X_OK):
+            raise ValueError("pumpkin_console must name an executable binary")
     scenarios = copy.deepcopy(sorted(scenarios, key=lambda s: s["id"]))
     run_id = dt.datetime.now(dt.timezone.utc).strftime("%Y%m%dT%H%M%S.%fZ-") + uuid.uuid4().hex[:8]
     directory = Path(output).resolve() / run_id
@@ -393,6 +404,8 @@ def run(scenarios, targets, output, *, repeat=1, timeout=10.0, lock_timeout=30.0
               "engine_version": __version__, "python_version": sys.version.split()[0],
               "minecraft_version": targets["minecraft_version"], "state": "running", "complete": False,
               "repeat": repeat, "normalization": NORMALIZATION,
+              "reset_commands": list(reset_commands),
+              "transports": {"vanilla": "rcon", "pumpkin": "scratch-console" if pumpkin_console else "rcon"},
               "targets": {name: {"host": t["host"], "port": t["port"]} for name, t in targets["targets"].items()},
               "results": [{"id": s["id"], "title": s["title"], "category": s["category"],
                            "status": "error", "observations": {name: [] for name in TARGET_NAMES},
@@ -424,8 +437,14 @@ def run(scenarios, targets, output, *, repeat=1, timeout=10.0, lock_timeout=30.0
                     for name in TARGET_NAMES:
                         record = _target_record()
                         attempt["targets"][name] = record
+                        factory = client_factory
+                        if name == "pumpkin" and pumpkin_console:
+                            from .console import ConsoleClient
+                            console_directory = directory / "console" / (scenario["id"] + "-" + str(number))
+                            def factory(host, port, password, timeout):
+                                return ConsoleClient(pumpkin_console, console_directory, timeout=timeout)
                         _attempt_target(scenario, targets["targets"][name], name,
-                            number, transcripts[name], client_factory, timeout, record)
+                            number, transcripts[name], factory, timeout, record, reset_commands)
                     attempt.update(compare_attempt(attempt["targets"]))
                     save()
                 summarize_result(current)
