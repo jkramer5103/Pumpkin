@@ -1,0 +1,6 @@
+{
+  "commands": [
+    "kill @e[tag=pp_shrink_src]",
+    "kill @e[tag=pp_shrink_marker]"
+  ]
+}

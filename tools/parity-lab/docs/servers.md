@@ -146,7 +146,10 @@ as proof that the chunks loaded.
 
 ## Scenarios and live evidence
 
-There are **50 distinct schema-v1 scenarios**, one JSON file each. They cover:
+The initial expanded catalog contained **50 distinct schema-v1 scenarios**, one
+JSON file each. The entity campaign adds 23, for **73** total; see
+[entity and selector coverage](entities-selectors.md) for current validation.
+The original 50 cover:
 
 - Placement, replacement, occupied/empty keep behavior, state replacement,
   log axis, stair orientation, and waterlogged slabs.
@@ -165,7 +168,7 @@ Every observation has a positive `expect_contains` and reads gameplay state with
 an `execute if/unless` predicate. Error messages, matching empty replies, and
 command acceptance cannot pass these checks. The occupied `keep` case deliberately
 attempts a failing mutation in setup and then positively observes the original
-block's preservation. Entity selectors are restricted to tagged markers inside
+block's preservation. Entity selectors are restricted to tagged markers and armor stands inside
 the bounded arena. Random UUID/display-name outputs are not observations.
 
 The independent baseline validator imports **no lab engine code**:

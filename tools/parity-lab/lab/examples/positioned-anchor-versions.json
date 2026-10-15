@@ -1,0 +1,15 @@
+{
+  "vanilla": {
+    "version": "Minecraft Java 26.3",
+    "binary": "runtime/downloads/minecraft-26.3.jar",
+    "transport": "rcon",
+    "sha256": "d052f14d7a173734fba553711e5b570162e2f2a313267ee31a21b975a679be64"
+  },
+  "pumpkin": {
+    "version": "current upstream master 5b53f064",
+    "source_commit": "5b53f064af8708ba33fcaa533b81ca29a53a3310",
+    "binary": "runtime/downloads/pumpkin-source-5b53f064af8708ba33fcaa533b81ca29a53a3310",
+    "transport": "scratch-console",
+    "sha256": "463905ffe45d2dd55d1cf6511bdd7548fd21ef8977125bfe57b7a2ea55350eb7"
+  }
+}

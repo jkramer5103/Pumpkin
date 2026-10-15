@@ -169,3 +169,23 @@ unmodified upstream and the patched binary, with two repeats and the shared engi
 lock. Both vanilla and the patch placed the marker at Y=64.25; upstream placed it
 at Y=66.0275000333786. This targeted console validation is documented on
 [`parity-lab-christine`](https://github.com/jkramer5103/Pumpkin/blob/parity-lab-christine/tools/parity-lab/docs/christine-positioned-anchor.md).
+
+A reusable genuine-mismatch example is included in `lab/examples/`. With the
+campaign's existing vanilla deployment and immutable current-upstream binary,
+run from the lab root:
+
+```sh
+python3 -m lab shrink --targets runtime/targets.json \
+  --scenario lab/examples/positioned-anchor.json \
+  --reset lab/examples/positioned-anchor-reset.json \
+  --versions lab/examples/positioned-anchor-versions.json \
+  --pumpkin-console runtime/downloads/pumpkin-source-5b53f064af8708ba33fcaa533b81ca29a53a3310
+```
+
+The version file pins the campaign's official vanilla JAR and upstream binary
+hashes. Other deployments must supply their actual version records and paths.
+This is the known anchor regression fixed by `f123eb8`; it is not a new defect or
+a synthetic server demonstration. The five steps preserve the source-existence
+observation and the feet-position observation, with conditions evaluated through
+scoreboard values. Only the tagged entities within the bounded arena and the
+`pp_shrink` objective are changed.

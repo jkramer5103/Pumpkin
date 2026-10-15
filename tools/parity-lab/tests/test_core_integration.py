@@ -51,11 +51,11 @@ class FixtureServer(socketserver.ThreadingTCPServer):
                 self.release_probe.wait(3)
             if self.mode == "unsupported":
                 return ["Unknown or incomplete command, see below for error", "probe<--[HERE]"]
-            if not self.created or not self.triggered:
+            if not self.created or (not self.triggered and self.mode != "drift"):
                 return [""]
             raw = "PARITY:ready"
-            if self.name == "pumpkin" and self.mode == "different":
-                raw += " divergent"
+            if self.name == "pumpkin" and self.mode in ("different", "drift"):
+                raw += " divergent" if self.triggered else " another-divergence"
             # Several output frames and sender wrappers exercise the full path.
             return [("[Rcon] " if self.name == "vanilla" else "[Server] ") + raw[:7], raw[7:]]
         return ["OK"]
@@ -234,6 +234,22 @@ class TcpIntegrationTests(unittest.TestCase):
                     if command == "prepare":
                         self.assertEqual(server.commands[index-2:index], ["reset", "list"])
             self.assertNotIn("fixture-only", (directory / "shrink-report.json").read_text())
+
+    def test_reduction_does_not_substitute_a_different_mismatch(self):
+        with tempfile.TemporaryDirectory() as temporary, fixture_pair("drift") as (_, targets):
+            root = Path(temporary)
+            atomic_json(root / "case.json", fixture_scenario())
+            atomic_json(root / "targets.json", targets)
+            directory, report, code = shrink_scenario(root / "case.json", root / "targets.json", root / "shrinks",
+                                                     timeout=2, **shrink_inputs(root))
+            self.assertEqual(code, 0, report)
+            reproducer = json.loads((directory / "reproducer.json").read_text())
+            self.assertEqual([s["command"] for s in reproducer["steps"]], ["create", "trigger", "probe"])
+            # Removing trigger still gives a stable supported mismatch with
+            # passing vanilla assertions, but a different Pumpkin response.
+            alternative = [p for p in report["probes"] if p["failure_identity"] and not p["accepted"]]
+            self.assertTrue(alternative)
+            self.assertTrue(any("another-divergence" in json.dumps(p["failure_identity"]) for p in alternative))
 
     def test_budget_exhaustion_retains_best_verified_candidate_without_minimality(self):
         with tempfile.TemporaryDirectory() as temporary, fixture_pair() as (_, targets):

@@ -1,5 +1,31 @@
 # Jaron integration notes
 
+## Entity campaign follow-up
+
+The catalog now has 73 cases, with 23 new entity/selector behaviors. All new cases
+and the strengthened `tag-intersection` case meet their positive expectations on
+live vanilla 26.3 twice (48/48), including armor-stand effect fields and selective
+clearing. No connected player was used. Detailed scope, raw evidence and the
+current-source NBT-list defect are documented in
+[entities and selectors](entities-selectors.md). Earlier 50-case evidence below
+is historical.
+
+The engine-owned files were read but not edited. New release-candidate failures
+remain in `artifacts/jaron-entities-pumpkin.json`; all 48 expectation sets fail.
+The bounded engine comparison of four cases, twice each, exited 2 with four
+candidate environment errors at
+`artifacts/runs/20261015T213619.177076Z-86127de9/`. This is not four confirmed
+current-source gameplay defects. Current-source validation uses the explicitly
+selected scratch-console transport and scoreboard sentinels, under the shared
+engine lock, because upstream has neither RCON nor terminal entity predicates.
+
+The preexisting `tag-intersection` fixture now targets the actual centered
+position and requires the excluded entity to survive unselected. Its earlier
+final assertion could pass even when the exclusion tag was never applied. The
+original historical report and expansion-draft failures remain preserved.
+
+## Earlier baseline and block campaign
+
 The current upstream baseline built successfully in 9m39s from
 `5b53f064af8708ba33fcaa533b81ca29a53a3310`, under the shared cargo lock and
 required resource limits. It booted as the candidate, but this upstream revision
