@@ -8,6 +8,7 @@ import datetime as dt
 import fcntl
 import json
 import os
+import random
 import re
 import signal
 import sys
@@ -174,7 +175,8 @@ class TickController:
 
 
 def _target_record():
-    return {"observations": [], "commands": [], "problems": [], "errors": [], "completed": False}
+    return {"observations": [], "commands": [], "problems": [], "errors": [], "completed": False,
+            "timing": {"status": "untested", "verified_ticks": 0}}
 
 
 def _attempt_target(scenario, target, target_name, repeat, transcript, factory, timeout, record, reset_commands=()):
@@ -216,6 +218,7 @@ def _attempt_target(scenario, target, target_name, repeat, transcript, factory, 
         connected_once = True
         transcript.write({"scenario_id": scenario["id"], "repeat": repeat, "target": target_name, "event": "connected"})
         if any(step.get("wait_ticks", 0) for step in scenario["steps"]):
+            record["timing"]["status"] = "testing"
             ticks = TickController(execute, timeout)
             ticks.freeze()
         for index, command in enumerate(reset_commands):
@@ -235,8 +238,11 @@ def _attempt_target(scenario, target, target_name, repeat, transcript, factory, 
                     "expectation_met": expected in normalized if expected is not None else None})
             if step.get("wait_ticks", 0):
                 ticks.advance(step["wait_ticks"])
+                record["timing"]["verified_ticks"] += step["wait_ticks"]
+                record["timing"]["status"] = "supported"
         record["completed"] = True
     except UnsupportedTicks as exc:
+        record["timing"].update(status="unsupported", reason=str(exc))
         record["problems"].append({"phase": "timing", "kind": "unsupported", "reason": str(exc)})
     except RconError as exc:
         transport_broken = True
@@ -283,6 +289,8 @@ def _attempt_target(scenario, target, target_name, repeat, transcript, factory, 
                     record["errors"].append({"kind": type(exc).__name__, "reason": "Tick restoration: " + str(exc)})
             finally:
                 client.close()
+        if record["timing"]["status"] != "untested" and record["errors"]:
+            record["timing"]["status"] = "error"
     return record
 
 
@@ -327,6 +335,9 @@ def _fingerprint(attempt):
 
 def summarize_result(result):
     attempts = result["attempts"]
+    # Only complete, compared attempts can establish repeat stability.
+    if not attempts or any("status" not in a for a in attempts):
+        return
     result["flaky"] = len({_fingerprint(a) for a in attempts}) > 1
     if any(a["status"] == "error" for a in attempts):
         result["status"] = "error"
@@ -349,6 +360,29 @@ def summarize_result(result):
         and result["status"] == "different"
         and any(f["kind"] == "observation_mismatch" for f in attempts[0]["failures"]))
     result["repeat_count"] = len(attempts)
+    result["trial_details"] = {
+        "series_complete": len(attempts) == result.get("requested_repeat_count", len(attempts)),
+        "outcome_counts": {status: sum(a["status"] == status for a in attempts)
+                           for status in ("pass", "different", "error")},
+        "distinct_outcomes": len({_fingerprint(a) for a in attempts}),
+        "target_variability": {name: len({json.dumps({
+            "observations": [(o["index"], o["normalized"], o["expectation_met"])
+                             for o in a["targets"][name]["observations"]],
+            "problems": a["targets"][name]["problems"],
+            "errors": a["targets"][name]["errors"]}, sort_keys=True) for a in attempts}) > 1
+            for name in TARGET_NAMES},
+        "classification": ("infrastructure_error" if result["status"] == "error" else
+                           "non_deterministic" if result["flaky"] else
+                           "single_trial" if len(attempts) < 2 else
+                           "confirmed_mismatch" if result["confirmed_mismatch"] else
+                           "stable_unsupported" if unsupported else
+                           "stable_pass" if result["status"] == "pass" else "stable_failure"),
+    }
+    if not result["trial_details"]["series_complete"]:
+        result["status"] = "error"
+        result["confirmed_mismatch"] = False
+        result["reason"] = "Awaiting remaining trials"
+        result["trial_details"]["classification"] = "incomplete"
 
 
 def _update_summary(report):
@@ -378,11 +412,16 @@ def _update_summary(report):
 
 
 def run(scenarios, targets, output, *, repeat=1, timeout=10.0, lock_timeout=30.0,
-        client_factory=RconClient, lock_path=None, reset_commands=(), pumpkin_console=None):
+        client_factory=RconClient, lock_path=None, reset_commands=(), pumpkin_console=None,
+        order="alternating", order_seed=0, probe_ticks=False):
     """Return (run_directory, report, exit_code). No connection before validation/lock."""
     validate_targets(targets)
     if type(repeat) is not int or repeat < 1:
         raise ValueError("repeat must be a positive integer")
+    if order not in ("sorted", "alternating", "shuffle") or type(order_seed) is not int:
+        raise ValueError("order must be sorted, alternating or shuffle; order_seed must be an integer")
+    if type(probe_ticks) is not bool:
+        raise ValueError("probe_ticks must be a boolean")
     if not 0 < timeout <= 300 or not 0 <= lock_timeout <= 300:
         raise ValueError("timeout must be > 0 and <= 300; lock_timeout must be >= 0 and <= 300")
     if not scenarios:
@@ -398,6 +437,15 @@ def run(scenarios, targets, output, *, repeat=1, timeout=10.0, lock_timeout=30.0
         if not pumpkin_console.is_file() or not os.access(pumpkin_console, os.X_OK):
             raise ValueError("pumpkin_console must name an executable binary")
     scenarios = copy.deepcopy(sorted(scenarios, key=lambda s: s["id"]))
+    generator = random.Random(order_seed)
+    schedule = []
+    for number in range(1, repeat + 1):
+        trial = list(range(len(scenarios)))
+        if order == "alternating" and number % 2 == 0:
+            trial.reverse()
+        elif order == "shuffle":
+            generator.shuffle(trial)
+        schedule.extend((number, index, position) for position, index in enumerate(trial))
     run_id = dt.datetime.now(dt.timezone.utc).strftime("%Y%m%dT%H%M%S.%fZ-") + uuid.uuid4().hex[:8]
     directory = Path(output).resolve() / run_id
     directory.mkdir(parents=True, exist_ok=False)
@@ -408,11 +456,18 @@ def run(scenarios, targets, output, *, repeat=1, timeout=10.0, lock_timeout=30.0
               "minecraft_version": targets["minecraft_version"], "state": "running", "complete": False,
               "repeat": repeat, "normalization": NORMALIZATION,
               "reset_commands": list(reset_commands),
+              "isolation": {"policy": "declared_reset" if reset_commands else "scenario_setup_cleanup",
+                            "world_snapshot": False, "order": order, "order_seed": order_seed,
+                            "scope": "Setup/cleanup and optional reset run per target/trial; arbitrary state restoration is not proven"},
+              "trial_schedule": [{"repeat": number, "id": scenarios[index]["id"], "position": position}
+                                 for number, index, position in schedule],
+              "timing_capabilities": {name: {"status": "untested"} for name in TARGET_NAMES},
               "transports": {"vanilla": "rcon", "pumpkin": "scratch-console" if pumpkin_console else "rcon"},
               "targets": {name: {"host": t["host"], "port": t["port"]} for name, t in targets["targets"].items()},
               "results": [{"id": s["id"], "title": s["title"], "category": s["category"],
                            "status": "error", "observations": {name: [] for name in TARGET_NAMES},
                            "reason": "Not run", "duration_seconds": 0.0, "attempts": [],
+                           "requested_repeat_count": repeat,
                            "flaky": False, "confirmed_mismatch": False} for s in scenarios]}
 
     if pumpkin_console:
@@ -432,29 +487,47 @@ def run(scenarios, targets, output, *, repeat=1, timeout=10.0, lock_timeout=30.0
                 atomic_json(directory / "scenarios" / (scenario["id"] + ".json"), scenario)
             for name in TARGET_NAMES:
                 transcripts[name] = Transcript(directory / "transcripts" / (name + ".jsonl"))
-            for scenario, current in zip(scenarios, report["results"]):
+
+            def target_factory(name, scenario_id, number):
+                if name == "pumpkin" and pumpkin_console:
+                    from .console import ConsoleClient
+                    console_directory = directory / "console" / (scenario_id + "-" + str(number))
+                    return lambda host, port, password, timeout: ConsoleClient(
+                        pumpkin_console, console_directory, timeout=timeout)
+                return client_factory
+
+            if probe_ticks:
+                probe = {"id": "timing-capability-probe", "setup": [], "cleanup": [],
+                         "steps": [{"command": "time query gametime", "wait_ticks": 1}]}
+                for name in TARGET_NAMES:
+                    record = _target_record()
+                    report["timing_capabilities"][name] = record
+                    # Save the mutable record before connecting, including interruptions.
+                    record["status"] = "testing"
+                    save()
+                    _attempt_target(probe, targets["targets"][name], name, 0, transcripts[name],
+                        target_factory(name, probe["id"], 0), timeout, record)
+                    record["status"] = "error" if record["errors"] else record["timing"]["status"]
+                    save()
+
+            for number, scenario_index, position in schedule:
+                scenario = scenarios[scenario_index]
+                current = report["results"][scenario_index]
                 start = time.monotonic()
                 current["reason"] = "Running; no verdict yet"
                 save()
-                for number in range(1, repeat + 1):
-                    attempt = {"repeat": number, "targets": {}}
-                    # Append first to preserve partial attempts on interruption.
-                    current["attempts"].append(attempt)
-                    for name in TARGET_NAMES:
-                        record = _target_record()
-                        attempt["targets"][name] = record
-                        factory = client_factory
-                        if name == "pumpkin" and pumpkin_console:
-                            from .console import ConsoleClient
-                            console_directory = directory / "console" / (scenario["id"] + "-" + str(number))
-                            def factory(host, port, password, timeout):
-                                return ConsoleClient(pumpkin_console, console_directory, timeout=timeout)
-                        _attempt_target(scenario, targets["targets"][name], name,
-                            number, transcripts[name], factory, timeout, record, reset_commands)
-                    attempt.update(compare_attempt(attempt["targets"]))
-                    save()
+                attempt = {"repeat": number, "position": position, "targets": {}}
+                # Append first to preserve partial attempts on interruption.
+                current["attempts"].append(attempt)
+                for name in TARGET_NAMES:
+                    record = _target_record()
+                    attempt["targets"][name] = record
+                    _attempt_target(scenario, targets["targets"][name], name,
+                        number, transcripts[name], target_factory(name, scenario["id"], number),
+                        timeout, record, reset_commands)
+                attempt.update(compare_attempt(attempt["targets"]))
                 summarize_result(current)
-                current["duration_seconds"] = round(time.monotonic() - start, 6)
+                current["duration_seconds"] = round(current["duration_seconds"] + time.monotonic() - start, 6)
                 save()
             report["complete"] = True
             report["state"] = "finished"
@@ -467,7 +540,7 @@ def run(scenarios, targets, output, *, repeat=1, timeout=10.0, lock_timeout=30.0
             current["status"] = "error"
             current["confirmed_mismatch"] = False
             current["reason"] = "Interrupted" if isinstance(exc, KeyboardInterrupt) else "Engine/infrastructure failure"
-            current["duration_seconds"] = round(time.monotonic() - start, 6)
+            current["duration_seconds"] = round(current["duration_seconds"] + time.monotonic() - start, 6)
             if current["attempts"]:
                 current["observations"] = {name: [o["raw"] for o in current["attempts"][0]["targets"].get(name, {}).get("observations", [])]
                                            for name in TARGET_NAMES}
@@ -475,7 +548,13 @@ def run(scenarios, targets, output, *, repeat=1, timeout=10.0, lock_timeout=30.0
     finally:
         for transcript in transcripts.values():
             transcript.close()
+        for capability in report["timing_capabilities"].values():
+            if capability["status"] == "testing":
+                capability["status"] = "error"
+                capability["reason"] = "Timing capability probe did not complete"
         report["finished_at"] = utc_now()
         save()
-    code = 2 if not report["complete"] or report["summary"]["error"] else (1 if report["summary"]["different"] else 0)
+    capabilities = [c["status"] for c in report["timing_capabilities"].values()]
+    code = (2 if not report["complete"] or report["summary"]["error"] or "error" in capabilities
+            else 1 if report["summary"]["different"] or "unsupported" in capabilities else 0)
     return directory, report, code

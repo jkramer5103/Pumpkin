@@ -52,6 +52,18 @@ both guards. Decompiled Java is private runtime material and is not published.
 Two focused regression tests fail before the fix. Full validation and push
 records are recorded in `artifacts/jaron-fork-status.json`.
 
+The patched source commit is `31a781da7ec52a274bc8104a6875508f832e7055`.
+All 435 `pumpkin-core` unit tests pass, as do workspace formatting,
+core clippy with all targets/features, and the full binary build. The completed
+three-target live comparison at
+`artifacts/jaron-entity-console-20261015T214446.446756Z/report.json` passes all
+eight controls twice on vanilla and patched code. Clean upstream fails the
+empty-list, oversized-list and inverted-empty-list checks on both repetitions.
+Controls also confirm empty actual lists and repeated subset values when length
+permits. Both scratch servers stop cleanly without ERROR or panic log lines.
+The original interrupted verification log is retained separately from the
+successful detached build retry.
+
 The open-upstream review found selector-permission PR #4069 and SNBT-depth PR
 #4003, but no identical open NBT-list selector fix. Neither was integrated. Other
 selector leads, including rotation-axis mapping and empty-tag handling, remain

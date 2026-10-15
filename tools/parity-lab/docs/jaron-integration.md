@@ -24,6 +24,14 @@ position and requires the excluded entity to survive unselected. Its earlier
 final assertion could pass even when the exclusion tag was never applied. The
 original historical report and expansion-draft failures remain preserved.
 
+The NBT-list fix (`31a781da7ec52a274bc8104a6875508f832e7055`) passes all 435 core
+unit tests, formatting, core clippy with all targets/features, and a full binary
+build. Final locked console evidence is at
+`artifacts/jaron-entity-console-20261015T214446.446756Z/report.json`: eight checks
+twice each pass on vanilla and patched code; clean upstream fails the three
+expected list-pattern checks twice. This validates the focused selector fix,
+including positive subset controls, without claiming full source-catalog parity.
+
 ## Earlier baseline and block campaign
 
 The current upstream baseline built successfully in 9m39s from

@@ -1,5 +1,6 @@
 import io
 import json
+import random
 import subprocess
 import sys
 import tempfile
@@ -264,6 +265,72 @@ class RunnerTests(unittest.TestCase):
         self.assertEqual(code, 1)
         self.assertTrue(report["results"][0]["flaky"])
 
+    def test_order_pollution_is_visible_and_reset_is_applied_per_target_trial(self):
+        probe = scenario()
+        probe.update(id="a-probe", setup=[], cleanup=[], steps=[{
+            "command": "read-state", "observe": True, "expect_contains": "PARITY:"}])
+        polluter = scenario()
+        polluter.update(id="z-polluter", setup=[], cleanup=[], steps=[{
+            "command": "dirty-state", "observe": True, "expect_contains": "PARITY:"}])
+
+        def compare(reset):
+            state = {25585: "clean", 25586: "clean"}
+            calls = []
+            def factory(host, port, password, timeout):
+                class Client:
+                    def connect(self): pass
+                    def close(self): pass
+                    def command(self, command):
+                        calls.append((port, command))
+                        if command == "reset-state": state[port] = "clean"
+                        if command == "dirty-state": state[port] = "dirty"
+                        return "PARITY:" + state[port]
+                return Client()
+            directory, report, code = run([polluter, probe], targets(), self.output, repeat=2,
+                reset_commands=reset, client_factory=factory, lock_path=self.lock)
+            return report, code, calls
+
+        report, code, _ = compare([])
+        self.assertEqual(code, 1)
+        result = report["results"][0]
+        self.assertTrue(result["flaky"])
+        self.assertFalse(result["confirmed_mismatch"])
+        self.assertEqual(result["trial_details"]["classification"], "non_deterministic")
+        self.assertEqual(result["trial_details"]["target_variability"], {"vanilla": True, "pumpkin": True})
+        self.assertEqual([s["id"] for s in report["trial_schedule"]],
+                         ["a-probe", "z-polluter", "z-polluter", "a-probe"])
+        report, code, calls = compare(["reset-state"])
+        self.assertEqual(code, 0)
+        self.assertEqual(calls.count((25585, "reset-state")), 4)
+        self.assertEqual(calls.count((25586, "reset-state")), 4)
+        self.assertEqual(report["isolation"]["policy"], "declared_reset")
+        self.assertTrue(all(not r["flaky"] for r in report["results"]))
+
+    def test_seeded_schedule_is_reproducible_without_global_random_state_changes(self):
+        cases = [{**scenario(), "id": name} for name in ("a", "b", "c", "d")]
+        before = random.getstate()
+        def schedule(seed):
+            _, report, code = run(cases, targets(), self.output, repeat=3, order="shuffle",
+                order_seed=seed, client_factory=Fixtures().factory, lock_path=self.lock)
+            self.assertEqual(code, 0)
+            for result in report["results"]:
+                self.assertEqual([a["repeat"] for a in result["attempts"]], [1, 2, 3])
+            return report["trial_schedule"]
+        first = schedule(17)
+        self.assertEqual(first, schedule(17))
+        self.assertNotEqual(first, schedule(18))
+        self.assertEqual(before, random.getstate())
+
+    def test_interrupted_trial_series_does_not_leave_an_earlier_scenario_passing(self):
+        first = {**scenario(), "id": "a-first"}
+        second = {**scenario(), "id": "z-second", "setup": ["interrupt"]}
+        fixture = Fixtures({("vanilla", "interrupt"): KeyboardInterrupt()})
+        _, report, code = self.execute(fixture, cases=[first, second], repeat=2)
+        self.assertEqual(code, 2)
+        self.assertEqual(report["summary"]["passed"], 0)
+        self.assertEqual(report["results"][0]["reason"], "Awaiting remaining trials")
+        self.assertFalse(report["results"][0]["confirmed_mismatch"])
+
     def test_auth_or_disconnect_is_infra_and_other_target_runs(self):
         for error in (AuthenticationError("auth rejected"), RconError("disconnected")):
             fixtures = Fixtures(errors={("vanilla", "connect"): error})
@@ -336,6 +403,46 @@ class RunnerTests(unittest.TestCase):
         _, report, code = self.execute(fixtures)
         self.assertEqual(code, 1)
         self.assertIn("unsupported", report["results"][0]["reason"])
+
+    def test_explicit_tick_probe_records_rejection_without_hiding_passing_scenarios(self):
+        fixture = Fixtures({(name, "tick query"): "Unknown command" for name in ("vanilla", "pumpkin")})
+        directory, report, code = run([self.case], targets(), self.output, probe_ticks=True,
+            client_factory=fixture.factory, lock_path=self.lock)
+        self.assertEqual(code, 1)
+        self.assertEqual(report["summary"]["passed"], 1)
+        for name, capability in report["timing_capabilities"].items():
+            self.assertEqual(capability["status"], "unsupported")
+            self.assertEqual(capability["timing"]["verified_ticks"], 0)
+            self.assertEqual(capability["commands"][0]["raw"], "Unknown command")
+            self.assertIn("timing-capability-probe", (directory / "transcripts" / (name + ".jsonl")).read_text())
+
+    def test_tick_probe_verifies_advance_and_preserves_initial_frozen_state(self):
+        calls = []
+        def factory(host, port, password, timeout):
+            state = {"time": 42}
+            class Client:
+                def connect(self): pass
+                def close(self): pass
+                def command(self, command):
+                    calls.append((port, command))
+                    if command == "tick query":
+                        return "The game is frozen" if port == 25585 else "The game is running normally"
+                    if command == "tick freeze": return "The game is frozen"
+                    if command == "tick unfreeze": return "The game is running normally"
+                    if command == "tick step 1":
+                        state["time"] += 1
+                        return "Stepping 1 ticks"
+                    if command == "time query gametime": return f"The time is {state['time']}"
+                    return "PARITY:stone-present"
+            return Client()
+        _, report, code = run([self.case], targets(), self.output, probe_ticks=True,
+            client_factory=factory, lock_path=self.lock)
+        self.assertEqual(code, 0)
+        for capability in report["timing_capabilities"].values():
+            self.assertEqual(capability["status"], "supported")
+            self.assertEqual(capability["timing"]["verified_ticks"], 1)
+        self.assertNotIn((25585, "tick unfreeze"), calls)
+        self.assertIn((25586, "tick unfreeze"), calls)
 
     def test_tick_steps_verified_with_game_time_and_restored(self):
         self.case["steps"][0]["wait_ticks"] = 2

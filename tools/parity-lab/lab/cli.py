@@ -5,7 +5,7 @@ import json
 import sys
 
 from .runner import run
-from .schema import SchemaError, load_scenarios, load_targets
+from .schema import SchemaError, load_scenarios, load_targets, read_json
 from .shrink import ShrinkError, replay_reproducer, shrink_scenario
 
 
@@ -38,6 +38,12 @@ def parser():
                          help="repetitions per scenario; >=2 needed for confirmed mismatch claims")
     execute.add_argument("--timeout", type=_timeout, default=10.0, help="seconds per RCON operation")
     execute.add_argument("--lock-timeout", type=_timeout, default=30.0)
+    execute.add_argument("--order", choices=("alternating", "sorted", "shuffle"), default="alternating",
+                         help="scenario order in each suite-wide trial (default alternates forward/reverse)")
+    execute.add_argument("--order-seed", type=int, default=0, help="local shuffle seed; recorded with full schedule")
+    execute.add_argument("--reset", help='JSON {"commands": [...]} reset before each target/trial')
+    execute.add_argument("--probe-ticks", action="store_true", help="verify freeze/step with a game-time barrier on both targets")
+    execute.add_argument("--pumpkin-console", help="explicit current-source scratch console binary; not RCON")
     shrink = commands.add_parser("shrink", help="delta debug steps with real two-server verification and retained evidence")
     shrink.add_argument("--targets", required=True)
     shrink.add_argument("--scenario", required=True)
@@ -78,8 +84,13 @@ def main(argv=None):
         else:
             targets = load_targets(args.targets)
             scenarios = load_scenarios(args.scenarios, args.scenario_id)
+            reset = read_json(args.reset) if args.reset else {"commands": []}
+            if set(reset) != {"commands"} or not isinstance(reset["commands"], list):
+                raise SchemaError('reset must contain only a commands array')
             directory, report, code = run(scenarios, targets, args.output, repeat=args.repeat,
-                                         timeout=args.timeout, lock_timeout=args.lock_timeout)
+                timeout=args.timeout, lock_timeout=args.lock_timeout, reset_commands=reset["commands"],
+                order=args.order, order_seed=args.order_seed, probe_ticks=args.probe_ticks,
+                pumpkin_console=args.pumpkin_console)
         print(directory)
         if code == 2:
             print("Infrastructure/validation failure or incomplete run; inspect the report and transcripts.", file=sys.stderr)
