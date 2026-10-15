@@ -1,0 +1,44 @@
+{
+  "schema_version": 1,
+  "id": "entity-cleanup-distance",
+  "title": "Spatial kill preserves entities outside its radius",
+  "category": "entities",
+  "description": "After both fixtures are proven present, a bounded distance kill removes the near fixture and preserves the far fixture.",
+  "tags": [
+    "command",
+    "deterministic",
+    "state-observation"
+  ],
+  "setup": [
+    "tick freeze",
+    "fill 0 60 0 8 75 8 minecraft:air",
+    "execute if entity @e[type=minecraft:marker,tag=pp,x=-32,y=48,z=-32,dx=64,dy=48,dz=64] run kill @e[type=minecraft:marker,tag=pp,x=-32,y=48,z=-32,dx=64,dy=48,dz=64]"
+  ],
+  "steps": [
+    {
+      "command": "summon minecraft:marker 2 64 2 {Tags:[\"pp\",\"near\"]}"
+    },
+    {
+      "command": "summon minecraft:marker 8 64 2 {Tags:[\"pp\",\"far\"]}"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:marker,tag=pp,x=-32,y=48,z=-32,dx=64,dy=48,dz=64,tag=near] if entity @e[type=minecraft:marker,tag=pp,x=-32,y=48,z=-32,dx=64,dy=48,dz=64,tag=far]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:marker,tag=pp,x=0.5,y=64,z=2.5,distance=..3]"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:marker,tag=pp,x=-32,y=48,z=-32,dx=64,dy=48,dz=64,tag=far] unless entity @e[type=minecraft:marker,tag=pp,x=-32,y=48,z=-32,dx=64,dy=48,dz=64,tag=near]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    }
+  ],
+  "cleanup": [
+    "execute if entity @e[type=minecraft:marker,tag=pp,x=-32,y=48,z=-32,dx=64,dy=48,dz=64] run kill @e[type=minecraft:marker,tag=pp,x=-32,y=48,z=-32,dx=64,dy=48,dz=64]",
+    "fill 0 60 0 8 75 8 minecraft:air",
+    "tick unfreeze"
+  ],
+  "notes": "Provisioning requests arena force-loading; Pumpkin readiness limitations remain visible. Simulation is frozen for immediate command-state assertions and unfrozen in cleanup; no client or elapsed-tick claim. Positive execute predicates return Test passed on vanilla 26.3; errors and empty output fail expectations. Requires marker entities and selectors; missing support remains a visible mismatch. No UUID or entity display-name output is compared."
+}

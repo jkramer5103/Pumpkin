@@ -53,12 +53,22 @@ class ScenarioCatalogTests(unittest.TestCase):
                     for x,y,z in positions:
                         self.assertTrue(-32<=x<=32 and 48<=y<=96 and -32<=z<=32,command)
                 for selector in re.findall(r'@e\[([^\]]*)\]',command):
-                    self.assertIn('type=minecraft:marker',selector)
+                    self.assertRegex(selector,r'^type=minecraft:(marker|armor_stand),')
                     self.assertIn('tag=pp',selector)
                     self.assertIn('x=',selector)
                     self.assertIn('y=',selector)
                     self.assertIn('z=',selector)
-                    self.assertTrue('dx=' in selector or 'distance=..0.1' in selector,command)
+                    coordinates={k:float(v) for k,v in re.findall(r'(x|y|z|dx|dy|dz)=(-?\d+(?:\.\d+)?)',selector)}
+                    if 'dx' in coordinates:
+                        for axis,low,high in [('x',-32,32),('y',48,96),('z',-32,32)]:
+                            start=coordinates[axis]; delta=coordinates.get('d'+axis,0)
+                            self.assertTrue(low<=start+min(delta,0)<=start+max(delta,0)<=high,command)
+                    else:
+                        radius=re.search(r'distance=(?:\d+(?:\.\d+)?)?\.\.(\d+(?:\.\d+)?)',selector)
+                        self.assertIsNotNone(radius,command)
+                        radius=float(radius[1])
+                        for axis,low,high in [('x',-32,32),('y',48,96),('z',-32,32)]:
+                            self.assertTrue(low<=coordinates[axis]-radius<=coordinates[axis]+radius<=high,command)
                 self.assertNotRegex(command,r'^(stop|op|ban|whitelist|worldborder|reload)\b')
 
     def test_critical_semantics_are_observed(self):
@@ -85,6 +95,26 @@ class ScenarioCatalogTests(unittest.TestCase):
         self.assertIn('unless data block 2 64 2 Items[0]',observations[1][1]['command'])
         middle=scenario['steps'][observations[0][0]+1:observations[1][0]]
         self.assertIn({'command':'setblock 2 64 2 minecraft:stone'},middle)
+
+    def test_entity_fixture_coordinates_and_cleanup(self):
+        for scenario in self.scenarios:
+            commands=scenario['setup']+[s['command'] for s in scenario['steps']]+scenario['cleanup']
+            summoned=[]
+            for command in commands:
+                match=re.match(r'summon minecraft:(marker|armor_stand) (-?\d+(?:\.\d+)?) (-?\d+(?:\.\d+)?) (-?\d+(?:\.\d+)?) ',command)
+                if match:
+                    kind=match[1];x,y,z=map(float,match.groups()[1:])
+                    self.assertTrue(-32<=x<=32 and 48<=y<=96 and -32<=z<=32,command)
+                    self.assertIn('Tags:["pp"',command)
+                    summoned.append(kind)
+            for kind in summoned:
+                self.assertTrue(any(f'run kill @e[type=minecraft:{kind},tag=pp,' in c for c in scenario['cleanup']),scenario['id'])
+
+    def test_tag_intersection_observes_both_branches(self):
+        scenario=next(s for s in self.scenarios if s['id']=='tag-intersection')
+        self.assertTrue(any('x=4.5,y=64,z=2.5,distance=..0.1' in s['command'] for s in scenario['steps']))
+        probes=' '.join(s['command'] for s in scenario['steps'] if s.get('observe'))
+        self.assertIn('tag=excluded,tag=!selected',probes)
 
 if __name__=='__main__':
     unittest.main()

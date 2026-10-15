@@ -1,0 +1,49 @@
+{
+  "schema_version": 1,
+  "id": "entity-nbt-set-index",
+  "title": "NBT list set index",
+  "category": "entity-nbt",
+  "description": "An indexed list mutation is observed by reading the resulting numeric element, preserving index semantics.",
+  "tags": [
+    "command",
+    "deterministic",
+    "state-observation"
+  ],
+  "setup": [
+    "tick freeze",
+    "fill 0 60 0 8 75 8 minecraft:air",
+    "execute if entity @e[type=minecraft:marker,tag=pp,x=-32,y=48,z=-32,dx=64,dy=48,dz=64] run kill @e[type=minecraft:marker,tag=pp,x=-32,y=48,z=-32,dx=64,dy=48,dz=64]",
+    "scoreboard objectives add pp dummy"
+  ],
+  "steps": [
+    {
+      "command": "summon minecraft:marker 2 64 2 {Tags:[\"pp\",\"fixture\"],data:{values:[2,4,8]}}"
+    },
+    {
+      "command": "execute store result score value pp run data get entity @e[type=minecraft:marker,tag=pp,x=-32,y=48,z=-32,dx=64,dy=48,dz=64,limit=1] data.values[1]"
+    },
+    {
+      "command": "execute if score value pp matches 4",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data modify entity @e[type=minecraft:marker,tag=pp,x=-32,y=48,z=-32,dx=64,dy=48,dz=64,limit=1] data.values[1] set value 6"
+    },
+    {
+      "command": "execute store result score value pp run data get entity @e[type=minecraft:marker,tag=pp,x=-32,y=48,z=-32,dx=64,dy=48,dz=64,limit=1] data.values[1]"
+    },
+    {
+      "command": "execute if score value pp matches 6",
+      "observe": true,
+      "expect_contains": "Test passed"
+    }
+  ],
+  "cleanup": [
+    "execute if entity @e[type=minecraft:marker,tag=pp,x=-32,y=48,z=-32,dx=64,dy=48,dz=64] run kill @e[type=minecraft:marker,tag=pp,x=-32,y=48,z=-32,dx=64,dy=48,dz=64]",
+    "scoreboard objectives remove pp",
+    "fill 0 60 0 8 75 8 minecraft:air",
+    "tick unfreeze"
+  ],
+  "notes": "Provisioning requests arena force-loading; Pumpkin readiness limitations remain visible. Simulation is frozen for immediate command-state assertions and unfrozen in cleanup; no client or elapsed-tick claim. Positive execute predicates return Test passed on vanilla 26.3; errors and empty output fail expectations. Requires marker entities and selectors; missing support remains a visible mismatch. No UUID or entity display-name output is compared."
+}

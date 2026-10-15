@@ -186,9 +186,9 @@ entity('tag-remove-selector','Tag removal changes selection','Removing chosen pr
        [summon(tag='chosen'),f'tag {ONE} remove chosen'],[f'execute if entity {ONE[:-1]},tag=!chosen] unless entity {SEL[:-1]},tag=chosen]'])
 entity('tag-intersection','Multiple tags intersect selectors','Intersecting chosen and !excluded isolates one entity before adding selected.',
        [summon(tag='chosen'),summon(4,tag='chosen',data='data:{excluded:1b}'),
-        f'tag @e[type=minecraft:marker,tag=pp,x=4,y=64,z=2,distance=..0.1,limit=1] add excluded',
+        f'tag @e[type=minecraft:marker,tag=pp,x=4.5,y=64,z=2.5,distance=..0.1,limit=1] add excluded',
         f'tag {SEL[:-1]},tag=chosen,tag=!excluded] add selected'],
-       [f'execute if entity {SEL[:-1]},tag=selected,tag=!excluded] unless entity {SEL[:-1]},tag=selected,tag=excluded]'])
+       [f'execute if entity {SEL[:-1]},tag=selected,tag=!excluded] if entity {SEL[:-1]},tag=excluded,tag=!selected] unless entity {SEL[:-1]},tag=selected,tag=excluded]'])
 entity('entity-nbt-summon','Summon preserves nested entity NBT','Marker custom data supplied in summon must be readable by an NBT predicate.',
        [summon(data='data:{value:7,nested:{flag:1b}}')],
        [f'execute if entity {ONE[:-1]},nbt={{data:{{value:7,nested:{{flag:1b}}}}}}]'],category='entity-nbt')
@@ -207,6 +207,155 @@ entity('kill-tag-isolation','Kill affects only the selected tag','Killing the ch
 entity('selector-score-count','Execute as counts selected entities','Execute as runs once per marker and increments a fake-player score twice.',
        [summon(),summon(4),'scoreboard players set count pp 0',f'execute as {SEL} run scoreboard players add count pp 1'],
        ['execute if score count pp matches 2'],setup=['scoreboard objectives add pp dummy'],cleanup=['scoreboard objectives remove pp'],category='scoreboard')
+
+# Entity expansion: use tagged fixtures and positive controls, including before
+# destructive operations. Each case isolates a different selector/mutation rule.
+def select(options='', *, origin=None, kind='minecraft:marker'):
+    bounds=origin or 'x=-32,y=48,z=-32,dx=64,dy=48,dz=64'
+    return f'@e[type={kind},tag=pp,{bounds}'+(','+options if options else '')+']'
+
+def marked(x=2, *, tag='fixture', data='', y=64, z=2):
+    return f'summon minecraft:marker {x} {y} {z} {{Tags:["pp","{tag}"]'+(','+data if data else '')+'}'
+
+def positive(command):
+    return {'command':command,'observe':True,'expect_contains':'Test passed'}
+
+entity('entity-summon-position-precedence','Summon coordinates override Pos NBT',
+       'Explicit summon coordinates determine position even when the NBT supplies a conflicting Pos.',
+       [marked(data='Pos:[9.0d,70.0d,9.0d]')],
+       [f'execute if entity {select(origin="x=2.5,y=64,z=2.5,distance=..0.1")} unless entity {select(origin="x=9,y=70,z=9,distance=..0.1")}'])
+
+entity('selector-distance-inclusive','Distance bounds include both endpoints',
+       'Markers at distances two and four match 2..4; an exterior marker remains excluded.',
+       [marked(2,tag='lower'),marked(4,tag='upper'),marked(5,tag='outside'),
+        f'tag {select(origin="x=0.5,y=64,z=2.5,distance=2..4")} add selected'],
+       [f'execute if entity {select("tag=lower,tag=selected")} if entity {select("tag=upper,tag=selected")} if entity {select("tag=outside,tag=!selected")}'])
+
+entity('selector-negative-box','Negative box deltas normalize the selection',
+       'A box extending back four blocks includes both interior markers while excluding either neighbor.',
+       [marked(4,tag='low'),marked(8,tag='high'),marked(3,tag='before'),marked(9,tag='after'),
+        f'tag {select(origin="x=8,y=63.5,z=2,dx=-4,dy=0,dz=0")} add selected'],
+       [f'execute if entity {select("tag=low,tag=selected")} if entity {select("tag=high,tag=selected")} if entity {select("tag=before,tag=!selected")} if entity {select("tag=after,tag=!selected")}'])
+
+for ordering,chosen,other in [('nearest','near','far'),('furthest','far','near')]:
+    entity('selector-'+ordering+'-limit','Select the '+ordering+' entity before limiting',
+           'A deterministic distance ordering selects exactly the intended fixture before applying limit one.',
+           [marked(2,tag='near'),marked(6,tag='far'),
+            f'tag {select("sort="+ordering+",limit=1",origin="x=0.5,y=63.5,z=2,dx=8,dy=0,dz=0")} add selected'],
+           [f'execute if entity {select("tag="+chosen+",tag=selected")} if entity {select("tag="+other+",tag=!selected")}'])
+
+entity('selector-limit-count','Limit caps execution multiplicity',
+       'Three fixtures produce exactly two execution branches when limit two is applied.',
+       [marked(2,tag='near'),marked(4,tag='middle'),marked(6,tag='far'),
+        'scoreboard players set count pp 0',
+        f'execute as {select("sort=nearest,limit=2",origin="x=0.5,y=63.5,z=2,dx=8,dy=0,dz=0")} run scoreboard players add count pp 1'],
+       ['execute if score count pp matches 2'],setup=['scoreboard objectives add pp dummy'],cleanup=['scoreboard objectives remove pp'])
+
+entity('selector-quoted-name','Quoted custom names filter entities',
+       'A name containing a space selects its fixture and excludes a differently named control.',
+       [marked(2,tag='named',data='CustomName:{text:"Parity Marker"}'),marked(4,tag='other',data='CustomName:{text:"Other"}'),
+        f'tag {select("name=\"Parity Marker\"")} add selected'],
+       [f'execute if entity {select("tag=named,tag=selected")} if entity {select("tag=other,tag=!selected")}'])
+
+entity('selector-empty-tag','Empty tag predicates distinguish tagged entities',
+       'All fixtures carry pp: tag=! must accept them while tag= must reject them.',
+       [marked()],
+       [f'execute if entity {select("tag=!")} unless entity {select("tag=")}'])
+
+entity('selector-nbt-empty-list','Empty NBT lists are not wildcards',
+       'A populated Tags list satisfies a nonempty subset but must not satisfy the empty-list pattern.',
+       [marked()],
+       [f'execute if entity {select("nbt={Tags:[\"pp\"]}")} unless entity {select("nbt={Tags:[]}")}'],category='entity-nbt')
+
+entity('selector-nbt-list-cardinality','NBT list patterns cannot exceed actual list length',
+       'A two-tag fixture rejects a three-element pattern even with repeated values, while a repeated two-element subset still matches.',
+       [marked()],
+       [f'execute if entity {select("nbt={Tags:[\"fixture\",\"fixture\"]}")} unless entity {select("nbt={Tags:[\"fixture\",\"fixture\",\"fixture\"]}")}'],category='entity-nbt')
+
+entity('selector-nbt-list-compounds','NBT list matching keeps compound fields together',
+       'Unordered compound subsets match extra fields, but fields from different list entries cannot be combined.',
+       [marked(data='data:{rows:[{key:"a",value:1,extra:9},{key:"b",value:3}]}')],
+       [f'execute if entity {select("nbt={data:{rows:[{key:\"b\"},{key:\"a\",value:1}]}}") } unless entity {select("nbt={data:{rows:[{key:\"b\",value:1}]}}") }'],category='entity-nbt')
+
+entity('selector-nbt-numeric-type','NBT matching preserves numeric tag types',
+       'A byte value and an integer with equal magnitude remain distinct NBT selector matches.',
+       [marked(2,tag='byte',data='data:{value:1b}'),marked(4,tag='integer',data='data:{value:1}'),
+        f'tag {select("nbt={data:{value:1b}}")} add selected'],
+       [f'execute if entity {select("tag=byte,tag=selected")} if entity {select("tag=integer,tag=!selected")}'],category='entity-nbt')
+
+entity('selector-nbt-inverted','Inverted NBT predicates exclude matching data',
+       'NBT inversion selects the nonmatching fixture and retains the matching fixture without mutation.',
+       [marked(2,tag='match',data='data:{value:7}'),marked(4,tag='other',data='data:{value:9}'),
+        f'tag {select("nbt=!{data:{value:7}}")} add selected'],
+       [f'execute if entity {select("tag=match,tag=!selected")} if entity {select("tag=other,tag=selected")}'],category='entity-nbt')
+
+entity('selector-rotation-axes','Yaw and pitch filters use their respective axes',
+       'A marker with yaw ninety and pitch twenty passes independent yaw/pitch ranges and fails swapped ranges.',
+       [marked(data='Rotation:[90.0f,20.0f]')],
+       [f'execute if entity {select("y_rotation=80..100,x_rotation=10..30")} unless entity {select("x_rotation=80..100")} unless entity {select("y_rotation=10..30")}'])
+
+entity('selector-rotation-wrap','Yaw ranges can cross the signed angle boundary',
+       'A wraparound yaw range includes negative 175 degrees and excludes zero.',
+       [marked(2,tag='inside',data='Rotation:[-175.0f,0.0f]'),marked(4,tag='outside',data='Rotation:[0.0f,0.0f]'),
+        f'tag {select("y_rotation=170..-170")} add selected'],
+       [f'execute if entity {select("tag=inside,tag=selected")} if entity {select("tag=outside,tag=!selected")}'])
+
+entity('entity-nbt-remove','Remove deletes only the selected NBT child',
+       'Removing one nested marker field preserves its sibling and the parent compound.',
+       [marked(data='data:{nested:{remove:3,keep:9}}'),
+        positive(f'execute if entity {select("nbt={data:{nested:{remove:3,keep:9}}}")}'),
+        f'data remove entity {select("limit=1")} data.nested.remove'],
+       [f'execute if entity {select("nbt={data:{nested:{keep:9}}}")} unless data entity {select("limit=1")} data.nested.remove'],category='entity-nbt')
+
+for operation,mutation,expected in [('set-index','data.values[1] set value 6',6),('remove-index','data.values[1]',8)]:
+    verb='modify' if operation=='set-index' else 'remove'
+    entity('entity-nbt-'+operation,'NBT list '+operation.replace('-',' '),
+           'An indexed list mutation is observed by reading the resulting numeric element, preserving index semantics.',
+           [marked(data='data:{values:[2,4,8]}'),
+            f'execute store result score value pp run data get entity {select("limit=1")} data.values[1]',
+            positive('execute if score value pp matches 4'),
+            f'data {verb} entity {select("limit=1")} {mutation}',
+            f'execute store result score value pp run data get entity {select("limit=1")} data.values[1]'],
+           [f'execute if score value pp matches {expected}'],setup=['scoreboard objectives add pp dummy'],cleanup=['scoreboard objectives remove pp'],category='entity-nbt')
+
+entity('entity-teleport-relative','Relative teleport uses the executing entity position',
+       'Execution at a marker offsets its own position by one on each axis without integer recentering.',
+       [marked(),f'execute as {select("limit=1")} at @s run teleport @s ~1 ~1 ~-1'],
+       [f'execute if entity {select(origin="x=3.5,y=65,z=1.5,distance=..0.01")} unless entity {select(origin="x=2.5,y=64,z=2.5,distance=..0.01")}'])
+
+entity('entity-teleport-fractional','Decimal teleport coordinates remain exact',
+       'A decimal destination with negative x retains fractions rather than centering on block coordinates.',
+       [marked(),f'teleport {select("limit=1")} -1.25 65.5 6.75'],
+       [f'execute if entity {select(origin="x=-1.25,y=65.5,z=6.75,distance=..0.01")} unless entity {select(origin="x=-0.75,y=65.5,z=7.25,distance=..0.01")}'])
+
+entity('entity-cleanup-distance','Spatial kill preserves entities outside its radius',
+       'After both fixtures are proven present, a bounded distance kill removes the near fixture and preserves the far fixture.',
+       [marked(2,tag='near'),marked(8,tag='far'),
+        positive(f'execute if entity {select("tag=near")} if entity {select("tag=far")}'),
+        f'kill {select(origin="x=0.5,y=64,z=2.5,distance=..3")}'],
+       [f'execute if entity {select("tag=far")} unless entity {select("tag=near")}'])
+
+STAND=select('limit=1',kind='minecraft:armor_stand')
+STANDS=select(kind='minecraft:armor_stand')
+STAND_SUMMON='summon minecraft:armor_stand 2 64 2 {Tags:["pp"],NoGravity:1b,Invulnerable:1b}'
+
+def effect_case(id,title,description,commands,probes):
+    case(id,title,'entity-effects',description,[STAND_SUMMON,*commands],probes,
+         setup=[f'execute if entity {STANDS} run kill {STANDS}'],
+         cleanup=[f'execute if entity {STANDS} run kill {STANDS}'],
+         notes='Observes active_effects NBT on a summoned armor stand with frozen simulation, without a connected player. No inventory, combat or elapsed-tick claim.')
+
+effect_case('entity-effect-fields','Effect application stores entity-observable fields',
+            'A speed effect stores duration in ticks, zero-based amplifier, and hidden particles/icon on an armor stand.',
+            [f'effect give {STAND} minecraft:speed 60 2 true'],
+            [f'execute if entity {select("nbt={active_effects:[{id:\"minecraft:speed\",duration:1200,amplifier:2b,show_particles:0b,show_icon:0b}]}",kind="minecraft:armor_stand")}'])
+
+effect_case('entity-effect-clear-selective','Clearing one effect preserves another',
+            'After both speed and glowing are observed, clearing speed leaves glowing on the same armor stand.',
+            [f'effect give {STAND} minecraft:speed 60 0 true',f'effect give {STAND} minecraft:glowing 60 0 true',
+             positive(f'execute if entity {select("nbt={active_effects:[{id:\"minecraft:speed\"},{id:\"minecraft:glowing\"}]}",kind="minecraft:armor_stand")}'),
+             f'effect clear {STAND} minecraft:speed'],
+            [f'execute if entity {select("nbt={active_effects:[{id:\"minecraft:glowing\"}]}",kind="minecraft:armor_stand")} unless entity {select("nbt={active_effects:[{id:\"minecraft:speed\"}]}",kind="minecraft:armor_stand")}'])
 
 if __name__=='__main__':
     directory=ROOT/'scenarios';directory.mkdir(exist_ok=True)

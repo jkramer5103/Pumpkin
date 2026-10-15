@@ -22,13 +22,13 @@
       "command": "summon minecraft:marker 4 64 2 {Tags:[\"pp\",\"chosen\"],data:{excluded:1b}}"
     },
     {
-      "command": "tag @e[type=minecraft:marker,tag=pp,x=4,y=64,z=2,distance=..0.1,limit=1] add excluded"
+      "command": "tag @e[type=minecraft:marker,tag=pp,x=4.5,y=64,z=2.5,distance=..0.1,limit=1] add excluded"
     },
     {
       "command": "tag @e[type=minecraft:marker,tag=pp,x=-32,y=48,z=-32,dx=64,dy=48,dz=64,tag=chosen,tag=!excluded] add selected"
     },
     {
-      "command": "execute if entity @e[type=minecraft:marker,tag=pp,x=-32,y=48,z=-32,dx=64,dy=48,dz=64,tag=selected,tag=!excluded] unless entity @e[type=minecraft:marker,tag=pp,x=-32,y=48,z=-32,dx=64,dy=48,dz=64,tag=selected,tag=excluded]",
+      "command": "execute if entity @e[type=minecraft:marker,tag=pp,x=-32,y=48,z=-32,dx=64,dy=48,dz=64,tag=selected,tag=!excluded] if entity @e[type=minecraft:marker,tag=pp,x=-32,y=48,z=-32,dx=64,dy=48,dz=64,tag=excluded,tag=!selected] unless entity @e[type=minecraft:marker,tag=pp,x=-32,y=48,z=-32,dx=64,dy=48,dz=64,tag=selected,tag=excluded]",
       "observe": true,
       "expect_contains": "Test passed"
     }
