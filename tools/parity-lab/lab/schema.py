@@ -153,19 +153,22 @@ def load_targets(path: str | Path) -> dict:
     return validate_targets(read_json(path), str(path))
 
 
-def load_scenarios(directory: str | Path, scenario_id: str | None = None) -> list[dict]:
+def load_scenarios(directory: str | Path, scenario_id: str | list[str] | None = None) -> list[dict]:
     directory = Path(directory)
     if not directory.is_dir():
         raise SchemaError(f"{directory}: scenario directory does not exist")
     found = []
     ids = set()
+    selected = None if scenario_id is None else set([scenario_id] if isinstance(scenario_id, str) else scenario_id)
     for path in sorted(directory.glob("*.json")):
         value = validate_scenario(read_json(path), str(path))
         if value["id"] in ids:
             raise SchemaError(f"{path}: duplicate scenario id {value['id']}")
         ids.add(value["id"])
-        if scenario_id is None or value["id"] == scenario_id:
+        if selected is None or value["id"] in selected:
             found.append(value)
+    if selected is not None and selected - ids:
+        raise SchemaError(f"{directory}: no scenarios matching " + ", ".join(sorted(selected - ids)))
     if not found:
-        raise SchemaError(f"{directory}: no scenarios" + (f" matching {scenario_id}" if scenario_id else ""))
+        raise SchemaError(f"{directory}: no scenarios")
     return sorted(found, key=lambda scenario: scenario["id"])

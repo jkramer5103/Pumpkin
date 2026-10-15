@@ -32,7 +32,8 @@ def parser():
     execute.add_argument("--targets", required=True)
     execute.add_argument("--scenarios", default="scenarios")
     execute.add_argument("--output", default="artifacts/runs")
-    execute.add_argument("--id", dest="scenario_id")
+    execute.add_argument("--id", dest="scenario_id", action="append",
+                         help="scenario ID to select; repeat to select multiple scenarios")
     execute.add_argument("--repeat", type=_positive_int, default=1,
                          help="repetitions per scenario; >=2 needed for confirmed mismatch claims")
     execute.add_argument("--timeout", type=_timeout, default=10.0, help="seconds per RCON operation")

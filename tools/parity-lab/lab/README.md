@@ -6,6 +6,7 @@ Run from the project root. The runtime has no third-party dependencies.
 python3 -m lab list --scenarios scenarios
 python3 -m lab run --targets runtime/targets.json --scenarios scenarios --output artifacts/runs
 python3 -m lab run --targets runtime/targets.json --scenarios scenarios --output artifacts/runs --id stone-placement --repeat 2
+python3 -m lab run --targets runtime/targets.json --id stone-placement --id positioned-relative --repeat 2
 python3 -m lab shrink --targets runtime/targets.json --scenario scenarios/stone-placement.json --output artifacts/shrinks --repeat 2
 python3 -m unittest discover -s tests -p 'test_core*.py' -v
 ```
@@ -14,6 +15,8 @@ python3 -m unittest discover -s tests -p 'test_core*.py' -v
 `run` and `shrink` print their artifact directory. `--timeout` bounds each RCON
 operation (default 10 seconds). `run --lock-timeout` bounds the process-lock wait
 (default 30 seconds). The global lock is independent of the output directory.
+Repeat `run --id` to select several scenarios. Every requested ID must exist;
+unknown IDs fail validation before either server is contacted.
 
 Run exits: 0 means every selected scenario passed, 1 means an expectation failure,
 output difference, capability gap or flaky outcome, and 2 means infrastructure,

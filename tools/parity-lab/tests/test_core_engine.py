@@ -6,6 +6,7 @@ import tempfile
 import unittest
 from contextlib import redirect_stderr, redirect_stdout
 from pathlib import Path
+from unittest import mock
 
 from lab.cli import main
 from lab.normalize import command_problem, normalize_response
@@ -427,6 +428,26 @@ class ShrinkTests(unittest.TestCase):
 
 
 class CliTests(unittest.TestCase):
+    def test_repeated_ids_select_every_requested_scenario(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            cases = root / "scenarios"
+            cases.mkdir()
+            for name in ("first", "second", "third"):
+                case = scenario()
+                case["id"] = name
+                atomic_json(cases / (name + ".json"), case)
+            atomic_json(root / "targets.json", targets())
+            command = ["run", "--targets", str(root / "targets.json"), "--scenarios", str(cases),
+                       "--output", str(root / "runs"), "--id", "second", "--id", "first"]
+            with mock.patch("lab.cli.run", return_value=(root / "run", {}, 0)) as execute:
+                with redirect_stdout(io.StringIO()):
+                    self.assertEqual(main(command), 0)
+                self.assertEqual([s["id"] for s in execute.call_args.args[0]], ["first", "second"])
+                with redirect_stdout(io.StringIO()), redirect_stderr(io.StringIO()):
+                    self.assertEqual(main(command + ["--id", "missing"]), 2)
+                self.assertEqual(execute.call_count, 1, "missing IDs must fail before server access")
+
     def test_list_json_and_malformed_targets_exit_two(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
