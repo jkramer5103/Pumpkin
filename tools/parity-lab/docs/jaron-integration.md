@@ -34,3 +34,7 @@ from the verified official 26.3 server JAR. Decompiled files stay under runtime
 and are never committed. `BlockPredicateArgument.BlockPredicate.test` compares
 specified state properties; `TagPredicate.test` rejects missing/invalid shared
 properties. Unknown placement/state/NBT support must remain visible in reports.
+
+Open-upstream overlap review found existing issue [#2592](https://github.com/Pumpkin-MC/Pumpkin/issues/2592) documenting forceload/state-parser/execute gaps. [PR #3827](https://github.com/Pumpkin-MC/Pumpkin/pull/3827) covers setblock state parsing; [PR #3964](https://github.com/Pumpkin-MC/Pumpkin/pull/3964) covers fill callbacks. Neither is claimed as new work here, and neither was cherry-picked.
+
+The engine treats intentional failing mutations as command problems even when the final state expectation passes (occupied keep, rejected overlap and nonmatching fills). This remains visible. Supporting an explicit expected-failure schema belongs to the engine lane; Jaron does not hide or weaken these cases to obtain engine passes.
