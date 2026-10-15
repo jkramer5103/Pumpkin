@@ -2,6 +2,7 @@
 
 import contextlib
 import json
+import os
 import signal
 import socket
 import socketserver
@@ -12,6 +13,7 @@ import tempfile
 import threading
 import time
 import unittest
+from unittest import mock
 from pathlib import Path
 
 from lab.rcon import packet
@@ -127,6 +129,13 @@ def fixture_scenario():
 
 
 class TcpIntegrationTests(unittest.TestCase):
+    def setUp(self):
+        # These endpoints are synthetic. Give parent and CLI subprocesses the
+        # same private lock so a live catalog run cannot stall fixture tests.
+        temporary = self.enterContext(tempfile.TemporaryDirectory())
+        self.enterContext(mock.patch.object(tempfile, "tempdir", temporary))
+        self.enterContext(mock.patch.dict(os.environ, {"TMPDIR": temporary}))
+
     def test_full_runner_over_fragmented_tcp_responses(self):
         with tempfile.TemporaryDirectory() as temporary, fixture_pair() as (servers, targets):
             directory, report, code = run([fixture_scenario()], targets, temporary, repeat=2, timeout=2)

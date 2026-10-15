@@ -2,8 +2,9 @@
 
 This workspace runs the actual official Minecraft Java **26.3** server and official
 Pumpkin **0.2.0+26.3-26.51**, downloaded as `pumpkin-X64-Linux`. Both advertise Java
-protocol **777**, verified with a real server-list handshake. No Rust build, extra
-provider, external publication, or unrelated service changes were used.
+protocol **777**, verified with a real server-list handshake. This section records
+the initial released baseline. Source builds and subsequent validation are
+recorded below and in `runtime/manifest.json` under `active_candidate`.
 
 ## Provision and operate
 
@@ -145,12 +146,16 @@ as proof that the chunks loaded.
 
 ## Scenarios and live evidence
 
-There are **37 distinct schema-v1 scenarios**, one JSON file each. They cover:
+There are **50 distinct schema-v1 scenarios**, one JSON file each. They cover:
 
 - Placement, replacement, occupied/empty keep behavior, state replacement,
   log axis, stair orientation, and waterlogged slabs.
 - Bounded solid, hollow, outline, keep, material-filtered, and state-filtered fills.
 - Replace, masked, filtered, move, and overlapping forced clones.
+- Partial-state, tag, tag-with-state and negative block predicates; reversed fill
+  endpoints, tag/state fill filters, state-filtered clones, masked moves and
+  overlap rejection. Container placement, replacement and cloning observe real
+  stored item stacks; replacement proves the stack existed before clearing it.
 - Relative execution origin; signed scoreboard add/remove, multiplication,
   floor division, modulo, assignment, swap, minimum/maximum, and selector counting.
 - Tag addition/removal/intersection, selective kill, marker nested NBT,
@@ -171,7 +176,7 @@ python3 infra/validate_scenarios.py --target pumpkin --repeat 2 --output artifac
 python3 -m unittest discover -s tests -p 'test_scenarios*.py' -v
 ```
 
-Actual result: vanilla **74/74** positive scenario expectation sets satisfied
+Initial result: vanilla **74/74** positive scenario expectation sets satisfied
 (37 scenarios × 2); Pumpkin **0/74**. All raw setup/step/cleanup replies are in
 those artifacts. Pumpkin failures include unloaded chunks, unsupported terminal
 execute predicates, fake-player scoreboard arguments, and entity NBT/selector
@@ -211,3 +216,36 @@ Each scenario freezes simulation in setup and unfreezes it in cleanup; both tick
 login/gameplay, movement physics, inventories, combat, visual behavior, elapsed
 tick behavior, and Pumpkin generated-terrain equivalence remain untested. No
 scenario claims a tick advance from wall-clock sleep.
+
+## Expanded catalog review
+
+All original 37 cases were rerun on live vanilla before expansion. All 50 cases
+then met their positive expectations twice: **100/100** scenario expectation sets
+in `artifacts/jaron-catalog50-vanilla.json`. The released Pumpkin candidate met
+**0/50** in `artifacts/jaron-release-catalog50.json`. These are capability/state
+expectation results, not a count of independent gameplay defects. The bounded
+engine attempt exited **2** with candidate environment errors, preserved at
+`artifacts/runs/20261015T210048.698585Z-0275a6be`. This engine invocation ultimately
+selected only `block-entity-nbt-placement`, because `--id` is a single-value flag.
+
+The independent validator now snapshots scenario definitions and writes raw
+responses atomically after each command. An interrupted scenario starts with
+`complete=false` and `expectations_met=false`; no partial run can imply success.
+The direct RCON CLI also takes the engine lock, including arbitrary mutating
+`--command` probes. It remains independent of `lab/`.
+
+Source builds use the Jaron worktree, the shared cargo target/build lock, one
+build job, no incremental compilation or debug info, and a systemd scope capped
+at 5 GiB memory, zero swap and 200% CPU. Source candidate installation is:
+
+```sh
+python3 infra/deploy_candidate.py --binary /root/pumpkin-parity-worktrees/target/debug/pumpkin --build-command 'the exact completed build command'
+```
+
+The installer holds the engine lock, backs up the manifest/config/service
+override privately, copies and hashes the binary, and restarts only the candidate.
+Its manifest entry records source commit, binary hash and exact build command.
+Readiness verifies RCON and controlled gamerules; it does not claim block readiness.
+Existing source-candidate provenance survives normal reprovisioning. The released
+binary and old logs/worlds remain available. See [integration notes](jaron-integration.md)
+and `artifacts/jaron-fork-status.json` for current source validation and limitations.

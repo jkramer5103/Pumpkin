@@ -257,9 +257,9 @@ def _attempt_target(scenario, target, target_name, repeat, transcript, factory, 
                     transport_broken = False
 
             try:
-                if not connected_once:
-                    return record  # Failed authentication/connection cannot have mutated the world.
-                for index, command in enumerate(scenario["cleanup"]):
+                # Failed authentication/connection cannot have mutated the world.
+                # Do not return from finally: that would suppress an interrupt.
+                for index, command in enumerate(scenario["cleanup"] if connected_once else []):
                     try:
                         reconnect_if_broken()
                     except RconError as exc:
@@ -283,9 +283,9 @@ def _attempt_target(scenario, target, target_name, repeat, transcript, factory, 
 
 def compare_attempt(targets):
     failures = []
-    if any(record["errors"] for record in targets.values()):
-        return {"status": "error", "reason": "Infrastructure failure; see target errors", "failures": []}
     for name, record in targets.items():
+        failures.extend({"kind": "infrastructure_error", "target": name, "error": error}
+                        for error in record["errors"])
         failures.extend({"target": name, **problem} for problem in record["problems"])
         for observation in record["observations"]:
             if not observation["normalized"].strip():
@@ -295,8 +295,9 @@ def compare_attempt(targets):
                 failures.append({"kind": "expectation_failed", "target": name,
                                  "index": observation["index"], "command": observation["command"],
                                  "expected": observation["expect_contains"]})
-        if not record["completed"] and not record["problems"]:
-            return {"status": "error", "reason": f"{name} did not complete", "failures": []}
+        if not record["completed"] and not record["problems"] and not record["errors"]:
+            failures.append({"kind": "infrastructure_error", "target": name,
+                             "error": {"kind": "IncompleteTarget", "reason": "Target did not complete"}})
     vanilla, pumpkin = (targets[name]["observations"] for name in TARGET_NAMES)
     left = [(o["index"], o["normalized"]) for o in vanilla]
     right = [(o["index"], o["normalized"]) for o in pumpkin]
@@ -306,7 +307,8 @@ def compare_attempt(targets):
         failures.append({"kind": "missing_observations"})
     if failures:
         kinds = sorted({failure["kind"] for failure in failures})
-        return {"status": "different", "reason": ", ".join(kinds), "failures": failures}
+        status = "error" if "infrastructure_error" in kinds else "different"
+        return {"status": status, "reason": ", ".join(kinds), "failures": failures}
     return {"status": "pass", "reason": "Observations agree and positive expectations passed on both targets", "failures": []}
 
 
@@ -333,7 +335,12 @@ def summarize_result(result):
     result["observations"] = {name: [o["raw"] for o in attempts[0]["targets"][name]["observations"]]
                               for name in TARGET_NAMES}
     unsupported = any(f["kind"] == "unsupported" for a in attempts for f in a["failures"])
+    # A broken vanilla oracle cannot establish the intended behavior. Keep the
+    # difference visible, but require its positive assertions before confirmation.
+    vanilla_failed = any(f["kind"] == "expectation_failed" and f.get("target") == "vanilla"
+                         for a in attempts for f in a["failures"])
     result["confirmed_mismatch"] = (len(attempts) >= 2 and not result["flaky"] and not unsupported
+        and not vanilla_failed
         and result["status"] == "different"
         and any(f["kind"] == "observation_mismatch" for f in attempts[0]["failures"]))
     result["repeat_count"] = len(attempts)

@@ -1,0 +1,36 @@
+# Jaron integration notes
+
+The current upstream baseline is being built in the Jaron worktree from
+`5b53f064af8708ba33fcaa533b81ca29a53a3310`, under the shared cargo lock and
+the required resource limits. Candidate deployment takes the engine run lock.
+See `artifacts/jaron-fork-status.json` for the current build/deployment outcome.
+
+The catalog now contains 50 behaviors. All 50 met positive expectations twice
+on live vanilla (`artifacts/jaron-catalog50-vanilla.json`). The released candidate
+met none (`artifacts/jaron-release-catalog50.json`). Its unloaded chunks and
+unsupported terminal execute predicates prevent interpreting this as 50
+independent gameplay defects.
+
+Files owned by the engine lane were read but not edited. The attempted bounded
+engine run is retained at
+`artifacts/runs/20261015T210048.698585Z-0275a6be`; it exited 2 after the first
+scenario, with candidate environment errors. The CLI accepts a single `--id`;
+repeated flags select only the final value, so this invocation did not execute
+all four requested IDs. Use a scenario directory subset or individual invocations.
+
+Current upstream block command findings for integration:
+
+- `BlockArgumentType` parses only a material name. Placement states/NBT and clone
+  state filters are separate capability gaps. Changes to execute predicates
+  belong to the engine lane; no execute code is changed by Jaron.
+- `BlockPredicate::test` currently compares only the material/tag membership;
+  fill supplies the material without its actual state. This is the focused
+  source-fix investigation in the Jaron lane. NBT matching is a separate gap.
+- `forceload add` updates the forced/active set but does not fetch chunks in this
+  headless setup. A successful command is insufficient readiness evidence.
+
+Vanilla implementation was inspected locally using Vineflower 1.12.0 on classes
+from the verified official 26.3 server JAR. Decompiled files stay under runtime
+and are never committed. `BlockPredicateArgument.BlockPredicate.test` compares
+specified state properties; `TagPredicate.test` rejects missing/invalid shared
+properties. Unknown placement/state/NBT support must remain visible in reports.

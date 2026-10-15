@@ -1,9 +1,12 @@
 #!/usr/bin/env python3
 """Independent stdlib RCON smoke probe; never imports lab or prints credentials."""
 import argparse
+import fcntl
 import json
+import os
 import socket
 import struct
+import tempfile
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -78,15 +81,19 @@ def main():
     args = parser.parse_args()
     targets = json.loads(args.targets.read_text())['targets']
     records = []
-    for name, target in targets.items():
-        if args.target not in ('both', name):
-            continue
-        client = Rcon(target)
-        try:
-            for command in args.command or ['list', 'gamerule advance_time', 'gamerule random_tick_speed']:
-                records.append(dict(target=name, command=command, response=client.command(command)))
-        finally:
-            client.close()
+    # Arbitrary --command values can mutate the shared arena, just like runs.
+    lock_path=Path(tempfile.gettempdir())/f'pumpkin-parity-lab-{os.getuid()}.lock'
+    with lock_path.open('a') as lock:
+        fcntl.flock(lock,fcntl.LOCK_EX)
+        for name, target in targets.items():
+            if args.target not in ('both', name):
+                continue
+            client = Rcon(target)
+            try:
+                for command in args.command or ['list', 'gamerule advance_time', 'gamerule random_tick_speed']:
+                    records.append(dict(target=name, command=command, response=client.command(command)))
+            finally:
+                client.close()
     result = json.dumps(records, indent=2)
     if args.output:
         args.output.parent.mkdir(parents=True, exist_ok=True)

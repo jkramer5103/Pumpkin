@@ -13,7 +13,7 @@ class ScenarioCatalogTests(unittest.TestCase):
 
     def test_distinct_semantic_cases_and_contract_schema(self):
         from lab.schema import validate_scenario
-        self.assertGreaterEqual(len(self.scenarios),25)
+        self.assertGreaterEqual(len(self.scenarios),50)
         ids=set(); sequences=set()
         for scenario in self.scenarios:
             validate_scenario(scenario)
@@ -23,7 +23,7 @@ class ScenarioCatalogTests(unittest.TestCase):
             sequence=tuple(scenario['setup'])+tuple(s['command'] for s in scenario['steps'])
             self.assertNotIn(sequence,sequences)
             sequences.add(sequence)
-        self.assertTrue({'blocks','block-states','fill','clone','scoreboard','entities','entity-nbt','execute'} <= {s['category'] for s in self.scenarios})
+        self.assertTrue({'blocks','block-states','block-predicates','fill','clone','scoreboard','entities','entity-nbt','execute'} <= {s['category'] for s in self.scenarios})
 
     def test_every_observation_is_a_positive_state_predicate(self):
         for scenario in self.scenarios:
@@ -66,9 +66,25 @@ class ScenarioCatalogTests(unittest.TestCase):
         for id,meaning in [('clone-replace-air','minecraft:air'),('clone-masked','minecraft:gold_block'),
                            ('fill-hollow','minecraft:air'),('fill-outline','minecraft:gold_block'),
                            ('score-division-floor','matches -3'),('score-modulo','matches 2'),
-                           ('entity-nbt-merge','right:9'),('entity-teleport','Pos:[4.5d,65.0d,4.5d]')]:
+                           ('entity-nbt-merge','right:9'),('entity-teleport','Pos:[4.5d,65.0d,4.5d]'),
+                           ('predicate-partial-state','unless block 2 64 2 minecraft:oak_stairs[half=bottom]'),
+                           ('predicate-tag-state','#minecraft:logs[axis=x]'),
+                           ('fill-tag-filter','if block 2 64 0 minecraft:stone if block 3 64 0 minecraft:air'),
+                           ('clone-state-filter','if block 5 64 0 minecraft:gold_block'),
+                           ('clone-block-entity-nbt','count:3'),
+                           ('clone-masked-move','if block 5 64 0 minecraft:gold_block'),
+                           ('clone-overlap-normal-preserves','if block 2 64 0 minecraft:air')]:
             probes=' '.join(s['command'] for s in by_id[id]['steps'] if s.get('observe'))
             self.assertIn(meaning,probes,id)
+
+    def test_container_replacement_proves_initial_data_before_clearing_it(self):
+        scenario=next(s for s in self.scenarios if s['id']=='block-entity-replacement-clears-nbt')
+        observations=[(i,s) for i,s in enumerate(scenario['steps']) if s.get('observe')]
+        self.assertEqual(len(observations),2)
+        self.assertIn('count:3',observations[0][1]['command'])
+        self.assertIn('unless data block 2 64 2 Items[0]',observations[1][1]['command'])
+        middle=scenario['steps'][observations[0][0]+1:observations[1][0]]
+        self.assertIn({'command':'setblock 2 64 2 minecraft:stone'},middle)
 
 if __name__=='__main__':
     unittest.main()

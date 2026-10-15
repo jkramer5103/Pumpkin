@@ -218,6 +218,9 @@ def main():
         provision(args)
 
 def provision(args):
+    previous_manifest=RUNTIME/'manifest.json'
+    active_candidate=(json.loads(previous_manifest.read_text()).get('active_candidate')
+                      if previous_manifest.exists() else None)
     (RUNTIME/'downloads').mkdir(exist_ok=True)
     metadata=json.loads(document(MOJANG,'mojang-manifest.json'))
     entry=next(v for v in metadata['versions'] if v['id']=='26.3' and v['type']=='release')
@@ -295,6 +298,7 @@ def provision(args):
     if config['networking']['java']['address']!='127.0.0.1:25576' or config['networking']['rcon']['address']!='127.0.0.1:25586':
         raise RuntimeError('Generated Pumpkin bindings disagree with contract')
     write(RUNTIME/'manifest.json',json.dumps({
+        **({'active_candidate':active_candidate} if active_candidate else {}),
         'schema_version':1,'provisioned_at':datetime.datetime.now(datetime.UTC).isoformat(),
         'minecraft_version':'26.3','pumpkin_version':PUMPKIN,
         'mojang_manifest_url':MOJANG,'mojang_version_url':entry['url'],

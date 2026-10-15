@@ -34,8 +34,9 @@ The contract report fields are retained. Additional fields include:
 - `flaky`: observations or outcomes differed across repeats. Equal outputs on
   both targets can still be flaky if both change between repeats.
 - `confirmed_mismatch`: at least two stable repeats with differing observations,
-  no unsupported command and no infrastructure error. Single-repeat differences,
-  equal expectation failures, flakes and capability gaps are not confirmed.
+  passing vanilla positive assertions, no unsupported command and no infrastructure
+  error. Single-repeat differences, failing vanilla oracles, equal expectation
+  failures, flakes and capability gaps are not confirmed.
 - `unsupported_commands` and `command_coverage`: command rejection evidence and
   response counts. Rejected syntax can also appear as `unsupported`; inspect the
   command and raw response before concluding a feature is unimplemented.
@@ -60,6 +61,10 @@ Command rejection is visible in any phase. An already-empty `kill` during arena
 setup/cleanup is treated as idempotent; its raw response remains in evidence.
 Unloaded positions and internal command execution errors are infrastructure
 failures, because the intended world precondition or observation is unavailable.
+An infrastructure verdict retains concurrent command rejections, failed positive
+assertions and response mismatches in the attempt's `failures` array. Infrastructure
+entries use `kind=infrastructure_error` with the original target error attached;
+exit code 2 still takes precedence.
 
 `wait_ticks` advances simulation **after** its command. Such scenarios run frozen,
 use `tick step N`, and poll `time query gametime` until exactly N simulation ticks

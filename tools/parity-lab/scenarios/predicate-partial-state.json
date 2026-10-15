@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "id": "predicate-partial-state",
+  "title": "Unspecified properties are wildcards",
+  "category": "block-predicates",
+  "description": "A stair predicate constraining only facing accepts a top stair; a contradictory half rejects it.",
+  "tags": [
+    "command",
+    "deterministic",
+    "state-observation"
+  ],
+  "setup": [
+    "tick freeze",
+    "fill 0 60 0 8 75 8 minecraft:air"
+  ],
+  "steps": [
+    {
+      "command": "setblock 2 64 2 minecraft:oak_stairs[facing=east,half=top,shape=straight,waterlogged=false]"
+    },
+    {
+      "command": "execute if block 2 64 2 minecraft:oak_stairs[facing=east] unless block 2 64 2 minecraft:oak_stairs[half=bottom]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    }
+  ],
+  "cleanup": [
+    "fill 0 60 0 8 75 8 minecraft:air",
+    "tick unfreeze"
+  ],
+  "notes": "Provisioning requests arena force-loading; Pumpkin readiness limitations remain visible. Simulation is frozen for immediate command-state assertions and unfrozen in cleanup; no client or elapsed-tick claim. Positive execute predicates return Test passed on vanilla 26.3; errors and empty output fail expectations. "
+}

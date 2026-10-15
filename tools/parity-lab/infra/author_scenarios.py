@@ -10,7 +10,7 @@ ONE=SEL[:-1]+',limit=1]'
 CASES=[]
 
 def case(id,title,category,description,commands,probes,setup=(),cleanup=(),notes=''):
-    steps=[{'command':c} for c in commands]
+    steps=[{'command':c} if isinstance(c,str) else c for c in commands]
     steps += [{'command':c,'observe':True,'expect_contains':'Test passed'} for c in probes]
     value={'schema_version':1,'id':id,'title':title,'category':category,
            'description':description,'tags':['command','deterministic','state-observation'],
@@ -80,6 +80,73 @@ case('clone-overlap-force','Forced overlap preserves source snapshot','clone','A
 case('positioned-relative','Execute positioned changes relative origin','execute','A relative setblock under positioned execution writes at the translated coordinate.',
      ['execute positioned 2 64 2 run setblock ~1 ~ ~-1 minecraft:stone'],
      ['execute if block 3 64 1 minecraft:stone if block 2 64 2 minecraft:air'])
+
+# These exercise predicate grammar and transfer semantics, rather than adding
+# mechanic counts by substituting material names in the placement case.
+case('predicate-partial-state','Unspecified properties are wildcards','block-predicates',
+     'A stair predicate constraining only facing accepts a top stair; a contradictory half rejects it.',
+     ['setblock 2 64 2 minecraft:oak_stairs[facing=east,half=top,shape=straight,waterlogged=false]'],
+     ['execute if block 2 64 2 minecraft:oak_stairs[facing=east] unless block 2 64 2 minecraft:oak_stairs[half=bottom]'])
+case('predicate-block-tag','Block tags match multiple materials','block-predicates',
+     'The logs tag accepts oak and birch but rejects a stone control.',
+     ['setblock 0 64 0 minecraft:oak_log','setblock 1 64 0 minecraft:birch_log','setblock 2 64 0 minecraft:stone'],
+     ['execute if block 0 64 0 #minecraft:logs if block 1 64 0 #minecraft:logs unless block 2 64 0 #minecraft:logs'])
+case('predicate-tag-state','Tags can constrain shared block properties','block-predicates',
+     'An axis constraint applies across members of the logs tag and excludes a different orientation.',
+     ['setblock 0 64 0 minecraft:oak_log[axis=x]','setblock 1 64 0 minecraft:birch_log[axis=x]',
+      'setblock 2 64 0 minecraft:oak_log[axis=y]'],
+     ['execute if block 0 64 0 #minecraft:logs[axis=x] if block 1 64 0 #minecraft:logs[axis=x] unless block 2 64 0 #minecraft:logs[axis=x]'])
+case('predicate-negation','Unless block gates a real mutation','block-predicates',
+     'A false unless branch leaves its destination air; a true branch writes a sentinel.',
+     ['setblock 0 64 0 minecraft:stone',
+      'execute unless block 0 64 0 minecraft:stone run setblock 1 64 0 minecraft:gold_block',
+      'execute unless block 0 64 0 minecraft:dirt run setblock 2 64 0 minecraft:gold_block'],
+     ['execute if block 0 64 0 minecraft:stone if block 1 64 0 minecraft:air if block 2 64 0 minecraft:gold_block'])
+case('block-entity-nbt-placement','Placement applies block entity NBT','block-states',
+     'A barrel placed with an item stack retains its slot, item ID and count in block entity storage.',
+     ['setblock 2 64 2 minecraft:barrel{Items:[{Slot:0b,id:"minecraft:diamond",count:3}]}'],
+     ['execute if block 2 64 2 minecraft:barrel{Items:[{Slot:0b,id:"minecraft:diamond",count:3}]}'])
+case('block-entity-replacement-clears-nbt','Replacing a container clears its old data','blocks',
+     'Replacing a populated barrel with stone and then an empty barrel must not resurrect its item stack.',
+     ['setblock 2 64 2 minecraft:barrel{Items:[{Slot:0b,id:"minecraft:diamond",count:3}]}',
+      {'command':'execute if block 2 64 2 minecraft:barrel{Items:[{Slot:0b,id:"minecraft:diamond",count:3}]}','observe':True,'expect_contains':'Test passed'},
+      'setblock 2 64 2 minecraft:stone','setblock 2 64 2 minecraft:barrel'],
+     ['execute if block 2 64 2 minecraft:barrel unless data block 2 64 2 Items[0]'])
+case('fill-reversed-bounds','Fill normalizes reversed endpoints','fill',
+     'Reversing all three axes still fills the inclusive cuboid and leaves its neighbor untouched.',
+     ['fill 2 66 2 0 64 0 minecraft:stone'],
+     ['execute if block 0 64 0 minecraft:stone if block 1 65 1 minecraft:stone if block 2 66 2 minecraft:stone if block 3 65 1 minecraft:air'])
+case('fill-tag-filter','Fill replace accepts a block tag','fill',
+     'A logs filter replaces two member materials while preserving a nonmember and air.',
+     ['setblock 0 64 0 minecraft:oak_log','setblock 1 64 0 minecraft:birch_log','setblock 2 64 0 minecraft:stone',
+      'fill 0 64 0 3 64 0 minecraft:gold_block replace #minecraft:logs'],
+     ['execute if block 0 64 0 minecraft:gold_block if block 1 64 0 minecraft:gold_block if block 2 64 0 minecraft:stone if block 3 64 0 minecraft:air'])
+case('fill-tag-state-filter','Fill filters tags and states together','fill',
+     'A shared axis predicate replaces matching log types but preserves another orientation.',
+     ['setblock 0 64 0 minecraft:oak_log[axis=x]','setblock 1 64 0 minecraft:birch_log[axis=x]',
+      'setblock 2 64 0 minecraft:oak_log[axis=y]','fill 0 64 0 2 64 0 minecraft:gold_block replace #minecraft:logs[axis=x]'],
+     ['execute if block 0 64 0 minecraft:gold_block if block 1 64 0 minecraft:gold_block if block 2 64 0 minecraft:oak_log[axis=y]'])
+case('clone-state-filter','Clone filters individual block states','clone',
+     'A state filter copies one oriented log and preserves destination cells under nonmatching source states.',
+     ['setblock 0 64 0 minecraft:oak_log[axis=x]','setblock 1 64 0 minecraft:oak_log[axis=y]',
+      'fill 4 64 0 5 64 0 minecraft:gold_block','clone 0 64 0 1 64 0 4 64 0 filtered minecraft:oak_log[axis=x] normal'],
+     ['execute if block 0 64 0 minecraft:oak_log[axis=x] if block 1 64 0 minecraft:oak_log[axis=y] if block 4 64 0 minecraft:oak_log[axis=x] if block 5 64 0 minecraft:gold_block'])
+case('clone-block-entity-nbt','Clone copies block entity data','clone',
+     'Cloning a populated barrel copies its item stack and facing while preserving the original.',
+     ['setblock 0 64 0 minecraft:barrel[facing=east]{Items:[{Slot:0b,id:"minecraft:diamond",count:3}]}',
+      'clone 0 64 0 0 64 0 4 64 0 replace normal'],
+     ['execute if block 0 64 0 minecraft:barrel[facing=east]{Items:[{Slot:0b,id:"minecraft:diamond",count:3}]} if block 4 64 0 minecraft:barrel[facing=east]{Items:[{Slot:0b,id:"minecraft:diamond",count:3}]}'])
+case('clone-masked-move','Masked move leaves destination under air','clone',
+     'A masked move clears the solid source and preserves gold under source air at the destination.',
+     ['setblock 0 64 0 minecraft:stone','fill 4 64 0 5 64 0 minecraft:gold_block',
+      'clone 0 64 0 1 64 0 4 64 0 masked move'],
+     ['execute if block 0 64 0 minecraft:air if block 1 64 0 minecraft:air if block 4 64 0 minecraft:stone if block 5 64 0 minecraft:gold_block'])
+case('clone-overlap-normal-preserves','Normal clone rejects overlap without writes','clone',
+     'A rejected overlapping normal clone preserves both distinct source cells and the destination extension.',
+     [],['execute if block 0 64 0 minecraft:stone if block 1 64 0 minecraft:gold_block if block 2 64 0 minecraft:air'],
+     setup=['setblock 0 64 0 minecraft:stone','setblock 1 64 0 minecraft:gold_block',
+            'clone 0 64 0 1 64 0 1 64 0 replace normal'],
+     notes='The overlapping mutation intentionally fails in setup; unchanged positive state is the observation.')
 
 def score(id,title,description,commands,predicates):
     case(id,title,'scoreboard',description,commands,

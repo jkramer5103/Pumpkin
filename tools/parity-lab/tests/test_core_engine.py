@@ -12,7 +12,7 @@ from lab.normalize import command_problem, normalize_response
 from lab.rcon import AuthenticationError, RconError
 from lab.runner import TickController, UnsupportedTicks, atomic_json, process_lock, run
 from lab.schema import SchemaError, load_scenarios, load_targets, read_json, validate_scenario, validate_targets
-from lab.shrink import ShrinkError, ddmin
+from lab.shrink import ShrinkError, ddmin, failure_identity
 
 
 def scenario():
@@ -82,6 +82,7 @@ class SchemaTests(unittest.TestCase):
                    {"steps": [{"command": "say ok", "observe": True, "expect_contains": "ok", "wait_ticks": True}]},
                    {"steps": [{"command": "say ok", "observe": True, "expect_contains": "ok", "wait_ticks": -1}]},
                    {"setup": ["say first\nsay second"]}, {"unknown": "typo"}, {"tags": ["a", "a"]},
+                   {"notes": "\ud800"}, {1: "invalid key"},
                    {"steps": [{"command": "say ok", "observe": "true", "expect_contains": "ok"}]},
                    {"steps": [{"command": "say ok", "observe": True, "expect_contains": ["ok"]}]}]
         for change in changes:
@@ -108,7 +109,7 @@ class SchemaTests(unittest.TestCase):
     def test_malformed_json_never_echoes_credentials(self):
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "targets.json"
-            for content in ('{"password":"DO-NOT-LOG-THIS",', '{"a":1,"a":2}', '{"value":NaN}'):
+            for content in ('{"password":"DO-NOT-LOG-THIS",', '{"a":1,"a":2}', '{"value":NaN}', '[' * 2000 + ']' * 2000):
                 path.write_text(content)
                 with self.assertRaises(SchemaError) as caught:
                     read_json(path)
@@ -198,6 +199,33 @@ class RunnerTests(unittest.TestCase):
         failures = report["results"][0]["attempts"][0]["failures"]
         self.assertTrue(any(f["kind"] == "expectation_failed" and f["target"] == "pumpkin" for f in failures))
 
+    def test_infrastructure_error_preserves_other_failure_evidence(self):
+        fixtures = Fixtures({
+            ("pumpkin", self.case["setup"][0]): "That position is not loaded",
+            ("pumpkin", self.observe): "Unknown command: execute",
+        })
+        _, report, code = self.execute(fixtures, repeat=2)
+        self.assertEqual(code, 2)
+        result = report["results"][0]
+        self.assertFalse(result["confirmed_mismatch"])
+        failures = result["attempts"][0]["failures"]
+        self.assertEqual({f["kind"] for f in failures}, {
+            "infrastructure_error", "unsupported", "expectation_failed", "observation_mismatch"})
+        self.assertTrue(any(f["kind"] == "infrastructure_error" and f["target"] == "pumpkin"
+                            for f in failures))
+
+    def test_failed_vanilla_oracle_does_not_confirm_a_pumpkin_mismatch(self):
+        for pumpkin in ("PARITY:wrong", "PARITY:stone-present"):
+            with self.subTest(pumpkin=pumpkin):
+                fixtures = Fixtures({("vanilla", self.observe): "PARITY:bad-oracle",
+                                     ("pumpkin", self.observe): pumpkin})
+                _, report, code = self.execute(fixtures, repeat=2)
+                self.assertEqual(code, 1)
+                result = report["results"][0]
+                self.assertIn("expectation_failed", result["reason"])
+                self.assertFalse(result["confirmed_mismatch"])
+                self.assertIsNone(failure_identity(result))
+
     def test_narrow_normalization_detects_real_payload_difference(self):
         fixtures = Fixtures({("pumpkin", self.observe): "[Server] PARITY:stone-present extra"})
         _, report, code = self.execute(fixtures)
@@ -276,6 +304,13 @@ class RunnerTests(unittest.TestCase):
         self.assertEqual(report["results"][1]["reason"], "Not run")
         self.assertEqual(read_json(directory / "report.json"), report)
         self.assertIn(self.observe, (directory / "transcripts" / "vanilla.jsonl").read_text())
+
+    def test_interruption_during_auth_is_not_suppressed_by_cleanup(self):
+        fixtures = Fixtures(errors={("vanilla", "connect"): KeyboardInterrupt()})
+        _, report, code = self.execute(fixtures)
+        self.assertEqual(code, 2)
+        self.assertEqual(report["state"], "interrupted")
+        self.assertEqual(fixtures.connections["pumpkin"], 0)
 
     def test_tick_capability_gap_cannot_pass(self):
         self.case["steps"][0]["wait_ticks"] = 2

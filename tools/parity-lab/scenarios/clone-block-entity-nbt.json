@@ -1,0 +1,34 @@
+{
+  "schema_version": 1,
+  "id": "clone-block-entity-nbt",
+  "title": "Clone copies block entity data",
+  "category": "clone",
+  "description": "Cloning a populated barrel copies its item stack and facing while preserving the original.",
+  "tags": [
+    "command",
+    "deterministic",
+    "state-observation"
+  ],
+  "setup": [
+    "tick freeze",
+    "fill 0 60 0 8 75 8 minecraft:air"
+  ],
+  "steps": [
+    {
+      "command": "setblock 0 64 0 minecraft:barrel[facing=east]{Items:[{Slot:0b,id:\"minecraft:diamond\",count:3}]}"
+    },
+    {
+      "command": "clone 0 64 0 0 64 0 4 64 0 replace normal"
+    },
+    {
+      "command": "execute if block 0 64 0 minecraft:barrel[facing=east]{Items:[{Slot:0b,id:\"minecraft:diamond\",count:3}]} if block 4 64 0 minecraft:barrel[facing=east]{Items:[{Slot:0b,id:\"minecraft:diamond\",count:3}]}",
+      "observe": true,
+      "expect_contains": "Test passed"
+    }
+  ],
+  "cleanup": [
+    "fill 0 60 0 8 75 8 minecraft:air",
+    "tick unfreeze"
+  ],
+  "notes": "Provisioning requests arena force-loading; Pumpkin readiness limitations remain visible. Simulation is frozen for immediate command-state assertions and unfrozen in cleanup; no client or elapsed-tick claim. Positive execute predicates return Test passed on vanilla 26.3; errors and empty output fail expectations. "
+}

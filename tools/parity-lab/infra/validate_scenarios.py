@@ -11,7 +11,10 @@ import json
 import os
 from pathlib import Path
 import tempfile
-from rcon_probe import ROOT, Rcon
+try:
+    from .rcon_probe import ROOT, Rcon
+except ImportError:
+    from rcon_probe import ROOT, Rcon
 
 
 def main():
@@ -31,10 +34,12 @@ def main():
         raise ValueError('Expected nonempty scenarios and positive repeat')
     report={'schema_version':1,'kind':'independent-expectation-validation',
             'started_at':datetime.datetime.now(datetime.UTC).isoformat(),
-            'complete':False,'results':[]}
+            'complete':False,'scenarios':scenarios,'results':[]}
     args.output.parent.mkdir(parents=True,exist_ok=True)
     def save():
-        args.output.write_text(json.dumps(report,indent=2)+'\n')
+        temporary=args.output.with_name(args.output.name+'.tmp')
+        temporary.write_text(json.dumps(report,indent=2)+'\n')
+        temporary.replace(args.output)
     save()
     lock_path=Path(tempfile.gettempdir())/f'pumpkin-parity-lab-{os.getuid()}.lock'
     with lock_path.open('a') as lock:
@@ -47,16 +52,22 @@ def main():
                 try:
                     for scenario in scenarios:
                         result={'id':scenario['id'],'target':name,'repeat':attempt,
-                                'expectations_met':True,'events':[]}
+                                'complete':False,'expectations_met':False,'events':[]}
                         report['results'].append(result)
                         def execute(command,phase,step=None):
-                            raw=client.command(command)
-                            event={'phase':phase,'command':command,'response':raw}
+                            event={'phase':phase,'command':command}
+                            result['events'].append(event)
+                            try:
+                                raw=client.command(command)
+                            except Exception as exc:
+                                event['error']=f'{type(exc).__name__}: {exc}'
+                                save()
+                                raise
+                            event['response']=raw
                             if step and step.get('observe'):
                                 event['expect_contains']=step['expect_contains']
                                 event['expectation_met']=step['expect_contains'] in raw
-                                result['expectations_met'] &= event['expectation_met']
-                            result['events'].append(event)
+                            save()
                         try:
                             for command in scenario['setup']:
                                 execute(command,'setup')
@@ -67,6 +78,9 @@ def main():
                         finally:
                             for command in scenario['cleanup']:
                                 execute(command,'cleanup')
+                        result['complete']=True
+                        observed=[e for e in result['events'] if 'expectation_met' in e]
+                        result['expectations_met']=bool(observed) and all(e['expectation_met'] for e in observed)
                         save()
                         print(name,attempt,scenario['id'],'expectations-met' if result['expectations_met'] else 'EXPECTATION-FAILED',flush=True)
                 finally:

@@ -82,6 +82,9 @@ def failure_identity(result):
         return None
     if any(f["kind"] == "unsupported" for a in attempts for f in a["failures"]):
         return None
+    if any(f["kind"] == "expectation_failed" and f.get("target") == "vanilla"
+           for a in attempts for f in a["failures"]):
+        return None
     identity = []
     first = attempts[0]
     for name, target in first["targets"].items():

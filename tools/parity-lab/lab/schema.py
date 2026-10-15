@@ -19,6 +19,8 @@ def _fail(location: str, message: str) -> None:
 def _object(value, location, required, optional=()):
     if not isinstance(value, dict):
         _fail(location, "must be an object")
+    if any(not isinstance(key, str) for key in value):
+        _fail(location, "object keys must be strings")
     missing = set(required) - value.keys()
     extra = value.keys() - set(required) - set(optional)
     if missing:
@@ -32,6 +34,10 @@ def _string(value, location, *, nonempty=True):
         _fail(location, "must be a nonempty string" if nonempty else "must be a string")
     if "\x00" in value:
         _fail(location, "NUL is not allowed")
+    try:
+        value.encode("utf-8")
+    except UnicodeEncodeError:
+        _fail(location, "must contain valid UTF-8 text")
 
 
 def _command(value, location):
@@ -133,9 +139,12 @@ def _unique_pairs(pairs):
 def read_json(path: str | Path) -> dict:
     try:
         with Path(path).open(encoding="utf-8") as handle:
-            return json.load(handle, object_pairs_hook=_unique_pairs,
-                             parse_constant=lambda _: _fail("JSON", "non-finite number"))
-    except (OSError, UnicodeError, ValueError) as exc:
+            value = json.load(handle, object_pairs_hook=_unique_pairs,
+                              parse_constant=lambda _: _fail("JSON", "non-finite number"))
+        if not isinstance(value, dict):
+            _fail("JSON", "root must be an object")
+        return value
+    except (OSError, UnicodeError, ValueError, RecursionError) as exc:
         # Do not echo JSON lines: targets files contain credentials.
         raise SchemaError(f"{path}: cannot read valid JSON ({type(exc).__name__})") from exc
 
