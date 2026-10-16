@@ -1,5 +1,6 @@
 use pumpkin_data::damage::DamageType;
 use pumpkin_data::entity::EntityType;
+use pumpkin_data::tag::{self, Taggable};
 use pumpkin_data::{Block, BlockStateId};
 use pumpkin_util::math::position::BlockPos;
 use pumpkin_util::math::vector3::Vector3;
@@ -644,6 +645,13 @@ impl EnderDragonEntity {
         }
     }
 
+    fn can_destroy_block(block: &Block, mob_griefing: bool) -> bool {
+        mob_griefing
+            && !block.is_air()
+            && !block.has_tag(&tag::Block::MINECRAFT_DRAGON_TRANSPARENT)
+            && !block.has_tag(&tag::Block::MINECRAFT_DRAGON_IMMUNE)
+    }
+
     fn tick_block_breaking(&self) {
         let phase_type = *self
             .phase
@@ -659,15 +667,10 @@ impl EnderDragonEntity {
         let min = bbox.min_block_pos();
         let max = bbox.max_block_pos();
 
+        let mob_griefing = world.level_info.load().game_rules.mob_griefing;
         for pos in BlockPos::iterate(min, max) {
             let block = world.get_block(&pos);
-            if block != &Block::BEDROCK
-                && block != &Block::END_STONE
-                && block != &Block::OBSIDIAN
-                && block != &Block::IRON_BARS
-                && block != &Block::END_PORTAL
-                && block != &Block::END_PORTAL_FRAME
-            {
+            if Self::can_destroy_block(block, mob_griefing) {
                 world.set_block_state(&pos, BlockStateId::AIR, BlockFlags::NOTIFY_ALL);
             }
         }
@@ -874,5 +877,37 @@ impl Vector3Ext for Vector3<f64> {
     fn distance_squared(self, other: Self) -> f64 {
         let (dx, dy, dz) = (self.x - other.x, self.y - other.y, self.z - other.z);
         dx * dx + dy * dy + dz * dz
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::EnderDragonEntity;
+    use pumpkin_data::Block;
+
+    #[test]
+    fn block_destruction_respects_mob_griefing() {
+        assert!(EnderDragonEntity::can_destroy_block(&Block::STONE, true));
+        assert!(!EnderDragonEntity::can_destroy_block(&Block::STONE, false));
+    }
+
+    #[test]
+    fn block_destruction_preserves_immune_and_transparent_blocks() {
+        for block in [
+            &Block::BARRIER,
+            &Block::CRYING_OBSIDIAN,
+            &Block::REINFORCED_DEEPSLATE,
+            &Block::END_STONE,
+            &Block::LIGHT,
+            &Block::FIRE,
+            &Block::AIR,
+            &Block::CAVE_AIR,
+        ] {
+            assert!(
+                !EnderDragonEntity::can_destroy_block(block, true),
+                "dragon destroyed {}",
+                block.name
+            );
+        }
     }
 }
