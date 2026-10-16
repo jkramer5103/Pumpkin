@@ -541,7 +541,7 @@ impl WitherEntity {
                         let search_box = entity.bounding_box.load().expand(20.0, 8.0, 20.0);
                         let targeting_conditions =
                             TargetPredicate::create_attackable().set_base_max_distance(20.0);
-                        let entities = world.get_entities_at_box(&search_box);
+                        let entities = world.get_all_at_box(&search_box);
                         let candidates: Vec<_> = entities
                             .into_iter()
                             .filter(|e| {
