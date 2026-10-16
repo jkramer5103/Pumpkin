@@ -656,6 +656,27 @@ mod tests {
     }
 
     #[test]
+    fn decreasing_rotation_bounds_preserve_endpoint_order() -> Result<(), CommandSyntaxError> {
+        let mut reader = StringReader::new("@e[x_rotation=170..-170,y_rotation=350..10]");
+        let selector = EntitySelectorParser::new(&mut reader, true).parse_and_consume()?;
+        assert!(selector.predicates.iter().any(|predicate| matches!(
+            predicate,
+            EntitySelectorPredicate::Rotation(bounds, RotationType::Pitch)
+                if bounds.min() == Some(170.0) && bounds.max() == Some(-170.0)
+        )));
+        assert!(selector.predicates.iter().any(|predicate| matches!(
+            predicate,
+            EntitySelectorPredicate::Rotation(bounds, RotationType::Yaw)
+                if bounds.min() == Some(350.0) && bounds.max() == Some(10.0)
+        )));
+        assert!(!parse("@e[distance=10..1]"));
+        assert!(!parse("@e[scores={test=10..1}]"));
+        assert!(!parse("@e[x_rotation=..]"));
+        assert!(!parse("@e[y_rotation=170..-]"));
+        Ok(())
+    }
+
+    #[test]
     fn wrapped_rotation_options_keep_their_axes() -> Result<(), CommandSyntaxError> {
         let mut reader = StringReader::new("@e[x_rotation=170..190,y_rotation=350..370]");
         let selector = EntitySelectorParser::new(&mut reader, true).parse_and_consume()?;

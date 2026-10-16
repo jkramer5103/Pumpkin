@@ -199,14 +199,9 @@ impl FromStringReader for DoubleBounds {
 
 impl FromStringReader for FloatDegreeBounds {
     fn from_reader(reader: &mut StringReader) -> Result<Self, CommandSyntaxError> {
-        let i = reader.cursor();
         let bounds = bounds_from_reader(reader, &READER_INVALID_FLOAT)?;
-        if bounds.are_swapped() {
-            reader.set_cursor(i);
-            Err(SWAPPED_BOUNDS_ERROR_TYPE.create(reader))
-        } else {
-            Ok(Self::from_bounds(bounds))
-        }
+        // Decreasing degree bounds describe a wrapped rotation interval.
+        Ok(Self::from_bounds(bounds))
     }
 }
 
