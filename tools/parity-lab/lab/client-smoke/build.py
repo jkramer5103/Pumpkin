@@ -36,7 +36,7 @@ def main():
               for p in classpath.read_text().strip().split(':')}
     if actual != expected:
         raise ValueError('Client dependency graph/hash changed; inspect before updating the lock')
-    classes = CACHE / 'classes' 
+    classes = CACHE / 'classes'
     classes.mkdir(exist_ok=True)
     subprocess.run(['javac', '-cp', classpath.read_text().strip(), '-d', str(classes),
                     str(Path(__file__).with_name('ClientSmoke.java'))], check=True, timeout=60)

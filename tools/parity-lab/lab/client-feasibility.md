@@ -58,7 +58,7 @@ Christine execute-anchor source patch remains on the separate patch branch.
 
 A final run of the provenance-complete implementation also passed all four trials:
 `artifacts/client-smoke-scratch/scratch-9ef58129ebaf/validation.json` and
-`runs/client-d14735059f39/report.json` (see validation.json for the authoritative
+`runs/client-e8e80a9dfd3b/report.json` (see validation.json for the authoritative
 inner path). Its report records and verifies the current Java source/class hashes.
 The full shared test suite passed 119 tests before publication. Raw failed setup
 and both successful runs are retained.
