@@ -81,4 +81,23 @@ unit tests passed. The added oracle test uses an independent fluid fixture with
 correct tick-five and late tick-six schedules: the former passes, the latter
 produces a confirmed repeated difference with only the tick-five control failing.
 
-The final scenario also reproduced the tick-five defect through the new launcher twice on clean upstream, with no infrastructure errors: `artifacts/jaron-simulation-upstream/20261016T015605.489773Z-4cfb8915/`. The patched-source build and world-crate validation are still running; no fixed live pass is claimed yet.
+The final scenario also reproduced the tick-five defect through the new launcher twice on clean upstream, with no infrastructure errors: `artifacts/jaron-simulation-upstream/20261016T015605.489773Z-4cfb8915/`. The fixed binary then passed all four controls twice on both engines (8/8
+each), with six verified ticks per trial, exit 0, no flakes or infrastructure
+errors, and clean scratch shutdowns. Final evidence:
+`artifacts/jaron-simulation-fixed/20261016T020838.197977Z-9354a9ae/`.
+
+Source validation passed all 267 world-crate unit tests, workspace formatting,
+world all-targets/all-features clippy, and the full binary build under the shared
+build lock and required resource caps. All three new scheduler regressions had
+failed before the fix. The earlier interrupted scope is preserved separately;
+the complete passing run is recorded in
+`artifacts/jaron-simulation-verify-build.json` and
+`artifacts/jaron-simulation-verify-build-resume.log`.
+
+The source correction advances the scheduler cursor before draining due ticks,
+keeps zero-delay work due on the next step, and reads the cursor under the queue
+mutex when scheduling or saving. It covers shared block/fluid scheduling;
+only the bounded water case was live-validated on Pumpkin. The permanent released
+candidate was not replaced because this source baseline lacks RCON.
+
+Source fix pushed and remotely verified on `parity-lab-jaron`: [94b5a524](https://github.com/jkramer5103/Pumpkin/commit/94b5a5248ac4e59dda519f5c7ef958cf9a71f90d). The patch branch includes the scheduler regressions and final validation notes.
