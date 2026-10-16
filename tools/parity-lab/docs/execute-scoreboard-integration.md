@@ -32,6 +32,17 @@ engine conservatively retains that command failure. Do not suppress the
 response or interpret this case's verdict as a clean supported-command pass.
 
 The bounded current-source comparison is console coverage, not RCON coverage.
-The 22-case reference run validates command-state expectations; it does not
+The 23-case reference run validates command-state expectations; it does not
 prove real-client, elapsed-tick, or broad command parity. No permanent service
 was replaced during this campaign.
+
+
+The selector score fix is independently documented in
+[score-holder findings](score-selector-score-holders.md). Final catalog cases
+`selector-score-absent` and `selector-score-holder-identity` both pass on vanilla
+and the patched binary over two trials, with no command or infrastructure
+problems: `artifacts/runs/20261016T014427.206123Z-32fb01c9/report.json`.
+The upstream identity rerun is
+`artifacts/runs/20261016T014417.589333Z-db3afef1/report.json`; it reproduces the
+failure twice. An earlier interrupted identity run is retained at
+`artifacts/runs/20261015T215745.265191Z-9041c1c8` and is not counted as validation.

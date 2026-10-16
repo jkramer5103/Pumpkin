@@ -180,8 +180,8 @@ def fuzz(targets_path, output, *, seed, seeds=10, actions=12, mode='mixed', max_
                                               'failure_identity': failure_identity(result)})
                 save()
                 check_budget()
-                if code == 2:
-                    raise RuntimeError('Infrastructure failure; campaign stopped with evidence')
+                if code == 2 and not report['complete']:
+                    raise RuntimeError('Incomplete engine run; campaign stopped with evidence')
             # All requested seeds run before spending the shared probe budget.
             remaining = max_probes
             for failure in state['failures']:
@@ -204,4 +204,5 @@ def fuzz(targets_path, output, *, seed, seeds=10, actions=12, mode='mixed', max_
     finally:
         state.update(finished_at=utc_now(), elapsed_seconds=round(time.monotonic()-started, 3))
         save()
-    return directory, state, 2 if not state['complete'] else 1 if state['failures'] else 0
+    return directory, state, (2 if not state['complete'] or any(r['exit_code'] == 2 for r in state['runs'])
+                              else 1 if state['failures'] else 0)
