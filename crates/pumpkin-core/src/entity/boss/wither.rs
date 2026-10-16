@@ -26,9 +26,12 @@ use pumpkin_world::world::BlockFlags;
 use crate::{
     entity::{
         Entity, EntityBase,
-        ai::goal::{
-            look_around::RandomLookAroundGoal, look_at_entity::LookAtEntityGoal,
-            revenge::RevengeGoal,
+        ai::{
+            goal::{
+                look_around::RandomLookAroundGoal, look_at_entity::LookAtEntityGoal,
+                revenge::RevengeGoal,
+            },
+            target_predicate::TargetPredicate,
         },
         mob::{Mob, MobEntity},
         projectile::wither_skull::WitherSkullEntity,
@@ -505,18 +508,16 @@ impl WitherEntity {
                         }
                     } else {
                         let search_box = entity.bounding_box.load().expand(20.0, 8.0, 20.0);
+                        let targeting_conditions =
+                            TargetPredicate::create_attackable().set_base_max_distance(20.0);
                         let entities = world.get_entities_at_box(&search_box);
                         let candidates: Vec<_> = entities
                             .into_iter()
                             .filter(|e| {
-                                e.get_entity().entity_id != entity.entity_id
-                                    && e.get_living_entity().is_some()
-                                    && e.get_entity().is_alive()
-                                    && !e
-                                        .get_entity()
-                                        .entity_type
-                                        .has_tag(&tag::EntityType::MINECRAFT_WITHER_FRIENDS)
-                                    && entity.has_line_of_sight(e.get_entity())
+                                !e.get_entity()
+                                    .entity_type
+                                    .has_tag(&tag::EntityType::MINECRAFT_WITHER_FRIENDS)
+                                    && targeting_conditions.test(&world, Some(self), e.as_ref())
                             })
                             .collect();
 

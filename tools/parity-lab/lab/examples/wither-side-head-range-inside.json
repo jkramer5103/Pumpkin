@@ -1,0 +1,702 @@
+{
+  "schema_version": 1,
+  "id": "wither-side-head-range-inside",
+  "title": "Wither side-head acquisition range inside",
+  "category": "entities",
+  "description": "Pin the Wither every tick and sample skulls for 40 ticks with a stationary golem at offset (14.0, 0, 14.0).",
+  "tags": [
+    "entity",
+    "wither",
+    "combat",
+    "range"
+  ],
+  "setup": [
+    "difficulty easy",
+    "gamerule mob_griefing false",
+    "gamerule spawn_mobs false",
+    "forceload add 0 0 31 31",
+    "scoreboard objectives add pp_range dummy",
+    "scoreboard players set #skulls pp_range 0",
+    "fill 0 79 0 30 86 30 minecraft:air",
+    "fill 0 79 0 30 79 30 minecraft:bedrock",
+    "summon minecraft:iron_golem 17.5 80 17.5 {NoAI:1b,NoGravity:1b,Silent:1b,PersistenceRequired:1b}",
+    "summon minecraft:wither 3.5 80 3.5 {NoAI:1b,NoGravity:1b,Silent:1b,PersistenceRequired:1b}"
+  ],
+  "steps": [
+    {
+      "command": "time query gametime",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:wither,limit=1] {NoAI:0b}"
+    },
+    {
+      "command": "tp @e[type=minecraft:wither] 3.5 80 3.5"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:wither,limit=1] {Motion:[0.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "time query gametime",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:wither_skull] run scoreboard players add #skulls pp_range 1"
+    },
+    {
+      "command": "kill @e[type=minecraft:wither_skull]"
+    },
+    {
+      "command": "tp @e[type=minecraft:wither] 3.5 80 3.5"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:wither,limit=1] {Motion:[0.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "time query gametime",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:wither_skull] run scoreboard players add #skulls pp_range 1"
+    },
+    {
+      "command": "kill @e[type=minecraft:wither_skull]"
+    },
+    {
+      "command": "tp @e[type=minecraft:wither] 3.5 80 3.5"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:wither,limit=1] {Motion:[0.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "time query gametime",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:wither_skull] run scoreboard players add #skulls pp_range 1"
+    },
+    {
+      "command": "kill @e[type=minecraft:wither_skull]"
+    },
+    {
+      "command": "tp @e[type=minecraft:wither] 3.5 80 3.5"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:wither,limit=1] {Motion:[0.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "time query gametime",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:wither_skull] run scoreboard players add #skulls pp_range 1"
+    },
+    {
+      "command": "kill @e[type=minecraft:wither_skull]"
+    },
+    {
+      "command": "tp @e[type=minecraft:wither] 3.5 80 3.5"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:wither,limit=1] {Motion:[0.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "time query gametime",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:wither_skull] run scoreboard players add #skulls pp_range 1"
+    },
+    {
+      "command": "kill @e[type=minecraft:wither_skull]"
+    },
+    {
+      "command": "tp @e[type=minecraft:wither] 3.5 80 3.5"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:wither,limit=1] {Motion:[0.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "time query gametime",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:wither_skull] run scoreboard players add #skulls pp_range 1"
+    },
+    {
+      "command": "kill @e[type=minecraft:wither_skull]"
+    },
+    {
+      "command": "tp @e[type=minecraft:wither] 3.5 80 3.5"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:wither,limit=1] {Motion:[0.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "time query gametime",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:wither_skull] run scoreboard players add #skulls pp_range 1"
+    },
+    {
+      "command": "kill @e[type=minecraft:wither_skull]"
+    },
+    {
+      "command": "tp @e[type=minecraft:wither] 3.5 80 3.5"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:wither,limit=1] {Motion:[0.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "time query gametime",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:wither_skull] run scoreboard players add #skulls pp_range 1"
+    },
+    {
+      "command": "kill @e[type=minecraft:wither_skull]"
+    },
+    {
+      "command": "tp @e[type=minecraft:wither] 3.5 80 3.5"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:wither,limit=1] {Motion:[0.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "time query gametime",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:wither_skull] run scoreboard players add #skulls pp_range 1"
+    },
+    {
+      "command": "kill @e[type=minecraft:wither_skull]"
+    },
+    {
+      "command": "tp @e[type=minecraft:wither] 3.5 80 3.5"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:wither,limit=1] {Motion:[0.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "time query gametime",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:wither_skull] run scoreboard players add #skulls pp_range 1"
+    },
+    {
+      "command": "kill @e[type=minecraft:wither_skull]"
+    },
+    {
+      "command": "tp @e[type=minecraft:wither] 3.5 80 3.5"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:wither,limit=1] {Motion:[0.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "time query gametime",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:wither_skull] run scoreboard players add #skulls pp_range 1"
+    },
+    {
+      "command": "kill @e[type=minecraft:wither_skull]"
+    },
+    {
+      "command": "tp @e[type=minecraft:wither] 3.5 80 3.5"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:wither,limit=1] {Motion:[0.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "time query gametime",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:wither_skull] run scoreboard players add #skulls pp_range 1"
+    },
+    {
+      "command": "kill @e[type=minecraft:wither_skull]"
+    },
+    {
+      "command": "tp @e[type=minecraft:wither] 3.5 80 3.5"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:wither,limit=1] {Motion:[0.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "time query gametime",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:wither_skull] run scoreboard players add #skulls pp_range 1"
+    },
+    {
+      "command": "kill @e[type=minecraft:wither_skull]"
+    },
+    {
+      "command": "tp @e[type=minecraft:wither] 3.5 80 3.5"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:wither,limit=1] {Motion:[0.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "time query gametime",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:wither_skull] run scoreboard players add #skulls pp_range 1"
+    },
+    {
+      "command": "kill @e[type=minecraft:wither_skull]"
+    },
+    {
+      "command": "tp @e[type=minecraft:wither] 3.5 80 3.5"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:wither,limit=1] {Motion:[0.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "time query gametime",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:wither_skull] run scoreboard players add #skulls pp_range 1"
+    },
+    {
+      "command": "kill @e[type=minecraft:wither_skull]"
+    },
+    {
+      "command": "tp @e[type=minecraft:wither] 3.5 80 3.5"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:wither,limit=1] {Motion:[0.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "time query gametime",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:wither_skull] run scoreboard players add #skulls pp_range 1"
+    },
+    {
+      "command": "kill @e[type=minecraft:wither_skull]"
+    },
+    {
+      "command": "tp @e[type=minecraft:wither] 3.5 80 3.5"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:wither,limit=1] {Motion:[0.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "time query gametime",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:wither_skull] run scoreboard players add #skulls pp_range 1"
+    },
+    {
+      "command": "kill @e[type=minecraft:wither_skull]"
+    },
+    {
+      "command": "tp @e[type=minecraft:wither] 3.5 80 3.5"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:wither,limit=1] {Motion:[0.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "time query gametime",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:wither_skull] run scoreboard players add #skulls pp_range 1"
+    },
+    {
+      "command": "kill @e[type=minecraft:wither_skull]"
+    },
+    {
+      "command": "tp @e[type=minecraft:wither] 3.5 80 3.5"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:wither,limit=1] {Motion:[0.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "time query gametime",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:wither_skull] run scoreboard players add #skulls pp_range 1"
+    },
+    {
+      "command": "kill @e[type=minecraft:wither_skull]"
+    },
+    {
+      "command": "tp @e[type=minecraft:wither] 3.5 80 3.5"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:wither,limit=1] {Motion:[0.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "time query gametime",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:wither_skull] run scoreboard players add #skulls pp_range 1"
+    },
+    {
+      "command": "kill @e[type=minecraft:wither_skull]"
+    },
+    {
+      "command": "tp @e[type=minecraft:wither] 3.5 80 3.5"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:wither,limit=1] {Motion:[0.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "time query gametime",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:wither_skull] run scoreboard players add #skulls pp_range 1"
+    },
+    {
+      "command": "kill @e[type=minecraft:wither_skull]"
+    },
+    {
+      "command": "tp @e[type=minecraft:wither] 3.5 80 3.5"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:wither,limit=1] {Motion:[0.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "time query gametime",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:wither_skull] run scoreboard players add #skulls pp_range 1"
+    },
+    {
+      "command": "kill @e[type=minecraft:wither_skull]"
+    },
+    {
+      "command": "tp @e[type=minecraft:wither] 3.5 80 3.5"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:wither,limit=1] {Motion:[0.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "time query gametime",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:wither_skull] run scoreboard players add #skulls pp_range 1"
+    },
+    {
+      "command": "kill @e[type=minecraft:wither_skull]"
+    },
+    {
+      "command": "tp @e[type=minecraft:wither] 3.5 80 3.5"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:wither,limit=1] {Motion:[0.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "time query gametime",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:wither_skull] run scoreboard players add #skulls pp_range 1"
+    },
+    {
+      "command": "kill @e[type=minecraft:wither_skull]"
+    },
+    {
+      "command": "tp @e[type=minecraft:wither] 3.5 80 3.5"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:wither,limit=1] {Motion:[0.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "time query gametime",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:wither_skull] run scoreboard players add #skulls pp_range 1"
+    },
+    {
+      "command": "kill @e[type=minecraft:wither_skull]"
+    },
+    {
+      "command": "tp @e[type=minecraft:wither] 3.5 80 3.5"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:wither,limit=1] {Motion:[0.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "time query gametime",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:wither_skull] run scoreboard players add #skulls pp_range 1"
+    },
+    {
+      "command": "kill @e[type=minecraft:wither_skull]"
+    },
+    {
+      "command": "tp @e[type=minecraft:wither] 3.5 80 3.5"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:wither,limit=1] {Motion:[0.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "time query gametime",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:wither_skull] run scoreboard players add #skulls pp_range 1"
+    },
+    {
+      "command": "kill @e[type=minecraft:wither_skull]"
+    },
+    {
+      "command": "tp @e[type=minecraft:wither] 3.5 80 3.5"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:wither,limit=1] {Motion:[0.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "time query gametime",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:wither_skull] run scoreboard players add #skulls pp_range 1"
+    },
+    {
+      "command": "kill @e[type=minecraft:wither_skull]"
+    },
+    {
+      "command": "tp @e[type=minecraft:wither] 3.5 80 3.5"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:wither,limit=1] {Motion:[0.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "time query gametime",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:wither_skull] run scoreboard players add #skulls pp_range 1"
+    },
+    {
+      "command": "kill @e[type=minecraft:wither_skull]"
+    },
+    {
+      "command": "tp @e[type=minecraft:wither] 3.5 80 3.5"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:wither,limit=1] {Motion:[0.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "time query gametime",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:wither_skull] run scoreboard players add #skulls pp_range 1"
+    },
+    {
+      "command": "kill @e[type=minecraft:wither_skull]"
+    },
+    {
+      "command": "tp @e[type=minecraft:wither] 3.5 80 3.5"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:wither,limit=1] {Motion:[0.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "time query gametime",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:wither_skull] run scoreboard players add #skulls pp_range 1"
+    },
+    {
+      "command": "kill @e[type=minecraft:wither_skull]"
+    },
+    {
+      "command": "tp @e[type=minecraft:wither] 3.5 80 3.5"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:wither,limit=1] {Motion:[0.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "time query gametime",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:wither_skull] run scoreboard players add #skulls pp_range 1"
+    },
+    {
+      "command": "kill @e[type=minecraft:wither_skull]"
+    },
+    {
+      "command": "tp @e[type=minecraft:wither] 3.5 80 3.5"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:wither,limit=1] {Motion:[0.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "time query gametime",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:wither_skull] run scoreboard players add #skulls pp_range 1"
+    },
+    {
+      "command": "kill @e[type=minecraft:wither_skull]"
+    },
+    {
+      "command": "tp @e[type=minecraft:wither] 3.5 80 3.5"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:wither,limit=1] {Motion:[0.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "time query gametime",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:wither_skull] run scoreboard players add #skulls pp_range 1"
+    },
+    {
+      "command": "kill @e[type=minecraft:wither_skull]"
+    },
+    {
+      "command": "tp @e[type=minecraft:wither] 3.5 80 3.5"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:wither,limit=1] {Motion:[0.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "time query gametime",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:wither_skull] run scoreboard players add #skulls pp_range 1"
+    },
+    {
+      "command": "kill @e[type=minecraft:wither_skull]"
+    },
+    {
+      "command": "tp @e[type=minecraft:wither] 3.5 80 3.5"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:wither,limit=1] {Motion:[0.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "time query gametime",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:wither_skull] run scoreboard players add #skulls pp_range 1"
+    },
+    {
+      "command": "kill @e[type=minecraft:wither_skull]"
+    },
+    {
+      "command": "tp @e[type=minecraft:wither] 3.5 80 3.5"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:wither,limit=1] {Motion:[0.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "time query gametime",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:wither_skull] run scoreboard players add #skulls pp_range 1"
+    },
+    {
+      "command": "kill @e[type=minecraft:wither_skull]"
+    },
+    {
+      "command": "tp @e[type=minecraft:wither] 3.5 80 3.5"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:wither,limit=1] {Motion:[0.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "time query gametime",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:wither_skull] run scoreboard players add #skulls pp_range 1"
+    },
+    {
+      "command": "kill @e[type=minecraft:wither_skull]"
+    },
+    {
+      "command": "tp @e[type=minecraft:wither] 3.5 80 3.5"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:wither,limit=1] {Motion:[0.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "time query gametime",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:wither_skull] run scoreboard players add #skulls pp_range 1"
+    },
+    {
+      "command": "kill @e[type=minecraft:wither_skull]"
+    },
+    {
+      "command": "tp @e[type=minecraft:wither] 3.5 80 3.5"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:wither,limit=1] {Motion:[0.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "time query gametime",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:wither_skull] run scoreboard players add #skulls pp_range 1"
+    },
+    {
+      "command": "kill @e[type=minecraft:wither_skull]"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:wither,x=3.5,y=80,z=3.5,distance=..1]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:iron_golem,x=17.5,y=80,z=17.5,distance=..0.01]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if score #skulls pp_range matches 1..",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 10 82 10 minecraft:air",
+      "observe": true,
+      "expect_contains": "Test passed"
+    }
+  ],
+  "cleanup": [
+    "kill @e[type=minecraft:wither]",
+    "kill @e[type=minecraft:iron_golem]",
+    "kill @e[type=minecraft:wither_skull]",
+    "kill @e[type=minecraft:item]",
+    "scoreboard objectives remove pp_range"
+  ],
+  "notes": "Fresh arena per target/case/repetition; easy disables idle skulls. Forceload vanilla, creative headless protocol client holds Pumpkin chunks. One NoAI registration tick then enabled AI. Every sampling tick teleports boss and zeros velocity so vanilla target pursuit cannot enter range. Outside case exceeds both main-head firing radius and side-head acquisition radius, but is within side-head retention radius. Inside and exact 20-block boundary are positive controls. Console/protocol behavior only; no human visual proof."
+}
