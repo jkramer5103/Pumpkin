@@ -200,7 +200,7 @@ entity('entity-nbt-list','Append extends an NBT list','Appending to marker data 
        [f'execute if data entity {ONE} data.values[0]',f'execute if entity {ONE[:-1]},nbt={{data:{{values:[2,4,8]}}}}]'],category='entity-nbt')
 entity('entity-teleport','Teleport mutates stored position','Integer teleport coordinates center x/z on blocks; marker Pos NBT must reflect that centering.',
        [summon(),f'teleport {ONE} 4 65 4'],
-       [f'execute if entity {ONE[:-1]},nbt={{Pos:[4.5d,65.0d,4.5d]}}]'])
+       [f'execute if entity {ONE[:-1]},nbt={{Pos:[4.5d,65.0d,4.5d]}}] if entity @e[type=minecraft:marker,tag=pp,x=4.5,y=65,z=4.5,distance=..0.001]'])
 entity('kill-tag-isolation','Kill affects only the selected tag','Killing the chosen marker leaves an unchosen marker alive.',
        [summon(tag='chosen'),summon(4),f'kill {SEL[:-1]},tag=chosen]'],
        [f'execute if entity {SEL[:-1]},tag=!chosen] unless entity {SEL[:-1]},tag=chosen]'])

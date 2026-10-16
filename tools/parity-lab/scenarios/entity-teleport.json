@@ -22,7 +22,7 @@
       "command": "teleport @e[type=minecraft:marker,tag=pp,x=-32,y=48,z=-32,dx=64,dy=48,dz=64,limit=1] 4 65 4"
     },
     {
-      "command": "execute if entity @e[type=minecraft:marker,tag=pp,x=-32,y=48,z=-32,dx=64,dy=48,dz=64,limit=1,nbt={Pos:[4.5d,65.0d,4.5d]}]",
+      "command": "execute if entity @e[type=minecraft:marker,tag=pp,x=-32,y=48,z=-32,dx=64,dy=48,dz=64,limit=1,nbt={Pos:[4.5d,65.0d,4.5d]}] if entity @e[type=minecraft:marker,tag=pp,x=4.5,y=65,z=4.5,distance=..0.001]",
       "observe": true,
       "expect_contains": "Test passed"
     }

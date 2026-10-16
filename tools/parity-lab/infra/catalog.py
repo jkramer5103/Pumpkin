@@ -1,8 +1,7 @@
 """Validate authoring invariants in addition to the engine's scenario schema."""
 from pathlib import Path
-import json
 
-from lab.schema import SchemaError, validate_scenario
+from lab.schema import SchemaError, read_json, validate_scenario
 
 
 def validate_catalog(scenarios):
@@ -29,10 +28,19 @@ def validate_catalog(scenarios):
     return scenarios
 
 
-def load_catalog(directory):
-    return validate_catalog([json.loads(path.read_text()) for path in sorted(Path(directory).glob('*.json'))])
+def load_catalog(directory, *, recursive=False):
+    directory = Path(directory)
+    if not directory.is_dir():
+        raise SchemaError(f'{directory}: scenario directory does not exist')
+    paths = directory.rglob('*.json') if recursive else directory.glob('*.json')
+    return validate_catalog([read_json(path) for path in sorted(paths)])
 
 
 if __name__=='__main__':
+    import argparse
     root=Path(__file__).resolve().parents[1]
-    print(f'Validated {len(load_catalog(root/"scenarios"))} distinct scenarios')
+    parser=argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--scenarios',type=Path,default=root/'scenarios')
+    parser.add_argument('--recursive',action='store_true',help='also validate opt-in catalogs and cross-directory identities')
+    args=parser.parse_args()
+    print(f'Validated {len(load_catalog(args.scenarios,recursive=args.recursive))} scenario definitions (unique IDs and command sequences)')

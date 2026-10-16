@@ -2,10 +2,11 @@
 from copy import deepcopy
 import json
 from pathlib import Path
+import tempfile
 import unittest
 
 from infra.author_execution_scenarios import execution_cases
-from infra.catalog import validate_catalog
+from infra.catalog import load_catalog, validate_catalog
 from lab.schema import SchemaError
 
 ROOT=Path(__file__).resolve().parents[1]
@@ -60,6 +61,25 @@ class ExecutionCatalogTests(unittest.TestCase):
         scenario['steps'][0]['expect_success']=True
         with self.assertRaisesRegex(SchemaError,'unknown fields: expect_success'):
             validate_catalog([scenario])
+
+    def test_catalog_reader_rejects_duplicate_json_keys(self):
+        scenario=execution_cases()[0]
+        raw=json.dumps(scenario).replace('"schema_version": 1', '"schema_version": 2, "schema_version": 1', 1)
+        with tempfile.TemporaryDirectory() as directory:
+            Path(directory,'duplicate.json').write_text(raw)
+            with self.assertRaises(SchemaError):
+                load_catalog(directory)
+
+    def test_recursive_audit_catches_cross_directory_duplicates(self):
+        scenario=execution_cases()[0]
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory)
+            (root/'opt-in').mkdir()
+            (root/'case.json').write_text(json.dumps(scenario))
+            (root/'opt-in/case.json').write_text(json.dumps(scenario))
+            self.assertEqual(len(load_catalog(root)),1)
+            with self.assertRaisesRegex(SchemaError,'duplicate scenario id'):
+                load_catalog(root,recursive=True)
 
 
 if __name__=='__main__':
