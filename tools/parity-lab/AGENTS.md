@@ -15,3 +15,11 @@ Read `ops/FORK.md` before making Pumpkin source changes or pushing commits.
 
 ## Latest account restriction
 Both worker lanes now use ONLY Christine (christine.funke@hamburg.de). The Jaron lane name is retained for its task history; it contains Christine credentials. Never switch back to the Jaron subscription or use its disabled login. The user needs that quota for other work.
+
+
+## Latest campaign priority
+User redirected the workers to actual Pumpkin Rust source fixes. New source tasks
+supersede old lab-only ownership and audit assignments in CONTRACT.md. Tests and
+lab tools support source patches; lab infrastructure is not the task deliverable.
+Christine owns selector rotation; retained Jaron lane owns terminal execute
+conditions. Both use Christine credentials only. Push campaign branches, not master.

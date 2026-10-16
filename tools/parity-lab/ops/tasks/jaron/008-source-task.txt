@@ -1,0 +1,33 @@
+Fix Pumpkin terminal execute condition behavior
+
+Read AGENTS.md and ops/FORK.md. LATEST USER PRIORITY: actual Pumpkin Rust source
+fixes, not improvements to the testing lab. This supersedes the old lab-first
+CONTRACT ownership and task briefs. Work only on your designated campaign branch
+and source worktree. Use exactly gpt-6.1-sol, Christine subscription only, YOLO.
+No new agents, upstream PRs/issues/messages, paid overage or banked resets.
+
+Fetch the authorized fork master and merge it into your designated branch without
+rewriting history, so your work includes all five previous source fixes. Inspect
+applicable Pumpkin AGENTS.md and relevant vanilla implementation. Check upstream
+for overlap before coding. Reproduce the actual bug, change Rust source, add a
+focused regression, and run meaningful relevant Rust checks. Follow all shared
+build lock and resource limits in ops/FORK.md. Use existing lab tools only as
+needed to validate that source fix; do not add lab infrastructure, expand catalogs,
+write general audits, or repeatedly revalidate already fixed bugs as the deliverable.
+Push validated source fixes to your designated branch, with concise evidence and
+artifacts/<lane>-fork-status.json patch summaries. Don't push master automatically.
+If a candidate is already fixed upstream or blocked, record a short reason and
+move to another real Pumpkin defect in your assigned scope within this task.
+A final response consisting only of lab/test-runner changes does not fulfill this task.
+If waiting on a build use ops/wait-for-build.py and finish the turn so the supervisor
+waits without inference. Do not claim compilation or live proof that did not happen.
+
+Lane: jaron (Christine credentials). Worktree /root/pumpkin-parity-worktrees/jaron;
+branch parity-lab-jaron. Own execute command Rust source; don't edit selector
+parser (Christine owns it). Current-source comparisons repeatedly report terminal
+execute if/unless entity and block conditions unsupported without a trailing run.
+Inspect crates/pumpkin-core/src/command/commands/execute.rs and the command dispatch
+path against vanilla. Reproduce exact terminal command result/success behavior and
+fix the source implementation if confirmed, with Rust regression tests and a
+bounded real-server comparison. If covered by an identical upstream fix, inspect
+another concrete execute command defect rather than returning to lab work.
