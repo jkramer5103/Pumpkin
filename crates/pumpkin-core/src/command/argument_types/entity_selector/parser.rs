@@ -148,11 +148,11 @@ impl<'b, 'a> EntitySelectorParser<'b, 'a> {
         // We finalize our predicates.
         if let Some(x) = self.rotation.x {
             self.predicates
-                .push(EntitySelectorPredicate::Rotation(x, RotationType::Yaw));
+                .push(EntitySelectorPredicate::Rotation(x, RotationType::Pitch));
         }
         if let Some(y) = self.rotation.y {
             self.predicates
-                .push(EntitySelectorPredicate::Rotation(y, RotationType::Pitch));
+                .push(EntitySelectorPredicate::Rotation(y, RotationType::Yaw));
         }
         if let Some(level) = self.experience_level {
             self.predicates
@@ -618,6 +618,8 @@ impl EntitySelectorParserSuggestions {
 #[cfg(test)]
 mod tests {
     use super::EntitySelectorParser;
+    use crate::command::argument_types::entity_selector::{EntitySelectorPredicate, RotationType};
+    use crate::command::errors::command_syntax_error::CommandSyntaxError;
     use crate::command::string_reader::StringReader;
 
     fn parse(selector: &str) -> bool {
@@ -634,5 +636,39 @@ mod tests {
         assert!(parse("@e[type=!minecraft:iron_golem]"));
         assert!(!parse("@e[type=pumpkin:iron_golem]"));
         assert!(!parse("@e[type=minecraft:not_an_entity]"));
+    }
+
+    #[test]
+    fn rotation_options_use_pitch_for_x_and_yaw_for_y() -> Result<(), CommandSyntaxError> {
+        let mut reader = StringReader::new("@e[x_rotation=10..30,y_rotation=80..100]");
+        let selector = EntitySelectorParser::new(&mut reader, true).parse_and_consume()?;
+        assert!(selector.predicates.iter().any(|predicate| matches!(
+            predicate,
+            EntitySelectorPredicate::Rotation(bounds, RotationType::Pitch)
+                if bounds.min() == Some(10.0) && bounds.max() == Some(30.0)
+        )));
+        assert!(selector.predicates.iter().any(|predicate| matches!(
+            predicate,
+            EntitySelectorPredicate::Rotation(bounds, RotationType::Yaw)
+                if bounds.min() == Some(80.0) && bounds.max() == Some(100.0)
+        )));
+        Ok(())
+    }
+
+    #[test]
+    fn wrapped_rotation_options_keep_their_axes() -> Result<(), CommandSyntaxError> {
+        let mut reader = StringReader::new("@e[x_rotation=170..190,y_rotation=350..370]");
+        let selector = EntitySelectorParser::new(&mut reader, true).parse_and_consume()?;
+        assert!(selector.predicates.iter().any(|predicate| matches!(
+            predicate,
+            EntitySelectorPredicate::Rotation(bounds, RotationType::Pitch)
+                if bounds.min() == Some(170.0) && bounds.max() == Some(190.0)
+        )));
+        assert!(selector.predicates.iter().any(|predicate| matches!(
+            predicate,
+            EntitySelectorPredicate::Rotation(bounds, RotationType::Yaw)
+                if bounds.min() == Some(350.0) && bounds.max() == Some(370.0)
+        )));
+        Ok(())
     }
 }
