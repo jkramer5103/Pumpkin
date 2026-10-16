@@ -515,7 +515,7 @@ impl WitherEntity {
                         let head_target = world.get_entity_by_id(head_target_id);
                         if let Some(target) = head_target {
                             let t_pos = target.get_entity().pos.load();
-                            if target.get_entity().is_alive()
+                            if self.can_attack(target.as_ref())
                                 && (wither_pos - t_pos).length_squared() <= 900.0
                                 && entity.has_line_of_sight(target.get_entity())
                             {
