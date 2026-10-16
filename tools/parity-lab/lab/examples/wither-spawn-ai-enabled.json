@@ -1,0 +1,59 @@
+{
+  "schema_version": 1,
+  "id": "wither-spawn-ai-enabled",
+  "title": "Wither enabled spawn AI positive control",
+  "category": "entities",
+  "description": "An ordinary Wither advances its countdown and heals during its spawn phase.",
+  "tags": [
+    "entity",
+    "wither",
+    "ai",
+    "spawn"
+  ],
+  "setup": [
+    "difficulty easy",
+    "gamerule mob_griefing false",
+    "gamerule spawn_mobs false",
+    "forceload add 0 0 15 15",
+    "fill 0 79 0 15 89 15 minecraft:air",
+    "fill 0 79 0 15 79 15 minecraft:bedrock",
+    "summon minecraft:wither 3.5 80 3.5 {NoAI:1b,NoGravity:1b,Silent:1b,Invul:220,Health:100.0f}"
+  ],
+  "steps": [
+    {
+      "command": "time query gametime",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:wither,limit=1] {NoAI:0b,Invul:220,Health:100.0f}"
+    },
+    {
+      "command": "time query gametime",
+      "wait_ticks": 10
+    },
+    {
+      "command": "time query gametime",
+      "wait_ticks": 10
+    },
+    {
+      "command": "time query gametime",
+      "wait_ticks": 10
+    },
+    {
+      "command": "time query gametime",
+      "wait_ticks": 10
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:wither,nbt={Invul:180,Health:140.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    }
+  ],
+  "cleanup": [
+    "kill @e[type=minecraft:wither]",
+    "kill @e[type=minecraft:wither_skull]",
+    "kill @e[type=minecraft:iron_golem]",
+    "kill @e[type=minecraft:item]"
+  ],
+  "notes": "Use a fresh isolated boss arena, keep the chunk loaded with a protocol client on Pumpkin, freeze ticks before setup and verify each tick step. Repeat twice. This is a server behavior fixture, with no human visual proof. Register the disabled Wither for one tick before enabling it; fresh vanilla chunks can otherwise delay its first entity tick."
+}

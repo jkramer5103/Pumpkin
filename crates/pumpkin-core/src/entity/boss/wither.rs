@@ -319,16 +319,50 @@ impl WitherEntity {
         bossbar_players.clear();
     }
 
+    // Vanilla aiStep still runs when customServerAiStep is disabled by NoAI.
+    fn tick_movement(&self) {
+        let entity = &self.mob_entity.living_entity.entity;
+        let world = entity.world.load();
+        let mut delta_movement = entity.velocity.load().multiply(1.0, 0.6, 1.0);
+        let target_id = self.get_alternative_target(0);
+        if target_id > 0
+            && let Some(target) = world.get_entity_by_id(target_id)
+        {
+            let target_pos = target.get_entity().pos.load();
+            let wither_pos = entity.pos.load();
+            let mut yd = delta_movement.y;
+
+            if wither_pos.y < target_pos.y
+                || (!self.is_powered() && wither_pos.y < target_pos.y + 5.0)
+            {
+                yd = yd.max(0.0);
+                yd += 0.3 - yd * 0.6;
+            }
+
+            delta_movement.y = yd;
+            let delta = Vector3::new(
+                target_pos.x - wither_pos.x,
+                0.0,
+                target_pos.z - wither_pos.z,
+            );
+
+            if delta.horizontal_length_squared() > 9.0 {
+                let scale = delta.normalize();
+                delta_movement.x += scale.x * 0.3 - delta_movement.x * 0.6;
+                delta_movement.z += scale.z * 0.3 - delta_movement.z * 0.6;
+            }
+        }
+        entity.velocity.store(delta_movement);
+        if delta_movement.horizontal_length_squared() > 0.05 {
+            let yaw = (delta_movement.z.atan2(delta_movement.x).to_degrees() as f32) - 90.0;
+            entity.set_rotation(yaw, entity.pitch.load());
+        }
+    }
+
     #[expect(clippy::too_many_lines)]
     fn tick_wither(&self) {
         let entity = &self.mob_entity.living_entity.entity;
         let world = entity.world.load();
-
-        if world.level_info.load().difficulty == Difficulty::Peaceful {
-            self.remove_all_bossbar(&world);
-            entity.remove();
-            return;
-        }
 
         if !entity.is_alive() || self.mob_entity.living_entity.health.load() <= 0.0 {
             self.remove_all_bossbar(&world);
@@ -384,36 +418,11 @@ impl WitherEntity {
                 living.heal(1.0);
             }
 
-            // AI step - movement towards main target
-            let mut delta_movement = entity.velocity.load().multiply(1.0, 0.6, 1.0);
             let target_opt = self.mob_entity.get_target();
-
             if let Some(ref target) = target_opt {
                 if target.get_entity().is_alive() {
                     let target_pos = target.get_entity().pos.load();
                     let wither_pos = entity.pos.load();
-                    let mut yd = delta_movement.y;
-
-                    if wither_pos.y < target_pos.y
-                        || (!self.is_powered() && wither_pos.y < target_pos.y + 5.0)
-                    {
-                        yd = yd.max(0.0);
-                        yd += 0.3 - yd * 0.6;
-                    }
-
-                    delta_movement.y = yd;
-                    let delta = Vector3::new(
-                        target_pos.x - wither_pos.x,
-                        0.0,
-                        target_pos.z - wither_pos.z,
-                    );
-
-                    if delta.horizontal_length_squared() > 9.0 {
-                        let scale = delta.normalize();
-                        delta_movement.x += scale.x * 0.3 - delta_movement.x * 0.6;
-                        delta_movement.z += scale.z * 0.3 - delta_movement.z * 0.6;
-                    }
-
                     self.set_alternative_target(0, target.get_entity().entity_id);
 
                     // Main head attack
@@ -442,12 +451,6 @@ impl WitherEntity {
                 }
             } else {
                 self.set_alternative_target(0, 0);
-            }
-
-            entity.velocity.store(delta_movement);
-            if delta_movement.horizontal_length_squared() > 0.05 {
-                let yaw = (delta_movement.z.atan2(delta_movement.x).to_degrees() as f32) - 90.0;
-                entity.set_rotation(yaw, entity.pitch.load());
             }
 
             // Side heads attack logic
@@ -601,6 +604,20 @@ impl Mob for WitherEntity {
     }
 
     fn mob_tick(&self, _caller: &dyn EntityBase) {
+        let entity = &self.mob_entity.living_entity.entity;
+        let world = entity.world.load();
+        if world.level_info.load().difficulty == Difficulty::Peaceful {
+            self.remove_all_bossbar(&world);
+            entity.remove();
+            return;
+        }
+
+        if entity.is_alive() && self.mob_entity.living_entity.health.load() > 0.0 {
+            self.tick_movement();
+        }
+    }
+
+    fn custom_server_ai_step(&self, _caller: &dyn EntityBase) {
         self.tick_wither();
     }
 
