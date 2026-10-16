@@ -1,0 +1,158 @@
+{
+  "schema_version": 1,
+  "id": "wither-distance-despawn",
+  "title": "Wither ignores ordinary mob distance despawning",
+  "category": "entities",
+  "description": "Active and spawning Withers survive a non-spectator player moving beyond 128 blocks and a spectator-only world, but still disappear on Peaceful. A zombie and persistent Wither control the ordinary distance checks.",
+  "tags": [
+    "entity",
+    "wither",
+    "despawn"
+  ],
+  "setup": [
+    "tick freeze",
+    "difficulty easy",
+    "gamerule spawn_mobs false",
+    "gamerule mob_griefing false",
+    "gamemode creative @a",
+    "forceload add 0 0 31 31",
+    "fill 0 79 0 31 79 31 minecraft:bedrock",
+    "tp @a 8.5 84 8.5"
+  ],
+  "steps": [
+    {
+      "command": "summon minecraft:wither 8.5 80 8.5 {Tags:[\"pp_active\"],NoAI:1b,NoGravity:1b,Silent:1b,Invul:0,PersistenceRequired:0b}"
+    },
+    {
+      "command": "summon minecraft:wither 8.5 80 8.5 {Tags:[\"pp_spawn\"],NoAI:1b,NoGravity:1b,Silent:1b,Invul:200,PersistenceRequired:0b}"
+    },
+    {
+      "command": "summon minecraft:zombie 8.5 80 12.5 {Tags:[\"pp_zombie\"],NoAI:1b,NoGravity:1b,PersistenceRequired:0b}"
+    },
+    {
+      "command": "summon minecraft:wither 8.5 80 16.5 {Tags:[\"pp_persistent\"],NoAI:1b,NoGravity:1b,Silent:1b,PersistenceRequired:1b}"
+    },
+    {
+      "command": "tp @a 8.5 207 8.5",
+      "wait_ticks": 2
+    },
+    {
+      "command": "execute if entity @e[tag=pp_active]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_spawn]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_zombie]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_persistent]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @a[gamemode=creative,x=8,y=207,z=8,dx=1,dy=0,dz=1]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "tp @a 8.5 209 8.5",
+      "wait_ticks": 2
+    },
+    {
+      "command": "execute if entity @e[tag=pp_active]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_spawn]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_persistent]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute unless entity @e[tag=pp_zombie]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @a[gamemode=creative,x=8,y=209,z=8,dx=1,dy=0,dz=1]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "gamemode spectator @a",
+      "wait_ticks": 2
+    },
+    {
+      "command": "execute if entity @e[tag=pp_active]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_spawn]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_persistent]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @a[gamemode=spectator]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "summon minecraft:wither 8.5 80 24.5 {Tags:[\"pp_spectator\"],NoAI:1b,NoGravity:1b,Silent:1b,PersistenceRequired:0b}",
+      "wait_ticks": 2
+    },
+    {
+      "command": "execute if entity @e[tag=pp_spectator]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "difficulty peaceful",
+      "wait_ticks": 2
+    },
+    {
+      "command": "execute unless entity @e[tag=pp_active]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute unless entity @e[tag=pp_spawn]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute unless entity @e[tag=pp_persistent]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute unless entity @e[tag=pp_spectator]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    }
+  ],
+  "cleanup": [
+    "difficulty easy",
+    "gamemode creative @a",
+    "tp @a 8.5 84 8.5",
+    "kill @e[type=!minecraft:player]"
+  ],
+  "notes": "Run with one connected headless client and an isolated forceloaded arena. Exactly ten verified ticks per repetition. At 127 blocks vertical distance all entities survive; at129 the ordinary zombie disappears but both nonpersistent Withers remain. A freshly summoned nonpersistent Wither tests the spectator-only eligible-player set. Peaceful checks cover the empty eligible-player set and retain boss removal. NoAI/NoGravity hold positions; neither spawn timers nor health/skull behavior are under test. Two repetitions against vanilla, baseline and patched binaries."
+}

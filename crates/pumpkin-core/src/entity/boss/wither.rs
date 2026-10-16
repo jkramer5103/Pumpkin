@@ -615,6 +615,12 @@ impl Mob for WitherEntity {
         &self.mob_entity
     }
 
+    fn remove_when_far_away(&self, _distance_sq: f64) -> bool {
+        // Vanilla WitherBoss.checkDespawn only removes the boss on Peaceful,
+        // which mob_tick handles independently of ordinary mob despawning.
+        false
+    }
+
     fn mob_init_data_tracker(&self) {
         let entity = &self.mob_entity.living_entity.entity;
         entity.set_synced_data(
