@@ -70,6 +70,41 @@ use pumpkin_util::text::TextComponent;
 use rand::RngExt;
 use std::sync::RwLock;
 
+#[derive(Default)]
+struct MobHurtMemory {
+    source: Option<uuid::Uuid>,
+    ticks_since_last_hurt: i32,
+}
+
+impl MobHurtMemory {
+    const fn remember(&mut self, source: uuid::Uuid) {
+        self.source = Some(source);
+        self.ticks_since_last_hurt = 0;
+    }
+
+    fn tick(&mut self, source_alive: Option<bool>) {
+        self.ticks_since_last_hurt = self.ticks_since_last_hurt.saturating_add(1);
+        if source_alive.is_some_and(|alive| !alive || self.ticks_since_last_hurt > 100) {
+            self.source = None;
+            self.ticks_since_last_hurt = 0;
+        }
+    }
+
+    fn write_nbt(&self, nbt: &mut NbtCompound) {
+        if let Some(source) = self.source {
+            nbt.put_uuid("last_hurt_by_mob", source);
+            nbt.put_int("ticks_since_last_hurt_by_mob", self.ticks_since_last_hurt);
+        }
+    }
+
+    fn read_nbt(nbt: &NbtCompound) -> Self {
+        Self {
+            source: nbt.get_uuid("last_hurt_by_mob"),
+            ticks_since_last_hurt: nbt.get_int("ticks_since_last_hurt_by_mob").unwrap_or(0),
+        }
+    }
+}
+
 /// Represents a living entity within the game world.
 ///
 /// This struct encapsulates the core properties and behaviors of living entities, including players, mobs, and other creatures.
@@ -116,6 +151,7 @@ pub struct LivingEntity {
     pub last_attacked_time: AtomicI32,
     last_damage_type: std::sync::Mutex<Option<DamageType>>,
     last_damage_stamp: std::sync::atomic::AtomicI64,
+    mob_hurt_memory: std::sync::Mutex<MobHurtMemory>,
 
     /// The entity ID of the entity this living entity last attacked.
     pub last_attacking_id: AtomicI32,
@@ -307,6 +343,7 @@ impl LivingEntity {
             last_attacked_time: AtomicI32::new(0),
             last_damage_type: std::sync::Mutex::new(None),
             last_damage_stamp: std::sync::atomic::AtomicI64::new(0),
+            mob_hurt_memory: std::sync::Mutex::new(MobHurtMemory::default()),
             last_attacking_id: AtomicI32::new(0),
             last_attack_time: AtomicI32::new(0),
             combat_tracker: std::sync::Mutex::new(CombatTracker::new()),
@@ -318,6 +355,35 @@ impl LivingEntity {
             water_movement_speed_multiplier,
             last_block_pos: AtomicCell::new(None),
             equipment_attribute_modifier_ids: std::sync::Mutex::new(FxHashMap::default()),
+        }
+    }
+
+    pub fn ticks_since_last_hurt_by_mob(&self) -> i32 {
+        self.mob_hurt_memory
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner)
+            .ticks_since_last_hurt
+    }
+
+    fn mob_hurt_causes_anger(damage_type: DamageType, victim_type: &EntityType) -> bool {
+        !damage_type.has_tag(&tag::DamageType::MINECRAFT_NO_ANGER)
+            && (damage_type != DamageType::WIND_CHARGE
+                || !victim_type.has_tag(&tag::EntityType::MINECRAFT_NO_ANGER_FROM_WIND_CHARGE))
+    }
+
+    fn resolve_mob_responsible_for_damage(
+        &self,
+        damage_type: DamageType,
+        source: Option<&dyn EntityBase>,
+    ) {
+        if let Some(source) = source
+            && source.get_living_entity().is_some()
+            && Self::mob_hurt_causes_anger(damage_type, self.entity.entity_type)
+        {
+            self.mob_hurt_memory
+                .lock()
+                .unwrap_or_else(std::sync::PoisonError::into_inner)
+                .remember(source.get_entity().entity_uuid);
         }
     }
 
@@ -2599,6 +2665,10 @@ impl LivingEntity {
         self.hurt_cooldown.store(20, Relaxed);
         self.hurt_time.store(0, Relaxed);
         self.last_damage_taken.store(0f32);
+        *self
+            .mob_hurt_memory
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner) = MobHurtMemory::default();
 
         self.entity.portal_cooldown.store(0, Relaxed);
         *self
@@ -2671,6 +2741,10 @@ impl LivingEntity {
         nbt.put("AbsorptionAmount", NbtTag::Float(self.absorption.load()));
         nbt.put("FallDistance", NbtTag::Float(fall_distance));
         nbt.put_short("HurtTime", self.hurt_time.load(Relaxed).max(0) as i16);
+        self.mob_hurt_memory
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner)
+            .write_nbt(nbt);
         nbt.put_short("DeathTime", i16::from(self.death_time.load(Relaxed)));
         nbt.put_bool("FallFlying", self.entity.is_fall_flying());
         {
@@ -2753,6 +2827,10 @@ impl LivingEntity {
         } else {
             self.fall_distance.store(fd);
         }
+        *self
+            .mob_hurt_memory
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner) = MobHurtMemory::read_nbt(nbt);
         if let Some(hurt_time) = nbt.get_short("HurtTime") {
             self.hurt_time.store(i32::from(hurt_time), Relaxed);
         }
@@ -3147,6 +3225,9 @@ impl LivingEntity {
                 (effective_amount, self.health.load() > effective_amount)
             };
 
+        // Accepted living-attacker hits count even when absorption or resistance prevents health loss.
+        self.resolve_mob_responsible_for_damage(damage_type, cause.or(source));
+
         // Finalize state
         self.last_damage_taken.store(amount);
         let damage_amount = damage_amount.max(0.0);
@@ -3361,6 +3442,22 @@ impl EntityBase for LivingEntity {
     #[allow(clippy::too_many_lines)]
     fn tick(&self, caller: &dyn EntityBase, server: &Server) {
         self.entity.tick(caller, server);
+        {
+            let world = self.entity.world.load();
+            let mut memory = self
+                .mob_hurt_memory
+                .lock()
+                .unwrap_or_else(std::sync::PoisonError::into_inner);
+            let source_alive = memory.source.and_then(|uuid| {
+                world.get_entity_by_uuid(uuid).map(|source| {
+                    source.get_entity().is_alive()
+                        && source
+                            .get_living_entity()
+                            .is_some_and(|living| living.health.load() > 0.0)
+                })
+            });
+            memory.tick(source_alive);
+        };
 
         // Only tick movement if the entity is alive. This prevents a dead "corpse"
         // from continuing to be simulated (accumulating fall_distance/velocity).
@@ -3929,6 +4026,83 @@ pub(crate) const fn bypasses_armor_durability(damage_type: &DamageType) -> bool 
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn mob_hurt_memory_counts_entity_ticks_and_restarts_for_a_different_attacker() {
+        let mut memory = MobHurtMemory::default();
+        for ticks in 1..=3 {
+            memory.tick(None);
+            assert_eq!(memory.ticks_since_last_hurt, ticks);
+        }
+        let first = uuid::Uuid::from_u128(1);
+        let second = uuid::Uuid::from_u128(2);
+        memory.remember(first);
+        assert_eq!(memory.ticks_since_last_hurt, 0);
+        for ticks in 1..=3 {
+            memory.tick(Some(true));
+            assert_eq!(memory.ticks_since_last_hurt, ticks);
+        }
+        memory.remember(second);
+        assert_eq!(memory.source, Some(second));
+        assert_eq!(memory.ticks_since_last_hurt, 0);
+    }
+
+    #[test]
+    fn mob_hurt_memory_forgets_dead_or_expired_attackers_and_keeps_unresolved_references() {
+        let mut memory = MobHurtMemory::default();
+        let source = uuid::Uuid::from_u128(1);
+        memory.remember(source);
+        memory.tick(None);
+        assert_eq!(memory.source, Some(source));
+        memory.tick(Some(false));
+        assert_eq!(memory.source, None);
+        assert_eq!(memory.ticks_since_last_hurt, 0);
+        memory.remember(source);
+        for _ in 0..100 {
+            memory.tick(Some(true));
+        }
+        assert_eq!(memory.source, Some(source));
+        memory.tick(Some(true));
+        assert_eq!(memory.source, None);
+        assert_eq!(memory.ticks_since_last_hurt, 0);
+    }
+
+    #[test]
+    fn mob_hurt_memory_restores_recent_hit_age_from_nbt() {
+        let mut memory = MobHurtMemory::default();
+        let source = uuid::Uuid::from_u128(1);
+        memory.remember(source);
+        memory.tick(Some(true));
+        let mut nbt = NbtCompound::new();
+        memory.write_nbt(&mut nbt);
+        let restored = MobHurtMemory::read_nbt(&nbt);
+        assert_eq!(restored.source, Some(source));
+        assert_eq!(restored.ticks_since_last_hurt, 1);
+        assert_eq!(
+            MobHurtMemory::read_nbt(&NbtCompound::new()).ticks_since_last_hurt,
+            0
+        );
+    }
+
+    #[test]
+    fn mob_hurt_memory_respects_no_anger_damage_and_wind_charge_exemptions() {
+        assert!(LivingEntity::mob_hurt_causes_anger(
+            DamageType::MOB_ATTACK,
+            &EntityType::PLAYER
+        ));
+        assert!(!LivingEntity::mob_hurt_causes_anger(
+            DamageType::MOB_ATTACK_NO_AGGRO,
+            &EntityType::PLAYER
+        ));
+        assert!(LivingEntity::mob_hurt_causes_anger(
+            DamageType::WIND_CHARGE,
+            &EntityType::PLAYER
+        ));
+        assert!(!LivingEntity::mob_hurt_causes_anger(
+            DamageType::WIND_CHARGE,
+            &EntityType::ZOMBIE
+        ));
+    }
 
     // ── bypasses_armor_durability ─────────────────────────────────────
 

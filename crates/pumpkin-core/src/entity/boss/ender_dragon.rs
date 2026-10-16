@@ -605,6 +605,10 @@ impl EnderDragonEntity {
         hurt_time <= 1 && !matches!(gamemode, GameMode::Creative | GameMode::Spectator)
     }
 
+    const fn can_damage_contact_victim(ticks_since_last_hurt_by_mob: i32) -> bool {
+        ticks_since_last_hurt_by_mob > 2
+    }
+
     fn handle_player_collisions(&self) {
         let hurt_time = self
             .mob_entity
@@ -639,6 +643,9 @@ impl EnderDragonEntity {
                     .lock()
                     .unwrap_or_else(std::sync::PoisonError::into_inner)
                     .is_sitting()
+                    && Self::can_damage_contact_victim(
+                        player.living_entity.ticks_since_last_hurt_by_mob(),
+                    )
                 {
                     player.damage(self, 5.0, DamageType::MOB_ATTACK);
                 }
@@ -911,6 +918,16 @@ mod tests {
     use pumpkin_data::Block;
     use pumpkin_util::gamemode::GameMode;
     use pumpkin_util::math::vector3::Vector3;
+
+    #[test]
+    fn contact_damage_waits_three_ticks_after_any_living_attacker_hit() {
+        for ticks in [0, 1, 2] {
+            assert!(!EnderDragonEntity::can_damage_contact_victim(ticks));
+        }
+        for ticks in [3, 4, 100] {
+            assert!(EnderDragonEntity::can_damage_contact_victim(ticks));
+        }
+    }
 
     #[test]
     fn contact_excludes_creative_and_spectator_players() {
