@@ -2,6 +2,7 @@ use pumpkin_data::damage::DamageType;
 use pumpkin_data::entity::EntityType;
 use pumpkin_data::tag::{self, Taggable};
 use pumpkin_data::{Block, BlockStateId};
+use pumpkin_util::gamemode::GameMode;
 use pumpkin_util::math::position::BlockPos;
 use pumpkin_util::math::vector3::Vector3;
 use pumpkin_world::{chunk::ChunkHeightmapType, world::BlockFlags};
@@ -599,13 +600,22 @@ impl EnderDragonEntity {
         Vector3::new(xd / dd * 4.0, f64::from(0.2f32), zd / dd * 4.0)
     }
 
+    const fn can_collide_with_player(gamemode: GameMode) -> bool {
+        !matches!(gamemode, GameMode::Creative | GameMode::Spectator)
+    }
+
     fn handle_player_collisions(&self) {
         let world = self.mob_entity.living_entity.entity.world.load();
 
         let dragon_bbox = self.mob_entity.living_entity.entity.bounding_box.load();
         let body_pos = self.body_position();
 
-        for player in world.players.load().iter() {
+        for player in world
+            .players
+            .load()
+            .iter()
+            .filter(|player| Self::can_collide_with_player(player.gamemode.load()))
+        {
             if player
                 .living_entity
                 .entity
@@ -893,7 +903,18 @@ impl Vector3Ext for Vector3<f64> {
 mod tests {
     use super::EnderDragonEntity;
     use pumpkin_data::Block;
+    use pumpkin_util::gamemode::GameMode;
     use pumpkin_util::math::vector3::Vector3;
+
+    #[test]
+    fn contact_excludes_creative_and_spectator_players() {
+        for gamemode in [GameMode::Creative, GameMode::Spectator] {
+            assert!(!EnderDragonEntity::can_collide_with_player(gamemode));
+        }
+        for gamemode in [GameMode::Survival, GameMode::Adventure] {
+            assert!(EnderDragonEntity::can_collide_with_player(gamemode));
+        }
+    }
 
     #[test]
     fn contact_push_is_outward_and_decreases_with_distance() {
