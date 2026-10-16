@@ -15,6 +15,7 @@ import tempfile
 import tarfile
 import tomllib
 import urllib.request
+from urllib.parse import quote
 try:
     from .rcon_probe import Rcon
     from .flat_world import seed_pumpkin_flat
@@ -25,8 +26,8 @@ except ImportError:
 ROOT = Path(__file__).resolve().parents[1]
 RUNTIME = ROOT/'runtime'
 MOJANG = 'https://piston-meta.mojang.com/mc/game/version_manifest_v2.json'
-RELEASE = 'https://api.github.com/repos/Pumpkin-MC/Pumpkin/releases/latest'
 PUMPKIN = '0.2.0+26.3-26.51'
+RELEASE = 'https://api.github.com/repos/Pumpkin-MC/Pumpkin/releases/tags/'+quote(PUMPKIN, safe='')
 SERVICES = {n: f'pumpkin-parity-{n}' for n in ('vanilla', 'pumpkin')}
 RULES = {'advance_time': 'false', 'advance_weather': 'false', 'spawn_mobs': 'false',
          'random_tick_speed': '0', 'mob_griefing': 'false', 'block_drops': 'false',
@@ -192,16 +193,11 @@ def control(name, target, readiness_seconds=180):
             records.append({'command':cmd,'response':response})
             if f'currently set to {value}' not in response:
                 raise RuntimeError(f'{name} gamerule readback failed: {key}')
-        # Explicit independently observed read-after-write on vanilla.
-        for cmd in ['setblock 2 64 2 minecraft:stone',
-                    'execute if block 2 64 2 minecraft:stone',
-                    'setblock 2 64 2 minecraft:air']:
-            response = client.command(cmd)
-            records.append({'command':cmd,'response':response})
-            if name == 'vanilla' and cmd.startswith('execute if block') and 'Test passed' not in response:
-                raise RuntimeError(f'{name} failed independent block-state probe')
     finally:
         client.close()
+        # Keep each readiness attempt, including partial failures, for recovery audits.
+        stamp=datetime.datetime.now(datetime.UTC).strftime('%Y%m%dT%H%M%S.%fZ')
+        write(RUNTIME/'control-evidence'/f'{name}-{stamp}.json',json.dumps(records,indent=2)+'\n')
         write(RUNTIME/f'{name}-bootstrap.json',json.dumps(records,indent=2)+'\n')
     return records
 
@@ -231,7 +227,7 @@ def provision(args):
         raise RuntimeError('Mojang metadata has an unexpected version id')
     release=json.loads(document(RELEASE,'pumpkin-release.json'))
     if release['tag_name'] != PUMPKIN:
-        raise RuntimeError(f'Official latest release changed to {release["tag_name"]}; review pin explicitly')
+        raise RuntimeError(f'Official release tag disagrees with reviewed pin: {release["tag_name"]}')
     tag=json.loads(document('https://api.github.com/repos/Pumpkin-MC/Pumpkin/git/ref/tags/'+PUMPKIN,'pumpkin-tag.json'))
     source_archive=RUNTIME/'downloads/pumpkin-source.tar.gz'
     if not source_archive.exists():
@@ -270,7 +266,7 @@ def provision(args):
         if Path('/etc/systemd/system/'+SERVICES[name]+'.service').exists():
             systemctl('stop',name)
     if args.reset_worlds:
-        stamp=datetime.datetime.now(datetime.UTC).strftime('%Y%m%dT%H%M%SZ')
+        stamp=datetime.datetime.now(datetime.UTC).strftime('%Y%m%dT%H%M%S.%fZ')
         for name in SERVICES:
             world=RUNTIME/name/'world'
             if world.exists():

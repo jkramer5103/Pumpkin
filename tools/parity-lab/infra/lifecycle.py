@@ -5,8 +5,21 @@ import fcntl
 import os
 from pathlib import Path
 import tempfile
-from provision import RUNTIME, SERVICES, control, systemctl
+try:
+    from .provision import RUNTIME, SERVICES, control, systemctl
+except ImportError:
+    from provision import RUNTIME, SERVICES, control, systemctl
 import json
+
+
+def transition(action, names):
+    """Apply a transition; caller must hold the shared engine process lock."""
+    systemctl(action,*names)
+    if action!='stop':
+        targets=json.loads((RUNTIME/'targets.json').read_text())['targets']
+        for name in names:
+            control(name,targets[name])
+            print(name+': RCON ready, controlled gamerules verified',flush=True)
 
 
 def main():
@@ -18,12 +31,7 @@ def main():
     path=Path(tempfile.gettempdir())/f'pumpkin-parity-lab-{os.getuid()}.lock'
     with path.open('a') as lock:
         fcntl.flock(lock,fcntl.LOCK_EX)
-        systemctl(args.action,*names)
-        if args.action!='stop':
-            targets=json.loads((RUNTIME/'targets.json').read_text())['targets']
-            for name in names:
-                control(name,targets[name])
-                print(name+': RCON ready, controlled gamerules verified')
+        transition(args.action,names)
 
 if __name__=='__main__':
     main()

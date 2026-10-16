@@ -11,7 +11,10 @@ import signal
 import subprocess
 import tempfile
 
-from provision import RUNTIME, control, digest, systemctl, write
+try:
+    from .provision import RUNTIME, control, digest, systemctl, write
+except ImportError:
+    from provision import RUNTIME, control, digest, systemctl, write
 
 WORKTREE=Path('/root/pumpkin-parity-worktrees/jaron')
 DROPIN=Path('/etc/systemd/system/pumpkin-parity-pumpkin.service.d/50-source-build.conf')
@@ -75,8 +78,12 @@ def main():
                 DROPIN.chmod(0o644)
             else:
                 DROPIN.unlink(missing_ok=True)
+            shutil.copy2(backup/'manifest.json',RUNTIME/'manifest.json')
             systemctl('daemon-reload')
             systemctl('start','pumpkin')
+            # A successful systemctl start does not establish usable recovery.
+            targets=json.loads((RUNTIME/'targets.json').read_text())['targets']
+            control('pumpkin',targets['pumpkin'],readiness_seconds=20)
             raise
     print(json.dumps(manifest['active_candidate'],indent=2))
 
