@@ -75,6 +75,11 @@ const ERROR_CONDITIONAL_FAILED: CommandErrorType<0> = CommandErrorType::new(
     translation::java::COMMANDS_EXECUTE_CONDITIONAL_FAIL,
 );
 
+const ERROR_CONDITIONAL_FAILED_COUNT: CommandErrorType<1> = CommandErrorType::new(
+    translation::java::COMMANDS_EXECUTE_CONDITIONAL_FAIL_COUNT,
+    translation::java::COMMANDS_EXECUTE_CONDITIONAL_FAIL_COUNT,
+);
+
 static DIMENSION_REGISTRY: &Identifier = &Identifier::vanilla_static("dimension");
 
 fn execute_as_modifier(context: &CommandContext) -> crate::command::node::RedirectModifierResult {
@@ -463,6 +468,44 @@ fn get_score(
         .lock()
         .unwrap_or_else(std::sync::PoisonError::into_inner);
     get_score_value(&scoreboard, target, objective)
+}
+
+struct EntityConditionalExecutor {
+    expected: bool,
+}
+
+impl EntityConditionalExecutor {
+    fn check_count(&self, context: &CommandContext, count: usize) -> CommandExecutorResult {
+        if self.expected && count == 0 {
+            return Err(ERROR_CONDITIONAL_FAILED.create_without_context());
+        }
+        if !self.expected && count > 0 {
+            return Err(ERROR_CONDITIONAL_FAILED_COUNT
+                .create_without_context(TextComponent::text(count.to_string())));
+        }
+        let message = if self.expected {
+            TextComponent::translate_cross(
+                translation::java::COMMANDS_EXECUTE_CONDITIONAL_PASS_COUNT,
+                translation::java::COMMANDS_EXECUTE_CONDITIONAL_PASS_COUNT,
+                [TextComponent::text(count.to_string())],
+            )
+        } else {
+            TextComponent::translate_cross(
+                translation::java::COMMANDS_EXECUTE_CONDITIONAL_PASS,
+                translation::java::COMMANDS_EXECUTE_CONDITIONAL_PASS,
+                [],
+            )
+        };
+        context.source.send_feedback(message, false);
+        Ok(if self.expected { count as i32 } else { 1 })
+    }
+}
+
+impl CommandExecutor for EntityConditionalExecutor {
+    fn execute(&self, context: &CommandContext) -> CommandExecutorResult {
+        let targets = EntityArgumentType::get_optional_entities(context, "targets")?;
+        self.check_count(context, targets.len())
+    }
 }
 
 struct ConditionalExecutor(fn(&CommandContext) -> RedirectModifierResult);
@@ -1237,17 +1280,21 @@ pub fn register(dispatcher: &mut CommandDispatcher, registry: &PermissionRegistr
         )
         .then(
             literal("if")
-                .then(literal("entity").then(
-                    argument("targets", EntityArgumentType::Entities).redirect_with_modifier(
-                        Redirection::Root,
-                        RedirectModifier::Custom(Arc::new(execute_if_entity_modifier)),
+                .then(
+                    literal("entity").then(
+                        argument("targets", EntityArgumentType::Entities)
+                            .fork(
+                                Redirection::Root,
+                                RedirectModifier::Custom(Arc::new(execute_if_entity_modifier)),
+                            )
+                            .executes(EntityConditionalExecutor { expected: true }),
                     ),
-                ))
+                )
                 .then(
                     literal("block").then(argument("pos", BlockPosArgumentType).then(
-                        argument("block", BlockArgumentType).redirect_with_modifier(
-                            Redirection::Root,
-                            RedirectModifier::Custom(Arc::new(execute_if_block_modifier)),
+                        add_conditional(
+                            argument("block", BlockArgumentType),
+                            execute_if_block_modifier,
                         ),
                     )),
                 )
@@ -1393,17 +1440,21 @@ pub fn register(dispatcher: &mut CommandDispatcher, registry: &PermissionRegistr
         )
         .then(
             literal("unless")
-                .then(literal("entity").then(
-                    argument("targets", EntityArgumentType::Entities).redirect_with_modifier(
-                        Redirection::Root,
-                        RedirectModifier::Custom(Arc::new(execute_unless_entity_modifier)),
+                .then(
+                    literal("entity").then(
+                        argument("targets", EntityArgumentType::Entities)
+                            .fork(
+                                Redirection::Root,
+                                RedirectModifier::Custom(Arc::new(execute_unless_entity_modifier)),
+                            )
+                            .executes(EntityConditionalExecutor { expected: false }),
                     ),
-                ))
+                )
                 .then(
                     literal("block").then(argument("pos", BlockPosArgumentType).then(
-                        argument("block", BlockArgumentType).redirect_with_modifier(
-                            Redirection::Root,
-                            RedirectModifier::Custom(Arc::new(execute_unless_block_modifier)),
+                        add_conditional(
+                            argument("block", BlockArgumentType),
+                            execute_unless_block_modifier,
                         ),
                     )),
                 )
@@ -1604,6 +1655,125 @@ mod tests {
             assert_eq!(sources[0].position, expected);
             assert_eq!(sources[0].entity_anchor, EntityAnchor::Feet);
             assert_eq!(source.entity_anchor, EntityAnchor::Eyes);
+        }
+    }
+
+    #[test]
+    fn terminal_entity_and_block_conditions_are_executable() {
+        let mut dispatcher = CommandDispatcher::new();
+        register(&mut dispatcher, &PermissionRegistry::default());
+        let source = CommandSource::dummy();
+        for condition in ["if", "unless"] {
+            for predicate in ["entity @s", "block 0 64 0 minecraft:stone"] {
+                let input = format!("execute {condition} {predicate}");
+                let parsed = dispatcher.parse_input(&input, &source);
+                assert!(parsed.errors.is_empty(), "{input}: {:?}", parsed.errors);
+                assert_eq!(parsed.reader.remaining_length(), 0, "{input}");
+                assert!(parsed.context.build(&input).command.is_some(), "{input}");
+            }
+        }
+    }
+
+    #[test]
+    fn terminal_entity_conditions_report_empty_selection_results() {
+        use crate::command::context::command_source::{ReturnValue, ReturnValueCallable};
+        use std::sync::Mutex;
+
+        struct Results(Mutex<Vec<ReturnValue>>);
+        impl ReturnValueCallable for Results {
+            fn call(&self, result: ReturnValue) {
+                self.0.lock().unwrap().push(result);
+            }
+        }
+
+        let mut dispatcher = CommandDispatcher::new();
+        register(&mut dispatcher, &PermissionRegistry::default());
+        let results = Arc::new(Results(Mutex::new(Vec::new())));
+        let mut source = CommandSource::dummy();
+        source.command_result_taker.0.push(results.clone());
+        let error = dispatcher
+            .execute_input("execute if entity @s", &source)
+            .unwrap_err();
+        assert_eq!(
+            serde_json::to_value(error.message).unwrap()["translate"],
+            translation::java::COMMANDS_EXECUTE_CONDITIONAL_FAIL
+        );
+        assert_eq!(
+            dispatcher.execute_input("execute unless entity @s", &source),
+            Ok(1)
+        );
+        assert_eq!(
+            *results.0.lock().unwrap(),
+            [ReturnValue::Failure, ReturnValue::Success(1)]
+        );
+    }
+
+    #[test]
+    fn entity_and_block_condition_continuations_count_successful_commands() {
+        struct Probe;
+        impl CommandExecutor for Probe {
+            fn execute(&self, _context: &CommandContext) -> CommandExecutorResult {
+                Ok(7)
+            }
+        }
+        let mut dispatcher = CommandDispatcher::new();
+        register(&mut dispatcher, &PermissionRegistry::default());
+        dispatcher.register(command("probe", "Return seven").executes(Probe));
+        let source = CommandSource::dummy();
+        for predicate in ["entity @s", "block 0 64 0 minecraft:stone"] {
+            assert_eq!(
+                dispatcher.execute_input(&format!("execute unless {predicate} run probe"), &source),
+                Ok(1)
+            );
+            assert_eq!(
+                dispatcher.execute_input(&format!("execute if {predicate} run probe"), &source),
+                Ok(0)
+            );
+        }
+        assert_eq!(
+            dispatcher.execute_input("execute unless entity @s if entity @s", &source),
+            Ok(0)
+        );
+    }
+
+    #[test]
+    fn terminal_entity_conditions_preserve_numeric_results() {
+        let mut dispatcher = CommandDispatcher::new();
+        register(&mut dispatcher, &PermissionRegistry::default());
+        let source = CommandSource::dummy();
+        let parsed = dispatcher.parse_input("execute if entity @s", &source);
+        let context = parsed.context.build("execute if entity @s");
+        for (expected, count, result) in [(true, 1, 1), (true, 2, 2), (false, 0, 1)] {
+            assert_eq!(
+                EntityConditionalExecutor { expected }.check_count(&context, count),
+                Ok(result)
+            );
+        }
+        for (expected, count, key) in [
+            (
+                true,
+                0,
+                translation::java::COMMANDS_EXECUTE_CONDITIONAL_FAIL,
+            ),
+            (
+                false,
+                1,
+                translation::java::COMMANDS_EXECUTE_CONDITIONAL_FAIL_COUNT,
+            ),
+            (
+                false,
+                2,
+                translation::java::COMMANDS_EXECUTE_CONDITIONAL_FAIL_COUNT,
+            ),
+        ] {
+            let error = EntityConditionalExecutor { expected }
+                .check_count(&context, count)
+                .unwrap_err();
+            let message = serde_json::to_value(error.message).unwrap();
+            assert_eq!(message["translate"], key);
+            if !expected {
+                assert_eq!(message["with"][0]["text"], count.to_string());
+            }
         }
     }
 
