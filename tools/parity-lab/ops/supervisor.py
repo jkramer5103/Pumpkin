@@ -57,6 +57,28 @@ def advance(lane, snapshot):
                 completed_baseline=snapshot["completed_turns"], status="queued", error=None)
 
 
+def is_provider_safety_rejection(error):
+    """Match explicit provider refusals, not ordinary worker or quota errors."""
+    message = str(error or "").lower()
+    return any(marker in message for marker in (
+        "this content was flagged for possible cybersecurity risk",
+        "content_policy_violation", "safety_violation",
+    ))
+
+
+def skip_blocked_task(lane, snapshot):
+    """Keep refusal evidence and start the next assignment in a fresh thread."""
+    lane.setdefault("blocked_tasks", []).append({
+        "task_index": lane["task_index"], "task_title": lane.get("task_title"),
+        "thread_id": lane.get("thread_id"), "error": snapshot["last_error"],
+        "recorded_at": utc(), "reason": "Provider safety rejection; task skipped without retry",
+    })
+    lane["ignored_thread_id"] = lane.get("thread_id")
+    lane["task_index"] += 1
+    lane.update(thread_id=None, retry_at=None, failures=0, adopted=False,
+                completed_baseline=snapshot["completed_turns"], status="queued", error=None)
+
+
 def main():
     RUNTIME.mkdir(exist_ok=True)
     lock = (RUNTIME / "supervisor.lock").open("w")
@@ -89,7 +111,8 @@ def main():
             for account, lane in state["accounts"].items():
                 files = task_files(account)
                 snapshot = event_snapshot(account)
-                lane["thread_id"] = snapshot["thread_id"] or lane.get("thread_id")
+                if snapshot["thread_id"] != lane.get("ignored_thread_id"):
+                    lane["thread_id"] = snapshot["thread_id"] or lane.get("thread_id")
                 lane["activity"] = snapshot
                 lane["total_tasks"] = len(files)
                 index = lane["task_index"]
@@ -109,7 +132,12 @@ def main():
                         lane.update(status="waiting_for_build", waiting_for=unit,
                                     completed_baseline=snapshot["completed_turns"], retry_at=None)
                         continue
-                    if snapshot["completed_turns"] > lane.get("completed_baseline", 0) and snapshot["last_error"] is None:
+                    if is_provider_safety_rejection(snapshot.get("last_error")):
+                        # Never retry or rephrase a refused task. Other assignments may proceed.
+                        skip_blocked_task(lane, snapshot)
+                        index = lane["task_index"]
+                        atomic_json(STATE, state)
+                    elif snapshot["completed_turns"] > lane.get("completed_baseline", 0) and snapshot["last_error"] is None:
                         advance(lane, snapshot)
                         index = lane["task_index"]
                     else:

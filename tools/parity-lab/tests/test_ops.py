@@ -5,7 +5,7 @@ import unittest
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "ops"))
 from common import quota_reset
-from supervisor import build_command, advance
+from supervisor import build_command, advance, is_provider_safety_rejection, skip_blocked_task
 
 
 class QuotaRecoveryTests(unittest.TestCase):
@@ -39,6 +39,38 @@ class QuotaRecoveryTests(unittest.TestCase):
         self.assertEqual(lane["task_index"], 1)
         self.assertIsNone(lane["thread_id"])
         self.assertEqual(lane["completed_baseline"], 1)
+
+
+class SafetyRejectionRecoveryTests(unittest.TestCase):
+    def test_explicit_provider_rejection_is_skippable(self):
+        self.assertTrue(is_provider_safety_rejection({"message":
+            "This content was flagged for possible cybersecurity risk."}))
+
+    def test_other_errors_are_not_skippable(self):
+        for error in (None, "Usage limit reached", "Connection timed out",
+                      "Worker exited before completing its turn", "Account routing mismatch"):
+            with self.subTest(error=error):
+                self.assertFalse(is_provider_safety_rejection(error))
+
+    def test_skip_preserves_evidence_without_counting_success(self):
+        lane = {"task_index": 4, "task_title": "Blocked job", "thread_id": "refused",
+                "completed_tasks": 4, "failures": 1, "retry_at": 123}
+        skip_blocked_task(lane, {"last_error": "safety_violation", "completed_turns": 8})
+        self.assertEqual(lane["task_index"], 5)
+        self.assertEqual(lane["completed_tasks"], 4)
+        self.assertEqual(lane["blocked_tasks"][0]["thread_id"], "refused")
+        self.assertEqual(lane["blocked_tasks"][0]["error"], "safety_violation")
+        self.assertEqual(lane["ignored_thread_id"], "refused")
+        self.assertIsNone(lane["thread_id"])
+        self.assertIsNone(lane["retry_at"])
+        self.assertEqual(lane["status"], "queued")
+        self.assertEqual(lane["completed_baseline"], 8)
+
+    def test_last_task_skip_exhausts_queue_and_keeps_prior_blocks(self):
+        lane = {"task_index": 7, "thread_id": "last", "blocked_tasks": [{"task_index": 4}]}
+        skip_blocked_task(lane, {"last_error": "safety_violation", "completed_turns": 8})
+        self.assertEqual(lane["task_index"], 8)
+        self.assertEqual(len(lane["blocked_tasks"]), 2)
 
 
 if __name__ == "__main__":
