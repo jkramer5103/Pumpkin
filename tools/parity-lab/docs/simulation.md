@@ -61,10 +61,24 @@ in `artifacts/jaron-simulation-overlap-4010*.json` and the overlap search record
 | Behavior | Actual evidence | Remaining prerequisite |
 | --- | --- | --- |
 | Falling sand landing | Vanilla passed the initial block, falling entity after tick two, and settled block after 22 total ticks twice. Source console chunk became unloaded during the longer run. | Sustained loaded and ticking chunk; supported observation commands. No passing Pumpkin physics claim. |
-| Redstone lamp shutoff | The first vanilla draft placed an unlit lamp next to existing power and failed its own initial-state oracle. Source property syntax is unsupported. | Correct vanilla fixture (lamp first, then power) and a supported lit-state oracle before promotion. No lamp timing pass. |
+| Redstone lamp shutoff | The corrected vanilla fixture places the lamp before power. Initial lit state, lit after three ticks, and off after four passed twice (`artifacts/jaron-simulation-lamp-vanilla.json`). The failed initial draft is preserved. | Source property syntax is unsupported; a supported lit-state oracle is needed before promotion. No Pumpkin lamp timing pass. |
 | Random growth | Not attempted; the lab disables random ticks for reproducibility. | A controlled random source/selection or deterministic growth trigger on both engines. Advancing a fixed number of ticks alone cannot guarantee growth. |
 | Full fluid levels, redstone networks, client physics | Not attempted. | Working property observations and, where needed, actual connected clients. |
 
 The schema has no prerequisite metadata field. Blocked checks remain documented;
 see [the engine integration note](simulation-integration.md). No tests were
 removed or loosened to turn these gaps into passes.
+
+The released RCON candidate was also tested twice with the final scenario. Both
+engines verified six tick advances, but the release rejected the observation
+commands and reported unloaded-world errors. The engine exited 2 with one
+infrastructure-error scenario; this is not a source defect count or a physics
+pass. Vanilla passed all four observations in both trials. Evidence:
+`artifacts/jaron-simulation-release/20261016T015514.235671Z-103286eb/`.
+
+Python validation: 22 assigned scenario/infrastructure tests and all 105 lab
+unit tests passed. The added oracle test uses an independent fluid fixture with
+correct tick-five and late tick-six schedules: the former passes, the latter
+produces a confirmed repeated difference with only the tick-five control failing.
+
+The final scenario also reproduced the tick-five defect through the new launcher twice on clean upstream, with no infrastructure errors: `artifacts/jaron-simulation-upstream/20261016T015605.489773Z-4cfb8915/`. The patched-source build and world-crate validation are still running; no fixed live pass is claimed yet.
