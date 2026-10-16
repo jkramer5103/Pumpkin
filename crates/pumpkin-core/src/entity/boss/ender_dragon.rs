@@ -257,7 +257,7 @@ impl EnderDragonEntity {
             nodes_initialized: Mutex::new(false),
             fight_origin: Mutex::new(BlockPos::new(0, 128, 0)),
             phase_manager: PhaseManager::new(),
-            phase: Mutex::new(EnderDragonPhase::Circling),
+            phase: Mutex::new(EnderDragonPhase::Hovering),
             growl_time: Mutex::new(GROWL_COOLDOWN_BASE),
             yaw_rot_accel: Mutex::new(0.0),
             holding_pattern_clockwise: Mutex::new(true),

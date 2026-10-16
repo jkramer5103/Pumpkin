@@ -1,0 +1,44 @@
+{
+  "schema_version": 1,
+  "id": "dragon-initial-hover",
+  "title": "Summoned dragon remains near its initial hover target",
+  "category": "entity",
+  "description": "Isolated loaded arena with a player present. Checks bounded initial-hover movement; exact flight physics and client presentation remain outside this assertion.",
+  "tags": [
+    "ender-dragon",
+    "hovering",
+    "ai"
+  ],
+  "setup": [
+    "tick freeze",
+    "difficulty normal",
+    "gamerule spawn_mobs false",
+    "gamerule mob_griefing false",
+    "forceload add 0 0 15 15",
+    "gamemode creative ParitySmoke",
+    "tp ParitySmoke 31.0 80.0 31.0"
+  ],
+  "steps": [
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]",
+      "wait_ticks": 210
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:ender_dragon]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 8.0 80.0 8.0 {NoGravity:1b,Silent:1b,PersistenceRequired:1b}",
+      "wait_ticks": 40
+    },
+    {
+      "command": "execute positioned 8.0 80.0 8.0 if entity @e[type=minecraft:ender_dragon,distance=..1.0]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    }
+  ],
+  "cleanup": [
+    "kill @e[type=minecraft:ender_dragon]"
+  ]
+}
