@@ -27,6 +27,11 @@ RCON, applies gamerules, and verifies their readback. Reprovisioning stops/resta
 these two services, preserves existing world directories and RCON passwords, and
 regenerates managed server configuration. It never removes unrelated caches.
 Lifecycle start/restart also reapplies controls and verifies RCON readiness.
+Readiness does not place or remove blocks; the previous block-writing probe at
+`2 64 2` destroyed existing state and was removed after a live reproducer.
+Authenticated control attempts retain timestamped raw responses under
+`runtime/control-evidence/`; `runtime/<target>-bootstrap.json` remains the latest
+attempt for compatibility.
 Provisioning, lifecycle changes, and the independent scenario validator use the
 same process lock as the engine to avoid changing worlds during a run.
 
@@ -68,8 +73,10 @@ of both binaries, release publication time, tag commit, source archive SHA-256,
 ports, resource limits, and requested gamerules. Upstream JSON snapshots are in
 `runtime/upstream/`; binaries and checksum file are in `runtime/downloads/`.
 
-The release was verified against the current official latest-release endpoint.
-The provisioner fails if latest changes away from the reviewed pin. Mojang's
+The initial release was verified against the official latest-release endpoint.
+Reprovisioning now requests the reviewed tag directly, so publication of a newer
+release does not break reproduction or silently upgrade this lab. The tag and
+asset checksums must still agree with the reviewed pin. Mojang's
 version metadata is SHA-1 checked against the version manifest, then the server
 JAR is SHA-1 checked against that metadata. Pumpkin's SHA-256 is checked against
 **both** its published checksum file and GitHub asset digest; the checksum file
@@ -127,6 +134,11 @@ mob_griefing=false       block_drops=false
 entity_drops=false       send_command_feedback=true
 log_admin_commands=false
 ```
+
+The latest lifecycle/reproducibility checks, exact recovery commands and full
+post-recovery catalog results are in [the lifecycle audit](server-lifecycle-audit.md).
+Vanilla's unit accepts normal JVM SIGTERM exit status 143; genuine failures keep
+their failure status. Only the two lab units are managed by these commands.
 
 Time is set to 6000, weather to clear, spawn to the flat surface, and the bounded
 arena is marked for force loading. These controls are recorded in
@@ -249,6 +261,8 @@ The installer holds the engine lock, backs up the manifest/config/service
 override privately, copies and hashes the binary, and restarts only the candidate.
 Its manifest entry records source commit, binary hash and exact build command.
 Readiness verifies RCON and controlled gamerules; it does not claim block readiness.
+Failed candidate deployment restores the previous configuration, service override
+and manifest, then checks RCON/gamerule recovery before returning failure.
 Existing source-candidate provenance survives normal reprovisioning. The released
 binary and old logs/worlds remain available. See [integration notes](jaron-integration.md)
 and `artifacts/jaron-fork-status.json` for current source validation and limitations.

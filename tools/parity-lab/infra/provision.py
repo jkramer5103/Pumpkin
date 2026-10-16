@@ -82,6 +82,7 @@ Restart=on-failure
 RestartSec=5
 TimeoutStopSec=90
 KillSignal=SIGTERM
+{('SuccessExitStatus=143' if name == 'vanilla' else '')}
 MemoryMax=3G
 MemorySwapMax=0
 CPUQuota=150%
