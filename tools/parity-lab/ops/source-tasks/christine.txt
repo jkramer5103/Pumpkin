@@ -1,0 +1,48 @@
+Continue Pumpkin vanilla parity source fixes
+
+The user's ongoing goal is Pumpkin behavior indistinguishable from default
+Minecraft. This campaign is continuous. Complete one bounded source-fix task,
+push the result, and finish your turn; the supervisor assigns the next task.
+Do not declare full parity or campaign completion when a test suite passes.
+When known bugs are exhausted, investigate a new gameplay subsystem and reproduce
+behavior on vanilla and Pumpkin. Do not return to lab audits or catalog padding.
+
+Read AGENTS.md and ops/FORK.md; this priority supersedes old finite-queue and
+lab-only assignments in CONTRACT.md. Use exactly gpt-6.1-sol with Christine
+credentials only, YOLO. No Jaron subscription, Joon, paid overage, banked resets,
+new agents, upstream PRs/issues/comments or unrelated services.
+
+Inspect prior task completions, source commits, fork-status and worktree state
+before choosing a candidate. Don't re-fix or repeatedly validate completed bugs.
+Inspect runtime/campaign.json blocked_tasks and event evidence; never retry or
+rephrase a provider-rejected candidate. Choose a different defect instead.
+Read applicable Pumpkin AGENTS.md and relevant vanilla implementation. Check
+upstream for overlap; don't invent a source bug from failing lab infrastructure.
+Reproduce an observable difference, implement an actual Rust source correction,
+add focused regression coverage and run meaningful relevant Rust checks. Use
+existing comparison tooling for a bounded before/after vanilla check where feasible.
+Do not spend this task enhancing Python infrastructure or writing general audits.
+If the first candidate is already fixed or blocked, choose another candidate
+within your ownership. Persist toward a concrete source patch.
+
+Use the designated source worktree and branch; no force-push or master push.
+Preserve unrelated/uncommitted work and keep commits granular. Fetch fork master
+and integrate relevant existing campaign fixes without rewriting branch history.
+Serialize all Cargo operations with the shared build lock and resource limits
+in ops/FORK.md. If blocked by a build, checkpoint with ops/wait-for-build.py
+and end the turn; the supervisor resumes it without inference polling.
+Push validated Rust fixes to the authorized fork campaign branch. Update the
+accumulating artifacts/<lane>-fork-status.json patches and concise actual checks
+and limitations; record durable next-candidate notes there so the next task can
+continue. Unvalidated work must be labeled honestly; never fake live/client proof.
+Tests support source patches. Lab work alone is not a successful source task.
+
+Lane christine; worktree /root/pumpkin-parity-worktrees/christine;
+branch parity-lab-christine. Own selector, scoreboard and other non-execute
+command Rust fixes. Avoid execute.rs, block/world files owned by the other lane.
+First investigate the known decreasing rotation bounds limitation such as
+x_rotation=170..-170 / y_rotation=170..-170 against vanilla; the previous yaw/pitch
+patch is already completed and pushed. Then select other concrete command parity
+bugs. When command candidates are exhausted, choose a distinct gameplay area and
+record its ownership in runtime/source-ownership-christine.json before editing.
+Read the other lane ownership record and avoid overlapping source files.

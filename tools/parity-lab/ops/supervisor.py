@@ -30,6 +30,22 @@ def task_files(account):
     return sorted((ROOT / "ops" / "tasks" / account).glob("*.txt"))
 
 
+def replenish_source_tasks(account, lane, files):
+    """Create one bounded source assignment at a time for opted-in campaigns."""
+    config = read_json(RUNTIME / "source-campaign.json", {})
+    if account not in config.get("enabled_accounts", []) or lane["task_index"] < len(files):
+        return files
+    template = ROOT / "ops" / "source-tasks" / f"{account}.txt"
+    if not template.is_file():
+        raise RuntimeError(f"Missing source campaign template for {account}")
+    index = lane["task_index"]
+    path = ROOT / "ops" / "tasks" / account / f"{index:03d}-source.txt"
+    path.write_text(template.read_text() + f"\nSource assignment sequence: {index}.\n")
+    lane.update(status="queued", thread_id=None, retry_at=None, error=None,
+                ignored_thread_id=lane.get("thread_id") or lane.get("ignored_thread_id"))
+    return task_files(account)
+
+
 def initial_active(account):
     return subprocess.run(["systemctl", "is-active", "--quiet", f"pumpkin-parity-worker-{account}"],
                           check=False).returncode == 0
@@ -53,6 +69,7 @@ def refresh_quotas(previous):
 def advance(lane, snapshot):
     lane["completed_tasks"] = lane.get("completed_tasks", 0) + 1
     lane["task_index"] += 1
+    lane["ignored_thread_id"] = snapshot.get("thread_id") or lane.get("thread_id")
     lane.update(thread_id=None, retry_at=None, failures=0, adopted=False,
                 completed_baseline=snapshot["completed_turns"], status="queued", error=None)
 
@@ -109,7 +126,7 @@ def main():
                 quotas = refresh_quotas(quotas)
                 next_quota_check = now + 90
             for account, lane in state["accounts"].items():
-                files = task_files(account)
+                files = replenish_source_tasks(account, lane, task_files(account))
                 snapshot = event_snapshot(account)
                 if snapshot["thread_id"] != lane.get("ignored_thread_id"):
                     lane["thread_id"] = snapshot["thread_id"] or lane.get("thread_id")
@@ -155,6 +172,9 @@ def main():
                         lane["status"] = "waiting_for_reset" if reset or is_limit else "retrying"
                         if not is_limit and not reset and lane["failures"] >= 3:
                             lane["status"] = "needs_attention"
+                files = replenish_source_tasks(account, lane, files)
+                lane["total_tasks"] = len(files)
+                lane["task_title"] = files[index].read_text().splitlines()[0] if index < len(files) else "Campaign complete"
                 if index >= len(files):
                     lane["status"] = "complete"
                     continue

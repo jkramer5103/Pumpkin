@@ -23,3 +23,12 @@ supersede old lab-only ownership and audit assignments in CONTRACT.md. Tests and
 lab tools support source patches; lab infrastructure is not the task deliverable.
 Christine owns selector rotation; retained Jaron lane owns terminal execute
 conditions. Both use Christine credentials only. Push campaign branches, not master.
+
+## Continuous source campaign
+The user explicitly wants workers to continue until Pumpkin is behaviorally
+indistinguishable from default Minecraft. The supervisor replenishes bounded
+source-fix assignments when queues run out. No finite queue/audit means the
+project is complete. Keep choosing new genuine source bugs; test suites passing
+are bounded evidence, not proof of full parity. This supersedes old instructions
+to finish a finite campaign. Christine subscription only; quota waits and skipped
+provider-rejected tasks remain in effect.

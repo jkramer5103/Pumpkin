@@ -2,10 +2,13 @@ import importlib.util
 from pathlib import Path
 import sys
 import unittest
+import tempfile
+from unittest.mock import patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "ops"))
+import supervisor
 from common import quota_reset
-from supervisor import build_command, advance, is_provider_safety_rejection, skip_blocked_task
+from supervisor import build_command, advance, is_provider_safety_rejection, skip_blocked_task, replenish_source_tasks
 
 
 class QuotaRecoveryTests(unittest.TestCase):
@@ -71,6 +74,36 @@ class SafetyRejectionRecoveryTests(unittest.TestCase):
         skip_blocked_task(lane, {"last_error": "safety_violation", "completed_turns": 8})
         self.assertEqual(lane["task_index"], 8)
         self.assertEqual(len(lane["blocked_tasks"]), 2)
+
+
+class ContinuousSourceCampaignTests(unittest.TestCase):
+    def test_empty_queue_generates_one_assignment_without_resuming_old_thread(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            (root / "ops/source-tasks").mkdir(parents=True)
+            (root / "ops/tasks/christine").mkdir(parents=True)
+            (root / "runtime").mkdir()
+            (root / "runtime/source-campaign.json").write_text('{"enabled_accounts":["christine"]}')
+            (root / "ops/source-tasks/christine.txt").write_text("Fix another Pumpkin source defect\n")
+            lane = {"task_index": 0, "thread_id": "finished", "status": "complete"}
+            with patch.object(supervisor, "ROOT", root), patch.object(supervisor, "RUNTIME", root / "runtime"):
+                files = replenish_source_tasks("christine", lane, [])
+                self.assertEqual(len(files), 1)
+                self.assertEqual(lane["status"], "queued")
+                self.assertIsNone(lane["thread_id"])
+                self.assertEqual(lane["ignored_thread_id"], "finished")
+                self.assertEqual(replenish_source_tasks("christine", lane, files), files)
+                advance(lane, {"completed_turns": 1, "thread_id": "newly-finished"})
+                files = replenish_source_tasks("christine", lane, files)
+                self.assertEqual(len(files), 2)
+                self.assertEqual(lane["ignored_thread_id"], "newly-finished")
+                self.assertEqual(lane["completed_tasks"], 1)
+
+    def test_finite_campaign_is_unchanged_without_opt_in(self):
+        with patch.object(supervisor, "read_json", return_value={}):
+            lane = {"task_index": 8, "status": "complete"}
+            self.assertEqual(replenish_source_tasks("christine", lane, []), [])
+            self.assertEqual(lane["status"], "complete")
 
 
 if __name__ == "__main__":
