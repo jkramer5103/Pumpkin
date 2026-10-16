@@ -1,0 +1,1310 @@
+{
+  "schema_version": 1,
+  "id": "wither-main-head-ranged-goal",
+  "title": "Wither main-head ranged goal delay and cover",
+  "category": "entities",
+  "description": "A Wither fires its main head at a visible target24 blocks away after a40-tick delay, repeats after40ticks, and suppresses fire behind bedrock cover. The24-block separation excludes side-head acquisition.",
+  "tags": [
+    "entity",
+    "wither",
+    "ai",
+    "combat"
+  ],
+  "setup": [
+    "tick freeze",
+    "difficulty easy",
+    "gamemode creative @a",
+    "gamerule spawn_mobs false",
+    "gamerule mob_griefing false",
+    "forceload add 0 0 47 31",
+    "fill 0 79 0 47 79 31 minecraft:bedrock",
+    "tp @a 16.5 84 16.5",
+    "fill 15 80 3 15 96 14 minecraft:air",
+    "summon minecraft:wither 4.5 80 8.5 {Tags:[\"pp_boss\"],NoGravity:1b,Silent:1b,PersistenceRequired:1b,Invul:0}",
+    "summon minecraft:sheep 28.5 80 8.5 {Tags:[\"pp_target\"],NoAI:1b,NoGravity:1b,Silent:1b,PersistenceRequired:1b}",
+    "effect give @e[tag=pp_target] minecraft:resistance infinite 4 true"
+  ],
+  "steps": [
+    {
+      "command": "execute if entity @e[tag=pp_boss,nbt={Health:300.0f,Invul:0}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_target,nbt={Health:8.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:wither_skull]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:wither_skull]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:wither_skull]"
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:wither_skull]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:wither_skull]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:wither_skull]"
+    },
+    {
+      "command": "fill 15 80 3 15 96 14 minecraft:bedrock"
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:wither_skull]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 15 83 8 minecraft:bedrock",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "fill 15 80 3 15 96 14 minecraft:air"
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:wither_skull]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss,nbt={Health:300.0f,Invul:0}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_target,nbt={Health:8.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @a[gamemode=creative]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    }
+  ],
+  "cleanup": [
+    "kill @e[type=!minecraft:player]",
+    "fill 15 80 3 15 96 14 minecraft:air"
+  ],
+  "notes": "Isolated arena with connected creative protocol777 client; exact single-tick barriers. Reposition and reset boss velocity each tick to hold24-block spacing while navigation runs. Sheep ResistanceV prevents target death. Check main-head target metadata names sheep and side targets remainzero. No visual or full-fight proof. Timing accepts first attack in ticks41-44 because goal-selector startup phase differs; does not prove exact first-shot tick."
+}

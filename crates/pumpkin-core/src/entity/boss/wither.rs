@@ -29,11 +29,12 @@ use crate::{
         ai::{
             goal::{
                 Controls, Goal, active_target::ActiveTargetGoal, look_around::RandomLookAroundGoal,
-                look_at_entity::LookAtEntityGoal, revenge::RevengeGoal,
+                look_at_entity::LookAtEntityGoal, ranged_attack::RangedAttackGoal,
+                revenge::RevengeGoal,
             },
             target_predicate::TargetPredicate,
         },
-        mob::{Mob, MobEntity},
+        mob::{Mob, MobEntity, RangedAttackMob},
         projectile::wither_skull::WitherSkullEntity,
     },
     world::{
@@ -67,7 +68,6 @@ pub struct WitherEntity {
     pub next_head_update: [AtomicI32; 2],
     pub idle_head_updates: [AtomicI32; 2],
     pub alternative_targets: [AtomicI32; 3],
-    pub main_attack_timer: AtomicI32,
     pub bossbar_uuid: Uuid,
     pub bossbar_players: Mutex<Vec<Uuid>>,
     pub dropped_loot: AtomicBool,
@@ -83,7 +83,6 @@ impl WitherEntity {
             next_head_update: [AtomicI32::new(0), AtomicI32::new(0)],
             idle_head_updates: [AtomicI32::new(0), AtomicI32::new(0)],
             alternative_targets: [AtomicI32::new(0), AtomicI32::new(0), AtomicI32::new(0)],
-            main_attack_timer: AtomicI32::new(0),
             bossbar_uuid: Uuid::new_v4(),
             bossbar_players: Mutex::new(Vec::new()),
             dropped_loot: AtomicBool::new(false),
@@ -92,6 +91,10 @@ impl WitherEntity {
         let mob_weak: Weak<dyn Mob> = {
             let mob_arc: Arc<dyn Mob> = mob_arc.clone();
             Arc::downgrade(&mob_arc)
+        };
+        let ranged_weak: Weak<dyn RangedAttackMob> = {
+            let ranged_arc: Arc<dyn RangedAttackMob> = mob_arc.clone();
+            Arc::downgrade(&ranged_arc)
         };
 
         {
@@ -111,6 +114,10 @@ impl WitherEntity {
                 Box::new(WitherDoNothingGoal {
                     wither: Arc::downgrade(&mob_arc),
                 }),
+            );
+            goal_selector.add_goal(
+                2,
+                Box::new(RangedAttackGoal::new(ranged_weak, 1.0, 40, 20.0)),
             );
             goal_selector.add_goal(
                 6,
@@ -455,30 +462,7 @@ impl WitherEntity {
             let target_opt = self.mob_entity.get_target();
             if let Some(ref target) = target_opt {
                 if target.get_entity().is_alive() {
-                    let target_pos = target.get_entity().pos.load();
-                    let wither_pos = entity.pos.load();
                     self.set_alternative_target(0, target.get_entity().entity_id);
-
-                    // Main head attack
-                    let dist_sq = (wither_pos - target_pos).length_squared();
-                    if dist_sq <= 400.0 {
-                        let attack_timer = self.main_attack_timer.load(Ordering::Relaxed);
-                        if attack_timer <= 0 {
-                            self.main_attack_timer.store(40, Ordering::Relaxed);
-                            let dangerous = rand::random_range(0.0..1.0) < 0.001;
-                            let eye_h = target.get_entity().get_eye_height();
-                            self.perform_ranged_attack(
-                                0,
-                                target_pos.x,
-                                target_pos.y + eye_h * 0.5,
-                                target_pos.z,
-                                dangerous,
-                            );
-                        } else {
-                            self.main_attack_timer
-                                .store(attack_timer - 1, Ordering::Relaxed);
-                        }
-                    }
                 } else {
                     self.set_alternative_target(0, 0);
                     self.mob_entity.set_target(None);
@@ -607,6 +591,20 @@ impl WitherEntity {
                 }
             }
         }
+    }
+}
+
+impl RangedAttackMob for WitherEntity {
+    fn perform_ranged_attack(&self, target: &Arc<dyn EntityBase>, _power: f32) {
+        let target_entity = target.get_entity();
+        let target_pos = target_entity.pos.load();
+        self.perform_ranged_attack(
+            0,
+            target_pos.x,
+            target_pos.y + target_entity.get_eye_height() * 0.5,
+            target_pos.z,
+            rand::random_range(0.0..1.0) < 0.001,
+        );
     }
 }
 
