@@ -798,8 +798,27 @@ impl EnderDragonEntity {
             return;
         }
         self.mob_entity.living_entity.entity.update_last_pos();
-        self.ensure_nodes_initialized();
         self.update_flap_time();
+        self.tick_growl();
+        self.tick_crystal_healing();
+
+        // Vanilla checks crystals before NoAI, but skips flight and contact work.
+        // Pumpkin's Dying phase also runs the death animation and can restore one health.
+        if self.mob_entity.is_no_ai()
+            && *self
+                .phase
+                .lock()
+                .unwrap_or_else(std::sync::PoisonError::into_inner)
+                != EnderDragonPhase::Dying
+        {
+            *self
+                .flap_time
+                .lock()
+                .unwrap_or_else(std::sync::PoisonError::into_inner) = 0.5;
+            return;
+        }
+
+        self.ensure_nodes_initialized();
 
         {
             let y = self.mob_entity.living_entity.entity.pos.load().y;
@@ -809,9 +828,6 @@ impl EnderDragonEntity {
                 .unwrap_or_else(std::sync::PoisonError::into_inner)
                 .record(y, yaw);
         };
-
-        self.tick_growl();
-        self.tick_crystal_healing();
 
         {
             let world = self.mob_entity.living_entity.entity.world.load();

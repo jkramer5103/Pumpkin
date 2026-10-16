@@ -1,0 +1,71 @@
+{
+  "schema_version": 1,
+  "id": "dragon-no-ai-block-destruction",
+  "title": "NoAI dragon preserves blocks and resumes destruction when enabled",
+  "category": "entity",
+  "description": "Run in an isolated loaded arena with a player present. A stone block overlaps both the current Pumpkin body and vanilla body part; this checks the NoAI gate rather than part dimensions.",
+  "tags": [
+    "ender-dragon",
+    "no-ai",
+    "block-destruction"
+  ],
+  "setup": [
+    "tick freeze",
+    "difficulty normal",
+    "gamerule spawn_mobs false",
+    "gamerule mob_griefing true",
+    "forceload add 0 0 15 15",
+    "gamemode creative ParitySmoke",
+    "tp ParitySmoke 31.0 80.0 31.0"
+  ],
+  "steps": [
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]",
+      "wait_ticks": 210
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:ender_dragon]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 8.0 80.0 8.0 {NoAI:1b,NoGravity:1b,Silent:1b,PersistenceRequired:1b}"
+    },
+    {
+      "command": "setblock 8 80 7 minecraft:stone",
+      "wait_ticks": 3
+    },
+    {
+      "command": "execute if block 8 80 7 minecraft:stone",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data remove entity @e[type=minecraft:ender_dragon,limit=1] NoAI",
+      "wait_ticks": 3
+    },
+    {
+      "command": "execute if block 8 80 7 minecraft:air",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,limit=1] {NoAI:1b}"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon] 8.0 80.0 8.0 0 0"
+    },
+    {
+      "command": "setblock 8 80 7 minecraft:stone",
+      "wait_ticks": 3
+    },
+    {
+      "command": "execute if block 8 80 7 minecraft:stone",
+      "observe": true,
+      "expect_contains": "Test passed"
+    }
+  ],
+  "cleanup": [
+    "kill @e[type=minecraft:ender_dragon]"
+  ]
+}
