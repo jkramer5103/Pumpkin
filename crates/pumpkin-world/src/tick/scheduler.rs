@@ -10,6 +10,7 @@ use crate::tick::{MAX_TICK_DELAY, OrderedTick, ScheduledTick};
 
 pub struct ChunkTickScheduler<T> {
     inner: Mutex<Option<Box<ChunkTickSchedulerInner<T>>>>,
+    // The last completed step, rather than the next bucket to drain.
     offset: AtomicUsize,
 }
 
@@ -20,15 +21,14 @@ struct ChunkTickSchedulerInner<T> {
 
 impl<'a, T: std::hash::Hash + Eq> ChunkTickScheduler<&'a T> {
     pub fn step_tick(&self) -> Vec<OrderedTick<&'a T>> {
-        // Atomic update for the offset
-        let current_offset = self.offset.fetch_add(1, Ordering::SeqCst) % MAX_TICK_DELAY;
-        let next_offset = (current_offset + 1) % MAX_TICK_DELAY;
-        self.offset.store(next_offset, Ordering::SeqCst);
-
         let mut inner_guard = self
             .inner
             .lock()
             .unwrap_or_else(std::sync::PoisonError::into_inner);
+        // Vanilla advances game time before collecting scheduled ticks. Keep
+        // the cursor and queue under the same lock so scheduling sees one step.
+        let current_offset = (self.offset.load(Ordering::SeqCst) + 1) % MAX_TICK_DELAY;
+        self.offset.store(current_offset, Ordering::SeqCst);
         let Some(inner) = inner_guard.as_mut() else {
             return Vec::new();
         };
@@ -49,11 +49,11 @@ impl<'a, T: std::hash::Hash + Eq> ChunkTickScheduler<&'a T> {
     }
 
     pub fn schedule_tick(&self, tick: &ScheduledTick<&'a T>, sub_tick_order: u64) {
-        let offset = self.offset.load(Ordering::SeqCst);
         let mut inner_guard = self
             .inner
             .lock()
             .unwrap_or_else(std::sync::PoisonError::into_inner);
+        let offset = self.offset.load(Ordering::SeqCst);
         let inner = inner_guard.get_or_insert_with(|| {
             Box::new(ChunkTickSchedulerInner {
                 tick_queue: std::array::from_fn(|_| Vec::new()),
@@ -62,7 +62,9 @@ impl<'a, T: std::hash::Hash + Eq> ChunkTickScheduler<&'a T> {
         });
 
         if inner.queued_ticks.insert((tick.position, tick.value)) {
-            let index = (offset + tick.delay as usize) % MAX_TICK_DELAY;
+            // An already-due tick is collected on the next step, not after a
+            // full rotation through the ring.
+            let index = (offset + usize::from(tick.delay.max(1))) % MAX_TICK_DELAY;
 
             inner.tick_queue[index].push(OrderedTick {
                 priority: tick.priority,
@@ -122,11 +124,11 @@ impl<'a, T: std::hash::Hash + Eq> ChunkTickScheduler<&'a T> {
 
     #[must_use]
     pub fn to_vec(&self) -> Vec<ScheduledTick<&'a T>> {
-        let offset = self.offset.load(Ordering::SeqCst);
         let inner_guard = self
             .inner
             .lock()
             .unwrap_or_else(std::sync::PoisonError::into_inner);
+        let offset = self.offset.load(Ordering::SeqCst);
         let Some(inner) = inner_guard.as_ref() else {
             return Vec::new();
         };
@@ -181,5 +183,79 @@ impl<T> Default for ChunkTickScheduler<T> {
             inner: Mutex::new(None),
             offset: AtomicUsize::new(0),
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::ChunkTickScheduler;
+    use crate::tick::{ScheduledTick, TickPriority};
+    use pumpkin_util::math::position::BlockPos;
+
+    const VALUE: &u8 = &0;
+
+    fn tick(delay: u8) -> ScheduledTick<&'static u8> {
+        ScheduledTick {
+            delay,
+            priority: TickPriority::Normal,
+            position: BlockPos::new(2, 65, 2),
+            value: VALUE,
+        }
+    }
+
+    #[test]
+    fn scheduled_ticks_fire_on_the_requested_step() {
+        for delay in [0, 1, 2, 4, 5, 255] {
+            let scheduler = ChunkTickScheduler::default();
+            scheduler.schedule_tick(&tick(delay), 7);
+            for step in 1..=u16::from(delay.max(1)) {
+                let due = scheduler.step_tick();
+                if step < u16::from(delay.max(1)) {
+                    assert!(due.is_empty(), "delay {delay} fired on step {step}");
+                } else {
+                    assert_eq!(due.len(), 1, "delay {delay} missing on step {step}");
+                    assert_eq!(due[0].sub_tick_order, 7);
+                    assert_eq!(due[0].position, tick(delay).position);
+                }
+            }
+            assert!(!scheduler.has_ticks());
+            assert!(!scheduler.is_scheduled(tick(delay).position, VALUE));
+        }
+    }
+
+    #[test]
+    fn scheduled_ticks_keep_remaining_delay_across_save_and_wrap() {
+        let scheduler = ChunkTickScheduler::default();
+        for _ in 0..254 {
+            assert!(scheduler.step_tick().is_empty());
+        }
+        scheduler.schedule_tick(&tick(5), 0);
+        assert!(scheduler.step_tick().is_empty());
+        assert!(scheduler.step_tick().is_empty());
+        let saved = scheduler.to_vec();
+        assert_eq!(saved.len(), 1);
+        assert_eq!(saved[0].delay, 3);
+        let loaded: ChunkTickScheduler<_> = saved.into_iter().collect();
+        for current in [&scheduler, &loaded] {
+            assert!(current.step_tick().is_empty());
+            assert!(current.step_tick().is_empty());
+            assert_eq!(current.step_tick().len(), 1);
+            assert!(!current.has_ticks());
+        }
+    }
+
+    #[test]
+    fn callback_rescheduling_counts_from_the_completed_step() {
+        let scheduler = ChunkTickScheduler::default();
+        scheduler.schedule_tick(&tick(1), 0);
+        assert_eq!(scheduler.step_tick().len(), 1);
+        scheduler.schedule_tick(&tick(2), 1);
+        // Duplicate scheduling cannot replace the original delay/order.
+        scheduler.schedule_tick(&tick(1), 2);
+        assert!(scheduler.step_tick().is_empty());
+        let due = scheduler.step_tick();
+        assert_eq!(due.len(), 1);
+        assert_eq!(due[0].sub_tick_order, 1);
+        assert!(!scheduler.has_ticks());
     }
 }
