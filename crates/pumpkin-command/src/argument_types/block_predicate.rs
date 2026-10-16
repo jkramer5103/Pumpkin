@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
 use pumpkin_data::tag::{RegistryKey, get_tag_ids};
-use pumpkin_data::{Block, translation};
+use pumpkin_data::{Block, BlockStateId, translation};
 use pumpkin_nbt::compound::NbtCompound;
 use pumpkin_util::text::TextComponent;
 
@@ -53,6 +53,28 @@ impl BlockPredicate {
             } => block.id == expected.id,
             Self::Tag { block_ids, .. } => block_ids.contains(&block.id.as_u16()),
         }
+    }
+
+    /// Tests the material/tag and specified properties, without block-entity NBT.
+    #[must_use]
+    pub fn test_state(&self, state_id: BlockStateId) -> bool {
+        let block = Block::from_state_id(state_id);
+        if !self.test(block) {
+            return false;
+        }
+        let (Self::Block { properties, .. } | Self::Tag { properties, .. }) = self;
+        if properties.is_empty() {
+            return true;
+        }
+        let Some(state_properties) = block.properties(state_id) else {
+            return false;
+        };
+        let actual = state_properties.to_props();
+        properties.iter().all(|(key, value)| {
+            actual
+                .iter()
+                .any(|&(name, actual_value)| key == name && value == actual_value)
+        })
     }
 
     #[must_use]
@@ -228,5 +250,40 @@ impl BlockPredicateArgumentType {
         name: &str,
     ) -> Result<BlockPredicate, CommandSyntaxError> {
         Ok(context.get_argument::<BlockPredicate>(name)?.clone())
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::source::DummySource;
+
+    #[test]
+    fn state_filters_respect_specified_properties() {
+        let oak = Block::OAK_LOG.default_state.id;
+        let birch = Block::BIRCH_LOG.default_state.id;
+        let stone = Block::STONE.default_state.id;
+        let stairs = Block::OAK_STAIRS
+            .from_properties(&[("facing", "east"), ("half", "top")])
+            .to_state_id(&Block::OAK_STAIRS);
+        for (input, state, expected) in [
+            ("minecraft:oak_log[axis=x]", oak, false),
+            ("minecraft:oak_log[axis=y]", oak, true),
+            ("minecraft:oak_log", oak, true),
+            ("#minecraft:logs[axis=x]", oak, false),
+            ("#minecraft:logs[axis=y]", oak, true),
+            ("#minecraft:logs[axis=y]", birch, true),
+            ("#minecraft:logs[axis=y]", stone, false),
+            ("#minecraft:logs[missing=value]", oak, false),
+            ("#minecraft:logs[axis=invalid]", oak, false),
+            ("minecraft:oak_stairs[facing=east]", stairs, true),
+            ("minecraft:oak_stairs[half=bottom]", stairs, false),
+        ] {
+            let mut reader = StringReader::new(input);
+            let predicate =
+                ArgumentType::<DummySource>::parse(&BlockPredicateArgumentType, &mut reader)
+                    .expect("valid block predicate syntax");
+            assert_eq!(predicate.test_state(state), expected, "{input}");
+        }
     }
 }

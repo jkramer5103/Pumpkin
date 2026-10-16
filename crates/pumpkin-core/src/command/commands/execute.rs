@@ -23,7 +23,9 @@ use crate::command::argument_types::coordinates::swizzle::SwizzleArgumentType;
 use crate::command::argument_types::coordinates::vec3::Vec3ArgumentType;
 use crate::command::argument_types::core::string::StringArgumentType;
 use crate::command::argument_types::entity::EntityArgumentType;
-use crate::command::argument_types::entity_anchor::{EntityAnchorArgumentType, EntityAnchorExt};
+use crate::command::argument_types::entity_anchor::{
+    EntityAnchor, EntityAnchorArgumentType, EntityAnchorExt,
+};
 use crate::command::argument_types::identifier::IdentifierArgumentType;
 use crate::command::argument_types::nbt_path::{NbtPath, NbtPathArgumentType};
 use crate::command::argument_types::objective::ObjectiveArgumentType;
@@ -134,6 +136,7 @@ fn execute_positioned_modifier(
     let pos = Vec3ArgumentType::get_vector3(context, "pos")?;
     let mut source = context.source.as_ref().clone();
     source.position = pos;
+    source.entity_anchor = EntityAnchor::Feet;
     Ok(vec![Arc::new(source)])
 }
 
@@ -1576,6 +1579,33 @@ mod tests {
     use crate::command::CommandSource;
     use crate::world::scoreboard::{NoTarget, ScoreboardObjective};
     use pumpkin_protocol::java::client::play::RenderType;
+
+    #[test]
+    fn positioned_coordinates_reset_the_entity_anchor() {
+        use pumpkin_util::math::vector3::Vector3;
+
+        let mut dispatcher = CommandDispatcher::new();
+        register(&mut dispatcher, &PermissionRegistry::default());
+        let mut source = CommandSource::dummy();
+        source.entity_anchor = EntityAnchor::Eyes;
+        source.position = Vector3::new(4.0, 60.0, 6.0);
+        for (input, expected) in [
+            (
+                "execute positioned 1.25 64 -2.5",
+                Vector3::new(1.25, 64.0, -2.5),
+            ),
+            ("execute positioned ~1 ~2 ~-3", Vector3::new(5.0, 62.0, 3.0)),
+        ] {
+            let parsed = dispatcher.parse_input(input, &source);
+            assert!(parsed.errors.is_empty(), "{input}: {:?}", parsed.errors);
+            let context = parsed.context.build(input);
+            let sources = execute_positioned_modifier(&context).unwrap();
+            assert_eq!(sources.len(), 1);
+            assert_eq!(sources[0].position, expected);
+            assert_eq!(sources[0].entity_anchor, EntityAnchor::Feet);
+            assert_eq!(source.entity_anchor, EntityAnchor::Eyes);
+        }
+    }
 
     #[test]
     fn score_lookup_distinguishes_missing_objectives_and_scores() {
