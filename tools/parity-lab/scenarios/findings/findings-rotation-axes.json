@@ -17,6 +17,12 @@
   ],
   "steps": [
     {
+      "command": "data get entity @e[type=minecraft:marker,tag=pp_find,x=-32,y=48,z=-32,dx=64,dy=48,dz=64,limit=1] Rotation[0]"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:marker,tag=pp_find,x=-32,y=48,z=-32,dx=64,dy=48,dz=64,limit=1] Rotation[1]"
+    },
+    {
       "command": "scoreboard players set #count pp_find 0"
     },
     {
@@ -88,5 +94,5 @@
     "scoreboard objectives remove pp_find",
     "tick unfreeze"
   ],
-  "notes": "Focused current-source replay; scores expose conditional results without requiring terminal entity/block conditions. Kept outside the default catalog; no new independent coverage count."
+  "notes": "Focused current-source replay; scores expose conditional results without requiring terminal entity/block conditions. Kept outside the default catalog; no new independent coverage count. Raw indexed Rotation reads independently establish axis order; selector NBT list matching alone is unordered and cannot establish order."
 }
