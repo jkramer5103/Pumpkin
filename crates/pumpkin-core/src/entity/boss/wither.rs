@@ -28,8 +28,8 @@ use crate::{
         Entity, EntityBase,
         ai::{
             goal::{
-                look_around::RandomLookAroundGoal, look_at_entity::LookAtEntityGoal,
-                revenge::RevengeGoal,
+                Controls, Goal, look_around::RandomLookAroundGoal,
+                look_at_entity::LookAtEntityGoal, revenge::RevengeGoal,
             },
             target_predicate::TargetPredicate,
         },
@@ -43,6 +43,22 @@ use crate::{
 };
 
 const INVULNERABLE_TICKS: i32 = 220;
+
+struct WitherDoNothingGoal {
+    wither: Weak<WitherEntity>,
+}
+
+impl Goal for WitherDoNothingGoal {
+    fn can_start(&mut self, _mob: &dyn Mob) -> bool {
+        self.wither
+            .upgrade()
+            .is_some_and(|wither| wither.get_invulnerable_ticks() > 0)
+    }
+
+    fn controls(&self) -> Controls {
+        Controls::MOVE | Controls::JUMP | Controls::LOOK
+    }
+}
 
 pub struct WitherEntity {
     pub mob_entity: MobEntity,
@@ -90,6 +106,12 @@ impl WitherEntity {
                 .lock()
                 .unwrap_or_else(std::sync::PoisonError::into_inner);
 
+            goal_selector.add_goal(
+                0,
+                Box::new(WitherDoNothingGoal {
+                    wither: Arc::downgrade(&mob_arc),
+                }),
+            );
             goal_selector.add_goal(
                 6,
                 LookAtEntityGoal::with_default(mob_weak, &EntityType::PLAYER, 8.0),

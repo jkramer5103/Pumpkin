@@ -1,0 +1,421 @@
+{
+  "schema_version": 1,
+  "id": "wither-spawn-look-suppression",
+  "title": "Wither spawn look suppression",
+  "category": "entities",
+  "description": "Sample looking over 180 ticks with four Withers near a creative player. Pin positions and clear velocity after each ten-tick sample to keep both servers in the same arena.",
+  "tags": [
+    "entity",
+    "wither",
+    "ai",
+    "spawn"
+  ],
+  "setup": [
+    "difficulty easy",
+    "gamerule mob_griefing false",
+    "gamerule spawn_mobs false",
+    "forceload add 0 0 31 31",
+    "fill 0 79 0 15 79 15 minecraft:bedrock",
+    "gamemode creative @a",
+    "tp @a 7.5 82 7.5 0 0",
+    "summon minecraft:wither 3.5 80 3.5 {Tags:[\"pp_w0\"],Invul:200,NoGravity:1b,Silent:1b,PersistenceRequired:1b,Rotation:[0.0f,0.0f]}",
+    "summon minecraft:wither 11.5 80 3.5 {Tags:[\"pp_w1\"],Invul:200,NoGravity:1b,Silent:1b,PersistenceRequired:1b,Rotation:[0.0f,0.0f]}",
+    "summon minecraft:wither 3.5 80 11.5 {Tags:[\"pp_w2\"],Invul:200,NoGravity:1b,Silent:1b,PersistenceRequired:1b,Rotation:[0.0f,0.0f]}",
+    "summon minecraft:wither 11.5 80 11.5 {Tags:[\"pp_w3\"],Invul:200,NoGravity:1b,Silent:1b,PersistenceRequired:1b,Rotation:[0.0f,0.0f]}"
+  ],
+  "steps": [
+    {
+      "command": "time query gametime",
+      "wait_ticks": 10
+    },
+    {
+      "command": "tp @e[tag=pp_w0] 3.5 80 3.5"
+    },
+    {
+      "command": "tp @e[tag=pp_w1] 11.5 80 3.5"
+    },
+    {
+      "command": "tp @e[tag=pp_w2] 3.5 80 11.5"
+    },
+    {
+      "command": "tp @e[tag=pp_w3] 11.5 80 11.5"
+    },
+    {
+      "command": "execute as @e[type=minecraft:wither] run data merge entity @s {Motion:[0.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "time query gametime",
+      "wait_ticks": 10
+    },
+    {
+      "command": "tp @e[tag=pp_w0] 3.5 80 3.5"
+    },
+    {
+      "command": "tp @e[tag=pp_w1] 11.5 80 3.5"
+    },
+    {
+      "command": "tp @e[tag=pp_w2] 3.5 80 11.5"
+    },
+    {
+      "command": "tp @e[tag=pp_w3] 11.5 80 11.5"
+    },
+    {
+      "command": "execute as @e[type=minecraft:wither] run data merge entity @s {Motion:[0.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "time query gametime",
+      "wait_ticks": 10
+    },
+    {
+      "command": "tp @e[tag=pp_w0] 3.5 80 3.5"
+    },
+    {
+      "command": "tp @e[tag=pp_w1] 11.5 80 3.5"
+    },
+    {
+      "command": "tp @e[tag=pp_w2] 3.5 80 11.5"
+    },
+    {
+      "command": "tp @e[tag=pp_w3] 11.5 80 11.5"
+    },
+    {
+      "command": "execute as @e[type=minecraft:wither] run data merge entity @s {Motion:[0.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "time query gametime",
+      "wait_ticks": 10
+    },
+    {
+      "command": "tp @e[tag=pp_w0] 3.5 80 3.5"
+    },
+    {
+      "command": "tp @e[tag=pp_w1] 11.5 80 3.5"
+    },
+    {
+      "command": "tp @e[tag=pp_w2] 3.5 80 11.5"
+    },
+    {
+      "command": "tp @e[tag=pp_w3] 11.5 80 11.5"
+    },
+    {
+      "command": "execute as @e[type=minecraft:wither] run data merge entity @s {Motion:[0.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "time query gametime",
+      "wait_ticks": 10
+    },
+    {
+      "command": "tp @e[tag=pp_w0] 3.5 80 3.5"
+    },
+    {
+      "command": "tp @e[tag=pp_w1] 11.5 80 3.5"
+    },
+    {
+      "command": "tp @e[tag=pp_w2] 3.5 80 11.5"
+    },
+    {
+      "command": "tp @e[tag=pp_w3] 11.5 80 11.5"
+    },
+    {
+      "command": "execute as @e[type=minecraft:wither] run data merge entity @s {Motion:[0.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "time query gametime",
+      "wait_ticks": 10
+    },
+    {
+      "command": "tp @e[tag=pp_w0] 3.5 80 3.5"
+    },
+    {
+      "command": "tp @e[tag=pp_w1] 11.5 80 3.5"
+    },
+    {
+      "command": "tp @e[tag=pp_w2] 3.5 80 11.5"
+    },
+    {
+      "command": "tp @e[tag=pp_w3] 11.5 80 11.5"
+    },
+    {
+      "command": "execute as @e[type=minecraft:wither] run data merge entity @s {Motion:[0.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "time query gametime",
+      "wait_ticks": 10
+    },
+    {
+      "command": "tp @e[tag=pp_w0] 3.5 80 3.5"
+    },
+    {
+      "command": "tp @e[tag=pp_w1] 11.5 80 3.5"
+    },
+    {
+      "command": "tp @e[tag=pp_w2] 3.5 80 11.5"
+    },
+    {
+      "command": "tp @e[tag=pp_w3] 11.5 80 11.5"
+    },
+    {
+      "command": "execute as @e[type=minecraft:wither] run data merge entity @s {Motion:[0.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "time query gametime",
+      "wait_ticks": 10
+    },
+    {
+      "command": "tp @e[tag=pp_w0] 3.5 80 3.5"
+    },
+    {
+      "command": "tp @e[tag=pp_w1] 11.5 80 3.5"
+    },
+    {
+      "command": "tp @e[tag=pp_w2] 3.5 80 11.5"
+    },
+    {
+      "command": "tp @e[tag=pp_w3] 11.5 80 11.5"
+    },
+    {
+      "command": "execute as @e[type=minecraft:wither] run data merge entity @s {Motion:[0.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "time query gametime",
+      "wait_ticks": 10
+    },
+    {
+      "command": "tp @e[tag=pp_w0] 3.5 80 3.5"
+    },
+    {
+      "command": "tp @e[tag=pp_w1] 11.5 80 3.5"
+    },
+    {
+      "command": "tp @e[tag=pp_w2] 3.5 80 11.5"
+    },
+    {
+      "command": "tp @e[tag=pp_w3] 11.5 80 11.5"
+    },
+    {
+      "command": "execute as @e[type=minecraft:wither] run data merge entity @s {Motion:[0.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "time query gametime",
+      "wait_ticks": 10
+    },
+    {
+      "command": "tp @e[tag=pp_w0] 3.5 80 3.5"
+    },
+    {
+      "command": "tp @e[tag=pp_w1] 11.5 80 3.5"
+    },
+    {
+      "command": "tp @e[tag=pp_w2] 3.5 80 11.5"
+    },
+    {
+      "command": "tp @e[tag=pp_w3] 11.5 80 11.5"
+    },
+    {
+      "command": "execute as @e[type=minecraft:wither] run data merge entity @s {Motion:[0.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "time query gametime",
+      "wait_ticks": 10
+    },
+    {
+      "command": "tp @e[tag=pp_w0] 3.5 80 3.5"
+    },
+    {
+      "command": "tp @e[tag=pp_w1] 11.5 80 3.5"
+    },
+    {
+      "command": "tp @e[tag=pp_w2] 3.5 80 11.5"
+    },
+    {
+      "command": "tp @e[tag=pp_w3] 11.5 80 11.5"
+    },
+    {
+      "command": "execute as @e[type=minecraft:wither] run data merge entity @s {Motion:[0.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "time query gametime",
+      "wait_ticks": 10
+    },
+    {
+      "command": "tp @e[tag=pp_w0] 3.5 80 3.5"
+    },
+    {
+      "command": "tp @e[tag=pp_w1] 11.5 80 3.5"
+    },
+    {
+      "command": "tp @e[tag=pp_w2] 3.5 80 11.5"
+    },
+    {
+      "command": "tp @e[tag=pp_w3] 11.5 80 11.5"
+    },
+    {
+      "command": "execute as @e[type=minecraft:wither] run data merge entity @s {Motion:[0.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "time query gametime",
+      "wait_ticks": 10
+    },
+    {
+      "command": "tp @e[tag=pp_w0] 3.5 80 3.5"
+    },
+    {
+      "command": "tp @e[tag=pp_w1] 11.5 80 3.5"
+    },
+    {
+      "command": "tp @e[tag=pp_w2] 3.5 80 11.5"
+    },
+    {
+      "command": "tp @e[tag=pp_w3] 11.5 80 11.5"
+    },
+    {
+      "command": "execute as @e[type=minecraft:wither] run data merge entity @s {Motion:[0.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "time query gametime",
+      "wait_ticks": 10
+    },
+    {
+      "command": "tp @e[tag=pp_w0] 3.5 80 3.5"
+    },
+    {
+      "command": "tp @e[tag=pp_w1] 11.5 80 3.5"
+    },
+    {
+      "command": "tp @e[tag=pp_w2] 3.5 80 11.5"
+    },
+    {
+      "command": "tp @e[tag=pp_w3] 11.5 80 11.5"
+    },
+    {
+      "command": "execute as @e[type=minecraft:wither] run data merge entity @s {Motion:[0.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "time query gametime",
+      "wait_ticks": 10
+    },
+    {
+      "command": "tp @e[tag=pp_w0] 3.5 80 3.5"
+    },
+    {
+      "command": "tp @e[tag=pp_w1] 11.5 80 3.5"
+    },
+    {
+      "command": "tp @e[tag=pp_w2] 3.5 80 11.5"
+    },
+    {
+      "command": "tp @e[tag=pp_w3] 11.5 80 11.5"
+    },
+    {
+      "command": "execute as @e[type=minecraft:wither] run data merge entity @s {Motion:[0.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "time query gametime",
+      "wait_ticks": 10
+    },
+    {
+      "command": "tp @e[tag=pp_w0] 3.5 80 3.5"
+    },
+    {
+      "command": "tp @e[tag=pp_w1] 11.5 80 3.5"
+    },
+    {
+      "command": "tp @e[tag=pp_w2] 3.5 80 11.5"
+    },
+    {
+      "command": "tp @e[tag=pp_w3] 11.5 80 11.5"
+    },
+    {
+      "command": "execute as @e[type=minecraft:wither] run data merge entity @s {Motion:[0.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "time query gametime",
+      "wait_ticks": 10
+    },
+    {
+      "command": "tp @e[tag=pp_w0] 3.5 80 3.5"
+    },
+    {
+      "command": "tp @e[tag=pp_w1] 11.5 80 3.5"
+    },
+    {
+      "command": "tp @e[tag=pp_w2] 3.5 80 11.5"
+    },
+    {
+      "command": "tp @e[tag=pp_w3] 11.5 80 11.5"
+    },
+    {
+      "command": "execute as @e[type=minecraft:wither] run data merge entity @s {Motion:[0.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "time query gametime",
+      "wait_ticks": 10
+    },
+    {
+      "command": "tp @e[tag=pp_w0] 3.5 80 3.5"
+    },
+    {
+      "command": "tp @e[tag=pp_w1] 11.5 80 3.5"
+    },
+    {
+      "command": "tp @e[tag=pp_w2] 3.5 80 11.5"
+    },
+    {
+      "command": "tp @e[tag=pp_w3] 11.5 80 11.5"
+    },
+    {
+      "command": "execute as @e[type=minecraft:wither] run data merge entity @s {Motion:[0.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_w0,nbt={Invul:20}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_w0,x=3.5,y=80,z=3.5,distance=..0.1]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_w1,nbt={Invul:20}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_w1,x=11.5,y=80,z=3.5,distance=..0.1]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_w2,nbt={Invul:20}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_w2,x=3.5,y=80,z=11.5,distance=..0.1]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_w3,nbt={Invul:20}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_w3,x=11.5,y=80,z=11.5,distance=..0.1]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @a",
+      "observe": true,
+      "expect_contains": "Test passed"
+    }
+  ],
+  "cleanup": [
+    "kill @e[type=minecraft:wither]",
+    "kill @e[type=minecraft:wither_skull]",
+    "kill @e[type=minecraft:item]"
+  ],
+  "notes": "Requires a connected headless or real player and a fresh isolated arena. Four bosses and repeated sampling bound the random idle-look control. Start tick-frozen, with all four chunks loaded. Bedrock floor and ten-tick position/velocity resets prevent flight and NoGravity drift from moving bosses away from the player. No whole-fight or rendering assertion. Spawn observation stays inside invulnerability and does not reach the explosion. Direct packet assertion: record ClientboundAddEntityPacket IDs for WITHER and inspect their ClientboundRotateHeadPacket headYaw during these 180 ticks. Spawn-window case requires no nonzero headYaw; active control requires at least one. Command observations verify arena and timer controls only. Pitch is a separate field and is not the head-yaw oracle."
+}
