@@ -586,12 +586,12 @@ impl WitherEntity {
                                 );
                                 let block = world.get_block(&bpos);
                                 if Self::can_destroy(block) {
-                                    world.set_block_state(
-                                        &bpos,
-                                        Block::AIR.default_state.id,
-                                        BlockFlags::NOTIFY_ALL,
-                                    );
-                                    destroyed = true;
+                                    let mut flags = BlockFlags::NOTIFY_ALL;
+                                    if !world.level_info.load().game_rules.block_drops {
+                                        flags |= BlockFlags::SKIP_DROPS;
+                                    }
+                                    destroyed = world.break_block(&bpos, None, flags).is_some()
+                                        || destroyed;
                                 }
                             }
                         }

@@ -1,0 +1,165 @@
+{
+  "schema_version": 1,
+  "id": "wither-retaliation-block-drops",
+  "title": "Wither retaliation destroys blocks with loot",
+  "category": "entities",
+  "description": "A damaged active Wither breaks nearby dirt after twenty AI ticks and drops its item, subject to mob griefing and block drops. Bedrock and out-of-range blocks survive.",
+  "tags": [
+    "entity",
+    "wither",
+    "loot"
+  ],
+  "setup": [
+    "tick freeze",
+    "difficulty easy",
+    "gamemode creative @a",
+    "gamerule spawn_mobs false",
+    "gamerule mob_griefing true",
+    "gamerule block_drops true",
+    "forceload add 0 0 31 31",
+    "fill 0 79 0 31 79 31 minecraft:bedrock",
+    "fill 6 80 6 12 86 12 minecraft:air",
+    "tp @a 16.5 84 16.5",
+    "summon minecraft:wither 8.5 80 8.5 {Tags:[\"pp_boss\"],NoGravity:1b,Silent:1b,PersistenceRequired:1b,Invul:0}",
+    "setblock 8 80 8 minecraft:dirt",
+    "setblock 9 80 8 minecraft:bedrock",
+    "setblock 11 80 8 minecraft:dirt"
+  ],
+  "steps": [
+    {
+      "command": "execute if block 8 80 8 minecraft:dirt",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "damage @e[tag=pp_boss,limit=1] 1 minecraft:generic"
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 8.5 80 8.5",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 8.5 80 8.5",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 8.5 80 8.5",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 8.5 80 8.5",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 8.5 80 8.5",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 8.5 80 8.5",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 8.5 80 8.5",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 8.5 80 8.5",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 8.5 80 8.5",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 8.5 80 8.5",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 8.5 80 8.5",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 8.5 80 8.5",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 8.5 80 8.5",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 8.5 80 8.5",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 8.5 80 8.5",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 8.5 80 8.5",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 8.5 80 8.5",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 8.5 80 8.5",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 8.5 80 8.5",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if block 8 80 8 minecraft:dirt",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:item]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 8.5 80 8.5",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if block 8 80 8 minecraft:air",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:item,nbt={Item:{id:\"minecraft:dirt\"}}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 9 80 8 minecraft:bedrock",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 11 80 8 minecraft:dirt",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:wither_skull]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss,nbt={Invul:0}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    }
+  ],
+  "cleanup": [
+    "kill @e[type=!minecraft:player]",
+    "fill 6 80 6 12 86 12 minecraft:air",
+    "gamerule mob_griefing false",
+    "gamerule block_drops true"
+  ],
+  "notes": "One real connected creative protocol777 client. Damage is unattributed generic damage, not an explosion. Freeze and exact tick barriers isolate the twenty-tick retaliation delay. Reposition boss each tick to isolate the destruction volume from wandering. Repeat with mob_griefing=false and block_drops=false; no skull targets are present. No client visual proof."
+}
