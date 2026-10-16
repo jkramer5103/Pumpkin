@@ -229,3 +229,73 @@ a synthetic server demonstration. The five steps preserve the source-existence
 observation and the feet-position observation, with conditions evaluated through
 scoreboard values. Only the tagged entities within the bounded arena and the
 `pp_shrink` objective are changed.
+
+Seeded fuzzing is finite and uses only generated, allowlisted commands:
+
+```sh
+python3 -m lab fuzz --targets runtime/targets.json --versions versions.json \
+  --seed 1000 --seeds 10 --actions 12 --mode mixed --max-seconds 300
+# For an upstream binary without RCON, add:
+# --pumpkin-console /absolute/path/to/current-source-pumpkin
+```
+
+`--seed` begins a consecutive range of 1–20 unsigned 64-bit seeds. Each seed has
+4–40 generated actions (default 12), replayed identically on both targets twice.
+Modes are `scoreboard`, `blocks`, and `mixed` (alternating arithmetic and block
+actions). The local RNG never changes Python's global random state. Generator v1
+uses signed, bounded intermediates, positive add/remove operands, nonzero division
+and modulo divisors, assignment, min/max, and swap. Integer floor division and
+modulo form the model. No overflow behavior is claimed.
+
+Block actions use inert stone/dirt/glass/gold blocks inside x/z 0..3 at y=80.
+Single writes or rectangles touch at most four cells; reset fills touch at most
+16. Every rectangle changes at least its first cell. Two distinct initial fills
+establish air; cleanup removes generated blocks. Every block action checks all
+16 cells, including those that should remain untouched. Block predicates record
+success in a freshly zeroed score and positively assert that score: current
+upstream supports redirected block conditions but rejects terminal block
+conditions. Neither an empty condition response nor two equal failures can pass.
+This tests block identities only, not properties, NBT, fluids or elapsed ticks.
+
+The versions-file format is the same as shrinking. It is mandatory; local binary
+hashes are saved and rechecked before each seed and reducer probe. Existing RCON
+service identity remains declared provenance. Upstream console runs are explicitly
+labelled `scratch-console`, and do not establish RCON support.
+
+For block console comparisons only, the engine creates an original one-block
+GameTest fixture and flat metadata in a new private world. A bounded loader probe
+records commands and raw responses in `arena-bootstrap.json`; readiness requires
+a successful actual block write. Networking remains loopback-only. The loader's
+GameTest is expected to report a missing START block; it supplies chunk loading,
+not a passing game test. Provisioning is separate evidence, never a parity pass.
+Current upstream can unload this chunk despite `forceload` and tick freeze;
+subsequent missing-chunk errors remain visible. Readiness does not guarantee
+retention. No existing world/config or server service is replaced.
+
+`--max-seconds` is one POSIX main-thread campaign deadline (0 < seconds <= 900),
+covering lock waits, server operations and reduction. The one-shot deadline
+interrupts active work, preserves an incomplete verdict and permits up to 30
+seconds for bounded cleanup/shutdown. Operations time out within 5 seconds and
+lock waits within 30 seconds. A swallowed engine/reducer timeout is checked again
+before any new work. The CLI refuses to replace an existing process alarm. The
+`--max-probes` budget (2–60, default 30) is shared across all reductions. There is
+no infinite mode. Generation/config validation precedes the live deadline.
+
+All seeds run before reduction. Completed engine runs with environment errors
+are preserved and the finite campaign continues; an incomplete engine run stops
+it. A campaign exits 2 if any infrastructure error occurred or the campaign was
+interrupted/incomplete, 1 for other failures, and 0 only when every seed passed.
+`complete=true` means the requested seed campaign finished, not that its results
+passed: always check exit codes and individual reports.
+
+Each `artifacts/fuzz/fuzz-SESSION/` contains its seed range, generator version,
+limits, hashed target versions, exact `replay.txt`, per-seed scenario and generated
+action JSON, run reports and raw transcripts, and a persisted failures array.
+Only stable supported two-repeat mismatches with passing vanilla oracles are
+sent to `lab.shrink.shrink_scenario`. Reduction preserves observation steps and
+uses the existing real-target reruns, reset policy and exact failure identity;
+unsupported, flaky and infrastructure outcomes cannot produce a minimized claim.
+A probe/deadline exhaustion leaves reduction evidence without a minimality claim.
+The saved reducer replay retains the scratch arena option. Replay entire
+campaigns with their saved command and inspect pinned observations before
+interpreting the limited deletion minimality.
