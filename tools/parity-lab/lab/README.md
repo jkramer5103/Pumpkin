@@ -10,6 +10,7 @@ python3 -m lab run --targets runtime/targets.json --id stone-placement --id posi
 python3 -m lab run --targets runtime/targets.json --repeat 3 --order shuffle --order-seed 17 --probe-ticks
 python3 -m lab shrink --targets runtime/targets.json --scenario case.json --reset reset.json --versions versions.json --output artifacts/reproducers --repeat 2
 python3 -m lab replay --targets runtime/targets.json --reproducer artifacts/reproducers/shrink-SESSION
+python3 -m lab recover --run artifacts/runs/RUN_ID
 python3 -m unittest discover -s tests -p 'test_core*.py' -v
 ```
 
@@ -29,6 +30,34 @@ copies, and per-target JSONL transcripts. Reports are replaced atomically with
 file and directory fsync. Requests are durably logged before execution. Ctrl-C
 and SIGTERM attempt cleanup and finalize an incomplete error report. A hard kill
 may leave `state=running`, `complete=false`; never treat that as a successful run.
+
+Reports also checkpoint each command request and response, observations and target
+completion. `pending_command` identifies an in-flight operation; `uncertain_commands`
+retains lost/interrupted replies even after cleanup succeeds. Commands with lost
+replies may already have mutated the server and are never automatically replayed.
+A disconnected scratch console cannot be recreated as a cleanup retry: its session
+identity would no longer be proven. Remaining targets/trials still run and retain
+the cleanup failure.
+
+`recover --run DIRECTORY` takes the shared engine lock and finalizes a dead owner's
+running report as `state=abandoned`, `complete=false`, exit 2. It checks PID, process
+start time and host boot ID, including owners still waiting for the engine lock.
+It preserves original transcripts, lists requests without a proven response and
+records torn transcript lines. Recovery executes no server commands and makes no
+cleanup/tick-restoration claim. Inspect uncertainty before further mutations.
+Completed/interrupted reports remain unchanged; legacy reports without process
+identity cannot be automatically recovered safely.
+
+Ordinary `run` accepts optional `--versions` using the format below. Without it,
+`target_versions=null` explicitly means unknown provenance; the Minecraft protocol
+version and endpoints alone cannot identify a server build. Scratch binary hashes
+are always recorded. Declared binaries/world directories are rechecked after the
+lock wait and before each target. Optional `world: {"path": "/absolute/world"}`
+records local directory device/inode; subsequent runs/replays check saved identities
+and reject replacements. This does not hash world contents, pin seeds, or attest
+which world an RCON service has loaded. Scratch attempts record their own world
+directory identities when present. Setup/reset/cleanup still do not prove arbitrary
+state restoration or general replay determinism.
 
 The contract report fields are retained. Additional fields include:
 
@@ -138,7 +167,7 @@ the server's fill limit. No universal world wipe is inferred.
 
 `--versions versions.json` is required. It contains exactly `vanilla` and
 `pumpkin` objects with a nonempty `version`. Optional fields are `source_commit`,
-`binary`, `sha256` and `transport`; arbitrary manifest fields are rejected.
+`binary`, `sha256`, `transport` and `world`; arbitrary manifest fields are rejected.
 For example:
 
 ```json
@@ -161,6 +190,12 @@ full run report, scenario snapshot, raw response/packet transcripts and any
 scratch console logs. `lab replay` reruns the saved case, reset and transport
 policy with two or more repeats; exit 1 means a difference was observed, as with
 `lab run`. It does not rerun the shrink algorithm or claim new minimality.
+Saved version metadata must still match the original shrink report; editing the
+version file cannot silently relabel an old reproducer as a different build.
+New shrink sessions also hash the verified candidate, reset and replay policy;
+replay refuses edits to those saved inputs before connecting. Existing sessions
+without these hashes retain their earlier, limited integrity checks. Explicit
+CLI timeout overrides remain possible and do not change saved evidence.
 
 A candidate must preserve the original failure's commands and exact normalized
 divergent responses. Infrastructure errors, unsupported commands, flaky repeats

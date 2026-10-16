@@ -5,6 +5,7 @@ import json
 import sys
 
 from .runner import run
+from .rcon import RconError
 from .schema import SchemaError, load_scenarios, load_targets, read_json
 from .shrink import ShrinkError, replay_reproducer, shrink_scenario
 
@@ -42,6 +43,7 @@ def parser():
                          help="scenario order in each suite-wide trial (default alternates forward/reverse)")
     execute.add_argument("--order-seed", type=int, default=0, help="local shuffle seed; recorded with full schedule")
     execute.add_argument("--reset", help='JSON {"commands": [...]} reset before each target/trial')
+    execute.add_argument("--versions", help="allowlisted declared versions, local binary hashes and optional world directory identities")
     execute.add_argument("--probe-ticks", action="store_true", help="verify freeze/step with a game-time barrier on both targets")
     execute.add_argument("--pumpkin-console", help="explicit current-source scratch console binary; not RCON")
     shrink = commands.add_parser("shrink", help="delta debug steps with real two-server verification and retained evidence")
@@ -76,6 +78,9 @@ def parser():
     replay.add_argument("--output")
     replay.add_argument("--timeout", type=_timeout)
     replay.add_argument("--lock-timeout", type=_timeout)
+    recover = commands.add_parser("recover", help="finalize an abandoned run under the shared lock; never replay commands")
+    recover.add_argument("--run", required=True, dest="run_directory")
+    recover.add_argument("--lock-timeout", type=_timeout, default=30.0)
     return root
 
 
@@ -86,7 +91,10 @@ def main(argv=None):
             scenarios = load_scenarios(args.scenarios)
             print(json.dumps({"schema_version": 1, "scenarios": scenarios}, ensure_ascii=False, indent=2))
             return 0
-        if args.action == "fuzz":
+        if args.action == "recover":
+            from .recovery import recover_run
+            directory, report, code = recover_run(args.run_directory, lock_timeout=args.lock_timeout)
+        elif args.action == "fuzz":
             from .fuzz import fuzz
             directory, report, code = fuzz(args.targets, args.output, seed=args.seed, seeds=args.seeds,
                 actions=args.actions, mode=args.mode, max_seconds=args.max_seconds, max_probes=args.max_probes,
@@ -109,12 +117,13 @@ def main(argv=None):
             directory, report, code = run(scenarios, targets, args.output, repeat=args.repeat,
                 timeout=args.timeout, lock_timeout=args.lock_timeout, reset_commands=reset["commands"],
                 order=args.order, order_seed=args.order_seed, probe_ticks=args.probe_ticks,
-                pumpkin_console=args.pumpkin_console)
+                pumpkin_console=args.pumpkin_console,
+                target_versions=read_json(args.versions) if args.versions else None)
         print(directory)
         if code == 2:
             print("Infrastructure/validation failure or incomplete run; inspect the report and transcripts.", file=sys.stderr)
         return code
-    except (SchemaError, ShrinkError, OSError, ValueError) as exc:
+    except (SchemaError, ShrinkError, RconError, OSError, ValueError) as exc:
         print(f"lab: {exc}", file=sys.stderr)
         return 2
     except KeyboardInterrupt:

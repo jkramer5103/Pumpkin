@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import copy
 import hashlib
+import json
 import shlex
 import sys
 import tempfile
@@ -19,10 +20,21 @@ from pathlib import Path
 
 from .runner import atomic_json, interruption_signals, run, utc_now
 from .schema import load_targets, read_json, validate_scenario
+from .provenance import ProvenanceError, check_transports, verify_versions
 
 
 class ShrinkError(ValueError):
     pass
+
+
+def _digest(value):
+    return hashlib.sha256(json.dumps(value, ensure_ascii=False, sort_keys=True,
+                                     allow_nan=False).encode('utf-8')).hexdigest()
+
+
+def _replay_policy(state):
+    return {key: state.get(key) for key in ('repeat', 'timeout', 'lock_timeout',
+                                           'pumpkin_console', 'console_arena')}
 
 
 def ddmin(sequence, fails):
@@ -123,35 +135,17 @@ def load_versions(path):
     strings are declarations; local hashes establish which file was checked,
     not that an existing remote service is running that file.
     """
-    value = read_json(path)
-    if set(value) != {"vanilla", "pumpkin"}:
-        raise ShrinkError("Versions must contain exactly vanilla and pumpkin")
-    for name, version in value.items():
-        if not isinstance(version, dict) or not version.get("version"):
-            raise ShrinkError(f"{name} requires a version")
-        if set(version) - {"version", "source_commit", "binary", "sha256", "transport"}:
-            raise ShrinkError("Unrecognized version metadata; do not include credentials")
-        if any(not isinstance(v, str) or not v.strip() for v in version.values()):
-            raise ShrinkError("Version metadata values must be nonempty strings")
-        if "binary" in version:
-            binary = Path(version["binary"]).resolve()
-            with binary.open('rb') as handle:
-                digest = hashlib.file_digest(handle, "sha256").hexdigest()
-            if "sha256" in version and version["sha256"] != digest:
-                raise ShrinkError(f"{name} binary hash differs from recorded version")
-            version.update(binary=str(binary), sha256=digest)
-    return value
+    try:
+        return verify_versions(read_json(path))
+    except ProvenanceError as exc:
+        raise ShrinkError(str(exc)) from exc
 
 
 def _console_version(versions, pumpkin_console):
-    for name in ("vanilla", "pumpkin"):
-        transport = "scratch-console" if name == "pumpkin" and pumpkin_console else "rcon"
-        if versions[name].get("transport", transport) != transport:
-            raise ShrinkError(f"{name} version transport differs from selected transport")
-    if pumpkin_console is None:
-        return
-    if not versions or versions["pumpkin"].get("binary") != str(Path(pumpkin_console).resolve()):
-        raise ShrinkError("Console binary must match the Pumpkin versions record")
+    try:
+        check_transports(versions, pumpkin_console)
+    except ProvenanceError as exc:
+        raise ShrinkError(str(exc)) from exc
 
 
 def shrink_scenario(scenario_path, targets_path, output, *, repeat=2, timeout=10.0, max_probes=100,
@@ -182,6 +176,8 @@ def shrink_scenario(scenario_path, targets_path, output, *, repeat=2, timeout=10
              "pumpkin_console": str(Path(pumpkin_console).resolve()) if pumpkin_console else None,
              "evidence_kind": "live differential comparison; inspect target version declarations",
              "version_limitations": "RCON service binary identity is declared, not remotely attested. Local file hashes are verified."}
+    state['replay_integrity'] = {'reset_sha256': _digest(reset),
+                                 'policy_sha256': _digest(_replay_policy(state))}
     atomic_json(directory / "original.json", original)
     atomic_json(directory / "reset.json", {"commands": reset})
     atomic_json(directory / "target-versions.json", versions)
@@ -208,12 +204,14 @@ def shrink_scenario(scenario_path, targets_path, output, *, repeat=2, timeout=10
             raise ShrinkError("Probe budget exhausted; no minimized claim")
         # Detect changed binaries between candidates, rather than silently
         # shrinking across two source versions. Never cache predicate outcomes.
-        load_versions(directory / "target-versions.json")
+        if load_versions(directory / "target-versions.json") != versions:
+            raise ShrinkError("Saved target versions changed during shrinking")
         probe = {"indices": indices, "state": "running", "accepted": False}
         state["probes"].append(probe)
         save()
         run_dir, report, code = run([scenario], targets, directory / "runs", repeat=repeat, timeout=timeout,
-            reset_commands=reset, lock_timeout=lock_timeout, pumpkin_console=pumpkin_console, console_arena=console_arena)
+            reset_commands=reset, lock_timeout=lock_timeout, pumpkin_console=pumpkin_console,
+            console_arena=console_arena, target_versions=versions)
         result = report["results"][0]
         identity = failure_identity(result)
         probe.update(state="finished", run=str(run_dir), exit_code=code, failure_identity=identity)
@@ -231,6 +229,7 @@ def shrink_scenario(scenario_path, targets_path, output, *, repeat=2, timeout=10
         probe["accepted"] = accepted
         if accepted and len(indices) <= state.get("step_count", len(original["steps"])):
             atomic_json(directory / "candidate.json", scenario)
+            state['replay_integrity']['scenario_sha256'] = _digest(scenario)
             state.update(retained_indices=indices, step_count=len(indices), verified_run=str(run_dir))
         save()
         return accepted
@@ -260,10 +259,19 @@ def replay_reproducer(directory, targets_path, *, output=None, timeout=None, loc
     directory = Path(directory).resolve()
     state = read_json(directory / "shrink-report.json")
     versions = load_versions(directory / "target-versions.json")
+    if versions != state["target_versions"]:
+        raise ShrinkError("Saved target versions differ from the original evidence")
     _console_version(versions, state["pumpkin_console"])
     path = directory / ("reproducer.json" if state["minimized"] else "candidate.json")
     scenario = validate_scenario(read_json(path), str(path))
+    reset = load_reset(directory / "reset.json")
+    integrity = state.get('replay_integrity')
+    if integrity and (integrity.get('scenario_sha256') != _digest(scenario)
+                      or integrity.get('reset_sha256') != _digest(reset)
+                      or integrity.get('policy_sha256') != _digest(_replay_policy(state))):
+        raise ShrinkError('Saved scenario, reset or replay policy differs from the verified evidence')
     return run([scenario], load_targets(targets_path), output or directory / "replays",
         repeat=state["repeat"], timeout=state["timeout"] if timeout is None else timeout,
         lock_timeout=state["lock_timeout"] if lock_timeout is None else lock_timeout,
-        reset_commands=load_reset(directory / "reset.json"), pumpkin_console=state["pumpkin_console"], console_arena=state.get("console_arena", False))
+        reset_commands=reset, pumpkin_console=state["pumpkin_console"],
+        console_arena=state.get("console_arena", False), target_versions=versions)

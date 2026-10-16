@@ -21,6 +21,7 @@ from pathlib import Path
 from .normalize import command_problem, normalize_response, strip_sender
 from .rcon import RconClient, RconError
 from .schema import validate_scenario, validate_targets
+from .provenance import binary_identity, check_transports, verify_versions, world_identity
 from . import __version__
 
 TARGET_NAMES = ("vanilla", "pumpkin")
@@ -179,7 +180,8 @@ def _target_record():
             "timing": {"status": "untested", "verified_ticks": 0}}
 
 
-def _attempt_target(scenario, target, target_name, repeat, transcript, factory, timeout, record, reset_commands=()):
+def _attempt_target(scenario, target, target_name, repeat, transcript, factory, timeout, record,
+                    reset_commands=(), checkpoint=lambda: None):
     client = None
     ticks = None
     connected_once = False
@@ -190,16 +192,22 @@ def _attempt_target(scenario, target, target_name, repeat, transcript, factory, 
                  "phase": phase, "index": index, "command": command}
         # Persist the request first, so an interruption leaves a visible pending command.
         transcript.write({**event, "event": "request"})
+        record["pending_command"] = event
+        checkpoint()
         try:
             raw = client.command(command)
-        except RconError as exc:
+        except BaseException as exc:
             transcript.write({**event, "event": "error", "error": str(exc), "error_type": type(exc).__name__,
                               "received_wire_hex": bytes(getattr(client, "last_wire_bytes", b"")).hex(),
                               "response_packets_hex": [p.hex() for p in getattr(client, "last_response_packets", [])]})
+            record.setdefault("uncertain_commands", []).append({**event, "error_type": type(exc).__name__})
+            record.pop("pending_command", None)
+            checkpoint()
             raise
         problem = command_problem(raw)
         packets = [p.hex() for p in getattr(client, "last_response_packets", [])]
         record["commands"].append({**event, "raw": raw, "problem": problem, "response_packets_hex": packets})
+        record.pop("pending_command", None)
         transcript.write({**event, "event": "response", "raw": raw, "problem": problem, "response_packets_hex": packets})
         if problem == "environment_error":
             record["errors"].append({"kind": "EnvironmentError", "phase": phase, "command": command, "reason": raw})
@@ -208,6 +216,7 @@ def _attempt_target(scenario, target, target_name, repeat, transcript, factory, 
                              and re.match(r"No (?:entity|entities) (?:was |were )?found", strip_sender(raw)))
         if problem in ("unsupported", "command_failed") and not benign_empty_kill:
             record["problems"].append({"phase": phase, "index": index, "command": command, "kind": problem})
+        checkpoint()
         return raw
 
     try:
@@ -216,7 +225,12 @@ def _attempt_target(scenario, target, target_name, repeat, transcript, factory, 
                           "event": "connecting", "host": target["host"], "port": target["port"]})
         client.connect()
         connected_once = True
+        if hasattr(client, "directory"):
+            world = Path(client.directory) / "world"
+            record["world_identity"] = (world_identity(world) if world.is_dir() else
+                                         {"status": "unknown", "scratch_directory": str(client.directory)})
         transcript.write({"scenario_id": scenario["id"], "repeat": repeat, "target": target_name, "event": "connected"})
+        checkpoint()
         if any(step.get("wait_ticks", 0) for step in scenario["steps"]):
             record["timing"]["status"] = "testing"
             ticks = TickController(execute, timeout)
@@ -236,10 +250,12 @@ def _attempt_target(scenario, target, target_name, repeat, transcript, factory, 
                 record["observations"].append({"index": index, "command": step["command"],
                     "raw": raw, "normalized": normalized, "expect_contains": expected,
                     "expectation_met": expected in normalized if expected is not None else None})
+                checkpoint()
             if step.get("wait_ticks", 0):
                 ticks.advance(step["wait_ticks"])
                 record["timing"]["verified_ticks"] += step["wait_ticks"]
                 record["timing"]["status"] = "supported"
+                checkpoint()
         record["completed"] = True
     except UnsupportedTicks as exc:
         record["timing"].update(status="unsupported", reason=str(exc))
@@ -263,6 +279,8 @@ def _attempt_target(scenario, target, target_name, repeat, transcript, factory, 
                 nonlocal client, transport_broken
                 if transport_broken:
                     client.close()
+                    if not getattr(client, "reconnectable", True):
+                        raise RconError("Scratch console disconnected; automatic reconnect cannot preserve the world session")
                     client = factory(target["host"], target["port"], target["password"], timeout=timeout)
                     client.connect()
                     transport_broken = False
@@ -413,7 +431,8 @@ def _update_summary(report):
 
 def run(scenarios, targets, output, *, repeat=1, timeout=10.0, lock_timeout=30.0,
         client_factory=RconClient, lock_path=None, reset_commands=(), pumpkin_console=None,
-        order="alternating", order_seed=0, probe_ticks=False, console_arena=False):
+        order="alternating", order_seed=0, probe_ticks=False, console_arena=False,
+        target_versions=None):
     """Return (run_directory, report, exit_code). No connection before validation/lock."""
     validate_targets(targets)
     if type(repeat) is not int or repeat < 1:
@@ -436,6 +455,11 @@ def run(scenarios, targets, output, *, repeat=1, timeout=10.0, lock_timeout=30.0
         pumpkin_console = Path(pumpkin_console).resolve()
         if not pumpkin_console.is_file() or not os.access(pumpkin_console, os.X_OK):
             raise ValueError("pumpkin_console must name an executable binary")
+    versions = verify_versions(target_versions) if target_versions is not None else None
+    if versions is not None:
+        check_transports(versions, pumpkin_console)
+    console_identity = binary_identity(pumpkin_console) if pumpkin_console else None
+    targets = copy.deepcopy(targets)
     scenarios = copy.deepcopy(sorted(scenarios, key=lambda s: s["id"]))
     generator = random.Random(order_seed)
     schedule = []
@@ -464,32 +488,41 @@ def run(scenarios, targets, output, *, repeat=1, timeout=10.0, lock_timeout=30.0
               "timing_capabilities": {name: {"status": "untested"} for name in TARGET_NAMES},
               "transports": {"vanilla": "rcon", "pumpkin": "scratch-console" if pumpkin_console else "rcon"},
               "targets": {name: {"host": t["host"], "port": t["port"]} for name, t in targets["targets"].items()},
+              "target_versions": versions,
+              "provenance_limitations": "Versions and RCON world paths are declarations, not service attestation. Local binary hashes and optional directory identities are checked; world contents, seeds and snapshots are not verified.",
               "results": [{"id": s["id"], "title": s["title"], "category": s["category"],
                            "status": "error", "observations": {name: [] for name in TARGET_NAMES},
                            "reason": "Not run", "duration_seconds": 0.0, "attempts": [],
                            "requested_repeat_count": repeat,
                            "flaky": False, "confirmed_mismatch": False} for s in scenarios]}
+    from .recovery import process_identity
+    report["owner"] = process_identity()
 
     if pumpkin_console:
-        report["targets"]["pumpkin"] = {"binary": str(pumpkin_console), "transport": "scratch-console"}
+        report["targets"]["pumpkin"] = {**console_identity, "transport": "scratch-console"}
 
     def save():
         _update_summary(report)
         atomic_json(directory / "report.json", report)
 
     save()
+    # Snapshot every input before lock acquisition, including timed-out runs.
+    for scenario in scenarios:
+        atomic_json(directory / "scenarios" / (scenario["id"] + ".json"), scenario)
     transcripts = {}
     current = None
     start = None
     try:
         with interruption_signals(), process_lock(lock_path, lock_timeout):
-            for scenario in scenarios:
-                atomic_json(directory / "scenarios" / (scenario["id"] + ".json"), scenario)
             for name in TARGET_NAMES:
                 transcripts[name] = Transcript(directory / "transcripts" / (name + ".jsonl"))
 
             def target_factory(name, scenario_id, number):
+                if versions is not None:
+                    verify_versions(versions)
                 if name == "pumpkin" and pumpkin_console:
+                    if binary_identity(pumpkin_console) != console_identity:
+                        raise ValueError("Scratch console binary changed during the run")
                     from .console import ConsoleClient
                     console_directory = directory / "console" / (scenario_id + "-" + str(number))
                     return lambda host, port, password, timeout: ConsoleClient(
@@ -506,7 +539,7 @@ def run(scenarios, targets, output, *, repeat=1, timeout=10.0, lock_timeout=30.0
                     record["status"] = "testing"
                     save()
                     _attempt_target(probe, targets["targets"][name], name, 0, transcripts[name],
-                        target_factory(name, probe["id"], 0), timeout, record)
+                        target_factory(name, probe["id"], 0), timeout, record, checkpoint=save)
                     record["status"] = "error" if record["errors"] else record["timing"]["status"]
                     save()
 
@@ -524,7 +557,8 @@ def run(scenarios, targets, output, *, repeat=1, timeout=10.0, lock_timeout=30.0
                     attempt["targets"][name] = record
                     _attempt_target(scenario, targets["targets"][name], name,
                         number, transcripts[name], target_factory(name, scenario["id"], number),
-                        timeout, record, reset_commands)
+                        timeout, record, reset_commands, checkpoint=save)
+                    save()
                 attempt.update(compare_attempt(attempt["targets"]))
                 summarize_result(current)
                 current["duration_seconds"] = round(current["duration_seconds"] + time.monotonic() - start, 6)
@@ -535,6 +569,7 @@ def run(scenarios, targets, output, *, repeat=1, timeout=10.0, lock_timeout=30.0
         # Catch unexpected engine exceptions too: the artifact is explicitly an
         # infrastructure failure with its type, never a fabricated parity pass.
         report["state"] = "interrupted" if isinstance(exc, KeyboardInterrupt) else "failed"
+        report["complete"] = False
         report["error"] = {"kind": type(exc).__name__, "reason": str(exc)}
         if current is not None:
             current["status"] = "error"

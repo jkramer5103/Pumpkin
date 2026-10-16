@@ -46,6 +46,8 @@ enabled = false
 
 
 class ConsoleClient:
+    reconnectable = False
+
     def __init__(self, binary, directory, *, timeout=10, arena=False):
         self.binary = Path(binary).resolve()
         self.directory = Path(directory)

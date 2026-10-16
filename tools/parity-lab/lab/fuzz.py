@@ -167,10 +167,11 @@ def fuzz(targets_path, output, *, seed, seeds=10, actions=12, mode='mixed', max_
         with time_budget(max_seconds):
             for case, generated in cases:
                 check_budget()
-                load_versions(directory / 'target-versions.json')
+                if load_versions(directory / 'target-versions.json') != versions:
+                    raise ValueError('Saved target versions changed during fuzzing')
                 path, report, code = run([case], targets, directory / 'runs', repeat=2, timeout=timeout,
                     lock_timeout=lock_timeout, pumpkin_console=pumpkin_console,
-                    console_arena=mode != 'scoreboard')
+                    console_arena=mode != 'scoreboard', target_versions=versions)
                 result = report['results'][0]
                 entry = {'seed': int(case['id'][5:]), 'run': str(path), 'exit_code': code,
                          'status': result['status'], 'classification': result.get('trial_details', {}).get('classification', 'incomplete')}
