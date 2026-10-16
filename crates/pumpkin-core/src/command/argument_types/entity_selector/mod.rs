@@ -9,6 +9,7 @@ use crate::command::errors::command_syntax_error::CommandSyntaxError;
 use crate::entity::EntityBase;
 use crate::entity::player::Player;
 use crate::world::World;
+use crate::world::scoreboard::Scoreboard;
 use pumpkin_data::Advancement;
 use pumpkin_data::entity::EntityType;
 use pumpkin_nbt::compound::NbtCompound;
@@ -465,6 +466,19 @@ fn matches_nbt_compound(expected: &NbtCompound, actual: &NbtCompound) -> bool {
     true
 }
 
+fn matches_scores(
+    expected: &HashMap<String, IntBounds>,
+    scoreboard: &Scoreboard,
+    name: &str,
+) -> bool {
+    expected.iter().all(|(objective, bounds)| {
+        scoreboard.get_objective(objective).is_some()
+            && scoreboard
+                .get_score_value(name, objective)
+                .is_some_and(|value| bounds.matches(value))
+    })
+}
+
 #[allow(clippy::option_if_let_else)]
 fn entity_actual_name(entity: &dyn EntityBase) -> String {
     if let Some(player) = entity.get_player() {
@@ -540,22 +554,13 @@ impl EntitySelectorPredicate {
                 has_team ^ invert
             }
             Self::Scores(scores_map) => {
-                let actual_name = entity_actual_name(entity);
+                let actual_name = entity.get_scoreboard_name();
                 let world = entity.get_entity().world.load();
                 let scoreboard = world
                     .scoreboard
                     .lock()
                     .unwrap_or_else(std::sync::PoisonError::into_inner);
-                let entity_scores = scoreboard.get_scores().get(&actual_name);
-                for (objective, bounds) in scores_map {
-                    let score_val = entity_scores
-                        .and_then(|obj_map| obj_map.get(objective))
-                        .map_or(0, |score| score.value.0);
-                    if !bounds.matches(score_val) {
-                        return false;
-                    }
-                }
-                true
+                matches_scores(scores_map, &scoreboard, &actual_name)
             }
             Self::Advancements(advancements_map) => {
                 let Some(player) = entity.get_player() else {
@@ -589,7 +594,64 @@ impl EntitySelectorPredicate {
 
 #[cfg(test)]
 mod tests {
-    use super::matches_nbt;
+    use super::{matches_nbt, matches_scores};
+    use crate::world::scoreboard::{NoTarget, Scoreboard, ScoreboardObjective};
+    use pumpkin_protocol::java::client::play::RenderType;
+    use pumpkin_util::math::bounds::IntBounds;
+    use pumpkin_util::text::TextComponent;
+    use std::collections::HashMap;
+
+    fn score_fixture() -> Scoreboard {
+        let mut scoreboard = Scoreboard::new();
+        for objective in ["first", "second"] {
+            scoreboard.add_objective(
+                &NoTarget,
+                ScoreboardObjective::new(
+                    objective,
+                    TextComponent::text(objective),
+                    RenderType::Integer,
+                    None,
+                    "dummy",
+                ),
+            );
+        }
+        scoreboard
+    }
+
+    #[test]
+    fn score_filters_require_existing_scores() {
+        let mut scoreboard = score_fixture();
+        let expected = HashMap::from([("first".to_owned(), IntBounds::new(0, 0))]);
+        assert!(!matches_scores(&expected, &scoreboard, "entity-uuid"));
+        scoreboard.set_score_value(&NoTarget, "entity-uuid", "first", 0);
+        assert!(matches_scores(&expected, &scoreboard, "entity-uuid"));
+        scoreboard.remove_score(&NoTarget, "entity-uuid", "first");
+        assert!(!matches_scores(&expected, &scoreboard, "entity-uuid"));
+        let unknown = HashMap::from([("missing".to_owned(), IntBounds::new(0, 0))]);
+        assert!(!matches_scores(&unknown, &scoreboard, "entity-uuid"));
+        assert!(
+            scoreboard
+                .get_score_value("entity-uuid", "missing")
+                .is_none()
+        );
+    }
+
+    #[test]
+    fn score_filters_intersect_existing_objectives() {
+        let mut scoreboard = score_fixture();
+        let expected = HashMap::from([
+            ("first".to_owned(), IntBounds::new(7, 7)),
+            ("second".to_owned(), IntBounds::new(0, 0)),
+        ]);
+        scoreboard.set_score_value(&NoTarget, "entity-uuid", "first", 7);
+        assert!(!matches_scores(&expected, &scoreboard, "entity-uuid"));
+        scoreboard.set_score_value(&NoTarget, "entity-uuid", "second", 0);
+        assert!(matches_scores(&expected, &scoreboard, "entity-uuid"));
+        scoreboard.set_score_value(&NoTarget, "entity-uuid", "first", 8);
+        assert!(!matches_scores(&expected, &scoreboard, "entity-uuid"));
+        assert!(matches_scores(&HashMap::new(), &scoreboard, "untracked"));
+    }
+
     use pumpkin_nbt::tag::NbtTag;
 
     #[test]
