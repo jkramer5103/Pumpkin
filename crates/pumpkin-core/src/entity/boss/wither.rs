@@ -480,6 +480,7 @@ impl WitherEntity {
                             let t_pos = target.get_entity().pos.load();
                             if target.get_entity().is_alive()
                                 && (wither_pos - t_pos).length_squared() <= 900.0
+                                && entity.has_line_of_sight(target.get_entity())
                             {
                                 let eye_h = target.get_entity().get_eye_height();
                                 self.perform_ranged_attack(
@@ -512,6 +513,7 @@ impl WitherEntity {
                                         .get_entity()
                                         .entity_type
                                         .has_tag(&tag::EntityType::MINECRAFT_WITHER_FRIENDS)
+                                    && entity.has_line_of_sight(e.get_entity())
                             })
                             .collect();
 
