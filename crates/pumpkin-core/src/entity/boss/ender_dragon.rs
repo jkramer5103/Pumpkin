@@ -600,11 +600,17 @@ impl EnderDragonEntity {
         Vector3::new(xd / dd * 4.0, f64::from(0.2f32), zd / dd * 4.0)
     }
 
-    const fn can_collide_with_player(gamemode: GameMode) -> bool {
-        !matches!(gamemode, GameMode::Creative | GameMode::Spectator)
+    const fn can_collide_with_player(gamemode: GameMode, hurt_time: i32) -> bool {
+        // Mob AI runs before LivingEntity::tick here; vanilla counts down before AI.
+        hurt_time <= 1 && !matches!(gamemode, GameMode::Creative | GameMode::Spectator)
     }
 
     fn handle_player_collisions(&self) {
+        let hurt_time = self
+            .mob_entity
+            .living_entity
+            .hurt_time
+            .load(Ordering::Relaxed);
         let world = self.mob_entity.living_entity.entity.world.load();
 
         let dragon_bbox = self.mob_entity.living_entity.entity.bounding_box.load();
@@ -614,7 +620,7 @@ impl EnderDragonEntity {
             .players
             .load()
             .iter()
-            .filter(|player| Self::can_collide_with_player(player.gamemode.load()))
+            .filter(|player| Self::can_collide_with_player(player.gamemode.load(), hurt_time))
         {
             if player
                 .living_entity
@@ -909,10 +915,33 @@ mod tests {
     #[test]
     fn contact_excludes_creative_and_spectator_players() {
         for gamemode in [GameMode::Creative, GameMode::Spectator] {
-            assert!(!EnderDragonEntity::can_collide_with_player(gamemode));
+            assert!(!EnderDragonEntity::can_collide_with_player(gamemode, 0));
         }
         for gamemode in [GameMode::Survival, GameMode::Adventure] {
-            assert!(EnderDragonEntity::can_collide_with_player(gamemode));
+            assert!(EnderDragonEntity::can_collide_with_player(gamemode, 0));
+        }
+    }
+
+    #[test]
+    fn contact_resumes_on_the_tick_the_hurt_animation_expires() {
+        for gamemode in [GameMode::Survival, GameMode::Adventure] {
+            for hurt_time in 2..=10 {
+                assert!(!EnderDragonEntity::can_collide_with_player(
+                    gamemode, hurt_time
+                ));
+            }
+            for hurt_time in [1, 0] {
+                assert!(EnderDragonEntity::can_collide_with_player(
+                    gamemode, hurt_time
+                ));
+            }
+        }
+        for gamemode in [GameMode::Creative, GameMode::Spectator] {
+            for hurt_time in 0..=10 {
+                assert!(!EnderDragonEntity::can_collide_with_player(
+                    gamemode, hurt_time
+                ));
+            }
         }
     }
 

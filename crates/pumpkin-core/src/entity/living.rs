@@ -78,6 +78,8 @@ pub struct LivingEntity {
     pub entity: Entity,
     /// Tracks the remaining time until the entity can regenerate health.
     pub hurt_cooldown: AtomicI32,
+    /// Remaining ticks of the hurt animation, separate from damage immunity.
+    pub hurt_time: AtomicI32,
     /// Stores the amount of damage the entity last received.
     pub last_damage_taken: AtomicCell<f32>,
     /// The current health level of the entity.
@@ -282,6 +284,7 @@ impl LivingEntity {
             health: AtomicCell::new(max_health), // Initial health value from attributes
             entity,
             hurt_cooldown: AtomicI32::new(0),
+            hurt_time: AtomicI32::new(0),
             last_damage_taken: AtomicCell::new(0.0),
             absorption: AtomicCell::new(0.0),
             fall_distance: AtomicCell::new(0.0),
@@ -2594,6 +2597,7 @@ impl LivingEntity {
 
         // Give a short grace period of invulnerability after respawn
         self.hurt_cooldown.store(20, Relaxed);
+        self.hurt_time.store(0, Relaxed);
         self.last_damage_taken.store(0f32);
 
         self.entity.portal_cooldown.store(0, Relaxed);
@@ -2666,7 +2670,7 @@ impl LivingEntity {
         // Persist current absorption amount
         nbt.put("AbsorptionAmount", NbtTag::Float(self.absorption.load()));
         nbt.put("FallDistance", NbtTag::Float(fall_distance));
-        nbt.put_short("HurtTime", self.hurt_cooldown.load(Relaxed).max(0) as i16);
+        nbt.put_short("HurtTime", self.hurt_time.load(Relaxed).max(0) as i16);
         nbt.put_short("DeathTime", i16::from(self.death_time.load(Relaxed)));
         nbt.put_bool("FallFlying", self.entity.is_fall_flying());
         {
@@ -2750,7 +2754,7 @@ impl LivingEntity {
             self.fall_distance.store(fd);
         }
         if let Some(hurt_time) = nbt.get_short("HurtTime") {
-            self.hurt_cooldown.store(i32::from(hurt_time), Relaxed);
+            self.hurt_time.store(i32::from(hurt_time), Relaxed);
         }
         if let Some(death_time) = nbt.get_short("DeathTime") {
             self.death_time.store(death_time as u8, Relaxed);
@@ -3139,6 +3143,7 @@ impl LivingEntity {
                 (effective_amount - last_damage, false)
             } else {
                 self.hurt_cooldown.store(20, Relaxed);
+                self.hurt_time.store(10, Relaxed);
                 (effective_amount, self.health.load() > effective_amount)
             };
 
@@ -3574,6 +3579,9 @@ impl EntityBase for LivingEntity {
             }
         }
 
+        if self.hurt_time.load(Relaxed) > 0 {
+            self.hurt_time.fetch_sub(1, Relaxed);
+        }
         if self.hurt_cooldown.load(Relaxed) > 0 {
             self.hurt_cooldown.fetch_sub(1, Relaxed);
         }
