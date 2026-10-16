@@ -40,7 +40,10 @@ def _compare_locked(ports, output, *, repeats=2, classpath_file=None, classes=No
               'coverage': 'status-ping-and-offline-login' if command else 'status-ping-only',
               'login_tested': False, 'gameplay_tested': False, 'shared_engine_lock_held': True,
               'expected_version': '26.3', 'expected_protocol': 777, 'results': [],
-              'dependencies': dependencies, 'limitations': [
+              'dependencies': dependencies,
+              'client_source_sha256': hashlib.sha256(Path(__file__).with_name('client-smoke').joinpath('ClientSmoke.java').read_bytes()).hexdigest() if command else None,
+              'client_class_sha256': hashlib.sha256((Path(classes) / 'ClientSmoke.class').read_bytes()).hexdigest() if command else None,
+              'limitations': [
                   'No movement, inventory, block interaction, rendering or online authentication coverage.',
                   'Initial position values are recorded, not compared across independent worlds.']}
     atomic_json(directory / 'report.json', report)

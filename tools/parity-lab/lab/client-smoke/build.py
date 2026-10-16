@@ -1,6 +1,7 @@
 """Resolve pinned MCProtocolLib and compile; all tools/cache/output stay in runtime/."""
 from pathlib import Path
 import hashlib
+import json
 import subprocess
 import tarfile
 import urllib.request
@@ -28,7 +29,14 @@ def main():
         f'-Dmaven.repo.local={CACHE / "m2"}',
         'org.apache.maven.plugins:maven-dependency-plugin:3.8.1:build-classpath',
         f'-Dmdep.outputFile={classpath}'], check=True, timeout=480)
-    classes = CACHE / 'classes'
+    # Freeze the actual transitive graph, including the protocol jar. A version
+    # string alone does not detect a repository replacing a published artifact.
+    expected = json.loads(Path(__file__).with_name('dependencies.sha256.json').read_text())
+    actual = {str(Path(p).relative_to(CACHE / 'm2')): hashlib.sha256(Path(p).read_bytes()).hexdigest()
+              for p in classpath.read_text().strip().split(':')}
+    if actual != expected:
+        raise ValueError('Client dependency graph/hash changed; inspect before updating the lock')
+    classes = CACHE / 'classes' 
     classes.mkdir(exist_ok=True)
     subprocess.run(['javac', '-cp', classpath.read_text().strip(), '-d', str(classes),
                     str(Path(__file__).with_name('ClientSmoke.java'))], check=True, timeout=60)

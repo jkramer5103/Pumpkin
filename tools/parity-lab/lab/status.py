@@ -114,7 +114,7 @@ def probe(host, port, *, timeout=5):
                     or type(status['version'].get('protocol')) is not int
                     or not isinstance(status['version'].get('name'), str)):
                 raise StatusError('Status is missing a valid version name/protocol')
-            evidence['status'] = 'pass' if status['version'] == {'name': VERSION, 'protocol': PROTOCOL} else 'incompatible'
+            evidence['status'] = 'pass' if status['version']['name'] == VERSION and status['version']['protocol'] == PROTOCOL else 'incompatible'
     except (OSError, ValueError, IndexError) as exc:
         evidence['error'] = f'{type(exc).__name__}: {exc}'
     evidence['received_hex'] = received.hex()
