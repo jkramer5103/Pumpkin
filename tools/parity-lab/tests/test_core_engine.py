@@ -219,6 +219,32 @@ class RunnerTests(unittest.TestCase):
         failures = report["results"][0]["attempts"][0]["failures"]
         self.assertTrue(any(f["kind"] == "expectation_failed" and f["target"] == "pumpkin" for f in failures))
 
+    def test_failed_vanilla_command_cannot_confirm_or_minimize_a_difference(self):
+        # A passing positive probe cannot repair an invalid reference setup,
+        # unobserved action or cleanup. Keep the raw difference visible.
+        for phase in ("setup", "steps", "cleanup"):
+            with self.subTest(phase=phase):
+                case = scenario()
+                if phase == "steps":
+                    command = case[phase][0]["command"]
+                else:
+                    command = "reference-precondition"
+                    case[phase] = [command]
+                fixture = Fixtures({("vanilla", command): "Failed to fill blocks",
+                    ("pumpkin", self.observe): "PARITY:stone-present extra"})
+                _, report, code = self.execute(fixture, repeat=2, cases=[case])
+                result = report["results"][0]
+                self.assertEqual(code, 1)
+                self.assertFalse(result["confirmed_mismatch"])
+                self.assertTrue(all(o["expectation_met"] for a in result["attempts"]
+                                    for o in a["targets"]["vanilla"]["observations"]))
+                self.assertTrue(any(f["kind"] == "command_failed" and f["target"] == "vanilla"
+                                    for f in result["attempts"][0]["failures"]))
+                self.assertIsNone(failure_identity(result))
+                # Older saved reports may contain the erroneous confirmation.
+                result["confirmed_mismatch"] = True
+                self.assertIsNone(failure_identity(result))
+
     def test_infrastructure_error_preserves_other_failure_evidence(self):
         fixtures = Fixtures({
             ("pumpkin", self.case["setup"][0]): "That position is not loaded",

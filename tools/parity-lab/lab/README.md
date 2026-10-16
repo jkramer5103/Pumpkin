@@ -68,8 +68,8 @@ The contract report fields are retained. Additional fields include:
 - `flaky`: observations or outcomes differed across repeats. Equal outputs on
   both targets can still be flaky if both change between repeats.
 - `confirmed_mismatch`: at least two stable repeats with differing observations,
-  passing vanilla positive assertions, no unsupported command and no infrastructure
-  error. Single-repeat differences, failing vanilla oracles, equal expectation
+  passing vanilla positive assertions, no failed vanilla command in any phase,
+  no unsupported command and no infrastructure error. Single-repeat differences, failing vanilla oracles, equal expectation
   failures, flakes and capability gaps are not confirmed.
 - `unsupported_commands` and `command_coverage`: command rejection evidence and
   response counts. Rejected syntax can also appear as `unsupported`; inspect the

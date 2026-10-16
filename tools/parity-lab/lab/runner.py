@@ -369,9 +369,10 @@ def summarize_result(result):
     result["observations"] = {name: [o["raw"] for o in attempts[0]["targets"][name]["observations"]]
                               for name in TARGET_NAMES}
     unsupported = any(f["kind"] == "unsupported" for a in attempts for f in a["failures"])
-    # A broken vanilla oracle cannot establish the intended behavior. Keep the
-    # difference visible, but require its positive assertions before confirmation.
-    vanilla_failed = any(f["kind"] == "expectation_failed" and f.get("target") == "vanilla"
+    # A failed reference command in any phase invalidates the comparison's
+    # preconditions even when a later positive assertion happens to pass.
+    vanilla_failed = any(f["kind"] in ("expectation_failed", "command_failed")
+                         and f.get("target") == "vanilla"
                          for a in attempts for f in a["failures"])
     result["confirmed_mismatch"] = (len(attempts) >= 2 and not result["flaky"] and not unsupported
         and not vanilla_failed

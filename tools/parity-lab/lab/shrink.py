@@ -98,7 +98,9 @@ def failure_identity(result):
         return None
     if any(f["kind"] == "unsupported" for a in attempts for f in a["failures"]):
         return None
-    if any(f["kind"] == "expectation_failed" and f.get("target") == "vanilla"
+    # Recheck old saved reports too: earlier runners could confirm differences
+    # despite a failed reference setup/action/cleanup.
+    if any(f["kind"] in ("expectation_failed", "command_failed") and f.get("target") == "vanilla"
            for a in attempts for f in a["failures"]):
         return None
     identity = []
