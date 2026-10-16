@@ -16,7 +16,7 @@
 use crate::command::argument_builder::{
     ArgumentBuilder, RequiredArgumentBuilder, argument, command, literal,
 };
-use crate::command::argument_types::block::BlockArgumentType;
+use crate::command::argument_types::block_predicate::{BlockPredicate, BlockPredicateArgumentType};
 use crate::command::argument_types::coordinates::block_pos::BlockPosArgumentType;
 use crate::command::argument_types::coordinates::rotation::RotationArgumentType;
 use crate::command::argument_types::coordinates::swizzle::SwizzleArgumentType;
@@ -27,7 +27,7 @@ use crate::command::argument_types::entity_anchor::{
     EntityAnchor, EntityAnchorArgumentType, EntityAnchorExt,
 };
 use crate::command::argument_types::identifier::IdentifierArgumentType;
-use crate::command::argument_types::nbt_path::{NbtPath, NbtPathArgumentType};
+use crate::command::argument_types::nbt_path::{NbtPath, NbtPathArgumentType, compare_nbt};
 use crate::command::argument_types::objective::ObjectiveArgumentType;
 use crate::command::argument_types::range::{FloatRangeArgumentType, IntRangeArgumentType};
 use crate::command::argument_types::resource::{ENTITY_TYPE_ARGUMENT, ResourceArgument};
@@ -282,36 +282,48 @@ fn execute_facing_entity_modifier(
     Ok(sources)
 }
 
+fn test_block(context: &CommandContext) -> Result<bool, CommandSyntaxError> {
+    let pos = BlockPosArgumentType::get_block_pos(context, "pos")?;
+    let predicate = BlockPredicateArgumentType::get(context, "block")?;
+    let Some(world) = context.source.world.as_ref() else {
+        return Ok(false);
+    };
+    if !predicate.test_state(world.get_block_state(&pos).id) {
+        return Ok(false);
+    }
+    let (BlockPredicate::Block { nbt, .. } | BlockPredicate::Tag { nbt, .. }) = predicate;
+    let Some(expected_nbt) = nbt else {
+        return Ok(true);
+    };
+    let Some(block_entity) = world.get_block_entity(&pos) else {
+        return Ok(false);
+    };
+    let mut actual_nbt = pumpkin_nbt::compound::NbtCompound::new();
+    block_entity.write_internal(&mut actual_nbt);
+    Ok(compare_nbt(
+        &NbtTag::Compound(expected_nbt),
+        &NbtTag::Compound(actual_nbt),
+    ))
+}
+
 fn execute_if_block_modifier(
     context: &CommandContext,
 ) -> crate::command::node::RedirectModifierResult {
-    let pos = BlockPosArgumentType::get_block_pos(context, "pos")?;
-    let expected_block = BlockArgumentType::get(context, "block")?;
-
-    if let Some(ref world) = context.source.world {
-        let block = world.get_block(&pos);
-        if block == expected_block {
-            return Ok(vec![context.source.clone()]);
-        }
+    if test_block(context)? {
+        Ok(vec![context.source.clone()])
+    } else {
+        Ok(vec![])
     }
-    Ok(vec![])
 }
 
 fn execute_unless_block_modifier(
     context: &CommandContext,
 ) -> crate::command::node::RedirectModifierResult {
-    let pos = BlockPosArgumentType::get_block_pos(context, "pos")?;
-    let expected_block = BlockArgumentType::get(context, "block")?;
-
-    if let Some(ref world) = context.source.world {
-        let block = world.get_block(&pos);
-        if block != expected_block {
-            return Ok(vec![context.source.clone()]);
-        }
+    if test_block(context)? {
+        Ok(vec![])
     } else {
-        return Ok(vec![context.source.clone()]);
+        Ok(vec![context.source.clone()])
     }
-    Ok(vec![])
 }
 
 fn execute_if_loaded_modifier(
@@ -1293,7 +1305,7 @@ pub fn register(dispatcher: &mut CommandDispatcher, registry: &PermissionRegistr
                 .then(
                     literal("block").then(argument("pos", BlockPosArgumentType).then(
                         add_conditional(
-                            argument("block", BlockArgumentType),
+                            argument("block", BlockPredicateArgumentType),
                             execute_if_block_modifier,
                         ),
                     )),
@@ -1453,7 +1465,7 @@ pub fn register(dispatcher: &mut CommandDispatcher, registry: &PermissionRegistr
                 .then(
                     literal("block").then(argument("pos", BlockPosArgumentType).then(
                         add_conditional(
-                            argument("block", BlockArgumentType),
+                            argument("block", BlockPredicateArgumentType),
                             execute_unless_block_modifier,
                         ),
                     )),
@@ -1670,6 +1682,59 @@ mod tests {
                 assert!(parsed.errors.is_empty(), "{input}: {:?}", parsed.errors);
                 assert_eq!(parsed.reader.remaining_length(), 0, "{input}");
                 assert!(parsed.context.build(&input).command.is_some(), "{input}");
+            }
+        }
+    }
+
+    #[test]
+    fn block_conditions_parse_and_match_state_and_tag_predicates() {
+        use pumpkin_data::Block;
+
+        let mut dispatcher = CommandDispatcher::new();
+        register(&mut dispatcher, &PermissionRegistry::default());
+        let source = CommandSource::dummy();
+        let stairs = Block::OAK_STAIRS
+            .from_properties(&[("facing", "east"), ("half", "top")])
+            .to_state_id(&Block::OAK_STAIRS);
+        for condition in ["if", "unless"] {
+            for (predicate, state, expected) in [
+                (
+                    "minecraft:oak_log[axis=y]",
+                    Block::OAK_LOG.default_state.id,
+                    true,
+                ),
+                (
+                    "minecraft:oak_log[axis=x]",
+                    Block::OAK_LOG.default_state.id,
+                    false,
+                ),
+                (
+                    "#minecraft:logs[axis=y]",
+                    Block::BIRCH_LOG.default_state.id,
+                    true,
+                ),
+                (
+                    "#minecraft:logs[axis=x]",
+                    Block::BIRCH_LOG.default_state.id,
+                    false,
+                ),
+                ("#minecraft:logs", Block::STONE.default_state.id, false),
+                (
+                    "#minecraft:logs[missing=value]",
+                    Block::OAK_LOG.default_state.id,
+                    false,
+                ),
+                ("minecraft:oak_stairs[facing=east]", stairs, true),
+                ("minecraft:oak_stairs[half=bottom]", stairs, false),
+            ] {
+                let input = format!("execute {condition} block 0 64 0 {predicate}");
+                let parsed = dispatcher.parse_input(&input, &source);
+                assert!(parsed.errors.is_empty(), "{input}: {:?}", parsed.errors);
+                assert_eq!(parsed.reader.remaining_length(), 0, "{input}");
+                let context = parsed.context.build(&input);
+                assert!(context.command.is_some(), "{input}");
+                let parsed_predicate = crate::command::argument_types::block_predicate::BlockPredicateArgumentType::get(&context, "block").unwrap();
+                assert_eq!(parsed_predicate.test_state(state), expected, "{input}");
             }
         }
     }
