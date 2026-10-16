@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "id": "dragon-silent-state",
+  "title": "Dragon Silent state survives NBT updates and clears on removal",
+  "category": "entities",
+  "description": "Support the dragon death-sound regression by exercising the Silent flag through the actual entity NBT read/write path.",
+  "tags": ["command", "entity", "ender-dragon", "nbt"],
+  "setup": [
+    "tick freeze",
+    "gamerule mob_griefing false",
+    "gamerule spawn_mobs false",
+    "forceload add 0 0 15 15",
+    "summon minecraft:ender_dragon 8 80 8 {NoAI:1b,Silent:1b,PersistenceRequired:1b,Tags:[\"dragon_silent_state\"]}"
+  ],
+  "steps": [
+    {"command": "execute if entity @e[tag=dragon_silent_state,nbt={Silent:1b}]", "observe": true, "expect_contains": "Test passed. Count: 1"},
+    {"command": "data merge entity @e[tag=dragon_silent_state,limit=1] {Health:200.0f}"},
+    {"command": "execute if entity @e[tag=dragon_silent_state,nbt={Silent:1b}]", "observe": true, "expect_contains": "Test passed. Count: 1"},
+    {"command": "data merge entity @e[tag=dragon_silent_state,limit=1] {Silent:0b}"},
+    {"command": "execute unless entity @e[tag=dragon_silent_state,nbt={Silent:1b}]", "observe": true, "expect_contains": "Test passed"},
+    {"command": "data merge entity @e[tag=dragon_silent_state,limit=1] {Silent:1b}"},
+    {"command": "execute if entity @e[tag=dragon_silent_state,nbt={Silent:1b}]", "observe": true, "expect_contains": "Test passed. Count: 1"},
+    {"command": "data remove entity @e[tag=dragon_silent_state,limit=1] Silent"},
+    {"command": "execute unless entity @e[tag=dragon_silent_state,nbt={Silent:1b}]", "observe": true, "expect_contains": "Test passed"}
+  ],
+  "cleanup": ["kill @e[tag=dragon_silent_state]"],
+  "notes": "NBT support for the packet-level silent dragon death-sound comparison. This fixture alone does not validate sound playback or a whole boss fight. The replay driver waits for death cleanup before and after this fixture."
+}

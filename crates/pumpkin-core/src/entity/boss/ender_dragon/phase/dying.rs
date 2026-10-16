@@ -7,6 +7,12 @@ use pumpkin_util::math::{vector2::Vector2, vector3::Vector3};
 
 pub struct DyingPhase;
 
+impl DyingPhase {
+    fn death_sound(death_time: i32, silent: bool) -> Option<Sound> {
+        (death_time == 1 && !silent).then_some(Sound::EntityEnderDragonDeath)
+    }
+}
+
 impl super::Phase for DyingPhase {
     fn get_type(&self) -> EnderDragonPhase {
         EnderDragonPhase::Dying
@@ -84,8 +90,8 @@ impl super::Phase for DyingPhase {
         }
 
         // 3. Play death sound at tick 1
-        if death_time == 1 {
-            world.play_sound(Sound::EntityEnderDragonDeath, SoundCategory::Hostile, &pos);
+        if let Some(sound) = Self::death_sound(death_time, entity.is_silent()) {
+            world.play_sound(sound, SoundCategory::Hostile, &pos);
         }
 
         // 4. Explosion particles matching doClientTick (every 10 ticks and during final ticks)
@@ -141,6 +147,26 @@ impl super::Phase for DyingPhase {
                 part.entity.remove();
             }
             entity.remove();
+        }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::DyingPhase;
+    use pumpkin_data::sound::Sound;
+
+    #[test]
+    fn death_sound_only_plays_on_first_tick_for_audible_dragons() {
+        assert_eq!(
+            DyingPhase::death_sound(1, false),
+            Some(Sound::EntityEnderDragonDeath)
+        );
+        assert_eq!(DyingPhase::death_sound(1, true), None);
+        for death_time in [0, 2, 150, 155, 199, 200] {
+            for silent in [false, true] {
+                assert_eq!(DyingPhase::death_sound(death_time, silent), None);
+            }
         }
     }
 }

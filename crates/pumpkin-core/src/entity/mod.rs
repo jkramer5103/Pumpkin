@@ -4047,6 +4047,9 @@ impl Entity {
             nbt.put("CustomName", tag);
         }
         nbt.put_bool("CustomNameVisible", self.custom_name_visible.load(Relaxed));
+        if self.is_silent() {
+            nbt.put_bool("Silent", true);
+        }
 
         let tags = self
             .scoreboard_tags
@@ -4075,6 +4078,7 @@ impl Entity {
     }
 
     pub fn read_nbt_non_mut(&self, nbt: &NbtCompound) {
+        self.set_silent(nbt.get_bool("Silent").unwrap_or(false));
         if let Some(position) = nbt.get_list("Pos")
             && position.len() >= 3
         {
