@@ -596,7 +596,7 @@ impl EnderDragonEntity {
         let xd = target_pos.x - body_pos.x;
         let zd = target_pos.z - body_pos.z;
         let dd = (xd * xd + zd * zd).max(0.1);
-        Vector3::new(xd / dd * 4.0, f64::from(0.2_f32), zd / dd * 4.0)
+        Vector3::new(xd / dd * 4.0, f64::from(0.2f32), zd / dd * 4.0)
     }
 
     fn handle_player_collisions(&self) {
@@ -901,19 +901,19 @@ mod tests {
         for (target, expected) in [
             (
                 Vector3::new(12.0, 80.0, 7.0),
-                Vector3::new(1.0, f64::from(0.2_f32), 0.0),
+                Vector3::new(1.0, f64::from(0.2f32), 0.0),
             ),
             (
                 Vector3::new(16.0, 80.0, 7.0),
-                Vector3::new(0.5, f64::from(0.2_f32), 0.0),
+                Vector3::new(0.5, f64::from(0.2f32), 0.0),
             ),
             (
                 Vector3::new(4.0, 80.0, 7.0),
-                Vector3::new(-1.0, f64::from(0.2_f32), 0.0),
+                Vector3::new(-1.0, f64::from(0.2f32), 0.0),
             ),
             (
                 Vector3::new(11.0, 86.0, 11.0),
-                Vector3::new(0.48, f64::from(0.2_f32), 0.64),
+                Vector3::new(0.48, f64::from(0.2f32), 0.64),
             ),
         ] {
             assert_eq!(EnderDragonEntity::knockback_push(body, target), expected);
@@ -925,11 +925,11 @@ mod tests {
         let body = Vector3::new(0.0, 80.0, 0.0);
         assert_eq!(
             EnderDragonEntity::knockback_push(body, Vector3::new(0.05, 80.0, -0.05)),
-            Vector3::new(2.0, f64::from(0.2_f32), -2.0),
+            Vector3::new(2.0, f64::from(0.2f32), -2.0),
         );
         assert_eq!(
             EnderDragonEntity::knockback_push(body, Vector3::new(0.0, 80.0, 0.0)),
-            Vector3::new(0.0, f64::from(0.2_f32), 0.0),
+            Vector3::new(0.0, f64::from(0.2f32), 0.0),
         );
     }
 
