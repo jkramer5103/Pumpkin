@@ -1,0 +1,20 @@
+# Terminal execute entity and block conditions
+
+On fork master `65bca3f7f36af3b4f5e32ac24ed9abd71c930844` (including the five previous Rust fixes), terminal `execute if/unless entity` and `execute if/unless block` parse without a final executor. The dispatcher cannot flatten the resulting context and reports an incomplete command before evaluating the condition. Chained conditions also use nonforking redirects, incorrectly returning the leaf command value rather than the number of successful executions.
+
+The patch attaches an entity count executor and reuses the existing boolean conditional executor for blocks. All four condition nodes fork when followed by another subcommand. A matching terminal entity condition returns its match count; an empty `unless entity` returns 1. Failing terminal conditions produce the vanilla conditional error, including the count for a failing `unless entity`. Existing block matching and selector parsing are unchanged.
+
+Vanilla reference: official Java 26.3 server, decompiled privately with Vineflower 1.12.0. `ExecuteCommand.addConditionals`, `createNumericConditionalHandler`, `addConditional` and `expect` distinguish terminal executors from continuation forks. No decompiled material is committed. Upstream master `5b53f064af8708ba33fcaa533b81ca29a53a3310` was rechecked before publication. Open [PR 3987](https://github.com/Pumpkin-MC/Pumpkin/pull/3987) implements score storage and has no identical terminal entity/block patch; [issue 2592](https://github.com/Pumpkin-MC/Pumpkin/issues/2592) tracks broader execute/block predicate defects.
+
+## Validation
+
+- Before the fix, three Rust regressions fail: terminal executor registration, empty-selection error/result callbacks, and continuation aggregation (`Ok(7)` instead of `Ok(1)`). A fourth test checks entity count results and counted errors for 0, 1 and 2 matches. After the fix, all 442 `pumpkin-core --lib` tests pass.
+- `cargo fmt --all -- --check`, `cargo clippy --locked -p pumpkin-core --all-targets --all-features` and `cargo build --locked -p pumpkin` pass. Cargo operations held the shared build lock with one job, debug info/incremental disabled, 5 GiB memory, no swap and 200% CPU limits. The initial interrupted compiler attempt produced no test outcome and is excluded.
+- Baseline scratch comparison repeated twice: vanilla passes 58/58 observations, including score-stored terminal result/success values; current upstream passes only the four continuation side-effect controls and rejects all 18 terminal checks. Raw responses are retained. Initial expectation punctuation/bracket corrections are documented alongside the unchanged raw replies.
+- Patched scratch comparison repeated twice: vanilla passes 60/60 observations and the patched binary passes 24/24. Every terminal feedback reply exactly matches vanilla; continuation side effects and silent forked failures pass. Vanilla additionally validates stored result/success values. Both scratch servers stop cleanly and their logs contain no ERROR/panic lines. Final report: `artifacts/jaron-terminal-live-20261016T070749.952019Z/report.json`.
+
+Private evidence in the deployment workspace: `artifacts/jaron-terminal-red-resume.log`, `jaron-terminal-red-green.json`, `jaron-terminal-verify.json`, `jaron-terminal-build.log`, and `jaron-terminal-live-20261016T065727.610815Z/report.json`. Candidate SHA-256: `f4c86e68eaeae418f147933bf46606c672524314587b4bec77121a558d3c0292`.
+
+## Limits
+
+Live Pumpkin validation uses an isolated scratch console server because current source has no RCON implementation. Score storage is a vanilla reference oracle, not a feature added by this patch; patched numeric return values and result callbacks are also checked in Rust. This change does not implement richer block predicates, property/tag/NBT matching or unloaded-block validation, and does not extend other terminal execute condition families. No connected-client or full-workspace gameplay coverage is claimed. Permanent lab servers are not replaced.
