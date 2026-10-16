@@ -28,7 +28,7 @@ use crate::{
         Entity, EntityBase,
         ai::{
             goal::{
-                Controls, Goal, look_around::RandomLookAroundGoal,
+                Controls, Goal, active_target::ActiveTargetGoal, look_around::RandomLookAroundGoal,
                 look_at_entity::LookAtEntityGoal, revenge::RevengeGoal,
             },
             target_predicate::TargetPredicate,
@@ -119,6 +119,15 @@ impl WitherEntity {
             goal_selector.add_goal(7, Box::new(RandomLookAroundGoal::default()));
 
             target_selector.add_goal(1, Box::new(RevengeGoal::new(true)));
+            target_selector.add_goal(
+                2,
+                ActiveTargetGoal::predicated(&mob_arc.mob_entity, 0, false, |living, _world| {
+                    !living
+                        .entity
+                        .entity_type
+                        .has_tag(&tag::EntityType::MINECRAFT_WITHER_FRIENDS)
+                }),
+            );
         };
 
         mob_arc

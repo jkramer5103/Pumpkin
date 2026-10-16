@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "id": "wither-main-head-friend-nearer",
+  "title": "Wither main-head friend-nearer",
+  "category": "entities",
+  "description": "An unprovoked Wither pursues a visible eligible target, excluding undead friends and respecting sight at acquisition.",
+  "tags": [
+    "entity",
+    "wither",
+    "ai",
+    "target"
+  ],
+  "setup": [
+    "difficulty easy",
+    "gamerule mob_griefing false",
+    "gamerule spawn_mobs false",
+    "forceload add 0 0 31 31",
+    "fill 0 79 0 31 79 31 minecraft:bedrock",
+    "gamemode creative @a",
+    "tp @a 15 84 15",
+    "fill 7 80 4 7 88 12 minecraft:air",
+    "summon minecraft:wither 4.5 80 8.5 {Tags:[\"pp_boss\"],NoGravity:1b,Silent:1b,PersistenceRequired:1b}",
+    "summon minecraft:zombie 4.5 80 4.5 {Tags:[\"pp_friend\"],NoAI:1b,NoGravity:1b,Silent:1b,PersistenceRequired:1b}",
+    "summon minecraft:sheep 12.5 80 8.5 {Tags:[\"pp_target\"],NoAI:1b,NoGravity:1b,Silent:1b,PersistenceRequired:1b}"
+  ],
+  "steps": [
+    {
+      "command": "execute if entity @e[tag=pp_boss,nbt={Health:300.0f,Invul:0}]",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 8
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss,x=5.0,y=80,z=7,dx=8,dy=8,dz=3]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss,nbt={Health:300.0f,Invul:0}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @a[gamemode=creative]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_target]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    }
+  ],
+  "cleanup": [
+    "kill @e[type=minecraft:wither]",
+    "kill @e[type=minecraft:sheep]",
+    "kill @e[type=minecraft:zombie]",
+    "kill @e[type=minecraft:wither_skull]",
+    "kill @e[type=minecraft:item]"
+  ],
+  "notes": "Run tick-frozen with a connected creative player in a fresh isolated arena. Main-head metadata DATA_TARGET_A (id16 on protocol777) must name the sheep for visible/friend-nearer cases and stay zero for friends-only/occluded cases. Also verify the movement observation after exactly eight ticks. The short window avoids sheep death. Does not assert attack timing or full fight parity."
+}
