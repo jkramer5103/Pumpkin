@@ -581,12 +581,29 @@ impl EnderDragonEntity {
             .cloned()
     }
 
+    fn body_position(&self) -> Vector3<f64> {
+        let entity = &self.mob_entity.living_entity.entity;
+        let pos = entity.pos.load();
+        let rot = entity.yaw.load() * (std::f32::consts::PI / 180.0);
+        Vector3::new(
+            pos.x + f64::from(rot.sin()) * 0.5,
+            pos.y,
+            pos.z - f64::from(rot.cos()) * 0.5,
+        )
+    }
+
+    fn knockback_push(body_pos: Vector3<f64>, target_pos: Vector3<f64>) -> Vector3<f64> {
+        let xd = target_pos.x - body_pos.x;
+        let zd = target_pos.z - body_pos.z;
+        let dd = (xd * xd + zd * zd).max(0.1);
+        Vector3::new(xd / dd * 4.0, f64::from(0.2_f32), zd / dd * 4.0)
+    }
+
     fn handle_player_collisions(&self) {
         let world = self.mob_entity.living_entity.entity.world.load();
 
         let dragon_bbox = self.mob_entity.living_entity.entity.bounding_box.load();
-        let xm = f64::midpoint(dragon_bbox.min.x, dragon_bbox.max.x);
-        let zm = f64::midpoint(dragon_bbox.min.z, dragon_bbox.max.z);
+        let body_pos = self.body_position();
 
         for player in world.players.load().iter() {
             if player
@@ -597,15 +614,9 @@ impl EnderDragonEntity {
                 .intersects(&dragon_bbox)
             {
                 let player_pos = player.get_entity().pos.load();
-                let xd = player_pos.x - xm;
-                let zd = player_pos.z - zm;
-                let dd = (xd * xd + zd * zd).max(0.1);
-
                 player
-                    .living_entity
-                    .entity
-                    .apply_knockback(4.0, xd / dd, zd / dd);
-                player.get_entity().send_velocity();
+                    .get_entity()
+                    .add_velocity(Self::knockback_push(body_pos, player_pos));
 
                 if !self
                     .phase
@@ -697,9 +708,7 @@ impl EnderDragonEntity {
         let pos = self.mob_entity.living_entity.entity.pos.load();
 
         // Body
-        self.parts[2]
-            .entity
-            .set_pos(Vector3::new(pos.x + ss1 * 0.5, pos.y, pos.z - cc1 * 0.5));
+        self.parts[2].entity.set_pos(self.body_position());
 
         // Wings
         self.parts[6].entity.set_pos(Vector3::new(
@@ -884,6 +893,45 @@ impl Vector3Ext for Vector3<f64> {
 mod tests {
     use super::EnderDragonEntity;
     use pumpkin_data::Block;
+    use pumpkin_util::math::vector3::Vector3;
+
+    #[test]
+    fn contact_push_is_outward_and_decreases_with_distance() {
+        let body = Vector3::new(8.0, 80.0, 7.0);
+        for (target, expected) in [
+            (
+                Vector3::new(12.0, 80.0, 7.0),
+                Vector3::new(1.0, f64::from(0.2_f32), 0.0),
+            ),
+            (
+                Vector3::new(16.0, 80.0, 7.0),
+                Vector3::new(0.5, f64::from(0.2_f32), 0.0),
+            ),
+            (
+                Vector3::new(4.0, 80.0, 7.0),
+                Vector3::new(-1.0, f64::from(0.2_f32), 0.0),
+            ),
+            (
+                Vector3::new(11.0, 86.0, 11.0),
+                Vector3::new(0.48, f64::from(0.2_f32), 0.64),
+            ),
+        ] {
+            assert_eq!(EnderDragonEntity::knockback_push(body, target), expected);
+        }
+    }
+
+    #[test]
+    fn contact_push_clamps_distance_without_randomizing_the_center() {
+        let body = Vector3::new(0.0, 80.0, 0.0);
+        assert_eq!(
+            EnderDragonEntity::knockback_push(body, Vector3::new(0.05, 80.0, -0.05)),
+            Vector3::new(2.0, f64::from(0.2_f32), -2.0),
+        );
+        assert_eq!(
+            EnderDragonEntity::knockback_push(body, Vector3::new(0.0, 80.0, 0.0)),
+            Vector3::new(0.0, f64::from(0.2_f32), 0.0),
+        );
+    }
 
     #[test]
     fn block_destruction_respects_mob_griefing() {
