@@ -1,0 +1,76 @@
+{
+  "schema_version": 1,
+  "id": "findings-score-holders",
+  "title": "Score selectors require existing UUID-backed entity scores",
+  "category": "findings",
+  "description": "Score selectors require existing UUID-backed entity scores",
+  "tags": [
+    "command",
+    "deterministic",
+    "state-observation"
+  ],
+  "setup": [
+    "tick freeze",
+    "scoreboard objectives add pp_find dummy",
+    "execute if entity @e[type=minecraft:marker,tag=pp_find,x=-32,y=48,z=-32,dx=64,dy=48,dz=64] run kill @e[type=minecraft:marker,tag=pp_find,x=-32,y=48,z=-32,dx=64,dy=48,dz=64]",
+    "summon minecraft:marker 2 64 2 {Tags:[\"pp_find\",\"fixture\"],Rotation:[90.0f,20.0f]}"
+  ],
+  "steps": [
+    {
+      "command": "scoreboard players set #count pp_find 0"
+    },
+    {
+      "command": "execute as @e[type=minecraft:marker,tag=pp_find,x=-32,y=48,z=-32,dx=64,dy=48,dz=64] run scoreboard players add #count pp_find 1"
+    },
+    {
+      "command": "execute if score #count pp_find matches 1",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "scoreboard players set #count pp_find 0"
+    },
+    {
+      "command": "execute as @e[type=minecraft:marker,tag=pp_find,x=-32,y=48,z=-32,dx=64,dy=48,dz=64,scores={pp_find=0}] run scoreboard players add #count pp_find 1"
+    },
+    {
+      "command": "execute if score #count pp_find matches 0",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "scoreboard players set @e[type=minecraft:marker,tag=pp_find,x=-32,y=48,z=-32,dx=64,dy=48,dz=64] pp_find 7"
+    },
+    {
+      "command": "scoreboard players set marker pp_find 99"
+    },
+    {
+      "command": "scoreboard players set #count pp_find 0"
+    },
+    {
+      "command": "execute as @e[type=minecraft:marker,tag=pp_find,x=-32,y=48,z=-32,dx=64,dy=48,dz=64,scores={pp_find=7}] run scoreboard players add #count pp_find 1"
+    },
+    {
+      "command": "execute if score #count pp_find matches 1",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "scoreboard players set #count pp_find 0"
+    },
+    {
+      "command": "execute as @e[type=minecraft:marker,tag=pp_find,x=-32,y=48,z=-32,dx=64,dy=48,dz=64,scores={pp_find=99}] run scoreboard players add #count pp_find 1"
+    },
+    {
+      "command": "execute if score #count pp_find matches 0",
+      "observe": true,
+      "expect_contains": "Test passed"
+    }
+  ],
+  "cleanup": [
+    "execute if entity @e[type=minecraft:marker,tag=pp_find,x=-32,y=48,z=-32,dx=64,dy=48,dz=64] run kill @e[type=minecraft:marker,tag=pp_find,x=-32,y=48,z=-32,dx=64,dy=48,dz=64]",
+    "scoreboard objectives remove pp_find",
+    "tick unfreeze"
+  ],
+  "notes": "Focused current-source replay; scores expose conditional results without requiring terminal entity/block conditions. Kept outside the default catalog; no new independent coverage count."
+}
