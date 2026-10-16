@@ -1,0 +1,81 @@
+{
+  "schema_version": 1,
+  "id": "scheduled-water-down",
+  "title": "Water begins flowing downward on tick five",
+  "category": "scheduled-fluid",
+  "description": "A source above an air cell stays isolated through tick four, then flows downward on tick five and remains on tick six.",
+  "tags": [
+    "command",
+    "deterministic",
+    "simulation"
+  ],
+  "setup": [
+    "fill 0 63 0 6 72 6 minecraft:air",
+    "fill 1 63 1 3 63 3 minecraft:stone",
+    "setblock 2 65 2 minecraft:water",
+    "scoreboard objectives add pp_sim dummy"
+  ],
+  "steps": [
+    {
+      "command": "scoreboard players set #probe pp_sim 0"
+    },
+    {
+      "command": "execute if block 2 65 2 minecraft:water if block 2 64 2 minecraft:air run scoreboard players set #probe pp_sim 1"
+    },
+    {
+      "command": "execute if score #probe pp_sim matches 1",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "time query gametime",
+      "wait_ticks": 4
+    },
+    {
+      "command": "scoreboard players set #probe pp_sim 0"
+    },
+    {
+      "command": "execute if block 2 64 2 minecraft:air run scoreboard players set #probe pp_sim 1"
+    },
+    {
+      "command": "execute if score #probe pp_sim matches 1",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "time query gametime",
+      "wait_ticks": 1
+    },
+    {
+      "command": "scoreboard players set #probe pp_sim 0"
+    },
+    {
+      "command": "execute if block 2 64 2 minecraft:water run scoreboard players set #probe pp_sim 1"
+    },
+    {
+      "command": "execute if score #probe pp_sim matches 1",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "time query gametime",
+      "wait_ticks": 1
+    },
+    {
+      "command": "scoreboard players set #probe pp_sim 0"
+    },
+    {
+      "command": "execute if block 2 64 2 minecraft:water run scoreboard players set #probe pp_sim 1"
+    },
+    {
+      "command": "execute if score #probe pp_sim matches 1",
+      "observe": true,
+      "expect_contains": "Test passed"
+    }
+  ],
+  "cleanup": [
+    "scoreboard objectives remove pp_sim",
+    "fill 0 63 0 6 72 6 minecraft:air"
+  ],
+  "notes": "Opt-in simulation catalog. Run infra/validate_simulation.py: wait_ticks requires verified freeze/step/game-time barriers; source consoles require the explicit bounded chunk fixture. Each block predicate sets a score reset to zero immediately beforehand; terminal score assertions work on both engines. Observes water material, not fluid level or shape. No random-growth, client, or wall-clock timing claim. See docs/simulation.md for blockers and actual validation."
+}

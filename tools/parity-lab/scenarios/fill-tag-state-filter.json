@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "id": "fill-tag-state-filter",
+  "title": "Fill filters tags and states together",
+  "category": "fill",
+  "description": "A shared axis predicate replaces matching log types but preserves another orientation.",
+  "tags": [
+    "command",
+    "deterministic",
+    "state-observation"
+  ],
+  "setup": [
+    "tick freeze",
+    "fill 0 60 0 8 75 8 minecraft:air"
+  ],
+  "steps": [
+    {
+      "command": "setblock 0 64 0 minecraft:oak_log[axis=x]"
+    },
+    {
+      "command": "setblock 1 64 0 minecraft:birch_log[axis=x]"
+    },
+    {
+      "command": "setblock 2 64 0 minecraft:oak_log[axis=y]"
+    },
+    {
+      "command": "fill 0 64 0 2 64 0 minecraft:gold_block replace #minecraft:logs[axis=x]"
+    },
+    {
+      "command": "execute if block 0 64 0 minecraft:gold_block if block 1 64 0 minecraft:gold_block if block 2 64 0 minecraft:oak_log[axis=y]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    }
+  ],
+  "cleanup": [
+    "fill 0 60 0 8 75 8 minecraft:air",
+    "tick unfreeze"
+  ],
+  "notes": "Provisioning requests arena force-loading; Pumpkin readiness limitations remain visible. Simulation is frozen for immediate command-state assertions and unfrozen in cleanup; no client or elapsed-tick claim. Positive execute predicates return Test passed on vanilla 26.3; errors and empty output fail expectations. "
+}

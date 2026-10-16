@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "id": "positioned-anchor-shrink",
+  "title": "Positioned anchor reset shrinking",
+  "category": "execute",
+  "description": "Genuine current-upstream anchor mismatch; tagged arena entities only. This is console state parity, not current-source RCON.",
+  "tags": [
+    "command",
+    "execute",
+    "current-upstream"
+  ],
+  "setup": [
+    "tick freeze",
+    "summon minecraft:armor_stand 2.5 64.25 2.5 {Tags:[\"pp_shrink_src\"],NoGravity:1b}",
+    "scoreboard objectives add pp_shrink dummy",
+    "scoreboard players set #source pp_shrink 0",
+    "scoreboard players set #feet pp_shrink 0"
+  ],
+  "steps": [
+    {
+      "command": "execute if entity @e[type=minecraft:armor_stand,tag=pp_shrink_src] run scoreboard players set #source pp_shrink 1"
+    },
+    {
+      "command": "execute if score #source pp_shrink matches 1",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute as @e[tag=pp_shrink_src,limit=1] at @s anchored eyes positioned ~ ~ ~ run summon minecraft:marker ^ ^ ^ {Tags:[\"pp_shrink_marker\"]}"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:marker,tag=pp_shrink_marker,x=2,y=64,z=2,dx=0,dy=0,dz=0] run scoreboard players set #feet pp_shrink 1"
+    },
+    {
+      "command": "execute if score #feet pp_shrink matches 1",
+      "observe": true,
+      "expect_contains": "Test passed"
+    }
+  ],
+  "cleanup": [
+    "kill @e[tag=pp_shrink_src]",
+    "kill @e[tag=pp_shrink_marker]",
+    "scoreboard objectives remove pp_shrink",
+    "tick unfreeze"
+  ],
+  "notes": "Known positioned-anchor regression on upstream 5b53f064; fixed by source commit f123eb8. Terminal execute-if-entity is unsupported there, so entity conditions write scoreboard values observed by terminal score predicates. Setup and reset remain fixed during shrinking."
+}

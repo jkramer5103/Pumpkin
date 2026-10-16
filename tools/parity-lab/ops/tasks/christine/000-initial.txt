@@ -1,0 +1,19 @@
+Initial build
+Build the real Pumpkin Parity Lab engine. Read AGENTS.md and CONTRACT.md first.
+You own lab/, tests/test_core*.py, pyproject.toml only. Another GPT-6.1-Sol worker
+is actively provisioning servers and writing scenarios. Do not alter its files.
+Implement the contract end to end: robust RCON, schema validation, deterministic
+runner with locking and repeat/flakiness detection, preserved evidence and atomic
+reports, CLI, and a real delta-debugging helper. Use Python stdlib and unittest
+where possible. Unit-test fragmented RCON auth/response behavior, failed
+expectations, mismatches, repeats, and shrinking. Do not over-normalize output.
+Tests and implementation must handle server output prefixes semantically while
+preserving raw logs. Two equally failed probes must never pass. Distinguish
+infra errors from genuine behavioral mismatches. Support missing/unsupported
+commands visibly. Provide a practical CLI that follows CONTRACT.md exactly.
+Run meaningful tests. When runtime/targets.json and scenarios exist, run a small
+real subset and fix engine bugs in your files. You may spend up to about 35
+minutes on this initial task; finish with working code and clear limitations,
+not a plan. Do not commit. Do not spawn agents. Do not alter system services.
+The model must remain exactly gpt-6.1-sol and auth must remain this isolated
+native ChatGPT subscription. Never use another account or a paid provider.

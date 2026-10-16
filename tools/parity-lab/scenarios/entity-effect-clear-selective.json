@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "id": "entity-effect-clear-selective",
+  "title": "Clearing one effect preserves another",
+  "category": "entity-effects",
+  "description": "After both speed and glowing are observed, clearing speed leaves glowing on the same armor stand.",
+  "tags": [
+    "command",
+    "deterministic",
+    "state-observation"
+  ],
+  "setup": [
+    "tick freeze",
+    "fill 0 60 0 8 75 8 minecraft:air",
+    "execute if entity @e[type=minecraft:armor_stand,tag=pp,x=-32,y=48,z=-32,dx=64,dy=48,dz=64] run kill @e[type=minecraft:armor_stand,tag=pp,x=-32,y=48,z=-32,dx=64,dy=48,dz=64]"
+  ],
+  "steps": [
+    {
+      "command": "summon minecraft:armor_stand 2 64 2 {Tags:[\"pp\"],NoGravity:1b,Invulnerable:1b}"
+    },
+    {
+      "command": "effect give @e[type=minecraft:armor_stand,tag=pp,x=-32,y=48,z=-32,dx=64,dy=48,dz=64,limit=1] minecraft:speed 60 0 true"
+    },
+    {
+      "command": "effect give @e[type=minecraft:armor_stand,tag=pp,x=-32,y=48,z=-32,dx=64,dy=48,dz=64,limit=1] minecraft:glowing 60 0 true"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:armor_stand,tag=pp,x=-32,y=48,z=-32,dx=64,dy=48,dz=64,nbt={active_effects:[{id:\"minecraft:speed\"},{id:\"minecraft:glowing\"}]}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "effect clear @e[type=minecraft:armor_stand,tag=pp,x=-32,y=48,z=-32,dx=64,dy=48,dz=64,limit=1] minecraft:speed"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:armor_stand,tag=pp,x=-32,y=48,z=-32,dx=64,dy=48,dz=64,nbt={active_effects:[{id:\"minecraft:glowing\"}]}] unless entity @e[type=minecraft:armor_stand,tag=pp,x=-32,y=48,z=-32,dx=64,dy=48,dz=64,nbt={active_effects:[{id:\"minecraft:speed\"}]}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    }
+  ],
+  "cleanup": [
+    "execute if entity @e[type=minecraft:armor_stand,tag=pp,x=-32,y=48,z=-32,dx=64,dy=48,dz=64] run kill @e[type=minecraft:armor_stand,tag=pp,x=-32,y=48,z=-32,dx=64,dy=48,dz=64]",
+    "fill 0 60 0 8 75 8 minecraft:air",
+    "tick unfreeze"
+  ],
+  "notes": "Provisioning requests arena force-loading; Pumpkin readiness limitations remain visible. Simulation is frozen for immediate command-state assertions and unfrozen in cleanup; no client or elapsed-tick claim. Positive execute predicates return Test passed on vanilla 26.3; errors and empty output fail expectations. Observes active_effects NBT on a summoned armor stand with frozen simulation, without a connected player. No inventory, combat or elapsed-tick claim."
+}

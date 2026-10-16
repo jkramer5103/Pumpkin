@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "id": "fill-state-filter",
+  "title": "Replace only matching block state",
+  "category": "fill",
+  "description": "An axis-specific replace predicate affects x logs and preserves y logs.",
+  "tags": [
+    "command",
+    "deterministic",
+    "state-observation"
+  ],
+  "setup": [
+    "tick freeze",
+    "fill 0 60 0 8 75 8 minecraft:air"
+  ],
+  "steps": [
+    {
+      "command": "setblock 0 64 0 minecraft:oak_log[axis=x]"
+    },
+    {
+      "command": "setblock 1 64 0 minecraft:oak_log[axis=y]"
+    },
+    {
+      "command": "fill 0 64 0 1 64 0 minecraft:gold_block replace minecraft:oak_log[axis=x]"
+    },
+    {
+      "command": "execute if block 0 64 0 minecraft:gold_block if block 1 64 0 minecraft:oak_log[axis=y]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    }
+  ],
+  "cleanup": [
+    "fill 0 60 0 8 75 8 minecraft:air",
+    "tick unfreeze"
+  ],
+  "notes": "Provisioning requests arena force-loading; Pumpkin readiness limitations remain visible. Simulation is frozen for immediate command-state assertions and unfrozen in cleanup; no client or elapsed-tick claim. Positive execute predicates return Test passed on vanilla 26.3; errors and empty output fail expectations. "
+}

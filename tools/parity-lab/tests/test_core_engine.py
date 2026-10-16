@@ -1,0 +1,610 @@
+import io
+import itertools
+import json
+import random
+import subprocess
+import sys
+import tempfile
+import unittest
+from contextlib import redirect_stderr, redirect_stdout
+from pathlib import Path
+from unittest import mock
+
+from lab.cli import main
+from lab.normalize import command_problem, normalize_response
+from lab.rcon import AuthenticationError, RconError
+from lab.runner import TickController, UnsupportedTicks, atomic_json, process_lock, run
+from lab.schema import SchemaError, load_scenarios, load_targets, read_json, validate_scenario, validate_targets
+from lab.shrink import ShrinkError, ddmin, failure_identity
+
+
+def scenario():
+    return {"schema_version": 1, "id": "stone-placement", "title": "Stone placement", "category": "blocks",
+            "description": "Positive block probe", "tags": ["command", "deterministic"],
+            "setup": ["fill 0 60 0 8 70 8 minecraft:air"],
+            "steps": [{"command": "setblock 2 64 2 minecraft:stone"},
+                      {"command": "execute if block 2 64 2 minecraft:stone run say PARITY:stone-present",
+                       "observe": True, "expect_contains": "PARITY:stone-present"}],
+            "cleanup": ["fill 0 60 0 8 70 8 minecraft:air"], "notes": "Command coverage only."}
+
+
+def targets():
+    return {"schema_version": 1, "minecraft_version": "26.3", "targets": {
+        "vanilla": {"host": "127.0.0.1", "port": 25585, "password": "DO-NOT-LOG-THIS"},
+        "pumpkin": {"host": "127.0.0.1", "port": 25586, "password": "DO-NOT-LOG-THIS"}}}
+
+
+class Fixtures:
+    """Transport fixtures; actual framing is separately exercised with fake sockets."""
+    def __init__(self, responses=None, errors=None):
+        self.responses = responses or {}
+        self.errors = errors or {}
+        self.calls = []
+        self.connections = {"vanilla": 0, "pumpkin": 0}
+
+    def factory(self, host, port, password, timeout):
+        owner = self
+        name = "vanilla" if port == 25585 else "pumpkin"
+        number = self.connections[name]
+        self.connections[name] += 1
+
+        class Client:
+            def connect(self):
+                error = owner.errors.get((name, "connect"))
+                if error:
+                    raise error
+
+            def command(self, command):
+                owner.calls.append((name, command))
+                value = owner.responses.get((name, command))
+                if value is None and "run say" in command:
+                    value = f"[{'Rcon' if name == 'vanilla' else 'Server'}] PARITY:stone-present"
+                elif value is None:
+                    value = "OK"
+                if isinstance(value, list):
+                    value = value[min(number, len(value) - 1)]
+                if isinstance(value, BaseException):
+                    raise value
+                return value
+
+            def close(self):
+                pass
+        return Client()
+
+
+class SchemaTests(unittest.TestCase):
+    def test_valid_schema(self):
+        self.assertEqual(validate_scenario(scenario())["id"], "stone-placement")
+        self.assertEqual(validate_targets(targets())["minecraft_version"], "26.3")
+
+    def test_reject_unsafe_or_ambiguous_scenarios(self):
+        changes = [{"schema_version": True}, {"schema_version": 2}, {"id": "Bad_ID"}, {"steps": []},
+                   {"steps": [{"command": "say ok", "observe": True}]},
+                   {"steps": [{"command": "say ok", "observe": True, "expect_contains": ""}]},
+                   {"steps": [{"command": "say ok", "expect_contains": "ok"}]},
+                   {"steps": [{"command": "say ok", "observe": True, "expect_contains": "ok", "wait_ticks": True}]},
+                   {"steps": [{"command": "say ok", "observe": True, "expect_contains": "ok", "wait_ticks": -1}]},
+                   {"setup": ["say first\nsay second"]}, {"unknown": "typo"}, {"tags": ["a", "a"]},
+                   {"notes": "\ud800"}, {1: "invalid key"},
+                   {"steps": [{"command": "say ok", "observe": "true", "expect_contains": "ok"}]},
+                   {"steps": [{"command": "say ok", "observe": True, "expect_contains": ["ok"]}]}]
+        for change in changes:
+            with self.subTest(change=change):
+                value = scenario()
+                value.update(change)
+                with self.assertRaises(SchemaError):
+                    validate_scenario(value)
+
+    def test_reject_public_targets_and_same_endpoint(self):
+        for host in ("0.0.0.0", "example.com", "192.168.1.10"):
+            value = targets()
+            value["targets"]["vanilla"]["host"] = host
+            with self.assertRaises(SchemaError):
+                validate_targets(value)
+        value = targets()
+        value["targets"]["pumpkin"] = value["targets"]["vanilla"].copy()
+        with self.assertRaises(SchemaError):
+            validate_targets(value)
+        value["targets"]["pumpkin"]["host"] = "localhost"
+        with self.assertRaises(SchemaError):
+            validate_targets(value)
+
+    def test_malformed_json_never_echoes_credentials(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "targets.json"
+            for content in ('{"password":"DO-NOT-LOG-THIS",', '{"a":1,"a":2}', '{"value":NaN}', '[' * 2000 + ']' * 2000):
+                path.write_text(content)
+                with self.assertRaises(SchemaError) as caught:
+                    read_json(path)
+                self.assertNotIn("DO-NOT-LOG-THIS", str(caught.exception))
+
+    def test_directory_selection_and_duplicate_ids(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory)
+            atomic_json(path / "one.json", scenario())
+            self.assertEqual(len(load_scenarios(path)), 1)
+            with self.assertRaises(SchemaError):
+                load_scenarios(path, "missing")
+            atomic_json(path / "two.json", scenario())
+            with self.assertRaises(SchemaError):
+                load_scenarios(path)
+
+
+class NormalizationTests(unittest.TestCase):
+    def test_known_sender_prefixes_for_chat_and_command_feedback(self):
+        for prefix in ("[Rcon] ", "[Server] ", "[RCON] ", "[Not Secure] [Server] "):
+            self.assertEqual(normalize_response(prefix + "PARITY:yes", "execute if entity @e run say PARITY:yes"), "PARITY:yes")
+            self.assertEqual(normalize_response(prefix + "PARITY:yes", "/say PARITY:yes"), "PARITY:yes")
+            self.assertEqual(normalize_response(prefix + "Test passed", "execute if block 0 64 0 stone"), "Test passed")
+
+    def test_output_values_and_whitespace_remain_significant(self):
+        for raw in ("[other] message", "UUID:123 count:2", "a\n\n b ", "§aGreen", "{x:1,z:2}"):
+            self.assertEqual(normalize_response(raw, "data get entity @e"), raw)
+        self.assertNotEqual(normalize_response("[Rcon]  PARITY:x ", "say PARITY:x"), "PARITY:x")
+        self.assertNotEqual(normalize_response("{x:1,z:2}", "data get entity @e"), "{z:2,x:1}")
+        self.assertEqual(normalize_response("[Server] UUID:123 count:2"), "UUID:123 count:2")
+
+    def test_prefix_does_not_hide_failed_or_unknown_command(self):
+        self.assertEqual(command_problem("[Server] Unknown or incomplete command, see below for error"), "unsupported")
+        self.assertEqual(command_problem("[Rcon] Test failed"), "command_failed")
+        self.assertIsNone(command_problem("[Server] PARITY:stone-present"))
+
+
+class RunnerTests(unittest.TestCase):
+    def setUp(self):
+        self.temp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.temp.cleanup)
+        self.output = Path(self.temp.name) / "runs"
+        self.lock = Path(self.temp.name) / "lock"
+        self.case = scenario()
+        self.observe = self.case["steps"][1]["command"]
+
+    def execute(self, fixture=None, repeat=1, cases=None):
+        self.fixture = fixture or Fixtures()
+        return run(cases or [self.case], targets(), self.output, repeat=repeat,
+                   client_factory=self.fixture.factory, lock_path=self.lock)
+
+    def test_semantic_prefix_parity_preserves_evidence(self):
+        directory, report, code = self.execute(repeat=2)
+        self.assertEqual(code, 0)
+        self.assertEqual(report["summary"], {"passed": 1, "different": 0, "error": 0, "total": 1})
+        result = report["results"][0]
+        self.assertFalse(result["flaky"])
+        self.assertIn("[Rcon]", result["observations"]["vanilla"][0])
+        self.assertIn("[Server]", result["observations"]["pumpkin"][0])
+        self.assertTrue(report["complete"])
+        self.assertEqual(read_json(directory / "report.json"), report)
+        self.assertEqual(read_json(directory / "scenarios" / "stone-placement.json"), self.case)
+        self.assertIn("RCON command", report["command_coverage"]["scope"])
+        for path in directory.rglob("*"):
+            if path.is_file():
+                self.assertNotIn("DO-NOT-LOG-THIS", path.read_text())
+        events = [json.loads(line) for line in (directory / "transcripts" / "vanilla.jsonl").read_text().splitlines()]
+        self.assertTrue(any(e.get("raw", "").startswith("[Rcon]") for e in events))
+        # Each target runs its whole attempt serially, then the other target.
+        self.assertEqual([n for n, _ in self.fixture.calls], ["vanilla"] * 4 + ["pumpkin"] * 4 + ["vanilla"] * 4 + ["pumpkin"] * 4)
+
+    def test_failed_reset_aborts_candidate_but_keeps_cleanup_and_raw_evidence(self):
+        fixture = Fixtures({("pumpkin", "arena-reset"): "That position is not loaded"})
+        directory, report, code = run([self.case], targets(), self.output, repeat=2,
+            reset_commands=["arena-reset"], client_factory=fixture.factory, lock_path=self.lock)
+        self.assertEqual(code, 2)
+        result = report["results"][0]
+        self.assertFalse(result["confirmed_mismatch"])
+        self.assertNotIn(("pumpkin", self.observe), fixture.calls)
+        self.assertEqual(fixture.calls.count(("pumpkin", self.case["cleanup"][0])), 2)
+        for attempt in result["attempts"]:
+            record = attempt["targets"]["pumpkin"]
+            self.assertEqual(record["commands"][0]["phase"], "reset")
+            self.assertEqual(record["commands"][0]["raw"], "That position is not loaded")
+            self.assertFalse(record["completed"])
+        transcript = (directory / "transcripts/pumpkin.jsonl").read_text()
+        self.assertIn("That position is not loaded", transcript)
+
+    def test_two_equal_empty_or_failed_probes_never_pass(self):
+        for raw in ("", "Test failed", "[Server] Unknown or incomplete command"):
+            with self.subTest(raw=raw):
+                fixtures = Fixtures({(name, self.observe): raw for name in ("vanilla", "pumpkin")})
+                _, report, code = self.execute(fixtures)
+                self.assertEqual(code, 1)
+                self.assertEqual(report["results"][0]["status"], "different")
+                self.assertIn("expectation_failed", report["results"][0]["reason"])
+                self.assertFalse(report["results"][0]["confirmed_mismatch"])
+
+    def test_expectation_checked_on_both_targets(self):
+        fixture = Fixtures({("pumpkin", self.observe): "[Server] PARITY:wrong"})
+        _, report, code = self.execute(fixture, repeat=2)
+        self.assertEqual(code, 1)
+        self.assertTrue(report["results"][0]["confirmed_mismatch"])
+        failures = report["results"][0]["attempts"][0]["failures"]
+        self.assertTrue(any(f["kind"] == "expectation_failed" and f["target"] == "pumpkin" for f in failures))
+
+    def test_infrastructure_error_preserves_other_failure_evidence(self):
+        fixtures = Fixtures({
+            ("pumpkin", self.case["setup"][0]): "That position is not loaded",
+            ("pumpkin", self.observe): "Unknown command: execute",
+        })
+        _, report, code = self.execute(fixtures, repeat=2)
+        self.assertEqual(code, 2)
+        result = report["results"][0]
+        self.assertFalse(result["confirmed_mismatch"])
+        failures = result["attempts"][0]["failures"]
+        self.assertEqual({f["kind"] for f in failures}, {
+            "infrastructure_error", "unsupported", "expectation_failed", "observation_mismatch"})
+        self.assertTrue(any(f["kind"] == "infrastructure_error" and f["target"] == "pumpkin"
+                            for f in failures))
+
+    def test_failed_vanilla_oracle_does_not_confirm_a_pumpkin_mismatch(self):
+        for pumpkin in ("PARITY:wrong", "PARITY:stone-present"):
+            with self.subTest(pumpkin=pumpkin):
+                fixtures = Fixtures({("vanilla", self.observe): "PARITY:bad-oracle",
+                                     ("pumpkin", self.observe): pumpkin})
+                _, report, code = self.execute(fixtures, repeat=2)
+                self.assertEqual(code, 1)
+                result = report["results"][0]
+                self.assertIn("expectation_failed", result["reason"])
+                self.assertFalse(result["confirmed_mismatch"])
+                self.assertIsNone(failure_identity(result))
+
+    def test_narrow_normalization_detects_real_payload_difference(self):
+        fixtures = Fixtures({("pumpkin", self.observe): "[Server] PARITY:stone-present extra"})
+        _, report, code = self.execute(fixtures)
+        self.assertEqual(code, 1)
+        self.assertIn("observation_mismatch", report["results"][0]["reason"])
+        self.assertFalse(report["results"][0]["confirmed_mismatch"], "one repeat is only a candidate")
+
+    def test_flaky_repeats_excluded_from_confirmed_mismatch(self):
+        fixtures = Fixtures({("pumpkin", self.observe): ["[Server] PARITY:stone-present extra", "[Server] PARITY:stone-present"]})
+        _, report, code = self.execute(fixtures, repeat=2)
+        self.assertEqual(code, 1)
+        self.assertTrue(report["results"][0]["flaky"])
+        self.assertEqual(report["confirmed_mismatch_count"], 0)
+
+    def test_equal_between_targets_but_changing_across_repeats_is_flaky(self):
+        fixtures = Fixtures({(name, self.observe): ["[Server] PARITY:stone-present A", "[Server] PARITY:stone-present B"] for name in ("vanilla", "pumpkin")})
+        _, report, code = self.execute(fixtures, repeat=2)
+        self.assertEqual(code, 1)
+        self.assertTrue(report["results"][0]["flaky"])
+
+    def test_order_pollution_is_visible_and_reset_is_applied_per_target_trial(self):
+        probe = scenario()
+        probe.update(id="a-probe", setup=[], cleanup=[], steps=[{
+            "command": "read-state", "observe": True, "expect_contains": "PARITY:"}])
+        polluter = scenario()
+        polluter.update(id="z-polluter", setup=[], cleanup=[], steps=[{
+            "command": "dirty-state", "observe": True, "expect_contains": "PARITY:"}])
+
+        def compare(reset):
+            state = {25585: "clean", 25586: "clean"}
+            calls = []
+            def factory(host, port, password, timeout):
+                class Client:
+                    def connect(self): pass
+                    def close(self): pass
+                    def command(self, command):
+                        calls.append((port, command))
+                        if command == "reset-state": state[port] = "clean"
+                        if command == "dirty-state": state[port] = "dirty"
+                        return "PARITY:" + state[port]
+                return Client()
+            directory, report, code = run([polluter, probe], targets(), self.output, repeat=2,
+                reset_commands=reset, client_factory=factory, lock_path=self.lock)
+            return report, code, calls
+
+        report, code, _ = compare([])
+        self.assertEqual(code, 1)
+        result = report["results"][0]
+        self.assertTrue(result["flaky"])
+        self.assertFalse(result["confirmed_mismatch"])
+        self.assertEqual(result["trial_details"]["classification"], "non_deterministic")
+        self.assertEqual(result["trial_details"]["target_variability"], {"vanilla": True, "pumpkin": True})
+        self.assertEqual([s["id"] for s in report["trial_schedule"]],
+                         ["a-probe", "z-polluter", "z-polluter", "a-probe"])
+        report, code, calls = compare(["reset-state"])
+        self.assertEqual(code, 0)
+        self.assertEqual(calls.count((25585, "reset-state")), 4)
+        self.assertEqual(calls.count((25586, "reset-state")), 4)
+        self.assertEqual(report["isolation"]["policy"], "declared_reset")
+        self.assertTrue(all(not r["flaky"] for r in report["results"]))
+
+    def test_seeded_schedule_is_reproducible_without_global_random_state_changes(self):
+        cases = [{**scenario(), "id": name} for name in ("a", "b", "c", "d")]
+        before = random.getstate()
+        def schedule(seed):
+            _, report, code = run(cases, targets(), self.output, repeat=3, order="shuffle",
+                order_seed=seed, client_factory=Fixtures().factory, lock_path=self.lock)
+            self.assertEqual(code, 0)
+            for result in report["results"]:
+                self.assertEqual([a["repeat"] for a in result["attempts"]], [1, 2, 3])
+            return report["trial_schedule"]
+        first = schedule(17)
+        self.assertEqual(first, schedule(17))
+        self.assertNotEqual(first, schedule(18))
+        self.assertEqual(before, random.getstate())
+
+    def test_interrupted_trial_series_does_not_leave_an_earlier_scenario_passing(self):
+        first = {**scenario(), "id": "a-first"}
+        second = {**scenario(), "id": "z-second", "setup": ["interrupt"]}
+        fixture = Fixtures({("vanilla", "interrupt"): KeyboardInterrupt()})
+        _, report, code = self.execute(fixture, cases=[first, second], repeat=2)
+        self.assertEqual(code, 2)
+        self.assertEqual(report["summary"]["passed"], 0)
+        self.assertEqual(report["results"][0]["reason"], "Awaiting remaining trials")
+        self.assertFalse(report["results"][0]["confirmed_mismatch"])
+
+    def test_auth_or_disconnect_is_infra_and_other_target_runs(self):
+        for error in (AuthenticationError("auth rejected"), RconError("disconnected")):
+            fixtures = Fixtures(errors={("vanilla", "connect"): error})
+            _, report, code = self.execute(fixtures)
+            self.assertEqual(code, 2)
+            self.assertEqual(report["results"][0]["status"], "error")
+            self.assertTrue(any(name == "pumpkin" for name, _ in fixtures.calls))
+
+    def test_cleanup_runs_after_expectation_and_transport_failure(self):
+        fixtures = Fixtures({("vanilla", self.observe): RconError("connection reset")})
+        _, report, code = self.execute(fixtures)
+        self.assertEqual(code, 2)
+        self.assertIn(("vanilla", self.case["cleanup"][0]), fixtures.calls)
+
+    def test_unknown_unobserved_command_is_visible(self):
+        command = self.case["steps"][0]["command"]
+        fixtures = Fixtures({(name, command): "Unknown or incomplete command, see below for error" for name in ("vanilla", "pumpkin")})
+        _, report, code = self.execute(fixtures, repeat=2)
+        self.assertEqual(code, 1)
+        self.assertIn("unsupported", report["results"][0]["reason"])
+        self.assertFalse(report["results"][0]["confirmed_mismatch"])
+        self.assertEqual(report["command_coverage"]["targets"]["vanilla"]["setblock"]["unsupported"], 2)
+
+    def test_equal_blank_secondary_probe_does_not_pass(self):
+        self.case["steps"].append({"command": "another-probe", "observe": True})
+        fixtures = Fixtures({(name, "another-probe"): "" for name in ("vanilla", "pumpkin")})
+        _, report, code = self.execute(fixtures)
+        self.assertEqual(code, 1)
+        self.assertIn("empty_observation", report["results"][0]["reason"])
+
+    def test_environment_failure_is_infra_even_with_good_probe(self):
+        fixtures = Fixtures({("pumpkin", self.case["setup"][0]): "That position is not loaded"})
+        _, report, code = self.execute(fixtures, repeat=2)
+        self.assertEqual(code, 2)
+        self.assertEqual(report["results"][0]["status"], "error")
+        self.assertEqual(report["confirmed_mismatch_count"], 0)
+
+    def test_failed_setup_or_cleanup_cannot_pass_positive_probe(self):
+        for phase in ("setup", "cleanup"):
+            with self.subTest(phase=phase):
+                command = self.case[phase][0]
+                fixtures = Fixtures({("pumpkin", command): "Failed to fill blocks"})
+                _, report, code = self.execute(fixtures)
+                self.assertEqual(code, 1)
+                self.assertIn("command_failed", report["results"][0]["reason"])
+
+    def test_interruption_preserves_atomic_report_and_pending_transcript(self):
+        fixtures = Fixtures({("vanilla", self.observe): KeyboardInterrupt()})
+        second = scenario()
+        second["id"] = "zzz-next"
+        directory, report, code = self.execute(fixtures, cases=[self.case, second])
+        self.assertEqual(code, 2)
+        self.assertEqual(report["state"], "interrupted")
+        self.assertFalse(report["complete"])
+        self.assertEqual(report["summary"]["error"], 2)
+        self.assertEqual(report["results"][1]["reason"], "Not run")
+        self.assertEqual(read_json(directory / "report.json"), report)
+        self.assertIn(self.observe, (directory / "transcripts" / "vanilla.jsonl").read_text())
+
+    def test_interruption_during_auth_is_not_suppressed_by_cleanup(self):
+        fixtures = Fixtures(errors={("vanilla", "connect"): KeyboardInterrupt()})
+        _, report, code = self.execute(fixtures)
+        self.assertEqual(code, 2)
+        self.assertEqual(report["state"], "interrupted")
+        self.assertEqual(fixtures.connections["pumpkin"], 0)
+
+    def test_tick_capability_gap_cannot_pass(self):
+        self.case["steps"][0]["wait_ticks"] = 2
+        fixtures = Fixtures({(name, "tick query"): "Unknown command" for name in ("vanilla", "pumpkin")})
+        _, report, code = self.execute(fixtures)
+        self.assertEqual(code, 1)
+        self.assertIn("unsupported", report["results"][0]["reason"])
+
+    def test_explicit_tick_probe_records_rejection_without_hiding_passing_scenarios(self):
+        fixture = Fixtures({(name, "tick query"): "Unknown command" for name in ("vanilla", "pumpkin")})
+        directory, report, code = run([self.case], targets(), self.output, probe_ticks=True,
+            client_factory=fixture.factory, lock_path=self.lock)
+        self.assertEqual(code, 1)
+        self.assertEqual(report["summary"]["passed"], 1)
+        for name, capability in report["timing_capabilities"].items():
+            self.assertEqual(capability["status"], "unsupported")
+            self.assertEqual(capability["timing"]["verified_ticks"], 0)
+            self.assertEqual(capability["commands"][0]["raw"], "Unknown command")
+            self.assertIn("timing-capability-probe", (directory / "transcripts" / (name + ".jsonl")).read_text())
+
+    def test_tick_probe_verifies_advance_and_preserves_initial_frozen_state(self):
+        calls = []
+        def factory(host, port, password, timeout):
+            state = {"time": 42}
+            class Client:
+                def connect(self): pass
+                def close(self): pass
+                def command(self, command):
+                    calls.append((port, command))
+                    if command == "tick query":
+                        return "The game is frozen" if port == 25585 else "The game is running normally"
+                    if command == "tick freeze": return "The game is frozen"
+                    if command == "tick unfreeze": return "The game is running normally"
+                    if command == "tick step 1":
+                        state["time"] += 1
+                        return "Stepping 1 ticks"
+                    if command == "time query gametime": return f"The time is {state['time']}"
+                    return "PARITY:stone-present"
+            return Client()
+        _, report, code = run([self.case], targets(), self.output, probe_ticks=True,
+            client_factory=factory, lock_path=self.lock)
+        self.assertEqual(code, 0)
+        for capability in report["timing_capabilities"].values():
+            self.assertEqual(capability["status"], "supported")
+            self.assertEqual(capability["timing"]["verified_ticks"], 1)
+        self.assertNotIn((25585, "tick unfreeze"), calls)
+        self.assertIn((25586, "tick unfreeze"), calls)
+
+    def test_tick_step_acknowledgment_without_advancement_is_an_error(self):
+        fixture = Fixtures({(name, command): response for name in ("vanilla", "pumpkin")
+            for command, response in (("tick query", "The game is running normally"),
+                ("tick freeze", "The game is frozen"), ("tick unfreeze", "The game is running normally"),
+                ("tick step 1", "Stepping 1 tick(s)"), ("time query gametime", "The time is 42"))})
+        with mock.patch("lab.runner.time.monotonic", side_effect=itertools.count()):
+            _, report, code = run([self.case], targets(), self.output, timeout=0.01, probe_ticks=True,
+                client_factory=fixture.factory, lock_path=self.lock)
+        self.assertEqual(code, 2)
+        self.assertEqual(report["summary"]["passed"], 1)
+        for name, capability in report["timing_capabilities"].items():
+            self.assertEqual(capability["status"], "error")
+            self.assertEqual(capability["timing"]["verified_ticks"], 0)
+            self.assertIn((name, "tick unfreeze"), fixture.calls)
+            self.assertIn("Timed out verifying", capability["errors"][0]["reason"])
+
+    def test_tick_steps_verified_with_game_time_and_restored(self):
+        self.case["steps"][0]["wait_ticks"] = 2
+        fixture = Fixtures()
+        original_factory = fixture.factory
+        def factory(*args, **kwargs):
+            client = original_factory(*args, **kwargs)
+            original_command = client.command
+            state = {"time": 10}
+            def command(text):
+                if text == "tick query":
+                    return "The game is running normally at 20 ticks per second"
+                if text == "tick freeze":
+                    return "The game is now frozen"
+                if text == "tick unfreeze":
+                    return "The game is now running normally"
+                if text == "time query gametime":
+                    return f"The time is {state['time']}"
+                if text == "tick step 2":
+                    state["time"] += 2
+                    return "Stepping 2 ticks"
+                return original_command(text)
+            client.command = command
+            return client
+        fixture.factory = factory
+        _, report, code = self.execute(fixture)
+        self.assertEqual(code, 0)
+        for target in report["results"][0]["attempts"][0]["targets"].values():
+            self.assertTrue(any(c["command"] == "tick unfreeze" for c in target["commands"]))
+
+    def test_actual_26_3_time_response_grammars_and_unknown_format(self):
+        for raw in ("The time is 42", "The game time is 42 tick(s)", "Gametime is 42"):
+            ticks = TickController(lambda command, phase: raw, 1)
+            self.assertEqual(ticks.game_time(), 42)
+        ticks = TickController(lambda command, phase: "Some unrelated count: 42", 1)
+        with self.assertRaises(UnsupportedTicks):
+            ticks.game_time()
+
+    def test_tick_restoration_attempted_after_cleanup_disconnect(self):
+        self.case["steps"][0]["wait_ticks"] = 1
+        self.case["cleanup"] = ["cleanup"]
+        fixtures = Fixtures({(name, command): response for name in ("vanilla", "pumpkin")
+            for command, response in (("tick query", "The game is running normally"),
+                ("tick freeze", "The game is frozen"), ("tick unfreeze", "The game is running normally"),
+                ("time query gametime", "unexpected format"), ("cleanup", RconError("disconnect")))})
+        _, report, code = self.execute(fixtures)
+        self.assertEqual(code, 2)
+        for name in ("vanilla", "pumpkin"):
+            self.assertIn((name, "tick unfreeze"), fixtures.calls)
+
+    def test_explicit_unfreeze_cleanup_continues_after_disconnect(self):
+        self.case["setup"].insert(0, "tick freeze")
+        self.case["cleanup"] = ["failing-cleanup", "tick unfreeze"]
+        fixtures = Fixtures({("vanilla", "failing-cleanup"): RconError("lost response")})
+        _, report, code = self.execute(fixtures)
+        self.assertEqual(code, 2)
+        self.assertIn(("vanilla", "tick unfreeze"), fixtures.calls)
+        self.assertEqual(fixtures.calls.count(("vanilla", "failing-cleanup")), 1, "never replay a possibly applied command")
+
+    def test_lock_timeout_creates_incomplete_error_artifact_without_connections(self):
+        with process_lock(self.lock):
+            fixture = Fixtures()
+            directory, report, code = run([self.case], targets(), self.output, client_factory=fixture.factory,
+                                         lock_path=self.lock, lock_timeout=0.01)
+        self.assertEqual(code, 2)
+        self.assertFalse(report["complete"])
+        self.assertEqual(report["error"]["kind"], "LockError")
+        self.assertEqual(fixture.connections, {"vanilla": 0, "pumpkin": 0})
+        self.assertTrue((directory / "report.json").is_file())
+
+    def test_global_lock_blocks_another_process(self):
+        script = "from lab.runner import process_lock,LockError\nimport sys\ntry:\n with process_lock(sys.argv[1],0.05): pass\nexcept LockError: sys.exit(7)\n"
+        with process_lock(self.lock):
+            child = subprocess.run([sys.executable, "-c", script, str(self.lock)], capture_output=True, text=True)
+        self.assertEqual(child.returncode, 7, child.stderr)
+
+
+class ShrinkTests(unittest.TestCase):
+    def test_real_delta_debugging_preserves_order_and_removes_noise(self):
+        calls = []
+        def fails(sequence):
+            calls.append(list(sequence))
+            return "create" in sequence and "probe" in sequence and sequence.index("create") < sequence.index("probe")
+        result = ddmin(["noise-a", "create", "noise-b", "probe", "noise-c"], fails)
+        self.assertEqual(result, ["create", "probe"])
+        self.assertEqual(calls[-1], result, "final result must be rerun")
+        self.assertTrue(all(not fails(result[:i] + result[i + 1:]) for i in range(len(result))))
+
+    def test_nonmonotonic_predicate_and_single_element(self):
+        result = ddmin([1, 2, 3, 4], lambda seq: len(seq) in (1, 4))
+        self.assertEqual(len(result), 1)
+        self.assertEqual(ddmin([1], lambda seq: 1 in seq), [1])
+        self.assertEqual(ddmin([1, 2], lambda seq: True), [])
+
+    def test_non_failure_and_unstable_final_rerun_rejected(self):
+        with self.assertRaises(ShrinkError):
+            ddmin([1, 2], lambda seq: False)
+        seen = 0
+        def unstable(seq):
+            nonlocal seen
+            if seq == [1]:
+                seen += 1
+                return seen == 1
+            return False
+        with self.assertRaises(ShrinkError):
+            ddmin([1], unstable)
+
+
+class CliTests(unittest.TestCase):
+    def test_repeated_ids_select_every_requested_scenario(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            cases = root / "scenarios"
+            cases.mkdir()
+            for name in ("first", "second", "third"):
+                case = scenario()
+                case["id"] = name
+                atomic_json(cases / (name + ".json"), case)
+            atomic_json(root / "targets.json", targets())
+            command = ["run", "--targets", str(root / "targets.json"), "--scenarios", str(cases),
+                       "--output", str(root / "runs"), "--id", "second", "--id", "first"]
+            with mock.patch("lab.cli.run", return_value=(root / "run", {}, 0)) as execute:
+                with redirect_stdout(io.StringIO()):
+                    self.assertEqual(main(command), 0)
+                self.assertEqual([s["id"] for s in execute.call_args.args[0]], ["first", "second"])
+                with redirect_stdout(io.StringIO()), redirect_stderr(io.StringIO()):
+                    self.assertEqual(main(command + ["--id", "missing"]), 2)
+                self.assertEqual(execute.call_count, 1, "missing IDs must fail before server access")
+
+    def test_list_json_and_malformed_targets_exit_two(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            cases = root / "scenarios"
+            cases.mkdir()
+            atomic_json(cases / "stone.json", scenario())
+            output, errors = io.StringIO(), io.StringIO()
+            with redirect_stdout(output), redirect_stderr(errors):
+                self.assertEqual(main(["list", "--scenarios", str(cases)]), 0)
+            self.assertEqual(json.loads(output.getvalue())["scenarios"][0]["id"], "stone-placement")
+            config = root / "targets.json"
+            config.write_text('{"password":"DO-NOT-LOG-THIS",')
+            with redirect_stdout(output), redirect_stderr(errors):
+                self.assertEqual(main(["run", "--targets", str(config), "--scenarios", str(cases), "--output", str(root / "runs")]), 2)
+            self.assertNotIn("DO-NOT-LOG-THIS", errors.getvalue())
+
+
+if __name__ == "__main__":
+    unittest.main()

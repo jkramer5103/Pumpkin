@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "id": "score-modulo",
+  "title": "Negative score modulo",
+  "category": "scoreboard",
+  "description": "Modulo with positive divisor yields a nonnegative remainder for a negative dividend.",
+  "tags": [
+    "command",
+    "deterministic",
+    "state-observation"
+  ],
+  "setup": [
+    "tick freeze",
+    "fill 0 60 0 8 75 8 minecraft:air",
+    "scoreboard objectives add pp dummy"
+  ],
+  "steps": [
+    {
+      "command": "scoreboard players set a pp -7"
+    },
+    {
+      "command": "scoreboard players set b pp 3"
+    },
+    {
+      "command": "scoreboard players operation a pp %= b pp"
+    },
+    {
+      "command": "execute if score a pp matches 2",
+      "observe": true,
+      "expect_contains": "Test passed"
+    }
+  ],
+  "cleanup": [
+    "scoreboard objectives remove pp",
+    "fill 0 60 0 8 75 8 minecraft:air",
+    "tick unfreeze"
+  ],
+  "notes": "Provisioning requests arena force-loading; Pumpkin readiness limitations remain visible. Simulation is frozen for immediate command-state assertions and unfrozen in cleanup; no client or elapsed-tick claim. Positive execute predicates return Test passed on vanilla 26.3; errors and empty output fail expectations. "
+}

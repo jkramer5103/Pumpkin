@@ -1,0 +1,50 @@
+{
+  "schema_version": 1,
+  "id": "score-reset-all-objectives",
+  "title": "Reset without objective removes all holder scores",
+  "category": "scoreboard",
+  "description": "Resetting one holder without an objective removes both its scores while preserving another holder in both objectives.",
+  "tags": [
+    "command",
+    "deterministic",
+    "state-observation"
+  ],
+  "setup": [
+    "tick freeze",
+    "scoreboard objectives add pp_audit dummy",
+    "scoreboard objectives add pp_other dummy"
+  ],
+  "steps": [
+    {
+      "command": "scoreboard players set cleared pp_audit 7"
+    },
+    {
+      "command": "scoreboard players set cleared pp_other 9"
+    },
+    {
+      "command": "scoreboard players set survivor pp_audit 11"
+    },
+    {
+      "command": "scoreboard players set survivor pp_other 13"
+    },
+    {
+      "command": "execute if score cleared pp_audit matches 7 if score cleared pp_other matches 9",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "scoreboard players reset cleared"
+    },
+    {
+      "command": "execute if score survivor pp_audit matches 11 if score survivor pp_other matches 13 unless score cleared pp_audit matches -2147483648..2147483647 unless score cleared pp_other matches -2147483648..2147483647",
+      "observe": true,
+      "expect_contains": "Test passed"
+    }
+  ],
+  "cleanup": [
+    "scoreboard objectives remove pp_other",
+    "scoreboard objectives remove pp_audit",
+    "tick unfreeze"
+  ],
+  "notes": "Frozen command-state test with positive before/after controls; no real-player score or persistence claim."
+}

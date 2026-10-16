@@ -1,0 +1,46 @@
+{
+  "schema_version": 1,
+  "id": "score-objective-recreation",
+  "title": "Removing an objective clears its stored scores",
+  "category": "scoreboard",
+  "description": "Removing and recreating the same objective loses the old holder score while a new control can be set.",
+  "tags": [
+    "command",
+    "deterministic",
+    "state-observation",
+    "execution-campaign"
+  ],
+  "setup": [
+    "tick freeze",
+    "scoreboard objectives add pp_exec dummy"
+  ],
+  "steps": [
+    {
+      "command": "scoreboard players set old pp_exec 7"
+    },
+    {
+      "command": "execute if score old pp_exec matches 7",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "scoreboard objectives remove pp_exec"
+    },
+    {
+      "command": "scoreboard objectives add pp_exec dummy"
+    },
+    {
+      "command": "scoreboard players set control pp_exec 1"
+    },
+    {
+      "command": "execute if score control pp_exec matches 1 unless score old pp_exec matches -2147483648..2147483647",
+      "observe": true,
+      "expect_contains": "Test passed"
+    }
+  ],
+  "cleanup": [
+    "scoreboard objectives remove pp_exec",
+    "tick unfreeze"
+  ],
+  "notes": "Vanilla 26.3 reference expectations are checked live; raw responses remain in campaign artifacts. Simulation is frozen and restored in cleanup. Positive state probes fail on empty or rejected output. Current-source console validation is separate from RCON support. No client or elapsed-tick claim."
+}

@@ -1,0 +1,45 @@
+{
+  "schema_version": 1,
+  "id": "selector-negative-box",
+  "title": "Negative box deltas normalize the selection",
+  "category": "entities",
+  "description": "A box extending back four blocks includes both interior markers while excluding either neighbor.",
+  "tags": [
+    "command",
+    "deterministic",
+    "state-observation"
+  ],
+  "setup": [
+    "tick freeze",
+    "fill 0 60 0 8 75 8 minecraft:air",
+    "execute if entity @e[type=minecraft:marker,tag=pp,x=-32,y=48,z=-32,dx=64,dy=48,dz=64] run kill @e[type=minecraft:marker,tag=pp,x=-32,y=48,z=-32,dx=64,dy=48,dz=64]"
+  ],
+  "steps": [
+    {
+      "command": "summon minecraft:marker 4 64 2 {Tags:[\"pp\",\"low\"]}"
+    },
+    {
+      "command": "summon minecraft:marker 8 64 2 {Tags:[\"pp\",\"high\"]}"
+    },
+    {
+      "command": "summon minecraft:marker 3 64 2 {Tags:[\"pp\",\"before\"]}"
+    },
+    {
+      "command": "summon minecraft:marker 9 64 2 {Tags:[\"pp\",\"after\"]}"
+    },
+    {
+      "command": "tag @e[type=minecraft:marker,tag=pp,x=8,y=63.5,z=2,dx=-4,dy=0,dz=0] add selected"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:marker,tag=pp,x=-32,y=48,z=-32,dx=64,dy=48,dz=64,tag=low,tag=selected] if entity @e[type=minecraft:marker,tag=pp,x=-32,y=48,z=-32,dx=64,dy=48,dz=64,tag=high,tag=selected] if entity @e[type=minecraft:marker,tag=pp,x=-32,y=48,z=-32,dx=64,dy=48,dz=64,tag=before,tag=!selected] if entity @e[type=minecraft:marker,tag=pp,x=-32,y=48,z=-32,dx=64,dy=48,dz=64,tag=after,tag=!selected]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    }
+  ],
+  "cleanup": [
+    "execute if entity @e[type=minecraft:marker,tag=pp,x=-32,y=48,z=-32,dx=64,dy=48,dz=64] run kill @e[type=minecraft:marker,tag=pp,x=-32,y=48,z=-32,dx=64,dy=48,dz=64]",
+    "fill 0 60 0 8 75 8 minecraft:air",
+    "tick unfreeze"
+  ],
+  "notes": "Provisioning requests arena force-loading; Pumpkin readiness limitations remain visible. Simulation is frozen for immediate command-state assertions and unfrozen in cleanup; no client or elapsed-tick claim. Positive execute predicates return Test passed on vanilla 26.3; errors and empty output fail expectations. Requires marker entities and selectors; missing support remains a visible mismatch. No UUID or entity display-name output is compared."
+}

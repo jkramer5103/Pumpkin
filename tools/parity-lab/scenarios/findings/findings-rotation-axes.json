@@ -1,0 +1,98 @@
+{
+  "schema_version": 1,
+  "id": "findings-rotation-axes",
+  "title": "Rotation selectors use yaw for y_rotation and pitch for x_rotation",
+  "category": "findings",
+  "description": "Rotation selectors use yaw for y_rotation and pitch for x_rotation",
+  "tags": [
+    "command",
+    "deterministic",
+    "state-observation"
+  ],
+  "setup": [
+    "tick freeze",
+    "scoreboard objectives add pp_find dummy",
+    "execute if entity @e[type=minecraft:marker,tag=pp_find,x=-32,y=48,z=-32,dx=64,dy=48,dz=64] run kill @e[type=minecraft:marker,tag=pp_find,x=-32,y=48,z=-32,dx=64,dy=48,dz=64]",
+    "summon minecraft:marker 2 64 2 {Tags:[\"pp_find\",\"fixture\"],Rotation:[90.0f,20.0f]}"
+  ],
+  "steps": [
+    {
+      "command": "data get entity @e[type=minecraft:marker,tag=pp_find,x=-32,y=48,z=-32,dx=64,dy=48,dz=64,limit=1] Rotation[0]"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:marker,tag=pp_find,x=-32,y=48,z=-32,dx=64,dy=48,dz=64,limit=1] Rotation[1]"
+    },
+    {
+      "command": "scoreboard players set #count pp_find 0"
+    },
+    {
+      "command": "execute as @e[type=minecraft:marker,tag=pp_find,x=-32,y=48,z=-32,dx=64,dy=48,dz=64] run scoreboard players add #count pp_find 1"
+    },
+    {
+      "command": "execute if score #count pp_find matches 1",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "scoreboard players set #count pp_find 0"
+    },
+    {
+      "command": "execute as @e[type=minecraft:marker,tag=pp_find,x=-32,y=48,z=-32,dx=64,dy=48,dz=64,nbt={Rotation:[90.0f,20.0f]}] run scoreboard players add #count pp_find 1"
+    },
+    {
+      "command": "execute if score #count pp_find matches 1",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "scoreboard players set #count pp_find 0"
+    },
+    {
+      "command": "execute as @e[type=minecraft:marker,tag=pp_find,x=-32,y=48,z=-32,dx=64,dy=48,dz=64,y_rotation=80..100] run scoreboard players add #count pp_find 1"
+    },
+    {
+      "command": "execute if score #count pp_find matches 1",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "scoreboard players set #count pp_find 0"
+    },
+    {
+      "command": "execute as @e[type=minecraft:marker,tag=pp_find,x=-32,y=48,z=-32,dx=64,dy=48,dz=64,x_rotation=10..30] run scoreboard players add #count pp_find 1"
+    },
+    {
+      "command": "execute if score #count pp_find matches 1",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "scoreboard players set #count pp_find 0"
+    },
+    {
+      "command": "execute as @e[type=minecraft:marker,tag=pp_find,x=-32,y=48,z=-32,dx=64,dy=48,dz=64,x_rotation=80..100] run scoreboard players add #count pp_find 1"
+    },
+    {
+      "command": "execute if score #count pp_find matches 0",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "scoreboard players set #count pp_find 0"
+    },
+    {
+      "command": "execute as @e[type=minecraft:marker,tag=pp_find,x=-32,y=48,z=-32,dx=64,dy=48,dz=64,y_rotation=10..30] run scoreboard players add #count pp_find 1"
+    },
+    {
+      "command": "execute if score #count pp_find matches 0",
+      "observe": true,
+      "expect_contains": "Test passed"
+    }
+  ],
+  "cleanup": [
+    "execute if entity @e[type=minecraft:marker,tag=pp_find,x=-32,y=48,z=-32,dx=64,dy=48,dz=64] run kill @e[type=minecraft:marker,tag=pp_find,x=-32,y=48,z=-32,dx=64,dy=48,dz=64]",
+    "scoreboard objectives remove pp_find",
+    "tick unfreeze"
+  ],
+  "notes": "Focused current-source replay; scores expose conditional results without requiring terminal entity/block conditions. Kept outside the default catalog; no new independent coverage count. Raw indexed Rotation reads independently establish axis order; selector NBT list matching alone is unordered and cannot establish order."
+}

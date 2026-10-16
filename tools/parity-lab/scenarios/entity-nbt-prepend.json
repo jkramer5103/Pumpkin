@@ -1,0 +1,85 @@
+{
+  "schema_version": 1,
+  "id": "entity-nbt-prepend",
+  "title": "Prepend shifts existing list elements",
+  "category": "entity-nbt",
+  "description": "Prepending eight puts it before two and four, preserving the exact three-element order.",
+  "tags": [
+    "command",
+    "deterministic",
+    "state-observation"
+  ],
+  "setup": [
+    "tick freeze",
+    "execute if entity @e[type=minecraft:marker,tag=pp,x=-32,y=48,z=-32,dx=64,dy=48,dz=64] run kill @e[type=minecraft:marker,tag=pp,x=-32,y=48,z=-32,dx=64,dy=48,dz=64]",
+    "fill 0 60 0 8 75 8 minecraft:air",
+    "scoreboard objectives add pp_audit dummy"
+  ],
+  "steps": [
+    {
+      "command": "summon minecraft:marker 2 64 2 {Tags:[\"pp\"],data:{values:[2,4]}}"
+    },
+    {
+      "command": "scoreboard players set length pp_audit -9999"
+    },
+    {
+      "command": "execute store result score length pp_audit run data get entity @e[type=minecraft:marker,tag=pp,x=-32,y=48,z=-32,dx=64,dy=48,dz=64,limit=1] data.values"
+    },
+    {
+      "command": "scoreboard players set index0 pp_audit -9999"
+    },
+    {
+      "command": "execute store result score index0 pp_audit run data get entity @e[type=minecraft:marker,tag=pp,x=-32,y=48,z=-32,dx=64,dy=48,dz=64,limit=1] data.values[0]"
+    },
+    {
+      "command": "scoreboard players set index1 pp_audit -9999"
+    },
+    {
+      "command": "execute store result score index1 pp_audit run data get entity @e[type=minecraft:marker,tag=pp,x=-32,y=48,z=-32,dx=64,dy=48,dz=64,limit=1] data.values[1]"
+    },
+    {
+      "command": "execute if score length pp_audit matches 2 if score index0 pp_audit matches 2 if score index1 pp_audit matches 4",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data modify entity @e[type=minecraft:marker,tag=pp,x=-32,y=48,z=-32,dx=64,dy=48,dz=64,limit=1] data.values prepend value 8"
+    },
+    {
+      "command": "scoreboard players set length pp_audit -9999"
+    },
+    {
+      "command": "execute store result score length pp_audit run data get entity @e[type=minecraft:marker,tag=pp,x=-32,y=48,z=-32,dx=64,dy=48,dz=64,limit=1] data.values"
+    },
+    {
+      "command": "scoreboard players set index0 pp_audit -9999"
+    },
+    {
+      "command": "execute store result score index0 pp_audit run data get entity @e[type=minecraft:marker,tag=pp,x=-32,y=48,z=-32,dx=64,dy=48,dz=64,limit=1] data.values[0]"
+    },
+    {
+      "command": "scoreboard players set index1 pp_audit -9999"
+    },
+    {
+      "command": "execute store result score index1 pp_audit run data get entity @e[type=minecraft:marker,tag=pp,x=-32,y=48,z=-32,dx=64,dy=48,dz=64,limit=1] data.values[1]"
+    },
+    {
+      "command": "scoreboard players set index2 pp_audit -9999"
+    },
+    {
+      "command": "execute store result score index2 pp_audit run data get entity @e[type=minecraft:marker,tag=pp,x=-32,y=48,z=-32,dx=64,dy=48,dz=64,limit=1] data.values[2]"
+    },
+    {
+      "command": "execute if score length pp_audit matches 3 if score index0 pp_audit matches 8 if score index1 pp_audit matches 2 if score index2 pp_audit matches 4",
+      "observe": true,
+      "expect_contains": "Test passed"
+    }
+  ],
+  "cleanup": [
+    "execute if entity @e[type=minecraft:marker,tag=pp,x=-32,y=48,z=-32,dx=64,dy=48,dz=64] run kill @e[type=minecraft:marker,tag=pp,x=-32,y=48,z=-32,dx=64,dy=48,dz=64]",
+    "scoreboard objectives remove pp_audit",
+    "fill 0 60 0 8 75 8 minecraft:air",
+    "tick unfreeze"
+  ],
+  "notes": "Requires execute store result and indexed data get; missing support is visible. Initial list and final length/every index are positively observed. No client or elapsed-tick claim."
+}

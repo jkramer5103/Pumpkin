@@ -1,0 +1,45 @@
+{
+  "schema_version": 1,
+  "id": "score-reset-one-objective",
+  "title": "Reset removes one objective score and preserves another",
+  "category": "scoreboard",
+  "description": "An observed pair of scores becomes one absent score and one preserved score after an objective-specific reset.",
+  "tags": [
+    "command",
+    "deterministic",
+    "state-observation",
+    "execution-campaign"
+  ],
+  "setup": [
+    "tick freeze",
+    "scoreboard objectives add pp_exec dummy",
+    "scoreboard objectives add pp_aux dummy"
+  ],
+  "steps": [
+    {
+      "command": "scoreboard players set value pp_exec 7"
+    },
+    {
+      "command": "scoreboard players set value pp_aux 9"
+    },
+    {
+      "command": "execute if score value pp_exec matches 7 if score value pp_aux matches 9",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "scoreboard players reset value pp_exec"
+    },
+    {
+      "command": "execute if score value pp_aux matches 9 unless score value pp_exec matches -2147483648..2147483647",
+      "observe": true,
+      "expect_contains": "Test passed"
+    }
+  ],
+  "cleanup": [
+    "scoreboard objectives remove pp_aux",
+    "scoreboard objectives remove pp_exec",
+    "tick unfreeze"
+  ],
+  "notes": "Vanilla 26.3 reference expectations are checked live; raw responses remain in campaign artifacts. Simulation is frozen and restored in cleanup. Positive state probes fail on empty or rejected output. Current-source console validation is separate from RCON support. No client or elapsed-tick claim."
+}

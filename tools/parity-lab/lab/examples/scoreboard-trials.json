@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "id": "scoreboard-trials",
+  "title": "Score arithmetic across repeated trials",
+  "category": "scoreboard",
+  "description": "Independent score state for repeated command trials without block loading prerequisites.",
+  "tags": ["command", "deterministic", "scoreboard"],
+  "setup": ["scoreboard objectives add pp_trial dummy"],
+  "steps": [
+    {"command": "scoreboard players set #trial pp_trial -4"},
+    {"command": "scoreboard players add #trial pp_trial 13"},
+    {"command": "scoreboard players remove #trial pp_trial 2"},
+    {"command": "execute if score #trial pp_trial matches 7", "observe": true, "expect_contains": "Test passed"}
+  ],
+  "cleanup": ["scoreboard objectives remove pp_trial"],
+  "notes": "Companion to the anchor reproducer for trial-order checks; setup and cleanup manage only the pp_trial objective. No elapsed-tick or RCON claim follows from a console comparison."
+}

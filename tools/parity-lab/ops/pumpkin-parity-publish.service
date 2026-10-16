@@ -1,0 +1,14 @@
+[Unit]
+Description=Publish validated lab snapshots to the authorized Pumpkin fork
+After=network-online.target
+
+[Service]
+Type=oneshot
+User=root
+Environment=GH_CONFIG_DIR=/root/.config/gh
+WorkingDirectory=/root/pumpkin-parity-lab
+ExecStart=/usr/bin/python3 /root/pumpkin-parity-lab/ops/publish-lab.py --message "feat(parity): update validated autonomous lab snapshot"
+MemoryMax=512M
+CPUQuota=100%
+TimeoutStartSec=180
+UMask=0077

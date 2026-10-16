@@ -1,0 +1,42 @@
+{
+  "schema_version": 1,
+  "id": "block-entity-replacement-clears-nbt",
+  "title": "Replacing a container clears its old data",
+  "category": "blocks",
+  "description": "Replacing a populated barrel with stone and then an empty barrel must not resurrect its item stack.",
+  "tags": [
+    "command",
+    "deterministic",
+    "state-observation"
+  ],
+  "setup": [
+    "tick freeze",
+    "fill 0 60 0 8 75 8 minecraft:air"
+  ],
+  "steps": [
+    {
+      "command": "setblock 2 64 2 minecraft:barrel{Items:[{Slot:0b,id:\"minecraft:diamond\",count:3}]}"
+    },
+    {
+      "command": "execute if block 2 64 2 minecraft:barrel{Items:[{Slot:0b,id:\"minecraft:diamond\",count:3}]}",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "setblock 2 64 2 minecraft:stone"
+    },
+    {
+      "command": "setblock 2 64 2 minecraft:barrel"
+    },
+    {
+      "command": "execute if block 2 64 2 minecraft:barrel unless data block 2 64 2 Items[0]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    }
+  ],
+  "cleanup": [
+    "fill 0 60 0 8 75 8 minecraft:air",
+    "tick unfreeze"
+  ],
+  "notes": "Provisioning requests arena force-loading; Pumpkin readiness limitations remain visible. Simulation is frozen for immediate command-state assertions and unfrozen in cleanup; no client or elapsed-tick claim. Positive execute predicates return Test passed on vanilla 26.3; errors and empty output fail expectations. "
+}

@@ -1,0 +1,32 @@
+Final campaign verification
+
+Read AGENTS.md, CONTRACT.md and ops/FORK.md before work. The user explicitly
+authorized YOLO mode and autonomous fixes pushed to jkramer5103/Pumpkin.
+Remain on gpt-6.1-sol with this isolated subscription. No extra agents, paid API
+providers, banked reset redemptions, upstream PRs or unrelated server changes.
+Use your isolated Pumpkin worktree and push your own branch per ops/FORK.md.
+Do not commit the shared live lab repository while the other lane runs.
+Prioritize actual fixes over growing counts. Reproduce on current upstream:
+the released Pumpkin binary predates master and known gaps may already be fixed.
+If you have not yet produced a source patch, actively investigate a real failure
+in your assigned subsystem and patch/test/push it if feasible. For the Jaron lane,
+building and deploying current upstream baseline is the first priority after
+initial provisioning. For Christine, investigate execute/scoreboard/RCON parity
+on current upstream while the baseline builds. Serialize resource-capped builds.
+Record all actual pushes and validation in artifacts/<account>-fork-status.json.
+After meaningful validated lab changes, run python3 ops/publish-lab.py to snapshot
+them to the authorized parity-lab branch. It serializes pushes and excludes
+runtime secrets/artifacts. Pumpkin source patches go on your own patch branch.
+Do not remove or weaken tests merely because Pumpkin fails them. Preserve
+actual server evidence. Report unsupported and untested behavior honestly.
+Run the applicable unit tests and a bounded live comparison if possible.
+All server-mutating comparisons must hold the engine's shared file lock.
+If another lane owns a file, write an integration note instead of editing it.
+Finish with a concise account of actual changes, commands and results.
+
+You own lab/, tests/test_core*.py, pyproject.toml.
+Run complete unit tests and current live catalog with repeat=2. Investigate a
+representative confirmed mismatch and preserve a minimal reproduction if possible.
+Fix engine defects in your scope. Write artifacts/engine-final-audit.md with
+actual coverage, confirmed findings, limitations, and next concrete tasks. Finish
+this finite campaign; do not create new work just to consume quota.

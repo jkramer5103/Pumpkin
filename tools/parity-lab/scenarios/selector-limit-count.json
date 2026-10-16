@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "id": "selector-limit-count",
+  "title": "Limit caps execution multiplicity",
+  "category": "entities",
+  "description": "Three fixtures produce exactly two execution branches when limit two is applied.",
+  "tags": [
+    "command",
+    "deterministic",
+    "state-observation"
+  ],
+  "setup": [
+    "tick freeze",
+    "fill 0 60 0 8 75 8 minecraft:air",
+    "execute if entity @e[type=minecraft:marker,tag=pp,x=-32,y=48,z=-32,dx=64,dy=48,dz=64] run kill @e[type=minecraft:marker,tag=pp,x=-32,y=48,z=-32,dx=64,dy=48,dz=64]",
+    "scoreboard objectives add pp dummy"
+  ],
+  "steps": [
+    {
+      "command": "summon minecraft:marker 2 64 2 {Tags:[\"pp\",\"near\"]}"
+    },
+    {
+      "command": "summon minecraft:marker 4 64 2 {Tags:[\"pp\",\"middle\"]}"
+    },
+    {
+      "command": "summon minecraft:marker 6 64 2 {Tags:[\"pp\",\"far\"]}"
+    },
+    {
+      "command": "scoreboard players set count pp 0"
+    },
+    {
+      "command": "execute as @e[type=minecraft:marker,tag=pp,x=0.5,y=63.5,z=2,dx=8,dy=0,dz=0,sort=nearest,limit=2] run scoreboard players add count pp 1"
+    },
+    {
+      "command": "execute if score count pp matches 2",
+      "observe": true,
+      "expect_contains": "Test passed"
+    }
+  ],
+  "cleanup": [
+    "execute if entity @e[type=minecraft:marker,tag=pp,x=-32,y=48,z=-32,dx=64,dy=48,dz=64] run kill @e[type=minecraft:marker,tag=pp,x=-32,y=48,z=-32,dx=64,dy=48,dz=64]",
+    "scoreboard objectives remove pp",
+    "fill 0 60 0 8 75 8 minecraft:air",
+    "tick unfreeze"
+  ],
+  "notes": "Provisioning requests arena force-loading; Pumpkin readiness limitations remain visible. Simulation is frozen for immediate command-state assertions and unfrozen in cleanup; no client or elapsed-tick claim. Positive execute predicates return Test passed on vanilla 26.3; errors and empty output fail expectations. Requires marker entities and selectors; missing support remains a visible mismatch. No UUID or entity display-name output is compared."
+}

@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "id": "clone-replace-air",
+  "title": "Clone replace copies air too",
+  "category": "clone",
+  "description": "Replace copies solid and air cells, erasing destination gold at the air cell while preserving source.",
+  "tags": [
+    "command",
+    "deterministic",
+    "state-observation"
+  ],
+  "setup": [
+    "tick freeze",
+    "fill 0 60 0 8 75 8 minecraft:air"
+  ],
+  "steps": [
+    {
+      "command": "setblock 0 64 0 minecraft:stone"
+    },
+    {
+      "command": "fill 4 64 0 5 64 0 minecraft:gold_block"
+    },
+    {
+      "command": "clone 0 64 0 1 64 0 4 64 0 replace normal"
+    },
+    {
+      "command": "execute if block 0 64 0 minecraft:stone if block 4 64 0 minecraft:stone if block 5 64 0 minecraft:air",
+      "observe": true,
+      "expect_contains": "Test passed"
+    }
+  ],
+  "cleanup": [
+    "fill 0 60 0 8 75 8 minecraft:air",
+    "tick unfreeze"
+  ],
+  "notes": "Provisioning requests arena force-loading; Pumpkin readiness limitations remain visible. Simulation is frozen for immediate command-state assertions and unfrozen in cleanup; no client or elapsed-tick claim. Positive execute predicates return Test passed on vanilla 26.3; errors and empty output fail expectations. "
+}

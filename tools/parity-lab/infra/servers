@@ -1,0 +1,14 @@
+#!/bin/sh
+set -eu
+root=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
+case "${1:-status}" in
+ provision) shift; exec python3 "$root/infra/provision.py" "$@" ;;
+ start|stop|restart) action=$1; shift; exec python3 "$root/infra/lifecycle.py" "$action" "${1:-both}" ;;
+ status) case "${2:-both}" in
+ both) exec systemctl status pumpkin-parity-vanilla pumpkin-parity-pumpkin ;;
+ vanilla|pumpkin) exec systemctl status "pumpkin-parity-$2" ;;
+ *) echo 'Unknown target' >&2; exit 2;; esac ;;
+ probe) shift; exec python3 "$root/infra/rcon_probe.py" "$@" ;;
+ logs) case "${2:-}" in vanilla|pumpkin) exec tail -n 100 -F "$root/runtime/$2/service.log";; *) echo 'Use logs vanilla|pumpkin' >&2; exit 2;; esac ;;
+ *) echo 'Usage: infra/servers provision [flags] | start|stop|restart|status [both|vanilla|pumpkin] | probe [args] | logs vanilla|pumpkin' >&2; exit 2;;
+esac

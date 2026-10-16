@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "id": "clone-overlap-normal-preserves",
+  "title": "Normal clone rejects overlap without writes",
+  "category": "clone",
+  "description": "A rejected overlapping normal clone preserves both distinct source cells and the destination extension.",
+  "tags": [
+    "command",
+    "deterministic",
+    "state-observation"
+  ],
+  "setup": [
+    "tick freeze",
+    "fill 0 60 0 8 75 8 minecraft:air",
+    "setblock 0 64 0 minecraft:stone",
+    "setblock 1 64 0 minecraft:gold_block",
+    "clone 0 64 0 1 64 0 1 64 0 replace normal"
+  ],
+  "steps": [
+    {
+      "command": "execute if block 0 64 0 minecraft:stone if block 1 64 0 minecraft:gold_block if block 2 64 0 minecraft:air",
+      "observe": true,
+      "expect_contains": "Test passed"
+    }
+  ],
+  "cleanup": [
+    "fill 0 60 0 8 75 8 minecraft:air",
+    "tick unfreeze"
+  ],
+  "notes": "Provisioning requests arena force-loading; Pumpkin readiness limitations remain visible. Simulation is frozen for immediate command-state assertions and unfrozen in cleanup; no client or elapsed-tick claim. Positive execute predicates return Test passed on vanilla 26.3; errors and empty output fail expectations. The overlapping mutation intentionally fails in setup; unchanged positive state is the observation."
+}

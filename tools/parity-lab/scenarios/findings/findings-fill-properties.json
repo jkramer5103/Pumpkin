@@ -1,0 +1,78 @@
+{
+  "schema_version": 1,
+  "id": "findings-fill-properties",
+  "title": "Fill preserves a default vertical log under an axis=x filter",
+  "category": "findings",
+  "description": "Fill preserves a default vertical log under an axis=x filter",
+  "tags": [
+    "command",
+    "deterministic",
+    "state-observation"
+  ],
+  "setup": [
+    "tick freeze",
+    "scoreboard objectives add pp_find dummy",
+    "fill 0 64 0 2 64 0 minecraft:air",
+    "setblock 0 64 0 minecraft:oak_log",
+    "setblock 1 64 0 minecraft:birch_log",
+    "setblock 2 64 0 minecraft:stone"
+  ],
+  "steps": [
+    {
+      "command": "scoreboard players set #probe pp_find 0"
+    },
+    {
+      "command": "execute if block 0 64 0 minecraft:oak_log if block 1 64 0 minecraft:birch_log if block 2 64 0 minecraft:stone run scoreboard players set #probe pp_find 1"
+    },
+    {
+      "command": "execute if score #probe pp_find matches 1",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "scoreboard players set #probe pp_find 0"
+    },
+    {
+      "command": "execute if block 0 64 0 minecraft:diamond_block run scoreboard players set #probe pp_find 1"
+    },
+    {
+      "command": "execute if score #probe pp_find matches 0",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "fill 0 64 0 2 64 0 minecraft:gold_block replace minecraft:oak_log[axis=x]"
+    },
+    {
+      "command": "scoreboard players set #probe pp_find 0"
+    },
+    {
+      "command": "execute if block 0 64 0 minecraft:oak_log if block 1 64 0 minecraft:birch_log if block 2 64 0 minecraft:stone run scoreboard players set #probe pp_find 1"
+    },
+    {
+      "command": "execute if score #probe pp_find matches 1",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "fill 0 64 0 2 64 0 minecraft:gold_block replace minecraft:oak_log[axis=y]"
+    },
+    {
+      "command": "scoreboard players set #probe pp_find 0"
+    },
+    {
+      "command": "execute if block 0 64 0 minecraft:gold_block if block 1 64 0 minecraft:birch_log if block 2 64 0 minecraft:stone run scoreboard players set #probe pp_find 1"
+    },
+    {
+      "command": "execute if score #probe pp_find matches 1",
+      "observe": true,
+      "expect_contains": "Test passed"
+    }
+  ],
+  "cleanup": [
+    "fill 0 64 0 2 64 0 minecraft:air",
+    "scoreboard objectives remove pp_find",
+    "tick unfreeze"
+  ],
+  "notes": "Focused current-source replay; scores expose conditional results without requiring terminal entity/block conditions. Kept outside the default catalog; no new independent coverage count."
+}

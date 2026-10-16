@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "id": "execute-store-signed-result",
+  "title": "Store result preserves a signed command result",
+  "category": "execute",
+  "description": "Storing scoreboard get captures a negative value exactly and leaves its source intact.",
+  "tags": [
+    "command",
+    "deterministic",
+    "state-observation",
+    "execution-campaign"
+  ],
+  "setup": [
+    "tick freeze",
+    "scoreboard objectives add pp_exec dummy"
+  ],
+  "steps": [
+    {
+      "command": "scoreboard players set source pp_exec -7"
+    },
+    {
+      "command": "scoreboard players set stored pp_exec 99"
+    },
+    {
+      "command": "execute store result score stored pp_exec run scoreboard players get source pp_exec"
+    },
+    {
+      "command": "execute if score source pp_exec matches -7 if score stored pp_exec matches -7",
+      "observe": true,
+      "expect_contains": "Test passed"
+    }
+  ],
+  "cleanup": [
+    "scoreboard objectives remove pp_exec",
+    "tick unfreeze"
+  ],
+  "notes": "Vanilla 26.3 reference expectations are checked live; raw responses remain in campaign artifacts. Simulation is frozen and restored in cleanup. Positive state probes fail on empty or rejected output. Current-source console validation is separate from RCON support. No client or elapsed-tick claim."
+}

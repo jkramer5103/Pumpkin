@@ -1,0 +1,29 @@
+Provision actual Minecraft 26.3 vanilla and official Pumpkin 26.3 servers and
+author at least 25 distinct deterministic differential scenarios. Read AGENTS.md
+and CONTRACT.md first. You own infra/, scenarios/, tests/test_scenarios*.py,
+docs/servers.md only. Another worker owns lab/ and builds the engine concurrently.
+Build a repeatable infra/provision.py and lifecycle wrapper. Download official
+Minecraft server via Mojang manifest; exact version 26.3. Latest Pumpkin release
+was 0.2.0+26.3-26.51 with pumpkin-X64-Linux asset. Verify current official
+release metadata and checksums. Save source URLs/versions/hashes in runtime
+manifest. Accept Minecraft EULA for this user-authorized private test setup.
+Servers must actually boot, bind game and RCON to 127.0.0.1 on contract ports,
+use separate fresh flat worlds and controlled gamerules. Use dedicated systemd
+services pumpkin-parity-vanilla and pumpkin-parity-pumpkin with memory/CPU caps.
+Never modify unrelated services. No Rust compilation. Read upstream Pumpkin
+source/config documentation and inspect generated defaults as needed. Prove
+RCON works on each server using an independent minimal probe even if lab engine
+isn't ready. Handle Pumpkin config TOML correctly and preserve logs.
+Write runtime/targets.json with mode 0600 per contract. Provisions should be
+repeatable without resetting worlds or replacing credentials unless explicitly
+requested by an appropriate flag. No secrets in git/docs/logs.
+Write at least 25 meaningful scenarios in contract schema: block placement,
+replacement, block-state predicates, bounded fills/clones, scoreboard arithmetic,
+tag selectors and entity NBT where supported. Include genuine gameplay-state
+observations, not merely command-acceptance. Never make equality of error messages
+count as success. Each scenario has positive expect_contains on observed probes.
+Check actual vanilla behavior via RCON and adjust commands for 26.3. A Pumpkin
+failure can remain a truthful mismatch; don't water down tests to make it pass.
+Run small live engine subset if available without editing lab/. Describe
+unsupported and untested parts. About 35 minutes budget for initial task. Do not
+commit, spawn agents, inspect unrelated credentials, or use another provider.
