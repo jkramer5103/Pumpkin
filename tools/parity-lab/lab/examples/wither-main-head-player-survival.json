@@ -1,0 +1,51 @@
+{
+  "schema_version": 1,
+  "id": "wither-main-head-player-survival",
+  "title": "Wither main-head living target selection: survival",
+  "category": "entities",
+  "description": "A connected player and optional competing sheep test main-head acquisition across separate player/entity stores.",
+  "tags": [
+    "entity",
+    "wither",
+    "ai",
+    "player",
+    "target"
+  ],
+  "setup": [
+    "difficulty easy",
+    "gamerule mob_griefing false",
+    "gamerule spawn_mobs false",
+    "forceload add 0 0 31 31",
+    "fill 0 79 0 31 79 31 minecraft:bedrock",
+    "gamemode creative @a",
+    "tp @a 16.5 80 8.5",
+    "effect give @a minecraft:resistance infinite 4 true",
+    "gamemode survival @a",
+    "summon minecraft:wither 8.5 80 8.5 {Tags:[\"pp_boss\"],NoGravity:1b,Silent:1b,PersistenceRequired:1b}"
+  ],
+  "steps": [
+    {
+      "command": "tp @e[tag=pp_boss] 8.5 80 8.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 8
+    },
+    {
+      "command": "execute if entity @a[gamemode=survival,x=16,y=79,z=8,dx=1,dy=3,dz=1]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss,nbt={Invul:0}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    }
+  ],
+  "cleanup": [
+    "gamemode creative @a",
+    "kill @e[type=!minecraft:player]",
+    "effect clear @a"
+  ],
+  "notes": "Run with a connected protocol777 client, tick-frozen, in an isolated arena. After exactly8 ticks, main-head DATA_TARGET_A metadata16 must acquire the closest eligible player/sheep; creative/spectator players must be excluded. Require the competing sheep spawn packet in mixed cases. Compare two repetitions against vanilla and unpatched baseline. Resistance V isolates damage; the short window avoids later target displacement/retargeting. Command-only runner checks fixture guards and does not prove head target metadata. Boss health is retained as a diagnostic; baseline and patched Pumpkin can lose health during nearby sheep skull fire, a separate combat discrepancy outside the acquisition correction."
+}

@@ -222,7 +222,7 @@ impl ActiveTargetGoal {
                 .map(|p: Arc<Player>| p as Arc<dyn EntityBase>)
         } else {
             let entity_types = self.target_type.map(|t| [t]);
-            world.get_nearest_entity(
+            let entity = world.get_nearest_entity(
                 search_pos,
                 follow_range,
                 entity_types.as_ref().map(<[&EntityType; 1]>::as_slice),
@@ -230,7 +230,31 @@ impl ActiveTargetGoal {
                     predicate.test(&world, Some(mob), entity.as_ref())
                         && condition.allows_target(mob, entity.as_ref(), &world)
                 },
-            )
+            );
+            if self.target_type.is_none() {
+                // Players live outside the world's nonplayer entity store, but
+                // vanilla's LivingEntity search includes both kinds of target.
+                let player = world
+                    .get_nearest_player(search_pos, follow_range, |player| {
+                        predicate.test(&world, Some(mob), player.as_ref())
+                            && condition.allows_target(mob, player.as_ref(), &world)
+                    })
+                    .map(|player| player as Arc<dyn EntityBase>);
+                entity.into_iter().chain(player).min_by(|a, b| {
+                    a.get_entity()
+                        .pos
+                        .load()
+                        .squared_distance_to_vec(&search_pos)
+                        .total_cmp(
+                            &b.get_entity()
+                                .pos
+                                .load()
+                                .squared_distance_to_vec(&search_pos),
+                        )
+                })
+            } else {
+                entity
+            }
         };
 
         self.target = found;
