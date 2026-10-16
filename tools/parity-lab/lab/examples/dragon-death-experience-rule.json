@@ -1,0 +1,137 @@
+{
+  "schema_version": 1,
+  "id": "dragon-death-experience-rule",
+  "title": "Dragon periodic and final death XP obey mob_drops",
+  "category": "entity",
+  "description": "Loaded isolated boss arena with ParitySmoke connected. Force zero health after a player-attributed lethal hit so both implementations enter the death animation without waiting for flight to the podium. Observe periodic XP at tick155 and the terminal payout/removal at tick200. This checks the gamerule, not lethal-flight or full fight parity.",
+  "tags": [
+    "ender-dragon",
+    "death",
+    "experience",
+    "gamerule"
+  ],
+  "setup": [
+    "tick freeze",
+    "difficulty normal",
+    "gamerule spawn_mobs false",
+    "gamerule mob_griefing false",
+    "forceload add 0 0 15 15",
+    "gamemode creative ParitySmoke",
+    "tp ParitySmoke 31.0 80.0 31.0"
+  ],
+  "steps": [
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]",
+      "wait_ticks": 210
+    },
+    {
+      "command": "kill @e[type=minecraft:experience_orb]"
+    },
+    {
+      "command": "gamerule mob_drops false"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 8.0 80.0 8.0 {NoAI:1b,NoGravity:1b,Silent:1b,PersistenceRequired:1b,DragonPhase:0,UUID:[I;0,0,0,16]}"
+    },
+    {
+      "command": "damage @e[type=minecraft:ender_dragon,limit=1] 1000 minecraft:player_attack by ParitySmoke"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,limit=1] {Health:0.0f}",
+      "wait_ticks": 154
+    },
+    {
+      "command": "execute if entity 00000000-0000-0000-0000-000000000010",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:experience_orb]",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:experience_orb]",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 44
+    },
+    {
+      "command": "execute if entity 00000000-0000-0000-0000-000000000010",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:experience_orb]",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:experience_orb]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute unless entity 00000000-0000-0000-0000-000000000010",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:experience_orb]"
+    },
+    {
+      "command": "gamerule mob_drops true"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 8.0 80.0 8.0 {NoAI:1b,NoGravity:1b,Silent:1b,PersistenceRequired:1b,DragonPhase:0,UUID:[I;0,0,0,16]}"
+    },
+    {
+      "command": "damage @e[type=minecraft:ender_dragon,limit=1] 1000 minecraft:player_attack by ParitySmoke"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,limit=1] {Health:0.0f}",
+      "wait_ticks": 154
+    },
+    {
+      "command": "execute if entity 00000000-0000-0000-0000-000000000010",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:experience_orb]",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:experience_orb]",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 44
+    },
+    {
+      "command": "execute if entity 00000000-0000-0000-0000-000000000010",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:experience_orb]",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:experience_orb]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute unless entity 00000000-0000-0000-0000-000000000010",
+      "observe": true,
+      "expect_contains": "Test passed"
+    }
+  ],
+  "cleanup": [
+    "kill @e[type=minecraft:ender_dragon]",
+    "kill @e[type=minecraft:experience_orb]",
+    "gamerule mob_drops true"
+  ]
+}
