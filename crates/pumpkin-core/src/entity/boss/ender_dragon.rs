@@ -3,6 +3,7 @@ use pumpkin_data::entity::EntityType;
 use pumpkin_data::game_event::GameEvent;
 use pumpkin_data::tag::{self, Taggable};
 use pumpkin_data::{Block, BlockStateId};
+use pumpkin_nbt::compound::NbtCompound;
 use pumpkin_util::gamemode::GameMode;
 use pumpkin_util::math::position::BlockPos;
 use pumpkin_util::math::vector3::Vector3;
@@ -899,6 +900,24 @@ impl EnderDragonEntity {
 impl Mob for EnderDragonEntity {
     fn get_mob_entity(&self) -> &MobEntity {
         &self.mob_entity
+    }
+
+    fn mob_write_nbt(&self, nbt: &mut NbtCompound) {
+        nbt.put_int(
+            "DragonDeathTime",
+            *self
+                .dragon_death_time
+                .lock()
+                .unwrap_or_else(std::sync::PoisonError::into_inner),
+        );
+    }
+
+    fn mob_read_nbt(&self, nbt: &NbtCompound) {
+        *self
+            .dragon_death_time
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner) =
+            nbt.get_int("DragonDeathTime").unwrap_or(0);
     }
 
     fn mob_tick(&self, _caller: &dyn EntityBase) {

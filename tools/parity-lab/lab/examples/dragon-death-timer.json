@@ -1,0 +1,180 @@
+{
+  "schema_version": 1,
+  "id": "dragon-death-timer",
+  "title": "Restored dragon corpses finish their remaining death ticks",
+  "description": "Isolated arena with ParitySmoke. Uses UUID selection because corpses are excluded from alive-only selectors. Tests loaded and merged death progress plus the absent-field default.",
+  "category": "entity",
+  "tags": [
+    "ender-dragon",
+    "death",
+    "nbt"
+  ],
+  "setup": [
+    "tick freeze",
+    "difficulty normal",
+    "gamerule spawn_mobs false",
+    "gamerule mob_griefing false",
+    "gamerule mob_drops false",
+    "forceload add -16 -16 31 31",
+    "gamemode creative ParitySmoke",
+    "tp ParitySmoke 20.0 80.0 20.0"
+  ],
+  "steps": [
+    {
+      "command": "summon minecraft:ender_dragon 0.5 80.0 0.5 {Health:0.0f,DragonDeathTime:195,NoAI:1b,Silent:1b,UUID:[I;0,0,0,21]}"
+    },
+    {
+      "command": "execute if entity 00000000-0000-0000-0000-000000000015",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 4
+    },
+    {
+      "command": "execute if entity 00000000-0000-0000-0000-000000000015",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute unless entity 00000000-0000-0000-0000-000000000015",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill 00000000-0000-0000-0000-000000000015"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.5 80.0 0.5 {Health:0.0f,DragonDeathTime:199,NoAI:1b,Silent:1b,UUID:[I;0,0,0,21]}"
+    },
+    {
+      "command": "execute if entity 00000000-0000-0000-0000-000000000015",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity 00000000-0000-0000-0000-000000000015",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute unless entity 00000000-0000-0000-0000-000000000015",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill 00000000-0000-0000-0000-000000000015"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.5 80.0 0.5 {Health:0.0f,NoAI:1b,Silent:1b,UUID:[I;0,0,0,21]}"
+    },
+    {
+      "command": "execute if entity 00000000-0000-0000-0000-000000000015",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity 00000000-0000-0000-0000-000000000015",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data merge entity 00000000-0000-0000-0000-000000000015 {DragonDeathTime:199}"
+    },
+    {
+      "command": "execute if entity 00000000-0000-0000-0000-000000000015",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute unless entity 00000000-0000-0000-0000-000000000015",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill 00000000-0000-0000-0000-000000000015"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.5 80.0 0.5 {Health:0.0f,DragonDeathTime:195,NoAI:0b,Silent:1b,UUID:[I;0,0,0,21]}"
+    },
+    {
+      "command": "execute if entity 00000000-0000-0000-0000-000000000015",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 4
+    },
+    {
+      "command": "execute if entity 00000000-0000-0000-0000-000000000015",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute unless entity 00000000-0000-0000-0000-000000000015",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill 00000000-0000-0000-0000-000000000015"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.5 80.0 0.5 {Health:0.0f,DragonDeathTime:199,NoAI:0b,Silent:1b,UUID:[I;0,0,0,21]}"
+    },
+    {
+      "command": "execute if entity 00000000-0000-0000-0000-000000000015",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity 00000000-0000-0000-0000-000000000015",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute unless entity 00000000-0000-0000-0000-000000000015",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill 00000000-0000-0000-0000-000000000015"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.5 80.0 0.5 {Health:0.0f,NoAI:0b,Silent:1b,UUID:[I;0,0,0,21]}"
+    },
+    {
+      "command": "execute if entity 00000000-0000-0000-0000-000000000015",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity 00000000-0000-0000-0000-000000000015",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data merge entity 00000000-0000-0000-0000-000000000015 {DragonDeathTime:199}"
+    },
+    {
+      "command": "execute if entity 00000000-0000-0000-0000-000000000015",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute unless entity 00000000-0000-0000-0000-000000000015",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill 00000000-0000-0000-0000-000000000015"
+    }
+  ],
+  "cleanup": [
+    "kill 00000000-0000-0000-0000-000000000015",
+    "tick unfreeze"
+  ]
+}
