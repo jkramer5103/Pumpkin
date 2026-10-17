@@ -106,5 +106,38 @@ class ContinuousSourceCampaignTests(unittest.TestCase):
             self.assertEqual(lane["status"], "complete")
 
 
+class StaleQuotaWaitTests(unittest.TestCase):
+    def test_usable_quota_releases_old_weekly_deadline(self):
+        lane = {"status": "waiting_for_reset", "retry_at": 500000, "error": None}
+        quota = {"checked_at": "fresh", "allowed": True, "limit_reached": False,
+                 "five_hour": {"used_percent": 0}, "weekly": {"used_percent": 0}}
+        supervisor.release_stale_quota_wait(lane, quota, 100)
+        self.assertEqual(lane["status"], "queued")
+        self.assertIsNone(lane["retry_at"])
+
+    def test_unconfirmed_or_exhausted_telemetry_does_not_release_wait(self):
+        for quota in ({"allowed": True, "limit_reached": False},
+                      {"checked_at": "old", "allowed": True, "limit_reached": False, "error": "TimeoutError"},
+                      {"checked_at": "fresh", "allowed": True, "limit_reached": False,
+                       "weekly": {"used_percent": 100, "reset_at": 500000}}):
+            with self.subTest(quota=quota):
+                lane = {"status": "waiting_for_reset", "retry_at": 500000}
+                supervisor.release_stale_quota_wait(lane, quota, 100)
+                self.assertEqual(lane["retry_at"], 500000)
+
+    def test_provider_error_retains_short_backoff(self):
+        lane = {"status": "waiting_for_reset", "retry_at": 500000, "error": "Usage limit reached"}
+        quota = {"checked_at": "fresh", "allowed": True, "limit_reached": False}
+        supervisor.release_stale_quota_wait(lane, quota, 100)
+        self.assertEqual(lane["status"], "retrying")
+        self.assertEqual(lane["retry_at"], 190)
+
+    def test_regular_failure_backoff_is_unchanged(self):
+        lane = {"status": "retrying", "retry_at": 200}
+        supervisor.release_stale_quota_wait(lane, {"checked_at": "fresh", "allowed": True,
+                                                  "limit_reached": False}, 100)
+        self.assertEqual(lane["retry_at"], 200)
+
+
 if __name__ == "__main__":
     unittest.main()

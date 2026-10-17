@@ -96,6 +96,19 @@ def skip_blocked_task(lane, snapshot):
                 completed_baseline=snapshot["completed_turns"], status="queued", error=None)
 
 
+def release_stale_quota_wait(lane, quota, now):
+    """Current successful quota telemetry supersedes a saved reset deadline."""
+    if (lane.get("status") != "waiting_for_reset" or quota.get("error")
+            or not quota.get("checked_at") or quota.get("allowed") is not True
+            or quota.get("limit_reached") is not False or quota_reset(quota, now)):
+        return
+    if lane.get("error"):
+        # Preserve a short backoff for provider errors contradicting telemetry.
+        lane.update(status="retrying", retry_at=min(lane.get("retry_at") or now + 90, now + 90))
+    else:
+        lane.update(status="queued", retry_at=None)
+
+
 def main():
     RUNTIME.mkdir(exist_ok=True)
     lock = (RUNTIME / "supervisor.lock").open("w")
@@ -190,6 +203,7 @@ def main():
                 if reset:
                     lane.update(status="waiting_for_reset", retry_at=reset)
                     continue
+                release_stale_quota_wait(lane, quotas.get(account, {}), now)
                 if lane.get("retry_at") and now < lane["retry_at"]:
                     continue
                 # Recheck near the boundary instead of waiting for the normal telemetry poll.
