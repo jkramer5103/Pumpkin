@@ -5773,7 +5773,24 @@ impl World {
     }
 
     pub fn sync_global_world_event(&self, world_event: WorldEvent, position: BlockPos, data: i32) {
-        self.broadcast_packet_all(&CWorldEvent::new(world_event as i32, position, data, true));
+        let Some(server) = self.server.upgrade() else {
+            return;
+        };
+        let global = self.level_info.load().game_rules.global_sound_events;
+        server.for_each_player(|player| {
+            let entity = player.get_entity();
+            let same_world = std::ptr::eq(self, entity.world.load().as_ref());
+            if let Some(position) =
+                global_world_event_position(position, entity.pos.load(), same_world, global)
+            {
+                player.try_send_client_packet(&CWorldEvent::new(
+                    world_event as i32,
+                    position,
+                    data,
+                    global,
+                ));
+            }
+        });
     }
 
     pub fn set_block_destroy_stage(&self, entity_id: i32, location: BlockPos, stage: i8) {
@@ -7364,6 +7381,38 @@ fn merge_entity_records(data: &mut Vec<NbtCompound>, live: bool, fresh: Vec<NbtC
     }
 }
 
+// ServerLevel.globalLevelEvent projects global sounds to within 32 blocks of each listener.
+fn global_world_event_position(
+    source: BlockPos,
+    listener: Vector3<f64>,
+    same_world: bool,
+    global: bool,
+) -> Option<BlockPos> {
+    const GLOBAL_EVENT_DISTANCE: f64 = 32.0;
+    const LOCAL_EVENT_DISTANCE: f64 = 64.0;
+
+    if !global {
+        let source_position = Vector3::new(
+            f64::from(source.0.x),
+            f64::from(source.0.y),
+            f64::from(source.0.z),
+        );
+        return (same_world
+            && listener.squared_distance_to_vec(&source_position) < LOCAL_EVENT_DISTANCE.powi(2))
+        .then_some(source);
+    }
+    if !same_world {
+        return Some(BlockPos::floored_v(listener));
+    }
+    let center = source.to_centered_f64();
+    let position = if listener.squared_distance_to_vec(&center) < GLOBAL_EVENT_DISTANCE.powi(2) {
+        center
+    } else {
+        listener + (center - listener).normalize() * GLOBAL_EVENT_DISTANCE
+    };
+    Some(BlockPos::floored_v(position))
+}
+
 #[cfg(test)]
 mod tests {
     use pumpkin_data::{
@@ -7372,12 +7421,51 @@ mod tests {
         fluid::Fluid,
     };
     use pumpkin_nbt::compound::NbtCompound;
-    use pumpkin_util::math::position::BlockPos;
+    use pumpkin_util::math::{position::BlockPos, vector3::Vector3};
     use uuid::Uuid;
 
     use super::{
-        World, bedrock_block_breaking_rate, bedrock_chest_block_actor, merge_entity_records,
+        World, bedrock_block_breaking_rate, bedrock_chest_block_actor, global_world_event_position,
+        merge_entity_records,
     };
+
+    #[test]
+    fn global_world_events_project_to_each_listener_and_respect_the_gamerule() {
+        let source = BlockPos::new(8, 80, 8);
+        let near = Vector3::new(12.0, 80.0, 12.0);
+        let far = Vector3::new(104.0, 80.0, 12.0);
+        assert_eq!(
+            global_world_event_position(source, near, true, true),
+            Some(source)
+        );
+        assert_eq!(
+            global_world_event_position(source, far, true, true),
+            Some(BlockPos::new(72, 80, 10))
+        );
+        let other_dimension = Vector3::new(-12.25, 80.75, -4.5);
+        assert_eq!(
+            global_world_event_position(source, other_dimension, false, true),
+            Some(BlockPos::new(-13, 80, -5))
+        );
+        assert_eq!(
+            global_world_event_position(source, near, true, false),
+            Some(source)
+        );
+        assert_eq!(
+            global_world_event_position(source, Vector3::new(71.99, 80.0, 8.0), true, false),
+            Some(source)
+        );
+        for listener in [Vector3::new(72.0, 80.0, 8.0), far] {
+            assert_eq!(
+                global_world_event_position(source, listener, true, false),
+                None
+            );
+        }
+        assert_eq!(
+            global_world_event_position(source, near, false, false),
+            None
+        );
+    }
 
     fn record(uuid: Option<Uuid>, id: &str) -> NbtCompound {
         let mut nbt = NbtCompound::new();
