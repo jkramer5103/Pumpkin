@@ -1,5 +1,6 @@
 use pumpkin_data::damage::DamageType;
 use pumpkin_data::entity::EntityType;
+use pumpkin_data::game_event::GameEvent;
 use pumpkin_data::tag::{self, Taggable};
 use pumpkin_data::{Block, BlockStateId};
 use pumpkin_util::gamemode::GameMode;
@@ -902,6 +903,23 @@ impl Mob for EnderDragonEntity {
 
     fn mob_tick(&self, _caller: &dyn EntityBase) {
         self.ai_step();
+    }
+
+    fn mob_kill(&self, _caller: &dyn EntityBase) {
+        let entity = &self.mob_entity.living_entity.entity;
+        let world = entity.world.load();
+        entity.remove();
+        for part in &self.parts {
+            part.entity.remove();
+        }
+        world.emit_game_event(GameEvent::EntityDie.name(), entity.pos.load());
+        self.update_fight();
+        if let Some(ref fight_mutex) = world.dragon_fight {
+            fight_mutex
+                .lock()
+                .unwrap_or_else(std::sync::PoisonError::into_inner)
+                .set_dragon_killed(&world, entity.entity_uuid);
+        }
     }
 
     fn on_damage(&self, _damage_type: DamageType, _source: Option<&dyn EntityBase>) {

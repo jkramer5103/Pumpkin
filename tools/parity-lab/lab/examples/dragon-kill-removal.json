@@ -1,0 +1,153 @@
+{
+  "schema_version": 1,
+  "id": "dragon-kill-removal",
+  "title": "Kill removes live and dead dragons immediately without death XP",
+  "description": "Run only in an isolated arena with a ParitySmoke client. UUIDs include corpses, unlike alive-only selectors. Tests immediate removal without a tick and absence of delayed death XP.",
+  "category": "entity",
+  "tags": [
+    "ender-dragon",
+    "kill",
+    "death"
+  ],
+  "setup": [
+    "tick freeze",
+    "difficulty normal",
+    "gamerule spawn_mobs false",
+    "gamerule mob_griefing false",
+    "gamerule mob_drops true",
+    "forceload add -16 -16 31 31",
+    "gamemode creative ParitySmoke",
+    "tp ParitySmoke 20.0 80.0 20.0"
+  ],
+  "steps": [
+    {
+      "command": "kill @e[type=minecraft:experience_orb]"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.5 80.0 0.5 {NoAI:1b,NoGravity:1b,Silent:1b,PersistenceRequired:1b,UUID:[I;0,0,0,20]}"
+    },
+    {
+      "command": "execute if entity 00000000-0000-0000-0000-000000000014",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill 00000000-0000-0000-0000-000000000014"
+    },
+    {
+      "command": "execute unless entity 00000000-0000-0000-0000-000000000014",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 201
+    },
+    {
+      "command": "execute unless entity 00000000-0000-0000-0000-000000000014",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:experience_orb]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:experience_orb]"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.5 80.0 0.5 {NoAI:1b,NoGravity:1b,Silent:1b,PersistenceRequired:1b,UUID:[I;0,0,0,20]}"
+    },
+    {
+      "command": "data merge entity 00000000-0000-0000-0000-000000000014 {Health:0.0f}"
+    },
+    {
+      "command": "execute if entity 00000000-0000-0000-0000-000000000014",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill 00000000-0000-0000-0000-000000000014"
+    },
+    {
+      "command": "execute unless entity 00000000-0000-0000-0000-000000000014",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 201
+    },
+    {
+      "command": "execute unless entity 00000000-0000-0000-0000-000000000014",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:experience_orb]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:experience_orb]"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.5 80.0 0.5 {NoAI:0b,NoGravity:1b,Silent:1b,PersistenceRequired:1b,UUID:[I;0,0,0,20]}"
+    },
+    {
+      "command": "execute if entity 00000000-0000-0000-0000-000000000014",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill 00000000-0000-0000-0000-000000000014"
+    },
+    {
+      "command": "execute unless entity 00000000-0000-0000-0000-000000000014",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 201
+    },
+    {
+      "command": "execute unless entity 00000000-0000-0000-0000-000000000014",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:experience_orb]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:experience_orb]"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.5 80.0 0.5 {NoAI:0b,NoGravity:1b,Silent:1b,PersistenceRequired:1b,UUID:[I;0,0,0,20]}"
+    },
+    {
+      "command": "data merge entity 00000000-0000-0000-0000-000000000014 {Health:0.0f}"
+    },
+    {
+      "command": "execute if entity 00000000-0000-0000-0000-000000000014",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill 00000000-0000-0000-0000-000000000014"
+    },
+    {
+      "command": "execute unless entity 00000000-0000-0000-0000-000000000014",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 201
+    },
+    {
+      "command": "execute unless entity 00000000-0000-0000-0000-000000000014",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:experience_orb]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    }
+  ],
+  "cleanup": [
+    "kill @e[type=minecraft:experience_orb]"
+  ]
+}

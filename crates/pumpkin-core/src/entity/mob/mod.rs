@@ -918,6 +918,10 @@ pub trait Mob: EntityBase + Send + Sync {
     /// Per-mob tick hook called each tick before AI runs. Override for mob-specific logic.
     fn mob_tick(&self, _caller: &dyn EntityBase) {}
 
+    fn mob_kill(&self, caller: &dyn EntityBase) {
+        caller.damage(caller, f32::MAX, DamageType::GENERIC_KILL);
+    }
+
     fn post_tick(&self) {}
 
     fn get_preferred_weapon_type(&self) -> Option<&'static pumpkin_data::tag::Tag> {
@@ -1322,6 +1326,10 @@ pub trait Mob: EntityBase + Send + Sync {
     }
 }
 impl<T: Mob + Send + 'static> EntityBase for T {
+    fn kill(&self, caller: &dyn EntityBase) {
+        self.mob_kill(caller);
+    }
+
     fn get_mob(&self) -> Option<&dyn Mob> {
         Some(self)
     }
