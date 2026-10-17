@@ -3462,8 +3462,12 @@ impl EntityBase for LivingEntity {
         // Only tick movement if the entity is alive. This prevents a dead "corpse"
         // from continuing to be simulated (accumulating fall_distance/velocity).
         // We allow movement during death animation (20 ticks) so knockback is applied.
+        // Dragons move and remove their corpse in their own 200-tick death sequence.
+        let dragon_death_animation = self.entity.entity_type == &EntityType::ENDER_DRAGON;
         let is_alive = !self.dead.load(Relaxed) && self.health.load() > 0.0;
-        let in_death_animation = self.health.load() <= 0.0 && self.death_time.load(Relaxed) < 20;
+        let in_death_animation = !dragon_death_animation
+            && self.health.load() <= 0.0
+            && self.death_time.load(Relaxed) < 20;
         let is_player = self.entity.entity_type == &EntityType::PLAYER;
         if (is_alive || in_death_animation) && !is_player {
             self.tick_movement(caller);
@@ -3682,7 +3686,7 @@ impl EntityBase for LivingEntity {
         if self.hurt_cooldown.load(Relaxed) > 0 {
             self.hurt_cooldown.fetch_sub(1, Relaxed);
         }
-        if self.health.load() <= 0.0 {
+        if self.health.load() <= 0.0 && !dragon_death_animation {
             let time = self
                 .death_time
                 .fetch_update(Relaxed, Relaxed, |time| Some(time.saturating_add(1)))

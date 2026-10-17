@@ -793,24 +793,38 @@ impl EnderDragonEntity {
         }
     }
 
+    fn update_fight(&self) {
+        let world = self.mob_entity.living_entity.entity.world.load();
+        if let Some(ref fight_mutex) = world.dragon_fight {
+            let living = &self.mob_entity.living_entity;
+            if let Ok(mut fight) = fight_mutex.lock() {
+                let custom_name = living.entity.custom_name.load();
+                fight.update_dragon(
+                    &world,
+                    living.entity.entity_uuid,
+                    living.health.load(),
+                    living.get_max_health(),
+                    custom_name.as_ref().as_ref(),
+                );
+            }
+        }
+    }
+
     pub fn ai_step(&self) {
         if self.mob_entity.living_entity.entity.is_removed() {
             return;
         }
         self.mob_entity.living_entity.entity.update_last_pos();
+        if self.mob_entity.living_entity.health.load() <= 0.0 {
+            phase::DyingPhase::tick_death(self);
+            return;
+        }
         self.update_flap_time();
         self.tick_growl();
         self.tick_crystal_healing();
 
         // Vanilla checks crystals before NoAI, but skips flight and contact work.
-        // Pumpkin's Dying phase also runs the death animation and can restore one health.
-        if self.mob_entity.is_no_ai()
-            && *self
-                .phase
-                .lock()
-                .unwrap_or_else(std::sync::PoisonError::into_inner)
-                != EnderDragonPhase::Dying
-        {
+        if self.mob_entity.is_no_ai() {
             *self
                 .flap_time
                 .lock()
@@ -829,22 +843,7 @@ impl EnderDragonEntity {
                 .record(y, yaw);
         };
 
-        {
-            let world = self.mob_entity.living_entity.entity.world.load();
-            if let Some(ref fight_mutex) = world.dragon_fight {
-                let living = &self.mob_entity.living_entity;
-                if let Ok(mut fight) = fight_mutex.lock() {
-                    let custom_name = living.entity.custom_name.load();
-                    fight.update_dragon(
-                        &world,
-                        living.entity.entity_uuid,
-                        living.health.load(),
-                        living.get_max_health(),
-                        custom_name.as_ref().as_ref(),
-                    );
-                }
-            }
-        }
+        self.update_fight();
 
         let phase_type: EnderDragonPhase = *self
             .phase

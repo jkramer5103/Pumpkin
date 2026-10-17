@@ -38,20 +38,11 @@ impl super::Phase for DyingPhase {
     }
 
     fn tick(&self, dragon: &EnderDragonEntity) {
-        let death_time = {
-            let mut t = dragon
-                .dragon_death_time
-                .lock()
-                .unwrap_or_else(std::sync::PoisonError::into_inner);
-            *t += 1;
-            *t
-        };
-
         let entity = &dragon.mob_entity.living_entity.entity;
         let world = entity.world.load();
         let pos = entity.pos.load();
 
-        // 1. Resolve target location (center of the exit podium) if unset
+        // Resolve the dying flight target at the exit podium.
         let target = {
             let mut target_loc_lock = dragon
                 .target_location
@@ -78,7 +69,7 @@ impl super::Phase for DyingPhase {
             *target_loc_lock
         };
 
-        // 2. Steer towards target podium and update health matching vanilla doServerTick
+        // The living phase flies to the podium before the corpse animation starts.
         if let Some(target_pos) = target {
             let dist_sq = pos.distance_squared(target_pos);
             if (100.0..=22500.0).contains(&dist_sq) {
@@ -88,13 +79,32 @@ impl super::Phase for DyingPhase {
                 dragon.mob_entity.living_entity.health.store(0.0);
             }
         }
+    }
+}
 
-        // 3. Play death sound at tick 1
+impl DyingPhase {
+    pub(crate) fn tick_death(dragon: &EnderDragonEntity) {
+        let death_time = {
+            let mut t = dragon
+                .dragon_death_time
+                .lock()
+                .unwrap_or_else(std::sync::PoisonError::into_inner);
+            *t += 1;
+            *t
+        };
+
+        let entity = &dragon.mob_entity.living_entity.entity;
+        let world = entity.world.load();
+        let pos = entity.pos.load();
+
+        dragon.update_fight();
+
+        // Play the death sound at tick 1.
         if let Some(sound) = Self::death_sound(death_time, entity.is_silent()) {
             world.sync_global_world_event(sound, entity.block_pos.load(), 0);
         }
 
-        // 4. Explosion particles matching doClientTick (every 10 ticks and during final ticks)
+        // Explosion particles during the death animation.
         if death_time % 10 == 0 || (180..=200).contains(&death_time) {
             let xo = (rand::random::<f32>() - 0.5) * 8.0;
             let yo = (rand::random::<f32>() - 0.5) * 4.0;
@@ -112,7 +122,7 @@ impl super::Phase for DyingPhase {
             );
         }
 
-        // 5. Spawn experience orbs
+        // Spawn experience orbs.
         let xp_count = if let Some(ref fight_mutex) = world.dragon_fight
             && !fight_mutex
                 .lock()
@@ -129,12 +139,21 @@ impl super::Phase for DyingPhase {
             ExperienceOrbEntity::spawn(&world, pos, (xp_count as f32 * 0.08) as u32);
         }
 
-        entity.velocity.store(Vector3::new(0.0, 0.1, 0.0));
+        let death_move = Vector3::new(0.0, f64::from(0.1f32), 0.0);
+        entity.move_entity(dragon, death_move);
+        for part in &dragon.parts {
+            part.entity.update_last_pos();
+            part.entity.move_pos(death_move);
+        }
 
-        // 6. Complete death sequence at DEATH_TIMER_MAX
+        // Complete the death sequence at DEATH_TIMER_MAX.
         if death_time >= DEATH_TIMER_MAX {
             if mob_drops {
-                ExperienceOrbEntity::spawn(&world, pos, (xp_count as f32 * 0.2) as u32);
+                ExperienceOrbEntity::spawn(
+                    &world,
+                    entity.pos.load(),
+                    (xp_count as f32 * 0.2) as u32,
+                );
             }
 
             if let Some(ref fight_mutex) = world.dragon_fight {

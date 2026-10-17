@@ -1,0 +1,117 @@
+{
+  "id": "dragon-death-ascent",
+  "description": "Dragon corpses rise on every death tick with AI enabled or disabled. Forced zero health isolates the corpse animation from the separate death-flight phase. UUID reads include dead entities. Requires the isolated ParitySmoke client.",
+  "tags": [
+    "ender-dragon",
+    "death",
+    "movement",
+    "no-ai"
+  ],
+  "setup": [
+    "tick freeze",
+    "difficulty normal",
+    "gamerule spawn_mobs false",
+    "gamerule mob_griefing false",
+    "gamerule mob_drops false",
+    "forceload add -16 -16 31 31",
+    "gamemode creative ParitySmoke",
+    "tp ParitySmoke 20.0 80.0 20.0"
+  ],
+  "steps": [
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]",
+      "wait_ticks": 210
+    },
+    {
+      "command": "fill -4 79 -4 4 79 4 minecraft:stone"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.5 80.0 0.5 {NoAI:1b,NoGravity:1b,Silent:1b,PersistenceRequired:1b,UUID:[I;0,0,0,19]}"
+    },
+    {
+      "command": "damage 00000000-0000-0000-0000-000000000013 1000 minecraft:player_attack by ParitySmoke"
+    },
+    {
+      "command": "data merge entity 00000000-0000-0000-0000-000000000013 {Health:0.0f,Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 40
+    },
+    {
+      "command": "data get entity 00000000-0000-0000-0000-000000000013 Pos[1]",
+      "observe": true,
+      "expect_contains": "84.00000005960464d"
+    },
+    {
+      "command": "execute as 00000000-0000-0000-0000-000000000013 if entity @s[nbt={Health:0.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 159
+    },
+    {
+      "command": "data get entity 00000000-0000-0000-0000-000000000013 Pos[1]",
+      "observe": true,
+      "expect_contains": "99.90000029653311d"
+    },
+    {
+      "command": "execute as 00000000-0000-0000-0000-000000000013 if entity @s[nbt={Health:0.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute unless entity 00000000-0000-0000-0000-000000000013",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]",
+      "wait_ticks": 210
+    },
+    {
+      "command": "fill -4 79 -4 4 79 4 minecraft:stone"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.5 80.0 0.5 {NoAI:0b,NoGravity:1b,Silent:1b,PersistenceRequired:1b,UUID:[I;0,0,0,19]}"
+    },
+    {
+      "command": "damage 00000000-0000-0000-0000-000000000013 1000 minecraft:player_attack by ParitySmoke"
+    },
+    {
+      "command": "data merge entity 00000000-0000-0000-0000-000000000013 {Health:0.0f,Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 40
+    },
+    {
+      "command": "data get entity 00000000-0000-0000-0000-000000000013 Pos[1]",
+      "observe": true,
+      "expect_contains": "84.00000005960464d"
+    },
+    {
+      "command": "execute as 00000000-0000-0000-0000-000000000013 if entity @s[nbt={Health:0.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 159
+    },
+    {
+      "command": "data get entity 00000000-0000-0000-0000-000000000013 Pos[1]",
+      "observe": true,
+      "expect_contains": "99.90000029653311d"
+    },
+    {
+      "command": "execute as 00000000-0000-0000-0000-000000000013 if entity @s[nbt={Health:0.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute unless entity 00000000-0000-0000-0000-000000000013",
+      "observe": true,
+      "expect_contains": "Test passed"
+    }
+  ],
+  "cleanup": [
+    "kill @e[type=minecraft:ender_dragon]",
+    "gamerule mob_drops true"
+  ],
+  "schema_version": 1,
+  "title": "Dragon corpses keep rising until removal with either NoAI value",
+  "category": "entity"
+}
