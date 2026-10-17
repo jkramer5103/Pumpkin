@@ -1,0 +1,23 @@
+# Wither skull blast attribution
+
+Source commit: `af725048321c7721ae64fc549a77a08e1972d044`.
+
+Withers previously took splash damage from skulls fired by themselves or another Wither. Vanilla attributes each skull explosion to the projectile and its living owner; `WitherBoss.hurtServer` rejects damage caused by a Wither at both full and powered health. Pumpkin discarded that context by calling its anonymous explosion entry point.
+
+Skull impacts now carry their source into the synchronous explosion, before the projectile is removed. The explosion resolves the living owner and supplies both identities to the existing damage hooks. It uses vanilla's `PLAYER_EXPLOSION` type when both exist, and `EXPLOSION` otherwise. The source projectile is excluded from its own blast query. Existing anonymous explosion callers retain their prior context; events, cancellation, block interaction, packets and sounds still use the existing world helper.
+
+Vanilla 26.3 review followed `WitherSkull.onHit`, `Explosion.getDefaultDamageSource/getIndirectSourceEntity`, the `ServerExplosion` constructor and `hurtEntities`, `DamageSources.explosion`, and `WitherBoss.hurtServer`. Only skulls opt into the new entry point. Missing or nonliving owners remain unattributed.
+
+All 443 core Rust library tests, workspace formatting, core Clippy with all targets/features, and the full debug server build passed under the shared Cargo lock with one job, disabled debug info/incremental compilation, and required resource limits. The existing `proc-macro-error2` future-compatibility warning remains.
+
+Two trials of seven controlled cases plus two trials of the permanent fixture gave vanilla and patched Pumpkin **140/140** passing checks each. Baseline passed **132/140**, failing exactly eight expected Wither immunity assertions. Actual Wither-owned skull splash leaves vanilla/patched observers at 300 or 150 HP; baseline observers reach 298.01248 or 148.01248 HP. The shooter's own blast is also rejected. Ownerless skulls, a sheep observer and TNT still cause damage. These controls check damage acceptance; their damage amounts still differ between vanilla and Pumpkin.
+
+The comparison captures a real naturally fired skull, pauses its shooter and directs the skull into a sheep beside the observer. Measured impact commands match across servers; natural acquisition delays are recorded separately. NoAI prevents observer regeneration. The opt-in regression fixture `lab/examples/wither-owned-skull-splash.json` uses a 20-tick capture barrier with a distant sheep keeping the skull in flight, followed by three verified impact ticks. It checks initial target/boss/projectile presence, projectile consumption and unchanged boss health. Its two baseline trials fail, while vanilla and patched trials pass. Published description/notes only add spaces to the tested artifact; all gameplay fields match exactly.
+
+Source/binary hashes, matching impact commands and fixture gameplay, connected headless protocol 777 clients, clean logs, and six normal scratch-server stops were verified. Final binary SHA-256: `0f00895296b53aa95efb415451c678d414a77e0d65737ce6ab5059cebe95ec1a`. Evidence is in `artifacts/jaron-wither24-validation.json`, `artifacts/jaron-wither24-verify.json` and `artifacts/jaron-wither24-source-provenance.json`. Occluded block trials, a mistaken post-impact sheep-survival assertion and unisolated natural-combat fixtures admitting direct hits are excluded from final validation.
+
+Shared review: the new context reaches existing mob immunity hooks, living damage/plugin events, damage packets, shielding/knockback and attacker-credit code. Anonymous TNT, creeper, fireball, wind-charge, bed/anchor and minecart callers remain equivalent to the previous `damage` forwarding call. This patch retains the preexisting zero entity ID on the explosion plugin event.
+
+Limitations: headless server-state evidence only; no rendered-client capture or complete boss-fight proof. Direct skull impact attribution, healing and effect acceptance remain separate and overlap [upstream PR 3835](https://github.com/Pumpkin-MC/Pumpkin/pull/3835). Generic damage magnitudes, knockback, shielding, credit, plugin interactions, team rules, dangerous-skull block resistance, flight and source/owner NBT persistence were not independently validated.
+
+Fork master `65bca3f` is an ancestor; fetched upstream `998c3f8` has identical baseline contents for all three changed Rust files. Open Wither/explosion PRs were checked again before push: PR 3835 covers direct impacts and PR 3905 covers blast effects, with no duplicate skull explosion-owner correction found. No upstream code was copied. Unrelated upstream changes are not integrated.
