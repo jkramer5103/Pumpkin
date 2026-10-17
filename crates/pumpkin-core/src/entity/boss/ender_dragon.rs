@@ -904,6 +904,13 @@ impl Mob for EnderDragonEntity {
 
     fn mob_write_nbt(&self, nbt: &mut NbtCompound) {
         nbt.put_int(
+            "DragonPhase",
+            self.phase
+                .lock()
+                .unwrap_or_else(std::sync::PoisonError::into_inner)
+                .network_id(),
+        );
+        nbt.put_int(
             "DragonDeathTime",
             *self
                 .dragon_death_time
@@ -913,6 +920,12 @@ impl Mob for EnderDragonEntity {
     }
 
     fn mob_read_nbt(&self, nbt: &NbtCompound) {
+        if let Some(phase) = nbt
+            .get_int("DragonPhase")
+            .and_then(EnderDragonPhase::from_network_id)
+        {
+            self.set_phase(phase);
+        }
         *self
             .dragon_death_time
             .lock()

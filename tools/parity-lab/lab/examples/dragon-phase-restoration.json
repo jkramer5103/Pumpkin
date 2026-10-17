@@ -1,0 +1,60 @@
+{
+  "schema_version": 1,
+  "id": "dragon-phase-restoration",
+  "title": "Restored holding-pattern dragons resume flight",
+  "description": "Bounded isolated arena with ParitySmoke. Load vanilla phase0 and phase10, then measure five ticks of movement. Exact trajectories are outside this fixture.",
+  "category": "entity",
+  "tags": [
+    "ender-dragon",
+    "phase",
+    "nbt"
+  ],
+  "setup": [
+    "tick freeze",
+    "difficulty normal",
+    "gamerule spawn_mobs false",
+    "gamerule mob_griefing false",
+    "forceload add -48 -48 47 47",
+    "gamemode creative ParitySmoke",
+    "tp ParitySmoke 20.0 80.0 20.0"
+  ],
+  "steps": [
+    {
+      "command": "summon minecraft:ender_dragon 0.5 100.0 0.5 {Silent:1b,NoGravity:1b,PersistenceRequired:1b,UUID:[I;0,0,0,22],DragonPhase:0}"
+    },
+    {
+      "command": "data get entity 00000000-0000-0000-0000-000000000016 DragonPhase",
+      "observe": true,
+      "expect_contains": "following entity data: 0",
+      "wait_ticks": 5
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:ender_dragon,x=0.5,y=100,z=0.5,distance=..0.15]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill 00000000-0000-0000-0000-000000000016"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.5 100.0 0.5 {Silent:1b,NoGravity:1b,PersistenceRequired:1b,UUID:[I;0,0,0,22],DragonPhase:10}"
+    },
+    {
+      "command": "data get entity 00000000-0000-0000-0000-000000000016 DragonPhase",
+      "observe": true,
+      "expect_contains": "following entity data: 10",
+      "wait_ticks": 5
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,x=0.5,y=100,z=0.5,distance=..0.15]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill 00000000-0000-0000-0000-000000000016"
+    }
+  ],
+  "cleanup": [
+    "kill 00000000-0000-0000-0000-000000000016"
+  ]
+}

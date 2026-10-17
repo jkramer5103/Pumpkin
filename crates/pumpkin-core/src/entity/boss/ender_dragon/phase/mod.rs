@@ -76,7 +76,37 @@ impl EnderDragonPhase {
 
     #[must_use]
     pub const fn network_id(self) -> i32 {
-        self as i32
+        match self {
+            Self::Circling => 0,
+            Self::Strafing => 1,
+            Self::FlyToPortal | Self::LandingApproach => 2,
+            Self::Landing => 3,
+            Self::TakingOff => 4,
+            Self::SitBreathing => 5,
+            Self::SitAttacking => 7,
+            Self::Charging => 8,
+            Self::Dying => 9,
+            Self::Hovering => 10,
+        }
+    }
+
+    #[must_use]
+    pub const fn from_network_id(id: i32) -> Option<Self> {
+        Some(match id {
+            1 => Self::Strafing,
+            2 => Self::LandingApproach,
+            3 => Self::Landing,
+            4 => Self::TakingOff,
+            5 => Self::SitBreathing,
+            // Sitting scanning does not have a phase implementation yet.
+            6 => return None,
+            7 => Self::SitAttacking,
+            8 => Self::Charging,
+            9 => Self::Dying,
+            10 => Self::Hovering,
+            // Holding pattern (0) is also vanilla's fallback for invalid IDs.
+            _ => Self::Circling,
+        })
     }
 }
 
@@ -113,5 +143,37 @@ impl PhaseManager {
     #[must_use]
     pub fn get_phase(&self, phase_type: EnderDragonPhase) -> Arc<dyn Phase> {
         self.phases[phase_type as usize].clone()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::{EnderDragonPhase, PhaseManager};
+
+    #[test]
+    fn saved_vanilla_phase_ids_select_the_corresponding_handler() {
+        let manager = PhaseManager::new();
+        for (id, phase) in [
+            (0, EnderDragonPhase::Circling),
+            (2, EnderDragonPhase::LandingApproach),
+            (8, EnderDragonPhase::Charging),
+            (9, EnderDragonPhase::Dying),
+            (10, EnderDragonPhase::Hovering),
+        ] {
+            assert_eq!(EnderDragonPhase::from_network_id(id), Some(phase));
+            assert_eq!(manager.get_phase(phase).get_type(), phase);
+            assert_eq!(phase.network_id(), id);
+        }
+    }
+
+    #[test]
+    fn invalid_phase_ids_use_holding_pattern_without_aliasing_sitting_scanning() {
+        for id in [i32::MIN, -1, 11, i32::MAX] {
+            assert_eq!(
+                EnderDragonPhase::from_network_id(id),
+                Some(EnderDragonPhase::Circling),
+            );
+        }
+        assert_eq!(EnderDragonPhase::from_network_id(6), None);
     }
 }
