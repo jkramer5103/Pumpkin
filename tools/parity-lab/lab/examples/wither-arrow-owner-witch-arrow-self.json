@@ -1,0 +1,44 @@
+{
+  "schema_version": 1,
+  "id": "wither-arrow-owner-witch-arrow-self",
+  "title": "Arrow attribution preserves Witch self-damage protection",
+  "category": "entities",
+  "description": "A caller regression guard for the arrow source correction. Vanilla uses the causing entity for Witch self-damage protection; an unrelated sheep is a positive damage control.",
+  "tags": [
+    "entity",
+    "wither",
+    "combat",
+    "regression"
+  ],
+  "setup": [
+    "tick freeze",
+    "gamemode creative @a",
+    "difficulty easy",
+    "gamerule mob_griefing false",
+    "gamerule spawn_mobs false",
+    "forceload add 0 0 31 31",
+    "fill 0 79 0 31 79 31 minecraft:bedrock",
+    "tp @a 16.5 84 16.5",
+    "summon minecraft:witch 8.5 80 8.5 {Tags:[\"pp_boss\"],NoAI:1b,NoGravity:1b,Silent:1b,Health:26.0f}",
+    "summon minecraft:arrow 20.5 80 8.5 {Tags:[\"pp_direct\"],NoGravity:1b}",
+    "summon minecraft:sheep 24.5 80 8.5 {Tags:[\"pp_cause\"],NoAI:1b,NoGravity:1b}"
+  ],
+  "steps": [
+    {
+      "command": "execute if entity @e[tag=pp_boss,nbt={Health:26.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "damage @e[tag=pp_boss,limit=1] 4 minecraft:arrow by @e[tag=pp_direct,limit=1] from @e[tag=pp_boss,limit=1]"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss,nbt={Health:26.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    }
+  ],
+  "cleanup": [
+    "kill @e[type=!minecraft:player]"
+  ]
+}

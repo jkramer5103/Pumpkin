@@ -1,0 +1,53 @@
+{
+  "schema_version": 1,
+  "id": "wither-powered-arrow-151",
+  "title": "Wither arrow impact at 151 health",
+  "category": "entities",
+  "description": "Real ownerless projectile impact checks powered immunity at and below half health, with an unpowered positive damage control. NoAI isolates regeneration and targeting.",
+  "tags": [
+    "entity",
+    "wither",
+    "combat"
+  ],
+  "setup": [
+    "tick freeze",
+    "gamemode creative @a",
+    "difficulty easy",
+    "gamerule mob_griefing false",
+    "gamerule spawn_mobs false",
+    "forceload add 0 0 31 31",
+    "fill 0 79 0 31 79 31 minecraft:bedrock",
+    "fill 6 80 6 14 86 10 minecraft:air",
+    "tp @a 16.5 84 16.5",
+    "summon minecraft:wither 8.5 80 8.5 {Tags:[\"pp_boss\"],NoAI:1b,NoGravity:1b,Silent:1b,PersistenceRequired:1b,Health:151.0f,Invul:0}"
+  ],
+  "steps": [
+    {
+      "command": "execute if entity @e[tag=pp_boss,nbt={Health:151.0f,Invul:0}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "summon minecraft:arrow 12.5 82 8.5 {Tags:[\"pp_projectile\"],NoGravity:1b,Motion:[-1.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_projectile]",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 8
+    },
+    {
+      "command": "execute unless entity @e[tag=pp_boss,nbt={Health:151.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss,x=5,y=79,z=5,dx=10,dy=10,dz=10]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    }
+  ],
+  "cleanup": [
+    "kill @e[type=!minecraft:player]"
+  ]
+}

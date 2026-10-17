@@ -945,6 +945,16 @@ pub trait Mob: EntityBase + Send + Sync {
         true
     }
 
+    /// Checks damage that distinguishes the direct source from its causing entity.
+    fn pre_damage_with_context(
+        &self,
+        damage_type: DamageType,
+        source: Option<&dyn EntityBase>,
+        _cause: Option<&dyn EntityBase>,
+    ) -> bool {
+        self.pre_damage(damage_type, source)
+    }
+
     fn on_damage(&self, _damage_type: DamageType, _source: Option<&dyn EntityBase>) {}
 
     fn on_attack(&self, _target: &dyn EntityBase) {}
@@ -1445,7 +1455,7 @@ impl<T: Mob + Send + 'static> EntityBase for T {
         cause: Option<&dyn EntityBase>,
     ) -> bool {
         // pre_damage hook: allows mobs to dodge/cancel damage (e.g. enderman projectile dodge)
-        if !self.pre_damage(damage_type, source) {
+        if !self.pre_damage_with_context(damage_type, source, cause) {
             return false;
         }
         // Mob-specific damage modifier (e.g. shulker armor when closed).

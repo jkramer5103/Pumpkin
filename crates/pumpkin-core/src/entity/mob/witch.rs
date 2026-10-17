@@ -209,8 +209,13 @@ impl Mob for WitchEntity {
         self.read_raider_nbt(nbt);
     }
 
-    fn pre_damage(&self, _damage_type: DamageType, source: Option<&dyn EntityBase>) -> bool {
-        if let Some(src) = source
+    fn pre_damage_with_context(
+        &self,
+        _damage_type: DamageType,
+        source: Option<&dyn EntityBase>,
+        cause: Option<&dyn EntityBase>,
+    ) -> bool {
+        if let Some(src) = cause.or(source)
             && src.get_entity().entity_id == self.mob_entity.living_entity.entity.entity_id
         {
             return false;

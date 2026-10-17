@@ -1,0 +1,43 @@
+{
+  "schema_version": 1,
+  "id": "wither-projectile-context-arrow-zombie-300",
+  "title": "Wither separates direct source and causing entity",
+  "category": "entities",
+  "description": "Damage contexts isolate friend/Wither attacker immunity from direct-projectile phase immunity; complements real arrow impacts.",
+  "tags": [
+    "entity",
+    "wither",
+    "combat"
+  ],
+  "setup": [
+    "tick freeze",
+    "gamemode creative @a",
+    "difficulty easy",
+    "gamerule mob_griefing false",
+    "gamerule spawn_mobs false",
+    "forceload add 0 0 31 31",
+    "fill 0 79 0 31 79 31 minecraft:bedrock",
+    "tp @a 16.5 84 16.5",
+    "summon minecraft:wither 8.5 80 8.5 {Tags:[\"pp_boss\"],NoAI:1b,NoGravity:1b,Silent:1b,Health:300.0f,Invul:0}",
+    "summon minecraft:arrow 20.5 80 8.5 {Tags:[\"pp_direct\"],NoAI:1b,NoGravity:1b,Silent:1b}",
+    "summon minecraft:zombie 24.5 80 8.5 {Tags:[\"pp_cause\"],NoAI:1b,NoGravity:1b,Silent:1b}"
+  ],
+  "steps": [
+    {
+      "command": "execute if entity @e[tag=pp_boss,nbt={Health:300.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "damage @e[tag=pp_boss,limit=1] 4 minecraft:arrow by @e[tag=pp_direct,limit=1] from @e[tag=pp_cause,limit=1]"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss,nbt={Health:300.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    }
+  ],
+  "cleanup": [
+    "kill @e[type=!minecraft:player]"
+  ]
+}
