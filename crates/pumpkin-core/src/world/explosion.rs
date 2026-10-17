@@ -184,15 +184,16 @@ impl ExplosionDamageCalculator for SimpleExplosionDamageCalculator {
     }
 }
 
-pub struct Explosion {
+pub struct Explosion<'a> {
     power: f32,
     pos: Vector3<f64>,
     block_interaction: BlockInteraction,
     damage_calculator: Option<Arc<dyn ExplosionDamageCalculator>>,
     preserve_rails: bool,
+    source: Option<&'a dyn EntityBase>,
 }
 
-impl Explosion {
+impl<'a> Explosion<'a> {
     #[must_use]
     pub const fn new(power: f32, pos: Vector3<f64>, block_interaction: BlockInteraction) -> Self {
         Self {
@@ -201,7 +202,26 @@ impl Explosion {
             block_interaction,
             damage_calculator: None,
             preserve_rails: false,
+            source: None,
         }
+    }
+
+    #[must_use]
+    pub const fn with_source(mut self, source: &'a dyn EntityBase) -> Self {
+        self.source = Some(source);
+        self
+    }
+
+    fn get_indirect_source_entity(&self, world: &World) -> Option<Arc<dyn EntityBase>> {
+        let source = self.source?;
+        let entity_id = if source.get_living_entity().is_some() {
+            source.get_entity().entity_id
+        } else {
+            source.get_owner_id()?
+        };
+        world
+            .get_entity_by_id(entity_id)
+            .filter(|entity| entity.get_living_entity().is_some())
     }
 
     #[must_use]
@@ -372,6 +392,12 @@ impl Explosion {
         );
 
         let entities = world.get_all_at_box(&search_box);
+        let cause = self.get_indirect_source_entity(world);
+        let damage_type = if self.source.is_some() && cause.is_some() {
+            DamageType::PLAYER_EXPLOSION
+        } else {
+            DamageType::EXPLOSION
+        };
 
         let default_calc = DefaultExplosionDamageCalculator;
         let calc: &dyn ExplosionDamageCalculator = match &self.damage_calculator {
@@ -380,6 +406,11 @@ impl Explosion {
         };
 
         for entity_base in entities {
+            if self.source.is_some_and(|source| {
+                source.get_entity().entity_id == entity_base.get_entity().entity_id
+            }) {
+                continue;
+            }
             if entity_base.is_immune_to_explosion() {
                 continue;
             }
@@ -412,7 +443,14 @@ impl Explosion {
             if should_damage {
                 let damage =
                     calc.get_entity_damage_amount(self, entity_base.as_ref(), exposure as f32);
-                entity.damage(entity_base.as_ref(), damage, DamageType::EXPLOSION);
+                entity_base.damage_with_context(
+                    entity_base.as_ref(),
+                    damage,
+                    damage_type,
+                    self.source.map(|_| self.pos),
+                    self.source,
+                    cause.as_deref(),
+                );
             }
 
             // Calculate and apply knockback

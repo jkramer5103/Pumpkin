@@ -1,0 +1,95 @@
+{
+  "schema_version": 1,
+  "id": "wither-owned-skull-splash",
+  "title": "Wither immunity to an owned skull blast",
+  "category": "entities",
+  "description": "Capture a naturally fired Wither skull and direct it into a sheep beside a stationary Wither. The observer receives splash only and must retain 300 HP.",
+  "tags": [
+    "entity",
+    "wither",
+    "combat"
+  ],
+  "setup": [
+    "tick freeze",
+    "gamemode creative @a",
+    "difficulty easy",
+    "gamerule mob_griefing false",
+    "gamerule spawn_mobs false",
+    "forceload add 0 0 31 31",
+    "fill 0 79 0 31 79 31 minecraft:bedrock",
+    "fill 0 80 0 31 94 31 minecraft:air",
+    "tp @a 16.5 84 16.5",
+    "summon minecraft:wither 4.5 80 8.5 {Tags:[\"pp_shooter\"],NoGravity:1b,Silent:1b,PersistenceRequired:1b,Invul:0}",
+    "summon minecraft:sheep 23.5 80 8.5 {Tags:[\"pp_target\"],NoAI:1b,NoGravity:1b,Silent:1b}"
+  ],
+  "steps": [
+    {
+      "command": "execute if entity @e[tag=pp_shooter]",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 20
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:wither_skull]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "tag @e[type=minecraft:wither_skull,limit=1] add pp_shot"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_shooter,limit=1] {NoAI:1b}"
+    },
+    {
+      "command": "kill @e[tag=pp_target]"
+    },
+    {
+      "command": "kill @e[type=minecraft:wither_skull,tag=!pp_shot]"
+    },
+    {
+      "command": "tp @e[tag=pp_shooter] 4.5 80 8.5"
+    },
+    {
+      "command": "summon minecraft:sheep 20.5 82 20.5 {Tags:[\"pp_impact_target\"],NoAI:1b,NoGravity:1b,Silent:1b}"
+    },
+    {
+      "command": "summon minecraft:wither 19.5 81 21.4 {Tags:[\"pp_boss\"],NoAI:1b,NoGravity:1b,Silent:1b,PersistenceRequired:1b,Health:300.0f,Invul:0}"
+    },
+    {
+      "command": "tp @e[tag=pp_shot] 19.01 82.1 20.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_shot,limit=1] {Motion:[1.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_impact_target]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss,nbt={Health:300.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_shot]",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 3
+    },
+    {
+      "command": "execute unless entity @e[tag=pp_shot]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss,nbt={Health:300.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    }
+  ],
+  "cleanup": [
+    "kill @e[type=!minecraft:player]"
+  ],
+  "notes": "The first side-head target update selects the sheep, then fires within 20 ticks. The distant 19-block target keeps that skull in flight through the capture barrier. The frozen arena preserves actual shooter ownership when teleporting the projectile. The impact sheep and observer are separated laterally so the observer receives only splash. Supplemental two-trial cases cover powered/self Withers, ownerless skulls, another sheep and TNT. Direct-impact attribution and a whole fight are outside this fixture."
+}
