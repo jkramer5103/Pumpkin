@@ -1,0 +1,43 @@
+{
+  "schema_version": 1,
+  "id": "wither-armor-loaded-equipment",
+  "title": "Loaded equipment armor remains applied exactly once",
+  "category": "entities",
+  "description": "Shared absorption regression: a sheep loaded with an iron chestplate retains6armor after one verified vanilla equipment-update tick.",
+  "tags": [
+    "entity",
+    "wither",
+    "combat"
+  ],
+  "setup": [
+    "tick freeze",
+    "gamemode creative @a",
+    "difficulty easy",
+    "gamerule mob_griefing false",
+    "gamerule spawn_mobs false",
+    "forceload add 0 0 31 31",
+    "fill 0 79 0 31 79 31 minecraft:bedrock",
+    "fill 6 80 6 14 86 10 minecraft:air",
+    "tp @a 16.5 84 16.5",
+    "summon minecraft:sheep 8.5 80 8.5 {Tags:[\"pp_boss\"],NoAI:1b,NoGravity:1b,Silent:1b,Health:8.0f,equipment:{chest:{id:\"minecraft:iron_chestplate\",count:1}}}"
+  ],
+  "steps": [
+    {
+      "command": "execute if entity @e[tag=pp_boss,nbt={Health:8.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 1
+    },
+    {
+      "command": "damage @e[tag=pp_boss,limit=1] 4 minecraft:mob_attack"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss,nbt={Health:4.64f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    }
+  ],
+  "cleanup": [
+    "kill @e[type=!minecraft:player]"
+  ]
+}
