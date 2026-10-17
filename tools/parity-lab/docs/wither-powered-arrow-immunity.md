@@ -1,0 +1,24 @@
+# Wither powered arrow immunity
+
+Source fix: `5327fe29828052580a4d16db3b9ebf84118e41f4`.
+
+A Wither at or below half health took damage from real arrows and spectral arrows. In the isolated arena, baseline Pumpkin lost two health from both 149 and 150 health, while Minecraft Java 26.3 retained those values. Both accepted hits at 151 health.
+
+Vanilla `AbstractArrow.onHitEntity` supplies the arrow as the direct damage entity and its owner, or the arrow when ownerless, as the causing entity. Pumpkin passed the owner in the direct-source slot and left the causing entity empty. The Wither therefore could not recognize the arrow. Its existing damage hook also saw only the direct source, so correcting the projectile call alone would lose attacker-based immunity.
+
+The arrow now supplies both entities in their respective context slots. A default `Mob.pre_damage_with_context` forwards to existing hooks. The Wither overrides it to check the causing entity for Wither and `wither_friends` attacker immunity while retaining direct-source checks for powered projectile immunity. Single-entity contexts fall back to the direct source. Enderman, Creaking and Shulker retain their existing hooks. The Witch uses the causing entity for its existing self-attacker guard so the arrow correction preserves that health protection. Vanilla `Witch.getDamageAfterMagicAbsorb` identifies self damage through `DamageSource.getEntity`; its other damage side effects are outside this patch.
+
+Validation passed on the complete four-file Rust correction:
+
+- All 443 `pumpkin-core` library tests, workspace formatting, core clippy with all targets/features, and a full `pumpkin` build. Cargo used the shared lock, one job, disabled debug info/incremental compilation, and the required 5 GiB memory/200% CPU scope. The existing `proc-macro-error2` future-compatibility warning remains.
+- Two repetitions of twelve Wither fixtures: patched and vanilla 144/144 checks; baseline 128/144. The sixteen baseline failures are the four real powered-arrow health checks and four attacker/direct-source immunity checks per repetition.
+- Two repetitions of three Witch caller controls: patched and vanilla 30/30; baseline 28/30. Self and arrow/self contexts protect health; an unrelated sheep attacker is a positive damage control.
+- Matching fixture and gameplay-command hashes, final binary/source hashes, successful summons, connected headless protocol 777 clients, tick barriers, cleanup, normal scratch-server stops and logs without ERROR/panic lines. Both final replays used binary SHA-256 `6e56a4b3c8173e93af361e3c4fbf6625beff5d4b969b324c86c4b5a899cfe317`.
+
+Real ownerless arrow/spectral-arrow impacts exercise 149, 150 and 151 health with NoAI/NoGravity bosses. Explicit damage contexts separately distinguish projectile and attacker immunity. Those contexts supplement the real impact evidence; they do not prove skeleton- or Witch-fired arrows. Fifteen regression fixtures are under `tools/parity-lab/lab/examples/wither-powered-*`, `wither-projectile-context-*` and `wither-arrow-owner-witch-*`.
+
+Final evidence is recorded in `artifacts/jaron-wither21-final-validation.json`, `jaron-wither21-validation.json`, `jaron-wither21-witch-validation.json`, `jaron-wither21-verify.json` and `jaron-wither21-source-provenance.json`. Raw reports are `artifacts/jaron-wither21-final-{baseline,vanilla,fixed}-*/report.json` and `jaron-wither21-witch-{baseline,vanilla,fixed}-*/report.json`. The initial three-file build/replay and failed service-PATH attempt are retained separately and excluded from the final complete-source claim.
+
+Vanilla sources reviewed outside the repository: `WitherBoss.hurtServer`, `AbstractArrow.onHitEntity`, `DamageSources.arrow`, `ThrownTrident` and `Witch.getDamageAfterMagicAbsorb`. Fork master `65bca3f` is already an ancestor. Upstream `b57d821` retains the incorrect arrow context. Open PR 3835 leaves that arrow call unchanged; PR 3988 changes collision candidates; PR 4080 adds team collision filtering; PR 3525 supplies melee attack positions. None provides this contextual boss correction. No open Witch PR was found. PR 3835 already supplies trident attribution, so that correction is excluded. Tracker/issue 3468 entries were leads; completed spawn/ranged goals were not repeated.
+
+Limits: headless server-state evidence only, without rendered-client or complete boss-fight proof. Positive controls check damage acceptance rather than amounts: Pumpkin 151→149 versus vanilla 151→149.24 remains a separate armor/attribute lead. Trident, Breeze/player wind-charge immunity, skull explosions, general knockback, shielding, shooter credit, enchantment effects and plugin interactions are not separately proven. Witch cancellation timing and visual damage effects retain existing behavior; this is not full Witch damage parity.
