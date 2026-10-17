@@ -266,6 +266,8 @@ impl WitherEntity {
             dangerous,
             normalized_dir,
         ));
+        // The thrown-item constructor moves the skull to the shooter's eye.
+        skull.get_entity().set_pos(head_pos);
         world.spawn_entity(skull);
     }
 
