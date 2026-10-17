@@ -1,0 +1,317 @@
+{
+  "schema_version": 1,
+  "id": "wither-skull-scaled-double",
+  "title": "Wither double-scale skull launch offsets",
+  "category": "entities",
+  "description": "A Wither with scale 2 fires side-head skulls from its scaled height and radius.",
+  "tags": [
+    "entity",
+    "wither",
+    "projectile",
+    "regression"
+  ],
+  "setup": [
+    "difficulty easy",
+    "gamerule mob_griefing false",
+    "gamerule spawn_mobs false",
+    "forceload add 0 0 31 31",
+    "fill 0 79 0 31 79 31 minecraft:bedrock",
+    "gamemode creative @a",
+    "tp @a 15 86 15",
+    "scoreboard objectives add pp_launch dummy",
+    "scoreboard players set side pp_launch 0",
+    "summon minecraft:wither 4.5 80 8.5 {Tags:[\"pp_boss\"],NoGravity:1b,Silent:1b,PersistenceRequired:1b}",
+    "attribute @e[tag=pp_boss,limit=1] minecraft:scale base set 2",
+    "summon minecraft:sheep 23.5 80 8.5 {Tags:[\"pp_target\"],NoAI:1b,NoGravity:1b,Silent:1b,PersistenceRequired:1b}"
+  ],
+  "steps": [
+    {
+      "command": "execute if entity @e[tag=pp_boss,nbt={Health:300.0f,Invul:0}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5 0 0"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute positioned 4.5 84.4 8.5 if entity @e[type=minecraft:wither_skull,distance=2.59..2.61] run scoreboard players add side pp_launch 1"
+    },
+    {
+      "command": "kill @e[type=minecraft:wither_skull]"
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5 0 0"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute positioned 4.5 84.4 8.5 if entity @e[type=minecraft:wither_skull,distance=2.59..2.61] run scoreboard players add side pp_launch 1"
+    },
+    {
+      "command": "kill @e[type=minecraft:wither_skull]"
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5 0 0"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute positioned 4.5 84.4 8.5 if entity @e[type=minecraft:wither_skull,distance=2.59..2.61] run scoreboard players add side pp_launch 1"
+    },
+    {
+      "command": "kill @e[type=minecraft:wither_skull]"
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5 0 0"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute positioned 4.5 84.4 8.5 if entity @e[type=minecraft:wither_skull,distance=2.59..2.61] run scoreboard players add side pp_launch 1"
+    },
+    {
+      "command": "kill @e[type=minecraft:wither_skull]"
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5 0 0"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute positioned 4.5 84.4 8.5 if entity @e[type=minecraft:wither_skull,distance=2.59..2.61] run scoreboard players add side pp_launch 1"
+    },
+    {
+      "command": "kill @e[type=minecraft:wither_skull]"
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5 0 0"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute positioned 4.5 84.4 8.5 if entity @e[type=minecraft:wither_skull,distance=2.59..2.61] run scoreboard players add side pp_launch 1"
+    },
+    {
+      "command": "kill @e[type=minecraft:wither_skull]"
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5 0 0"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute positioned 4.5 84.4 8.5 if entity @e[type=minecraft:wither_skull,distance=2.59..2.61] run scoreboard players add side pp_launch 1"
+    },
+    {
+      "command": "kill @e[type=minecraft:wither_skull]"
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5 0 0"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute positioned 4.5 84.4 8.5 if entity @e[type=minecraft:wither_skull,distance=2.59..2.61] run scoreboard players add side pp_launch 1"
+    },
+    {
+      "command": "kill @e[type=minecraft:wither_skull]"
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5 0 0"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute positioned 4.5 84.4 8.5 if entity @e[type=minecraft:wither_skull,distance=2.59..2.61] run scoreboard players add side pp_launch 1"
+    },
+    {
+      "command": "kill @e[type=minecraft:wither_skull]"
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5 0 0"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute positioned 4.5 84.4 8.5 if entity @e[type=minecraft:wither_skull,distance=2.59..2.61] run scoreboard players add side pp_launch 1"
+    },
+    {
+      "command": "kill @e[type=minecraft:wither_skull]"
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5 0 0"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute positioned 4.5 84.4 8.5 if entity @e[type=minecraft:wither_skull,distance=2.59..2.61] run scoreboard players add side pp_launch 1"
+    },
+    {
+      "command": "kill @e[type=minecraft:wither_skull]"
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5 0 0"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute positioned 4.5 84.4 8.5 if entity @e[type=minecraft:wither_skull,distance=2.59..2.61] run scoreboard players add side pp_launch 1"
+    },
+    {
+      "command": "kill @e[type=minecraft:wither_skull]"
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5 0 0"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute positioned 4.5 84.4 8.5 if entity @e[type=minecraft:wither_skull,distance=2.59..2.61] run scoreboard players add side pp_launch 1"
+    },
+    {
+      "command": "kill @e[type=minecraft:wither_skull]"
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5 0 0"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute positioned 4.5 84.4 8.5 if entity @e[type=minecraft:wither_skull,distance=2.59..2.61] run scoreboard players add side pp_launch 1"
+    },
+    {
+      "command": "kill @e[type=minecraft:wither_skull]"
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5 0 0"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute positioned 4.5 84.4 8.5 if entity @e[type=minecraft:wither_skull,distance=2.59..2.61] run scoreboard players add side pp_launch 1"
+    },
+    {
+      "command": "kill @e[type=minecraft:wither_skull]"
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5 0 0"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute positioned 4.5 84.4 8.5 if entity @e[type=minecraft:wither_skull,distance=2.59..2.61] run scoreboard players add side pp_launch 1"
+    },
+    {
+      "command": "kill @e[type=minecraft:wither_skull]"
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5 0 0"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute positioned 4.5 84.4 8.5 if entity @e[type=minecraft:wither_skull,distance=2.59..2.61] run scoreboard players add side pp_launch 1"
+    },
+    {
+      "command": "kill @e[type=minecraft:wither_skull]"
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5 0 0"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute positioned 4.5 84.4 8.5 if entity @e[type=minecraft:wither_skull,distance=2.59..2.61] run scoreboard players add side pp_launch 1"
+    },
+    {
+      "command": "kill @e[type=minecraft:wither_skull]"
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5 0 0"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute positioned 4.5 84.4 8.5 if entity @e[type=minecraft:wither_skull,distance=2.59..2.61] run scoreboard players add side pp_launch 1"
+    },
+    {
+      "command": "kill @e[type=minecraft:wither_skull]"
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 4.5 80 8.5 0 0"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute positioned 4.5 84.4 8.5 if entity @e[type=minecraft:wither_skull,distance=2.59..2.61] run scoreboard players add side pp_launch 1"
+    },
+    {
+      "command": "kill @e[type=minecraft:wither_skull]"
+    },
+    {
+      "command": "execute if score side pp_launch matches 1..",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_target,nbt={Health:8.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss,nbt={Health:300.0f,Invul:0}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    }
+  ],
+  "cleanup": [
+    "kill @e[type=minecraft:wither]",
+    "kill @e[type=minecraft:sheep]",
+    "kill @e[type=minecraft:wither_skull]",
+    "kill @e[type=minecraft:item]",
+    "scoreboard objectives remove pp_launch"
+  ],
+  "notes": "Isolated connected-player arena, scale 2. Twenty single-tick launch observations; reset boss position and motion before each tick and remove skulls immediately. Side-head ring at Y84.4, radius2.6; main-head packet origin checked separately. No rendered-client or full-fight proof."
+}

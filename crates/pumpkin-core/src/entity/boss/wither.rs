@@ -6,6 +6,7 @@ use uuid::Uuid;
 
 use pumpkin_data::{
     Block,
+    attributes::Attributes,
     damage::DamageType,
     entity::EntityType,
     item::Item,
@@ -202,19 +203,25 @@ impl WitherEntity {
         if head == 0 {
             return self.mob_entity.living_entity.entity.pos.load().x;
         }
+        let scale = self
+            .mob_entity
+            .living_entity
+            .get_attribute_value(&Attributes::SCALE) as f32;
         let yaw = self.mob_entity.living_entity.entity.yaw.load();
         let angle = (yaw + 180.0 * (head as f32 - 1.0)).to_radians();
-        self.mob_entity.living_entity.entity.pos.load().x + (angle.cos() as f64) * 1.3
+        self.mob_entity.living_entity.entity.pos.load().x
+            + f64::from(angle.cos()) * 1.3 * f64::from(scale)
     }
 
     #[must_use]
     pub fn get_head_y(&self, head: usize) -> f64 {
         let base_y = self.mob_entity.living_entity.entity.pos.load().y;
-        if head == 0 {
-            base_y + 3.0
-        } else {
-            base_y + 2.2
-        }
+        let scale = self
+            .mob_entity
+            .living_entity
+            .get_attribute_value(&Attributes::SCALE) as f32;
+        let height = if head == 0 { 3.0 } else { 2.2 };
+        base_y + f64::from(height * scale)
     }
 
     #[must_use]
@@ -222,9 +229,14 @@ impl WitherEntity {
         if head == 0 {
             return self.mob_entity.living_entity.entity.pos.load().z;
         }
+        let scale = self
+            .mob_entity
+            .living_entity
+            .get_attribute_value(&Attributes::SCALE) as f32;
         let yaw = self.mob_entity.living_entity.entity.yaw.load();
         let angle = (yaw + 180.0 * (head as f32 - 1.0)).to_radians();
-        self.mob_entity.living_entity.entity.pos.load().z + (angle.sin() as f64) * 1.3
+        self.mob_entity.living_entity.entity.pos.load().z
+            + f64::from(angle.sin()) * 1.3 * f64::from(scale)
     }
 
     pub fn perform_ranged_attack(
