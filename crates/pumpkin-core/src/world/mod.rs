@@ -5579,8 +5579,19 @@ impl World {
     }
 
     pub fn drop_stack(self: &Arc<Self>, pos: &BlockPos, stack: ItemStack) {
+        if let Some(item) = self.create_item_drop(pos, stack) {
+            self.spawn_entity(Arc::new(item));
+        }
+    }
+
+    /// Prepares a drop, including its cancellable spawn event, before spawning it.
+    pub fn create_item_drop(
+        self: &Arc<Self>,
+        pos: &BlockPos,
+        stack: ItemStack,
+    ) -> Option<ItemEntity> {
         if stack.is_empty() {
-            return;
+            return None;
         }
 
         let half_height = f64::from(EntityType::ITEM.dimension[1]) / 2.0;
@@ -5605,11 +5616,10 @@ impl World {
                 .fire_blocking(&server, &mut item_event);
         }
         if item_event.cancelled {
-            return;
+            return None;
         }
 
-        let item_entity = Arc::new(ItemEntity::new(entity, stack));
-        self.spawn_entity(item_entity);
+        Some(ItemEntity::new(entity, stack))
     }
 
     pub fn drop_stack_from_face(

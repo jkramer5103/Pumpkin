@@ -1,0 +1,158 @@
+{
+  "schema_version": 1,
+  "id": "wither-nether-star-lifetime",
+  "title": "Wither nether star ten-minute lifetime",
+  "category": "entities",
+  "description": "A real Wither death drop starts at a negative age. Normalize the one-tick drop scheduling difference, then compare 12000 simulation ticks against an ordinary dropped nether star. Negative-age NBT restoration is also exercised. Tick rate accelerates simulation only; a headless observer stays away from pickup range.",
+  "tags": [
+    "wither",
+    "boss",
+    "loot",
+    "lifetime"
+  ],
+  "setup": [
+    "gamemode creative @a",
+    "difficulty easy",
+    "gamerule mob_griefing false",
+    "gamerule spawn_mobs false",
+    "forceload add 0 0 31 31",
+    "fill 0 79 0 31 79 31 minecraft:bedrock",
+    "tp @a 4 84 4",
+    "scoreboard objectives add pp_life dummy"
+  ],
+  "steps": [
+    {
+      "command": "summon minecraft:wither 24 80 24 {Tags:[\"pp_boss\"],NoAI:1b,Invul:0,Health:300.0f}"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss,nbt={Health:300.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[tag=pp_boss]",
+      "wait_ticks": 2
+    },
+    {
+      "command": "tag @e[type=minecraft:item] add pp_star"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_star,nbt={Item:{id:\"minecraft:nether_star\",count:1}}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "scoreboard players set age pp_life 0"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_star,nbt={Age:-6000s}] run scoreboard players set age pp_life 1"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_star,nbt={Age:-5999s}] run scoreboard players set age pp_life 1"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_star,nbt={Age:-5998s}] run scoreboard players set age pp_life 1"
+    },
+    {
+      "command": "execute if score age pp_life matches 1",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_star,limit=1] {Age:-6000s,Motion:[0.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "summon minecraft:item 18 80 24 {Tags:[\"pp_ordinary\"],Item:{id:\"minecraft:nether_star\",count:1},Age:0s}"
+    },
+    {
+      "command": "tick rate 1000"
+    },
+    {
+      "command": "say PARITY_STAR_CASE=before-five-minutes",
+      "wait_ticks": 5999
+    },
+    {
+      "command": "execute if entity @e[tag=pp_star,nbt={Age:-1s}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_ordinary,nbt={Age:5999s}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "say PARITY_STAR_CASE=five-minutes",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[tag=pp_star,nbt={Age:0s}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute unless entity @e[tag=pp_ordinary]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "say PARITY_STAR_CASE=before-ten-minutes",
+      "wait_ticks": 5999
+    },
+    {
+      "command": "execute if entity @e[tag=pp_star,nbt={Age:5999s}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "say PARITY_STAR_CASE=ten-minutes",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute unless entity @e[tag=pp_star]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "summon minecraft:item 24 80 24 {Tags:[\"pp_restored\"],Item:{id:\"minecraft:nether_star\",count:1},Age:-6000s}"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_restored,nbt={Age:-6000s}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "say PARITY_STAR_CASE=restored-negative-age",
+      "wait_ticks": 2
+    },
+    {
+      "command": "execute if entity @e[tag=pp_restored,nbt={Age:-5998s}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_restored,limit=1] {Age:-6000s}",
+      "wait_ticks": 2
+    },
+    {
+      "command": "execute if entity @e[tag=pp_restored,nbt={Age:-5998s}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute unless entity @e[tag=pp_boss]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @a[gamemode=creative]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    }
+  ],
+  "cleanup": [
+    "tick rate 20",
+    "scoreboard objectives remove pp_life",
+    "kill @e[type=!minecraft:player]"
+  ]
+}

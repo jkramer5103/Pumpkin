@@ -362,6 +362,18 @@ impl WitherEntity {
         }
     }
 
+    fn drop_nether_star(&self) {
+        let entity = &self.mob_entity.living_entity.entity;
+        let world = entity.world.load();
+        if let Some(item) = world.create_item_drop(
+            &entity.block_pos.load(),
+            ItemStack::new(1, &Item::NETHER_STAR),
+        ) {
+            item.set_extended_lifetime();
+            world.spawn_entity(Arc::new(item));
+        }
+    }
+
     fn remove_all_bossbar(&self, world: &Arc<crate::world::World>) {
         let mut bossbar_players = self
             .bossbar_players
@@ -424,8 +436,7 @@ impl WitherEntity {
         if !entity.is_alive() || self.mob_entity.living_entity.health.load() <= 0.0 {
             self.remove_all_bossbar(&world);
             if !self.dropped_loot.swap(true, Ordering::SeqCst) {
-                let pos = entity.block_pos.load();
-                world.drop_stack(&pos, ItemStack::new(1, &Item::NETHER_STAR));
+                self.drop_nether_star();
             }
             return;
         }
@@ -731,8 +742,7 @@ impl Mob for WitherEntity {
             let world = entity.world.load_full();
             self.remove_all_bossbar(&world);
             if !self.dropped_loot.swap(true, Ordering::SeqCst) {
-                let pos = entity.get_entity().block_pos.load();
-                world.drop_stack(&pos, ItemStack::new(1, &Item::NETHER_STAR));
+                self.drop_nether_star();
             }
         }
     }

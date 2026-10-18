@@ -25,7 +25,7 @@ use std::sync::atomic::Ordering::{AcqRel, Relaxed};
 use std::sync::{
     Arc, Mutex,
     atomic::{
-        AtomicBool, AtomicU8, AtomicU32,
+        AtomicBool, AtomicI32, AtomicU8,
         Ordering::{self},
     },
 };
@@ -34,7 +34,7 @@ use super::{Entity, EntityBase, living::LivingEntity, player::Player};
 
 pub struct ItemEntity {
     entity: Entity,
-    item_age: AtomicU32,
+    item_age: AtomicI32,
     // These cannot be atomic values because we mutate their state based on what they are; we run
     // into the ABA problem
     item_stack: Mutex<ItemStack>,
@@ -85,7 +85,7 @@ impl Drop for ItemMergeReservation<'_> {
 }
 
 /// Vanilla `ItemEntity.LIFETIME`.
-const LIFETIME: u32 = 6000; // 5 minutes in ticks
+const LIFETIME: i32 = 6000; // 5 minutes in ticks
 /// Vanilla `ItemEntity.merge(to, from, 64)`: cap on top of `getMaxStackSize`.
 const MERGE_MAX_COUNT: u8 = 64;
 
@@ -104,7 +104,7 @@ impl ItemEntity {
         Self {
             entity,
             item_stack: Mutex::new(item_stack),
-            item_age: AtomicU32::new(0),
+            item_age: AtomicI32::new(0),
             pickup_delay: AtomicU8::new(Self::DEFAULT_PICKUP_DELAY),
             health: AtomicF32::new(5.0),
             never_despawn: AtomicBool::new(false),
@@ -126,7 +126,7 @@ impl ItemEntity {
         Self {
             entity,
             item_stack: Mutex::new(item_stack),
-            item_age: AtomicU32::new(0),
+            item_age: AtomicI32::new(0),
             pickup_delay: AtomicU8::new(pickup_delay), // Vanilla pickup delay is 10 ticks
             health: AtomicF32::new(5.0),
             never_despawn: AtomicBool::new(false),
@@ -141,13 +141,18 @@ impl ItemEntity {
         Self {
             entity,
             item_stack: Mutex::new(ItemStack::new(1, &pumpkin_data::item::Item::AIR)),
-            item_age: AtomicU32::new(0),
+            item_age: AtomicI32::new(0),
             pickup_delay: AtomicU8::new(0),
             health: AtomicF32::new(5.0),
             never_despawn: AtomicBool::new(false),
             never_pickup: AtomicBool::new(false),
             merge_reserved: AtomicBool::new(false),
         }
+    }
+
+    /// Vanilla `ItemEntity.setExtendedLifetime` gives boss drops ten minutes.
+    pub fn set_extended_lifetime(&self) {
+        self.item_age.store(-LIFETIME, Ordering::Relaxed);
     }
 
     pub const fn get_item_stack(&self) -> &Mutex<ItemStack> {
@@ -788,8 +793,10 @@ impl EntityBase for ItemEntity {
         }
 
         // Vanilla stores Age as a short
-        self.item_age
-            .store(nbt.get_short("Age").unwrap_or(0) as u32, Ordering::Relaxed);
+        self.item_age.store(
+            i32::from(nbt.get_short("Age").unwrap_or(0)),
+            Ordering::Relaxed,
+        );
 
         // Vanilla stores PickupDelay as a short
         if let Some(delay) = nbt.get_short("PickupDelay") {
