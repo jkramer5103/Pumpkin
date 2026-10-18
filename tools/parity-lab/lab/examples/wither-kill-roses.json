@@ -1,0 +1,557 @@
+{
+  "schema_version": 1,
+  "id": "wither-kill-roses",
+  "title": "Wither kill-credit roses",
+  "category": "entities",
+  "description": "A Wither kill plants a rose on suitable ground or drops one at the victim position, independently of mob_drops.",
+  "tags": [
+    "entity",
+    "wither",
+    "combat"
+  ],
+  "setup": [
+    "tick freeze",
+    "gamemode creative @a",
+    "difficulty easy",
+    "gamerule spawn_mobs false",
+    "forceload add 0 0 31 31",
+    "fill 0 79 0 31 79 31 minecraft:bedrock",
+    "fill 0 80 0 31 94 31 minecraft:air",
+    "tp @a 16.5 84 16.5",
+    "scoreboard objectives add pp_rose_count dummy"
+  ],
+  "steps": [
+    {
+      "command": "say PARITY_ROSE_CASE=plant"
+    },
+    {
+      "command": "kill @e[type=!minecraft:player]",
+      "wait_ticks": 25
+    },
+    {
+      "command": "setblock 20 79 20 minecraft:dirt"
+    },
+    {
+      "command": "setblock 20 80 20 minecraft:air"
+    },
+    {
+      "command": "gamerule mob_griefing true"
+    },
+    {
+      "command": "gamerule mob_drops true"
+    },
+    {
+      "command": "kill @e[type=minecraft:item]"
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:item,nbt={Item:{id:\"minecraft:wither_rose\"}}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "summon minecraft:wither 4.5 80 8.5 {Tags:[\"pp_killer\"],NoAI:1b,NoGravity:1b}"
+    },
+    {
+      "command": "summon minecraft:cow 20.5 80 20.5 {Tags:[\"pp_victim\"],NoAI:1b,NoGravity:1b,Health:10.0f}"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_victim,nbt={Health:10.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "damage @e[tag=pp_victim,limit=1] 20 minecraft:mob_attack by @e[tag=pp_killer,limit=1]"
+    },
+    {
+      "command": "execute unless entity @e[tag=pp_victim,nbt=!{Health:0.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 20 80 20 minecraft:wither_rose",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:item,nbt={Item:{id:\"minecraft:wither_rose\"}}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "say PARITY_ROSE_CASE=plant-no-loot"
+    },
+    {
+      "command": "kill @e[type=!minecraft:player]",
+      "wait_ticks": 25
+    },
+    {
+      "command": "setblock 20 79 20 minecraft:soul_soil"
+    },
+    {
+      "command": "setblock 20 80 20 minecraft:air"
+    },
+    {
+      "command": "gamerule mob_griefing true"
+    },
+    {
+      "command": "gamerule mob_drops false"
+    },
+    {
+      "command": "kill @e[type=minecraft:item]"
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:item,nbt={Item:{id:\"minecraft:wither_rose\"}}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "summon minecraft:wither 4.5 80 8.5 {Tags:[\"pp_killer\"],NoAI:1b,NoGravity:1b}"
+    },
+    {
+      "command": "summon minecraft:cow 20.5 80 20.5 {Tags:[\"pp_victim\"],NoAI:1b,NoGravity:1b,Health:10.0f}"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_victim,nbt={Health:10.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "damage @e[tag=pp_victim,limit=1] 20 minecraft:mob_attack by @e[tag=pp_killer,limit=1]"
+    },
+    {
+      "command": "execute unless entity @e[tag=pp_victim,nbt=!{Health:0.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 20 80 20 minecraft:wither_rose",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:item,nbt={Item:{id:\"minecraft:wither_rose\"}}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "say PARITY_ROSE_CASE=unsupported"
+    },
+    {
+      "command": "kill @e[type=!minecraft:player]",
+      "wait_ticks": 25
+    },
+    {
+      "command": "setblock 20 79 20 minecraft:bedrock"
+    },
+    {
+      "command": "setblock 20 80 20 minecraft:air"
+    },
+    {
+      "command": "gamerule mob_griefing true"
+    },
+    {
+      "command": "gamerule mob_drops true"
+    },
+    {
+      "command": "kill @e[type=minecraft:item]"
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:item,nbt={Item:{id:\"minecraft:wither_rose\"}}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "summon minecraft:wither 4.5 80 8.5 {Tags:[\"pp_killer\"],NoAI:1b,NoGravity:1b}"
+    },
+    {
+      "command": "summon minecraft:cow 20.5 80 20.5 {Tags:[\"pp_victim\"],NoAI:1b,NoGravity:1b,Health:10.0f}"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_victim,nbt={Health:10.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "damage @e[tag=pp_victim,limit=1] 20 minecraft:mob_attack by @e[tag=pp_killer,limit=1]"
+    },
+    {
+      "command": "execute unless entity @e[tag=pp_victim,nbt=!{Health:0.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 20 80 20 minecraft:air",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:item,nbt={Item:{id:\"minecraft:wither_rose\"}}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:item,x=20.5,y=80,z=20.5,distance=..0.01,nbt={Item:{id:\"minecraft:wither_rose\",count:1},Age:0s,PickupDelay:0s}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "damage @e[tag=pp_victim,limit=1] 20 minecraft:mob_attack by @e[tag=pp_killer,limit=1]"
+    },
+    {
+      "command": "scoreboard players set roses pp_rose_count 0"
+    },
+    {
+      "command": "execute as @e[type=minecraft:item,nbt={Item:{id:\"minecraft:wither_rose\"}}] run scoreboard players add roses pp_rose_count 1"
+    },
+    {
+      "command": "execute if score roses pp_rose_count matches 1",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "say PARITY_ROSE_CASE=occupied"
+    },
+    {
+      "command": "kill @e[type=!minecraft:player]",
+      "wait_ticks": 25
+    },
+    {
+      "command": "setblock 20 79 20 minecraft:dirt"
+    },
+    {
+      "command": "setblock 20 80 20 minecraft:water"
+    },
+    {
+      "command": "gamerule mob_griefing true"
+    },
+    {
+      "command": "gamerule mob_drops true"
+    },
+    {
+      "command": "kill @e[type=minecraft:item]"
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:item,nbt={Item:{id:\"minecraft:wither_rose\"}}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "summon minecraft:wither 4.5 80 8.5 {Tags:[\"pp_killer\"],NoAI:1b,NoGravity:1b}"
+    },
+    {
+      "command": "summon minecraft:cow 20.5 80 20.5 {Tags:[\"pp_victim\"],NoAI:1b,NoGravity:1b,Health:10.0f}"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_victim,nbt={Health:10.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "damage @e[tag=pp_victim,limit=1] 20 minecraft:mob_attack by @e[tag=pp_killer,limit=1]"
+    },
+    {
+      "command": "execute unless entity @e[tag=pp_victim,nbt=!{Health:0.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 20 80 20 minecraft:water",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:item,nbt={Item:{id:\"minecraft:wither_rose\"}}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:item,x=20.5,y=80,z=20.5,distance=..0.01,nbt={Item:{id:\"minecraft:wither_rose\",count:1},Age:0s,PickupDelay:0s}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "damage @e[tag=pp_victim,limit=1] 20 minecraft:mob_attack by @e[tag=pp_killer,limit=1]"
+    },
+    {
+      "command": "scoreboard players set roses pp_rose_count 0"
+    },
+    {
+      "command": "execute as @e[type=minecraft:item,nbt={Item:{id:\"minecraft:wither_rose\"}}] run scoreboard players add roses pp_rose_count 1"
+    },
+    {
+      "command": "execute if score roses pp_rose_count matches 1",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "say PARITY_ROSE_CASE=no-grief"
+    },
+    {
+      "command": "kill @e[type=!minecraft:player]",
+      "wait_ticks": 25
+    },
+    {
+      "command": "setblock 20 79 20 minecraft:dirt"
+    },
+    {
+      "command": "setblock 20 80 20 minecraft:air"
+    },
+    {
+      "command": "gamerule mob_griefing false"
+    },
+    {
+      "command": "gamerule mob_drops true"
+    },
+    {
+      "command": "kill @e[type=minecraft:item]"
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:item,nbt={Item:{id:\"minecraft:wither_rose\"}}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "summon minecraft:wither 4.5 80 8.5 {Tags:[\"pp_killer\"],NoAI:1b,NoGravity:1b}"
+    },
+    {
+      "command": "summon minecraft:cow 20.5 80 20.5 {Tags:[\"pp_victim\"],NoAI:1b,NoGravity:1b,Health:10.0f}"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_victim,nbt={Health:10.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "damage @e[tag=pp_victim,limit=1] 20 minecraft:mob_attack by @e[tag=pp_killer,limit=1]"
+    },
+    {
+      "command": "execute unless entity @e[tag=pp_victim,nbt=!{Health:0.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 20 80 20 minecraft:air",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:item,nbt={Item:{id:\"minecraft:wither_rose\"}}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:item,x=20.5,y=80,z=20.5,distance=..0.01,nbt={Item:{id:\"minecraft:wither_rose\",count:1},Age:0s,PickupDelay:0s}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "damage @e[tag=pp_victim,limit=1] 20 minecraft:mob_attack by @e[tag=pp_killer,limit=1]"
+    },
+    {
+      "command": "scoreboard players set roses pp_rose_count 0"
+    },
+    {
+      "command": "execute as @e[type=minecraft:item,nbt={Item:{id:\"minecraft:wither_rose\"}}] run scoreboard players add roses pp_rose_count 1"
+    },
+    {
+      "command": "execute if score roses pp_rose_count matches 1",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "say PARITY_ROSE_CASE=no-rules"
+    },
+    {
+      "command": "kill @e[type=!minecraft:player]",
+      "wait_ticks": 25
+    },
+    {
+      "command": "setblock 20 79 20 minecraft:dirt"
+    },
+    {
+      "command": "setblock 20 80 20 minecraft:air"
+    },
+    {
+      "command": "gamerule mob_griefing false"
+    },
+    {
+      "command": "gamerule mob_drops false"
+    },
+    {
+      "command": "kill @e[type=minecraft:item]"
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:item,nbt={Item:{id:\"minecraft:wither_rose\"}}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "summon minecraft:wither 4.5 80 8.5 {Tags:[\"pp_killer\"],NoAI:1b,NoGravity:1b}"
+    },
+    {
+      "command": "summon minecraft:cow 20.5 80 20.5 {Tags:[\"pp_victim\"],NoAI:1b,NoGravity:1b,Health:10.0f}"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_victim,nbt={Health:10.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "damage @e[tag=pp_victim,limit=1] 20 minecraft:mob_attack by @e[tag=pp_killer,limit=1]"
+    },
+    {
+      "command": "execute unless entity @e[tag=pp_victim,nbt=!{Health:0.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 20 80 20 minecraft:air",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:item,nbt={Item:{id:\"minecraft:wither_rose\"}}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:item,x=20.5,y=80,z=20.5,distance=..0.01,nbt={Item:{id:\"minecraft:wither_rose\",count:1},Age:0s,PickupDelay:0s}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "damage @e[tag=pp_victim,limit=1] 20 minecraft:mob_attack by @e[tag=pp_killer,limit=1]"
+    },
+    {
+      "command": "scoreboard players set roses pp_rose_count 0"
+    },
+    {
+      "command": "execute as @e[type=minecraft:item,nbt={Item:{id:\"minecraft:wither_rose\"}}] run scoreboard players add roses pp_rose_count 1"
+    },
+    {
+      "command": "execute if score roses pp_rose_count matches 1",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "say PARITY_ROSE_CASE=other-killer"
+    },
+    {
+      "command": "kill @e[type=!minecraft:player]",
+      "wait_ticks": 25
+    },
+    {
+      "command": "setblock 20 79 20 minecraft:dirt"
+    },
+    {
+      "command": "setblock 20 80 20 minecraft:air"
+    },
+    {
+      "command": "gamerule mob_griefing true"
+    },
+    {
+      "command": "gamerule mob_drops true"
+    },
+    {
+      "command": "kill @e[type=minecraft:item]"
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:item,nbt={Item:{id:\"minecraft:wither_rose\"}}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "summon minecraft:zombie 4.5 80 8.5 {Tags:[\"pp_killer\"],NoAI:1b,NoGravity:1b}"
+    },
+    {
+      "command": "summon minecraft:cow 20.5 80 20.5 {Tags:[\"pp_victim\"],NoAI:1b,NoGravity:1b,Health:10.0f}"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_victim,nbt={Health:10.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "damage @e[tag=pp_victim,limit=1] 20 minecraft:mob_attack by @e[tag=pp_killer,limit=1]"
+    },
+    {
+      "command": "execute unless entity @e[tag=pp_victim,nbt=!{Health:0.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 20 80 20 minecraft:air",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:item,nbt={Item:{id:\"minecraft:wither_rose\"}}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "say PARITY_ROSE_CASE=survivor"
+    },
+    {
+      "command": "kill @e[type=!minecraft:player]",
+      "wait_ticks": 25
+    },
+    {
+      "command": "setblock 20 79 20 minecraft:dirt"
+    },
+    {
+      "command": "setblock 20 80 20 minecraft:air"
+    },
+    {
+      "command": "gamerule mob_griefing true"
+    },
+    {
+      "command": "gamerule mob_drops true"
+    },
+    {
+      "command": "kill @e[type=minecraft:item]"
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:item,nbt={Item:{id:\"minecraft:wither_rose\"}}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "summon minecraft:wither 4.5 80 8.5 {Tags:[\"pp_killer\"],NoAI:1b,NoGravity:1b}"
+    },
+    {
+      "command": "summon minecraft:cow 20.5 80 20.5 {Tags:[\"pp_victim\"],NoAI:1b,NoGravity:1b,Health:10.0f}"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_victim,nbt={Health:10.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "damage @e[tag=pp_victim,limit=1] 1 minecraft:mob_attack by @e[tag=pp_killer,limit=1]"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_victim,nbt={Health:9.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 20 80 20 minecraft:air",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:item,nbt={Item:{id:\"minecraft:wither_rose\"}}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    }
+  ],
+  "cleanup": [
+    "kill @e[type=!minecraft:player]",
+    "setblock 20 80 20 minecraft:air",
+    "gamerule mob_drops true",
+    "gamerule mob_griefing false",
+    "scoreboard objectives remove pp_rose_count"
+  ],
+  "notes": "Frozen immediately after credited damage to inspect placement and exact fallback item origin before movement/merging. Includes unsupported and occupied positions, independent gamerule controls, a non-Wither killer and a surviving victim. A separate naturally owned-skull splash probe covers gameplay attribution; direct-hit attribution remains upstream PR3835 scope. Each case clears items after changing the support block, because removing support can drop the previous planted rose."
+}

@@ -31,6 +31,7 @@ use crate::entity::attributes::AttributeInstance;
 use crate::entity::attributes::Modifier;
 use crate::entity::attributes::ModifierOperation;
 use crate::entity::combat::{CombatRules, CombatTracker, FallLocation, knockback_after_resistance};
+use crate::entity::item::ItemEntity;
 use crate::entity::mob::equipment::DEFAULT_EQUIPMENT_DROP_CHANCE;
 use crate::entity::player::statistics::{CustomStatistic, StatisticCategory};
 use crate::server::Server;
@@ -67,6 +68,7 @@ use pumpkin_protocol::{
 use pumpkin_util::math::boundingbox::BoundingBox;
 use pumpkin_util::math::vector3::Vector3;
 use pumpkin_util::text::TextComponent;
+use pumpkin_world::world::BlockFlags;
 use rand::RngExt;
 use std::sync::RwLock;
 
@@ -2103,6 +2105,7 @@ impl LivingEntity {
             self.entity.pose.store(EntityPose::Dying);
 
             self.drop_equipment(looting_level);
+            self.create_wither_rose(kill_credit.as_deref());
 
             // Broadcast death message if it's a player and the gamerule is enabled
             self.broadcast_death_message(&*dyn_self, damage_type, source, cause);
@@ -2125,6 +2128,50 @@ impl LivingEntity {
             }
 
             self.reset_effects_and_attributes();
+        }
+    }
+
+    fn create_wither_rose(&self, killer: Option<&dyn EntityBase>) {
+        if killer.is_none_or(|killer| killer.get_entity().entity_type != &EntityType::WITHER) {
+            return;
+        }
+
+        let world = self.entity.world.load();
+        let pos = self.entity.block_pos.load();
+        let state = Block::WITHER_ROSE.default_state;
+        if world.level_info.load().game_rules.mob_griefing
+            && world.get_block_state(&pos).is_air()
+            && world.block_registry.can_place_at(
+                None,
+                Some(&**world),
+                &**world,
+                None,
+                &Block::WITHER_ROSE,
+                state,
+                &pos,
+                None,
+                None,
+            )
+        {
+            world.set_block_state(&pos, state.id, BlockFlags::NOTIFY_ALL);
+            return;
+        }
+
+        // Vanilla creates the fallback at the victim's position, even with mob_drops off.
+        let position = self.entity.pos.load();
+        let entity = Entity::new(world.clone(), position, &EntityType::ITEM);
+        let mut event = crate::plugin::api::events::entity::item_spawn::ItemSpawnEvent::new(
+            entity.entity_id,
+            position,
+            Item::WITHER_ROSE.registry_key.to_string(),
+        );
+        if let Some(server) = world.server.upgrade() {
+            server.plugin_manager.fire_blocking(&server, &mut event);
+        }
+        if !event.cancelled {
+            let item = ItemEntity::new(entity, ItemStack::new(1, &Item::WITHER_ROSE));
+            item.set_pickup_delay(0);
+            world.spawn_entity(Arc::new(item));
         }
     }
 
