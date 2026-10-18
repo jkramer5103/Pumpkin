@@ -8,11 +8,30 @@ use pumpkin_util::math::vector3::Vector3;
 
 const WARMUP_TIME: i32 = 10;
 const FLAME_DURATION: i32 = 200;
+const SITTING_FLAME_ATTACKS_COUNT: i32 = 4;
 const FLAME_RADIUS: f64 = 5.0;
 
 pub struct SitBreathingPhase;
 
 impl SitBreathingPhase {
+    const fn next_phase(flame_ticks: i32, flame_count: i32) -> Option<EnderDragonPhase> {
+        if flame_ticks < FLAME_DURATION {
+            return None;
+        }
+        Some(if flame_count >= SITTING_FLAME_ATTACKS_COUNT {
+            EnderDragonPhase::TakingOff
+        } else {
+            EnderDragonPhase::SitScanning
+        })
+    }
+
+    pub fn reset_flame_count(dragon: &EnderDragonEntity) {
+        *dragon
+            .flame_count
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner) = 0;
+    }
+
     fn flame_position(
         dragon_pos: Vector3<f64>,
         head_pos: Vector3<f64>,
@@ -52,6 +71,10 @@ impl super::Phase for SitBreathingPhase {
             .lock()
             .unwrap_or_else(std::sync::PoisonError::into_inner) = 0;
         *dragon
+            .flame_count
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner) += 1;
+        *dragon
             .target_location
             .lock()
             .unwrap_or_else(std::sync::PoisonError::into_inner) = None;
@@ -83,10 +106,14 @@ impl super::Phase for SitBreathingPhase {
             .unwrap_or_else(std::sync::PoisonError::into_inner);
         *timer += 1;
 
-        if *timer >= FLAME_DURATION {
+        let flame_count = *dragon
+            .flame_count
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner);
+        if let Some(next_phase) = Self::next_phase(*timer, flame_count) {
             *timer = 0;
             drop(timer);
-            dragon.set_phase(EnderDragonPhase::SitScanning);
+            dragon.set_phase(next_phase);
             return;
         }
         drop(timer);
@@ -146,8 +173,22 @@ impl super::Phase for SitBreathingPhase {
 
 #[cfg(test)]
 mod tests {
-    use super::SitBreathingPhase;
+    use super::{EnderDragonPhase, SitBreathingPhase};
     use pumpkin_util::math::{position::BlockPos, vector3::Vector3};
+
+    #[test]
+    fn fourth_flame_takes_off_only_at_its_completion() {
+        for (count, next_phase) in [
+            (1, EnderDragonPhase::SitScanning),
+            (2, EnderDragonPhase::SitScanning),
+            (3, EnderDragonPhase::SitScanning),
+            (4, EnderDragonPhase::TakingOff),
+            (5, EnderDragonPhase::TakingOff),
+        ] {
+            assert_eq!(SitBreathingPhase::next_phase(199, count), None);
+            assert_eq!(SitBreathingPhase::next_phase(200, count), Some(next_phase));
+        }
+    }
 
     #[test]
     fn flame_is_ahead_of_head_and_above_first_non_air_block() {

@@ -1,4 +1,4 @@
-use super::EnderDragonPhase;
+use super::{EnderDragonPhase, SitBreathingPhase};
 use crate::entity::boss::ender_dragon::EnderDragonEntity;
 
 pub struct LandingPhase;
@@ -16,6 +16,7 @@ impl super::Phase for LandingPhase {
     }
 
     fn tick(&self, dragon: &EnderDragonEntity) {
+        SitBreathingPhase::reset_flame_count(dragon);
         dragon.set_phase(EnderDragonPhase::SitScanning);
         *dragon
             .ticks_sitting

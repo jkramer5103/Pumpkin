@@ -1,0 +1,365 @@
+{
+  "schema_version": 1,
+  "id": "dragon-four-flame-limit",
+  "title": "Fourth perched flame ends with takeoff and landing resets the attack budget",
+  "description": "Two isolated trials. Three complete flames return to scanning; the fourth remains flaming at199 and takes off at200. A second dragon retains its own first-flame budget. A podium landing restores the first dragon budget. Creative observer, persistent dragons, controlled ticks. No takeoff trajectory or full landing flight claim.",
+  "category": "entity",
+  "tags": [
+    "ender-dragon",
+    "ai"
+  ],
+  "setup": [
+    "tick freeze",
+    "difficulty normal",
+    "gamerule spawn_mobs false",
+    "gamerule mob_griefing false",
+    "forceload add -48 -48 47 47",
+    "gamemode creative ParitySmoke",
+    "tp ParitySmoke 20 80 20"
+  ],
+  "steps": [
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "kill @e[type=minecraft:area_effect_cloud]"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.5 100.0 0.5 {NoGravity:1b,PersistenceRequired:1b,DragonPhase:5,Tags:[\"flame_limit\"]}"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=flame_limit,limit=1] {DragonPhase:5}",
+      "wait_ticks": 199
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=flame_limit,nbt={DragonPhase:5}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "time query gametime",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=flame_limit,nbt={DragonPhase:6}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:area_effect_cloud]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=flame_limit,limit=1] {DragonPhase:5}"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=flame_limit,limit=1] {DragonPhase:5}",
+      "wait_ticks": 199
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=flame_limit,nbt={DragonPhase:5}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "time query gametime",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=flame_limit,nbt={DragonPhase:6}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:area_effect_cloud]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=flame_limit,limit=1] {DragonPhase:5}"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=flame_limit,limit=1] {DragonPhase:5}",
+      "wait_ticks": 199
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=flame_limit,nbt={DragonPhase:5}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "time query gametime",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=flame_limit,nbt={DragonPhase:6}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:area_effect_cloud]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=flame_limit,limit=1] {DragonPhase:5}"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=flame_limit,limit=1] {DragonPhase:5}",
+      "wait_ticks": 199
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=flame_limit,nbt={DragonPhase:5}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=flame_limit,limit=1] {NoAI:1b}",
+      "wait_ticks": 3
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=flame_limit,nbt={DragonPhase:5}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=flame_limit,limit=1] {NoAI:0b}"
+    },
+    {
+      "command": "time query gametime",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=flame_limit,nbt={DragonPhase:4}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:area_effect_cloud]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=flame_limit,limit=1] {NoAI:1b}"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 24.5 100.0 0.5 {NoGravity:1b,PersistenceRequired:1b,DragonPhase:5,Tags:[\"independent_flame\"]}",
+      "wait_ticks": 200
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=independent_flame,nbt={DragonPhase:6}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=independent_flame,limit=1] {NoAI:1b}"
+    },
+    {
+      "command": "setblock 0 99 0 minecraft:stone"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=flame_limit] 0.5 100.0 0.5"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=flame_limit,limit=1] {NoAI:0b,DragonPhase:3}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=flame_limit,nbt={DragonPhase:6}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=flame_limit,limit=1] {DragonPhase:5}",
+      "wait_ticks": 200
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=flame_limit,nbt={DragonPhase:6}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=flame_limit,nbt={PersistenceRequired:1b}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "setblock 0 99 0 minecraft:air"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "kill @e[type=minecraft:area_effect_cloud]"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.5 100.0 0.5 {NoGravity:1b,PersistenceRequired:1b,DragonPhase:5,Tags:[\"flame_limit\"]}"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=flame_limit,limit=1] {DragonPhase:5}",
+      "wait_ticks": 199
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=flame_limit,nbt={DragonPhase:5}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "time query gametime",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=flame_limit,nbt={DragonPhase:6}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:area_effect_cloud]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=flame_limit,limit=1] {DragonPhase:5}"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=flame_limit,limit=1] {DragonPhase:5}",
+      "wait_ticks": 199
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=flame_limit,nbt={DragonPhase:5}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "time query gametime",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=flame_limit,nbt={DragonPhase:6}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:area_effect_cloud]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=flame_limit,limit=1] {DragonPhase:5}"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=flame_limit,limit=1] {DragonPhase:5}",
+      "wait_ticks": 199
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=flame_limit,nbt={DragonPhase:5}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "time query gametime",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=flame_limit,nbt={DragonPhase:6}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:area_effect_cloud]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=flame_limit,limit=1] {DragonPhase:5}"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=flame_limit,limit=1] {DragonPhase:5}",
+      "wait_ticks": 199
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=flame_limit,nbt={DragonPhase:5}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=flame_limit,limit=1] {NoAI:1b}",
+      "wait_ticks": 3
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=flame_limit,nbt={DragonPhase:5}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=flame_limit,limit=1] {NoAI:0b}"
+    },
+    {
+      "command": "time query gametime",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=flame_limit,nbt={DragonPhase:4}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:area_effect_cloud]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=flame_limit,limit=1] {NoAI:1b}"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 24.5 100.0 0.5 {NoGravity:1b,PersistenceRequired:1b,DragonPhase:5,Tags:[\"independent_flame\"]}",
+      "wait_ticks": 200
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=independent_flame,nbt={DragonPhase:6}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=independent_flame,limit=1] {NoAI:1b}"
+    },
+    {
+      "command": "setblock 0 99 0 minecraft:stone"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=flame_limit] 0.5 100.0 0.5"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=flame_limit,limit=1] {NoAI:0b,DragonPhase:3}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=flame_limit,nbt={DragonPhase:6}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=flame_limit,limit=1] {DragonPhase:5}",
+      "wait_ticks": 200
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=flame_limit,nbt={DragonPhase:6}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=flame_limit,nbt={PersistenceRequired:1b}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "setblock 0 99 0 minecraft:air"
+    }
+  ],
+  "cleanup": [
+    "kill @e[type=minecraft:ender_dragon]",
+    "kill @e[type=minecraft:area_effect_cloud]",
+    "setblock 0 99 0 minecraft:air"
+  ]
+}
