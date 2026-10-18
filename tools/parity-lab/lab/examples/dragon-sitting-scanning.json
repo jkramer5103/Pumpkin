@@ -1,0 +1,606 @@
+{
+  "schema_version": 1,
+  "id": "dragon-sitting-scanning",
+  "title": "Sitting dragon scans, roars at close players and takes off without one",
+  "description": "Two isolated trials cover phase6 restoration, close-player turn and roar at26, creative/spectator exclusion, horizontal and vertical scan bounds, distant charge selection and NoAI pause at the100tick idle deadline. Headless state checks; natural landing and the later charge trajectory are outside this fixture.",
+  "category": "entity",
+  "tags": [
+    "ender-dragon",
+    "ai"
+  ],
+  "setup": [
+    "tick freeze",
+    "difficulty normal",
+    "gamerule spawn_mobs false",
+    "gamerule mob_griefing false",
+    "forceload add -48 -48 47 47",
+    "gamemode creative ParitySmoke",
+    "tp ParitySmoke 20 80 20"
+  ],
+  "steps": [
+    {
+      "command": "gamemode creative ParitySmoke"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "kill @e[type=minecraft:area_effect_cloud]"
+    },
+    {
+      "command": "tp ParitySmoke 15.5 100 0.5"
+    },
+    {
+      "command": "gamemode creative ParitySmoke"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.5 100.0 0.5 {Silent:1b,NoGravity:1b,PersistenceRequired:1b,DragonPhase:6,Tags:[\"scan_dragon\"]}"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=scan_dragon,nbt={DragonPhase:6}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "time query gametime",
+      "wait_ticks": 99
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=scan_dragon,nbt={DragonPhase:6}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "time query gametime",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=scan_dragon,nbt={DragonPhase:4}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "gamemode creative ParitySmoke"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "kill @e[type=minecraft:area_effect_cloud]"
+    },
+    {
+      "command": "tp ParitySmoke 15.5 100 0.5"
+    },
+    {
+      "command": "gamemode survival ParitySmoke"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.5 100.0 0.5 {Silent:1b,NoGravity:1b,PersistenceRequired:1b,DragonPhase:6,Tags:[\"scan_dragon\"]}"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=scan_dragon,nbt={DragonPhase:6}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "time query gametime",
+      "wait_ticks": 25
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=scan_dragon,nbt={DragonPhase:6}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=scan_dragon,y_rotation=0.1..90]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "time query gametime",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=scan_dragon,nbt={DragonPhase:7}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "time query gametime",
+      "wait_ticks": 40
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=scan_dragon,nbt={DragonPhase:5}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "gamemode creative ParitySmoke"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "kill @e[type=minecraft:area_effect_cloud]"
+    },
+    {
+      "command": "tp ParitySmoke 15.5 100 0.5"
+    },
+    {
+      "command": "gamemode spectator ParitySmoke"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.5 100.0 0.5 {Silent:1b,NoGravity:1b,PersistenceRequired:1b,DragonPhase:6,Tags:[\"scan_dragon\"]}"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=scan_dragon,nbt={DragonPhase:6}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "time query gametime",
+      "wait_ticks": 26
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=scan_dragon,nbt={DragonPhase:6}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "gamemode creative ParitySmoke"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "kill @e[type=minecraft:area_effect_cloud]"
+    },
+    {
+      "command": "tp ParitySmoke 20.6 100 0.5"
+    },
+    {
+      "command": "gamemode survival ParitySmoke"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.5 100.0 0.5 {Silent:1b,NoGravity:1b,PersistenceRequired:1b,DragonPhase:6,Tags:[\"scan_dragon\"]}"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=scan_dragon,nbt={DragonPhase:6}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "time query gametime",
+      "wait_ticks": 26
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=scan_dragon,nbt={DragonPhase:6}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "time query gametime",
+      "wait_ticks": 74
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=scan_dragon,nbt={DragonPhase:8}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "gamemode creative ParitySmoke"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "kill @e[type=minecraft:area_effect_cloud]"
+    },
+    {
+      "command": "tp ParitySmoke 15.5 110.1 0.5"
+    },
+    {
+      "command": "gamemode survival ParitySmoke"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.5 100.0 0.5 {Silent:1b,NoGravity:1b,PersistenceRequired:1b,DragonPhase:6,Tags:[\"scan_dragon\"]}"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=scan_dragon,nbt={DragonPhase:6}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "time query gametime",
+      "wait_ticks": 26
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=scan_dragon,nbt={DragonPhase:6}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "gamemode creative ParitySmoke"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "kill @e[type=minecraft:area_effect_cloud]"
+    },
+    {
+      "command": "tp ParitySmoke 15.5 110 0.5"
+    },
+    {
+      "command": "gamemode survival ParitySmoke"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.5 100.0 0.5 {Silent:1b,NoGravity:1b,PersistenceRequired:1b,DragonPhase:6,Tags:[\"scan_dragon\"]}"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=scan_dragon,nbt={DragonPhase:6}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "time query gametime",
+      "wait_ticks": 26
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=scan_dragon,nbt={DragonPhase:7}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "gamemode creative ParitySmoke"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "kill @e[type=minecraft:area_effect_cloud]"
+    },
+    {
+      "command": "tp ParitySmoke 15.5 100 0.5"
+    },
+    {
+      "command": "gamemode creative ParitySmoke"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.5 100.0 0.5 {Silent:1b,NoGravity:1b,PersistenceRequired:1b,DragonPhase:6,Tags:[\"scan_dragon\"]}"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=scan_dragon,nbt={DragonPhase:6}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "time query gametime",
+      "wait_ticks": 99
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=scan_dragon,nbt={DragonPhase:6}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=scan_dragon,limit=1] {NoAI:1b}",
+      "wait_ticks": 30
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=scan_dragon,nbt={DragonPhase:6}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=scan_dragon,limit=1] {NoAI:0b}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=scan_dragon,nbt={DragonPhase:4}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "gamemode creative ParitySmoke"
+    },
+    {
+      "command": "tp ParitySmoke 20 80 20"
+    },
+    {
+      "command": "gamemode creative ParitySmoke"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "kill @e[type=minecraft:area_effect_cloud]"
+    },
+    {
+      "command": "tp ParitySmoke 15.5 100 0.5"
+    },
+    {
+      "command": "gamemode creative ParitySmoke"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.5 100.0 0.5 {Silent:1b,NoGravity:1b,PersistenceRequired:1b,DragonPhase:6,Tags:[\"scan_dragon\"]}"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=scan_dragon,nbt={DragonPhase:6}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "time query gametime",
+      "wait_ticks": 99
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=scan_dragon,nbt={DragonPhase:6}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "time query gametime",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=scan_dragon,nbt={DragonPhase:4}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "gamemode creative ParitySmoke"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "kill @e[type=minecraft:area_effect_cloud]"
+    },
+    {
+      "command": "tp ParitySmoke 15.5 100 0.5"
+    },
+    {
+      "command": "gamemode survival ParitySmoke"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.5 100.0 0.5 {Silent:1b,NoGravity:1b,PersistenceRequired:1b,DragonPhase:6,Tags:[\"scan_dragon\"]}"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=scan_dragon,nbt={DragonPhase:6}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "time query gametime",
+      "wait_ticks": 25
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=scan_dragon,nbt={DragonPhase:6}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=scan_dragon,y_rotation=0.1..90]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "time query gametime",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=scan_dragon,nbt={DragonPhase:7}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "time query gametime",
+      "wait_ticks": 40
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=scan_dragon,nbt={DragonPhase:5}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "gamemode creative ParitySmoke"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "kill @e[type=minecraft:area_effect_cloud]"
+    },
+    {
+      "command": "tp ParitySmoke 15.5 100 0.5"
+    },
+    {
+      "command": "gamemode spectator ParitySmoke"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.5 100.0 0.5 {Silent:1b,NoGravity:1b,PersistenceRequired:1b,DragonPhase:6,Tags:[\"scan_dragon\"]}"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=scan_dragon,nbt={DragonPhase:6}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "time query gametime",
+      "wait_ticks": 26
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=scan_dragon,nbt={DragonPhase:6}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "gamemode creative ParitySmoke"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "kill @e[type=minecraft:area_effect_cloud]"
+    },
+    {
+      "command": "tp ParitySmoke 20.6 100 0.5"
+    },
+    {
+      "command": "gamemode survival ParitySmoke"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.5 100.0 0.5 {Silent:1b,NoGravity:1b,PersistenceRequired:1b,DragonPhase:6,Tags:[\"scan_dragon\"]}"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=scan_dragon,nbt={DragonPhase:6}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "time query gametime",
+      "wait_ticks": 26
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=scan_dragon,nbt={DragonPhase:6}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "time query gametime",
+      "wait_ticks": 74
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=scan_dragon,nbt={DragonPhase:8}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "gamemode creative ParitySmoke"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "kill @e[type=minecraft:area_effect_cloud]"
+    },
+    {
+      "command": "tp ParitySmoke 15.5 110.1 0.5"
+    },
+    {
+      "command": "gamemode survival ParitySmoke"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.5 100.0 0.5 {Silent:1b,NoGravity:1b,PersistenceRequired:1b,DragonPhase:6,Tags:[\"scan_dragon\"]}"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=scan_dragon,nbt={DragonPhase:6}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "time query gametime",
+      "wait_ticks": 26
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=scan_dragon,nbt={DragonPhase:6}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "gamemode creative ParitySmoke"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "kill @e[type=minecraft:area_effect_cloud]"
+    },
+    {
+      "command": "tp ParitySmoke 15.5 110 0.5"
+    },
+    {
+      "command": "gamemode survival ParitySmoke"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.5 100.0 0.5 {Silent:1b,NoGravity:1b,PersistenceRequired:1b,DragonPhase:6,Tags:[\"scan_dragon\"]}"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=scan_dragon,nbt={DragonPhase:6}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "time query gametime",
+      "wait_ticks": 26
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=scan_dragon,nbt={DragonPhase:7}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "gamemode creative ParitySmoke"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "kill @e[type=minecraft:area_effect_cloud]"
+    },
+    {
+      "command": "tp ParitySmoke 15.5 100 0.5"
+    },
+    {
+      "command": "gamemode creative ParitySmoke"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.5 100.0 0.5 {Silent:1b,NoGravity:1b,PersistenceRequired:1b,DragonPhase:6,Tags:[\"scan_dragon\"]}"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=scan_dragon,nbt={DragonPhase:6}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "time query gametime",
+      "wait_ticks": 99
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=scan_dragon,nbt={DragonPhase:6}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=scan_dragon,limit=1] {NoAI:1b}",
+      "wait_ticks": 30
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=scan_dragon,nbt={DragonPhase:6}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=scan_dragon,limit=1] {NoAI:0b}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=scan_dragon,nbt={DragonPhase:4}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "gamemode creative ParitySmoke"
+    },
+    {
+      "command": "tp ParitySmoke 20 80 20"
+    }
+  ],
+  "cleanup": [
+    "gamemode creative ParitySmoke",
+    "kill @e[type=minecraft:ender_dragon]",
+    "kill @e[type=minecraft:area_effect_cloud]",
+    "tp ParitySmoke 20 80 20"
+  ]
+}

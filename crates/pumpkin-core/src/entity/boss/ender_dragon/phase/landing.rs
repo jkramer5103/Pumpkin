@@ -16,7 +16,7 @@ impl super::Phase for LandingPhase {
     }
 
     fn tick(&self, dragon: &EnderDragonEntity) {
-        dragon.set_phase(EnderDragonPhase::SitAttacking);
+        dragon.set_phase(EnderDragonPhase::SitScanning);
         *dragon
             .ticks_sitting
             .lock()

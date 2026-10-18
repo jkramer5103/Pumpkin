@@ -1,0 +1,178 @@
+{
+  "schema_version": 1,
+  "id": "dragon-scanning-entry",
+  "title": "Landing and a completed breath enter sitting scanning",
+  "description": "Two trials at a controlled podium top and after one full200tick breath show natural entry into scanning, rather than an immediate roar, with a creative observer. No landing flight or four-breath-limit claim. All summoned dragons are persistent to isolate scanning from the existing random-despawn path.",
+  "category": "entity",
+  "tags": [
+    "ender-dragon",
+    "ai"
+  ],
+  "setup": [
+    "tick freeze",
+    "difficulty normal",
+    "gamerule spawn_mobs false",
+    "gamerule mob_griefing false",
+    "forceload add -48 -48 47 47",
+    "gamemode creative ParitySmoke",
+    "tp ParitySmoke 20 80 20"
+  ],
+  "steps": [
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "kill @e[type=minecraft:area_effect_cloud]"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.5 100.0 0.5 {Silent:1b,NoGravity:1b,PersistenceRequired:1b,DragonPhase:5,Tags:[\"scan_entry\"]}",
+      "wait_ticks": 199
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=scan_entry,nbt={PersistenceRequired:1b}]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=scan_entry,nbt={DragonPhase:5}]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1"
+    },
+    {
+      "command": "time query gametime",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=scan_entry,nbt={DragonPhase:6}]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1"
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:area_effect_cloud]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "time query gametime",
+      "wait_ticks": 25
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=scan_entry,nbt={DragonPhase:6}]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "setblock 0 99 0 minecraft:stone"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.5 100.0 0.5 {Silent:1b,NoGravity:1b,PersistenceRequired:1b,DragonPhase:3,Tags:[\"scan_entry\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=scan_entry,nbt={PersistenceRequired:1b}]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=scan_entry,nbt={DragonPhase:6}]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1"
+    },
+    {
+      "command": "time query gametime",
+      "wait_ticks": 25
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=scan_entry,nbt={DragonPhase:6}]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1"
+    },
+    {
+      "command": "setblock 0 99 0 minecraft:air"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "kill @e[type=minecraft:area_effect_cloud]"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.5 100.0 0.5 {Silent:1b,NoGravity:1b,PersistenceRequired:1b,DragonPhase:5,Tags:[\"scan_entry\"]}",
+      "wait_ticks": 199
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=scan_entry,nbt={PersistenceRequired:1b}]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=scan_entry,nbt={DragonPhase:5}]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1"
+    },
+    {
+      "command": "time query gametime",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=scan_entry,nbt={DragonPhase:6}]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1"
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:area_effect_cloud]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "time query gametime",
+      "wait_ticks": 25
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=scan_entry,nbt={DragonPhase:6}]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "setblock 0 99 0 minecraft:stone"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.5 100.0 0.5 {Silent:1b,NoGravity:1b,PersistenceRequired:1b,DragonPhase:3,Tags:[\"scan_entry\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=scan_entry,nbt={PersistenceRequired:1b}]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=scan_entry,nbt={DragonPhase:6}]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1"
+    },
+    {
+      "command": "time query gametime",
+      "wait_ticks": 25
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=scan_entry,nbt={DragonPhase:6}]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1"
+    },
+    {
+      "command": "setblock 0 99 0 minecraft:air"
+    }
+  ],
+  "cleanup": [
+    "gamemode creative ParitySmoke",
+    "kill @e[type=minecraft:ender_dragon]",
+    "kill @e[type=minecraft:area_effect_cloud]",
+    "tp ParitySmoke 20 80 20"
+  ]
+}

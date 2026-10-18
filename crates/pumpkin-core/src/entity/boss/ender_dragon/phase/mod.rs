@@ -11,6 +11,7 @@ mod landing;
 mod landing_approach;
 mod sit_attacking;
 mod sit_breathing;
+mod sit_scanning;
 mod strafing;
 mod taking_off;
 
@@ -23,6 +24,7 @@ pub use landing::LandingPhase;
 pub use landing_approach::LandingApproachPhase;
 pub use sit_attacking::SitAttackingPhase;
 pub use sit_breathing::SitBreathingPhase;
+pub use sit_scanning::SitScanningPhase;
 pub use strafing::StrafingPhase;
 pub use taking_off::TakingOffPhase;
 
@@ -59,6 +61,7 @@ pub enum EnderDragonPhase {
     TakingOff = 8,
     Hovering = 9,
     Dying = 10,
+    SitScanning = 11,
 }
 
 impl EnderDragonPhase {
@@ -68,6 +71,7 @@ impl EnderDragonPhase {
             self,
             Self::LandingApproach
                 | Self::Landing
+                | Self::SitScanning
                 | Self::SitAttacking
                 | Self::SitBreathing
                 | Self::TakingOff
@@ -83,6 +87,7 @@ impl EnderDragonPhase {
             Self::Landing => 3,
             Self::TakingOff => 4,
             Self::SitBreathing => 5,
+            Self::SitScanning => 6,
             Self::SitAttacking => 7,
             Self::Charging => 8,
             Self::Dying => 9,
@@ -98,8 +103,7 @@ impl EnderDragonPhase {
             3 => Self::Landing,
             4 => Self::TakingOff,
             5 => Self::SitBreathing,
-            // Sitting scanning does not have a phase implementation yet.
-            6 => return None,
+            6 => Self::SitScanning,
             7 => Self::SitAttacking,
             8 => Self::Charging,
             9 => Self::Dying,
@@ -111,7 +115,7 @@ impl EnderDragonPhase {
 }
 
 pub struct PhaseManager {
-    phases: [Arc<dyn Phase>; 11],
+    phases: [Arc<dyn Phase>; 12],
 }
 
 impl Default for PhaseManager {
@@ -136,6 +140,7 @@ impl PhaseManager {
                 Arc::new(TakingOffPhase),
                 Arc::new(HoveringPhase),
                 Arc::new(DyingPhase),
+                Arc::new(SitScanningPhase),
             ],
         }
     }
@@ -156,6 +161,7 @@ mod tests {
         for (id, phase) in [
             (0, EnderDragonPhase::Circling),
             (2, EnderDragonPhase::LandingApproach),
+            (6, EnderDragonPhase::SitScanning),
             (8, EnderDragonPhase::Charging),
             (9, EnderDragonPhase::Dying),
             (10, EnderDragonPhase::Hovering),
@@ -167,13 +173,12 @@ mod tests {
     }
 
     #[test]
-    fn invalid_phase_ids_use_holding_pattern_without_aliasing_sitting_scanning() {
+    fn invalid_phase_ids_use_holding_pattern() {
         for id in [i32::MIN, -1, 11, i32::MAX] {
             assert_eq!(
                 EnderDragonPhase::from_network_id(id),
                 Some(EnderDragonPhase::Circling),
             );
         }
-        assert_eq!(EnderDragonPhase::from_network_id(6), None);
     }
 }

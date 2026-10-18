@@ -86,7 +86,7 @@ impl super::Phase for SitBreathingPhase {
         if *timer >= FLAME_DURATION {
             *timer = 0;
             drop(timer);
-            dragon.set_phase(EnderDragonPhase::SitAttacking);
+            dragon.set_phase(EnderDragonPhase::SitScanning);
             return;
         }
         drop(timer);
