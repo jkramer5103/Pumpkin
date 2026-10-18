@@ -284,21 +284,18 @@ impl WitherEntity {
     }
 
     fn make_bossbar(&self) -> Bossbar {
-        let title = self
+        let title = if self
             .mob_entity
             .living_entity
             .entity
             .custom_name
             .load()
-            .as_ref()
-            .clone()
-            .unwrap_or_else(|| {
-                TextComponent::translate_cross(
-                    "entity.minecraft.wither",
-                    "entity.minecraft.wither",
-                    [],
-                )
-            });
+            .is_some()
+        {
+            self.get_display_name()
+        } else {
+            TextComponent::translate_cross("entity.minecraft.wither", "entity.minecraft.wither", [])
+        };
 
         Bossbar {
             uuid: self.bossbar_uuid,
@@ -637,6 +634,27 @@ impl RangedAttackMob for WitherEntity {
 }
 
 impl Mob for WitherEntity {
+    fn on_custom_name_changed(&self) {
+        let title = self.get_display_name();
+        let players = self
+            .mob_entity
+            .living_entity
+            .entity
+            .world
+            .load()
+            .players
+            .load_full();
+        let bossbar_players = self
+            .bossbar_players
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner);
+        for player in players.iter() {
+            if bossbar_players.contains(&player.gameprofile.id) {
+                player.update_bossbar_title(&self.bossbar_uuid, title.clone());
+            }
+        }
+    }
+
     fn get_mob_entity(&self) -> &MobEntity {
         &self.mob_entity
     }

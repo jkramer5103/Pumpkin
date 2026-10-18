@@ -1212,7 +1212,8 @@ impl Entity {
 
     /// Sets a custom name for the entity, typically used with nametags
     pub fn set_custom_name(&self, name: TextComponent) {
-        self.custom_name.store(Arc::new(Some(name.clone())));
+        let old_name = self.custom_name.swap(Arc::new(Some(name.clone())));
+        let changed = old_name.as_ref().as_ref() != Some(&name);
         let mut bedrock_meta = SyncedActorDataList::new();
         bedrock_meta.set(
             entity_data_key::NAME,
@@ -1231,6 +1232,12 @@ impl Entity {
         );
         self.set_synced_data(tracked_data::entity::DATA_CUSTOM_NAME, Some(name));
         self.send_bedrock_actor_data(&bedrock_meta);
+        if changed
+            && let Some(entity) = self.world.load().get_entity_by_id(self.entity_id)
+            && let Some(mob) = entity.get_mob()
+        {
+            mob.on_custom_name_changed();
+        }
     }
 
     pub fn set_custom_name_visible(&self, visible: bool) {

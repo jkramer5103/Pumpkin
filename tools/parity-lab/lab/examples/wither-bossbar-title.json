@@ -1,0 +1,73 @@
+{
+  "schema_version": 1,
+  "id": "wither-bossbar-title",
+  "title": "Wither bossbar titles follow name changes",
+  "category": "entities",
+  "description": "With a tracked named charging Wither, change its name and styling while ticks are frozen. A protocol client must verify one UPDATE_TITLE on the existing bossbar UUID per changed component, no update for an identical component, and immediate delivery with NoAI. Initial named ADD must carry the display-name hover/insertion metadata. No rendered-client proof is implied.",
+  "tags": [
+    "wither",
+    "boss",
+    "bossbar",
+    "packet"
+  ],
+  "setup": [
+    "gamemode creative @a",
+    "difficulty easy",
+    "gamerule mob_griefing false",
+    "gamerule spawn_mobs false",
+    "forceload add 0 0 31 31",
+    "fill 20 79 20 28 79 28 minecraft:bedrock",
+    "tp @a 15.0 84.0 15.0",
+    "summon minecraft:wither 24.0 80.0 24.0 {Tags:[\"pp_boss\"],Health:300.0f,Invul:200,CustomName:{text:\"First\"}}"
+  ],
+  "steps": [
+    {
+      "command": "say PARITY_BOSSBAR_TITLE_CASE=rename"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {CustomName:{text:\"Second\",color:\"red\"}}"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss,nbt={Health:300.0f,Invul:194}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "say PARITY_BOSSBAR_TITLE_CASE=same-name"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {CustomName:{text:\"Second\",color:\"red\"},Health:300.0f}"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss,nbt={Health:300.0f,Invul:194}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "say PARITY_BOSSBAR_TITLE_CASE=restyle"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {CustomName:{text:\"Second\",color:\"blue\"}}"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss,nbt={Health:300.0f,Invul:194}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "say PARITY_BOSSBAR_TITLE_CASE=noai-rename"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {NoAI:1b,CustomName:{text:\"Paused\",color:\"blue\"}}"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss,nbt={Health:300.0f,Invul:194}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    }
+  ],
+  "cleanup": [
+    "kill @e[type=!minecraft:player]"
+  ],
+  "notes": "Freeze ticks before setup; advance exactly6 ticks after summon to establish tracking and the bar, then keep frozen during all name changes. Read UPDATE_TITLE packets as well as command results; command-only execution cannot validate this regression. The identical-name health merge control reloads NBT without changing the title. Every changed component supplies its style explicitly; unspecified nested-component style merging is a separate shared NBT behavior. Shared CustomName removal and NoAI audience lifecycle are separate."
+}

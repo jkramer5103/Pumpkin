@@ -1150,6 +1150,9 @@ pub trait Mob: EntityBase + Send + Sync {
 
     fn mob_read_nbt(&self, _nbt: &NbtCompound) {}
 
+    /// Updates mob-specific state when a spawned mob's custom name changes.
+    fn on_custom_name_changed(&self) {}
+
     /// Drops a target the mob is not allowed to attack, such as a creative player.
     fn as_valid_target(&self, target: Option<Arc<dyn EntityBase>>) -> Option<Arc<dyn EntityBase>> {
         let target = target?;
