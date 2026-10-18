@@ -1,0 +1,131 @@
+{
+  "schema_version": 1,
+  "id": "wither-end-portal-immunity",
+  "title": "Withers cannot enter the End through portals",
+  "category": "entities",
+  "description": "Full-health, powered and spawn-invulnerable Withers remain at End portal contacts. A sheep leaves its portal source box; a boss away from portals stays put. Destination chunks are preloaded by the isolated runner. Dimension transfer of ordinary mobs is outside this boss-specific oracle.",
+  "tags": [
+    "entity",
+    "wither",
+    "portal"
+  ],
+  "setup": [
+    "tick freeze",
+    "gamemode creative @a",
+    "difficulty easy",
+    "gamerule mob_griefing false",
+    "gamerule spawn_mobs false",
+    "forceload add 0 0 31 31",
+    "fill 0 79 0 31 79 31 minecraft:bedrock",
+    "fill 0 80 0 31 96 31 minecraft:air",
+    "tp @a 28.5 92 28.5"
+  ],
+  "steps": [
+    {
+      "command": "setblock 5 80 5 minecraft:end_portal"
+    },
+    {
+      "command": "execute if block 5 80 5 minecraft:end_portal",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "summon minecraft:wither 5.5 80 5.5 {Tags:[\"pp_boss_0\"],NoAI:1b,NoGravity:1b,Silent:1b,Health:300.0f,Invul:0}",
+      "wait_ticks": 12
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss_0,x=5,y=80,z=5,dx=0,dy=0,dz=0]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[distance=0..,tag=pp_boss_0,nbt={Health:300.0f,Invul:0}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[tag=pp_boss_0,limit=1] Pos"
+    },
+    {
+      "command": "setblock 13 80 5 minecraft:end_portal"
+    },
+    {
+      "command": "execute if block 13 80 5 minecraft:end_portal",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "summon minecraft:wither 13.5 80 5.5 {Tags:[\"pp_boss_1\"],NoAI:1b,NoGravity:1b,Silent:1b,Health:150.0f,Invul:0}",
+      "wait_ticks": 12
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss_1,x=13,y=80,z=5,dx=0,dy=0,dz=0]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[distance=0..,tag=pp_boss_1,nbt={Health:150.0f,Invul:0}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[tag=pp_boss_1,limit=1] Pos"
+    },
+    {
+      "command": "setblock 21 80 5 minecraft:end_portal"
+    },
+    {
+      "command": "execute if block 21 80 5 minecraft:end_portal",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "summon minecraft:wither 21.5 80 5.5 {Tags:[\"pp_boss_2\"],NoAI:1b,NoGravity:1b,Silent:1b,Health:100.0f,Invul:200}",
+      "wait_ticks": 12
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss_2,x=21,y=80,z=5,dx=0,dy=0,dz=0]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[distance=0..,tag=pp_boss_2,nbt={Health:100.0f,Invul:200}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[tag=pp_boss_2,limit=1] Pos"
+    },
+    {
+      "command": "setblock 5 80 15 minecraft:end_portal"
+    },
+    {
+      "command": "summon minecraft:sheep 5.5 80 15.5 {Tags:[\"pp_control\"],NoAI:1b,NoGravity:1b,Silent:1b}",
+      "wait_ticks": 12
+    },
+    {
+      "command": "execute unless entity @e[tag=pp_control,x=5,y=80,z=15,dx=0,dy=0,dz=0]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "summon minecraft:wither 13.5 80 15.5 {Tags:[\"pp_away\"],NoAI:1b,NoGravity:1b,Silent:1b}",
+      "wait_ticks": 4
+    },
+    {
+      "command": "execute if entity @e[tag=pp_away,x=13,y=80,z=15,dx=0,dy=0,dz=0]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    }
+  ],
+  "cleanup": [
+    "tp @e[type=minecraft:wither] 15.5 80 25.5",
+    "tp @e[type=minecraft:sheep] 15.5 80 25.5",
+    "kill @e[type=minecraft:wither]",
+    "kill @e[type=minecraft:sheep]",
+    "execute in minecraft:the_end run tp @e[type=minecraft:wither,distance=0..] 100.5 50 0.5",
+    "execute in minecraft:the_end run kill @e[type=minecraft:wither,distance=0..]",
+    "execute in minecraft:the_end run kill @e[type=minecraft:sheep,distance=0..]",
+    "fill 0 80 0 31 96 31 minecraft:air"
+  ]
+}
