@@ -1,0 +1,348 @@
+{
+  "schema_version": 1,
+  "id": "dragon-dying-podium-height",
+  "title": "Dying dragon uses the space above the motion-blocking podium",
+  "description": "Two isolated trials check health after one dying-phase tick on either side of the ten-block arrival boundary, with a nonblocking podium decoration and NoAI controls.",
+  "category": "entity",
+  "tags": [
+    "ender-dragon",
+    "ai"
+  ],
+  "setup": [
+    "tick freeze",
+    "difficulty normal",
+    "gamerule spawn_mobs false",
+    "gamerule mob_griefing false",
+    "forceload add -48 -48 47 47",
+    "gamemode creative ParitySmoke",
+    "tp ParitySmoke 40 100 40",
+    "setblock 0 79 0 minecraft:bedrock"
+  ],
+  "steps": [
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "setblock 0 80 0 minecraft:air"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.5 89.5 0.5 {PersistenceRequired:1b,DragonPhase:9,Health:20.0f,NoAI:0b,Motion:[0.0d,0.0d,0.0d],Tags:[\"dying_height\"]}"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=dying_height,nbt={Health:20.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=dying_height,limit=1] Health"
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:ender_dragon,tag=dying_height,nbt=!{Health:0.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "setblock 0 80 0 minecraft:air"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.5 69.5 0.5 {PersistenceRequired:1b,DragonPhase:9,Health:20.0f,NoAI:0b,Motion:[0.0d,0.0d,0.0d],Tags:[\"dying_height\"]}"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=dying_height,nbt={Health:20.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=dying_height,limit=1] Health"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=dying_height,nbt={Health:1.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "setblock 0 80 0 minecraft:air"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.5 90.5 0.5 {PersistenceRequired:1b,DragonPhase:9,Health:20.0f,NoAI:0b,Motion:[0.0d,0.0d,0.0d],Tags:[\"dying_height\"]}"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=dying_height,nbt={Health:20.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=dying_height,limit=1] Health"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=dying_height,nbt={Health:1.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "setblock 0 80 0 minecraft:dandelion"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.5 70.5 0.5 {PersistenceRequired:1b,DragonPhase:9,Health:20.0f,NoAI:0b,Motion:[0.0d,0.0d,0.0d],Tags:[\"dying_height\"]}"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=dying_height,nbt={Health:20.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=dying_height,limit=1] Health"
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:ender_dragon,tag=dying_height,nbt=!{Health:0.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "setblock 0 80 0 minecraft:dandelion"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.5 69.5 0.5 {PersistenceRequired:1b,DragonPhase:9,Health:20.0f,NoAI:0b,Motion:[0.0d,0.0d,0.0d],Tags:[\"dying_height\"]}"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=dying_height,nbt={Health:20.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=dying_height,limit=1] Health"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=dying_height,nbt={Health:1.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "setblock 0 80 0 minecraft:dandelion"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.5 90.5 0.5 {PersistenceRequired:1b,DragonPhase:9,Health:20.0f,NoAI:0b,Motion:[0.0d,0.0d,0.0d],Tags:[\"dying_height\"]}"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=dying_height,nbt={Health:20.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=dying_height,limit=1] Health"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=dying_height,nbt={Health:1.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "setblock 0 80 0 minecraft:air"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.5 89.5 0.5 {PersistenceRequired:1b,DragonPhase:9,Health:20.0f,NoAI:1b,Motion:[0.0d,0.0d,0.0d],Tags:[\"dying_height\"]}"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=dying_height,nbt={Health:20.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=dying_height,limit=1] Health"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=dying_height,nbt={Health:20.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "setblock 0 80 0 minecraft:air"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.5 89.5 0.5 {PersistenceRequired:1b,DragonPhase:9,Health:20.0f,NoAI:0b,Motion:[0.0d,0.0d,0.0d],Tags:[\"dying_height\"]}"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=dying_height,nbt={Health:20.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=dying_height,limit=1] Health"
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:ender_dragon,tag=dying_height,nbt=!{Health:0.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "setblock 0 80 0 minecraft:air"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.5 69.5 0.5 {PersistenceRequired:1b,DragonPhase:9,Health:20.0f,NoAI:0b,Motion:[0.0d,0.0d,0.0d],Tags:[\"dying_height\"]}"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=dying_height,nbt={Health:20.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=dying_height,limit=1] Health"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=dying_height,nbt={Health:1.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "setblock 0 80 0 minecraft:air"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.5 90.5 0.5 {PersistenceRequired:1b,DragonPhase:9,Health:20.0f,NoAI:0b,Motion:[0.0d,0.0d,0.0d],Tags:[\"dying_height\"]}"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=dying_height,nbt={Health:20.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=dying_height,limit=1] Health"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=dying_height,nbt={Health:1.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "setblock 0 80 0 minecraft:dandelion"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.5 70.5 0.5 {PersistenceRequired:1b,DragonPhase:9,Health:20.0f,NoAI:0b,Motion:[0.0d,0.0d,0.0d],Tags:[\"dying_height\"]}"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=dying_height,nbt={Health:20.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=dying_height,limit=1] Health"
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:ender_dragon,tag=dying_height,nbt=!{Health:0.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "setblock 0 80 0 minecraft:dandelion"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.5 69.5 0.5 {PersistenceRequired:1b,DragonPhase:9,Health:20.0f,NoAI:0b,Motion:[0.0d,0.0d,0.0d],Tags:[\"dying_height\"]}"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=dying_height,nbt={Health:20.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=dying_height,limit=1] Health"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=dying_height,nbt={Health:1.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "setblock 0 80 0 minecraft:dandelion"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.5 90.5 0.5 {PersistenceRequired:1b,DragonPhase:9,Health:20.0f,NoAI:0b,Motion:[0.0d,0.0d,0.0d],Tags:[\"dying_height\"]}"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=dying_height,nbt={Health:20.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=dying_height,limit=1] Health"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=dying_height,nbt={Health:1.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "setblock 0 80 0 minecraft:air"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.5 89.5 0.5 {PersistenceRequired:1b,DragonPhase:9,Health:20.0f,NoAI:1b,Motion:[0.0d,0.0d,0.0d],Tags:[\"dying_height\"]}"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=dying_height,nbt={Health:20.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=dying_height,limit=1] Health"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=dying_height,nbt={Health:20.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    }
+  ],
+  "cleanup": [
+    "kill @e[type=minecraft:ender_dragon]"
+  ]
+}

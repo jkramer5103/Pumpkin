@@ -3,7 +3,8 @@ use crate::entity::boss::ender_dragon::{DEATH_TIMER_MAX, EnderDragonEntity, Vect
 use crate::entity::experience_orb::ExperienceOrbEntity;
 use pumpkin_data::particle::Particle;
 use pumpkin_data::world::WorldEvent;
-use pumpkin_util::math::{vector2::Vector2, vector3::Vector3};
+use pumpkin_util::math::vector3::Vector3;
+use pumpkin_world::chunk::ChunkHeightmapType;
 
 pub struct DyingPhase;
 
@@ -54,16 +55,16 @@ impl super::Phase for DyingPhase {
                     .fight_origin
                     .lock()
                     .unwrap_or_else(std::sync::PoisonError::into_inner);
-                let top_y = world.get_top_block(Vector2::new(fight_origin.0.x, fight_origin.0.z));
-                let egg_y = if top_y > world.min_y {
-                    top_y as f64
-                } else {
-                    65.0
-                };
+                // Pumpkin's heightmap returns the top block, not the space above it.
+                let egg_y = world.get_heightmap_height(
+                    ChunkHeightmapType::MotionBlocking,
+                    fight_origin.0.x,
+                    fight_origin.0.z,
+                ) + 1;
                 *target_loc_lock = Some(Vector3::new(
-                    fight_origin.0.x as f64 + 0.5,
-                    egg_y,
-                    fight_origin.0.z as f64 + 0.5,
+                    f64::from(fight_origin.0.x) + 0.5,
+                    f64::from(egg_y),
+                    f64::from(fight_origin.0.z) + 0.5,
                 ));
             }
             *target_loc_lock
