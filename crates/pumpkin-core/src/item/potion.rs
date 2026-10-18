@@ -19,7 +19,7 @@ pub enum PotionApplicationSource {
 impl PotionApplicationSource {
     const fn instant_scale(self, scale: f32) -> f32 {
         match self {
-            Self::AreaEffectCloud => scale * 0.5,
+            Self::AreaEffectCloud => 0.5,
             Self::Arrow => 1.0,
             Self::Normal => scale,
         }
@@ -190,6 +190,18 @@ mod tests {
     use pumpkin_data::data_component_impl::PotionDurationScaleImpl;
     use pumpkin_data::item::Item;
     use pumpkin_data::item_stack::ItemStack;
+
+    #[test]
+    fn cloud_instant_potency_does_not_fall_off_with_distance() {
+        // Center, half radius and near the edge of an emitted dragon flame.
+        for scale in [1.0, 0.5, 0.02] {
+            assert_eq!(
+                PotionApplicationSource::AreaEffectCloud.instant_scale(scale),
+                0.5
+            );
+            assert_eq!(PotionApplicationSource::Normal.instant_scale(scale), scale);
+        }
+    }
 
     #[test]
     fn tipped_arrow_scale_shortens_duration_without_reducing_instant_potency() {
