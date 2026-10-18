@@ -1,0 +1,79 @@
+{
+  "schema_version": 1,
+  "id": "wither-spawn-blast-immunity",
+  "title": "Wither immunity to another Wither spawn explosion",
+  "category": "entities",
+  "description": "Complete the last spawn-invulnerability tick beside full-health and powered Withers. Both observers must remain unharmed while a sheep in the same blast is killed.",
+  "tags": [
+    "entity",
+    "wither",
+    "combat"
+  ],
+  "setup": [
+    "tick freeze",
+    "gamemode creative @a",
+    "difficulty easy",
+    "gamerule mob_griefing false",
+    "gamerule spawn_mobs false",
+    "forceload add 0 0 31 31",
+    "fill 0 79 0 31 79 31 minecraft:bedrock",
+    "fill 0 80 0 31 96 31 minecraft:air",
+    "tp @a 16.5 92 16.5",
+    "summon minecraft:wither 17.5 80 12.5 {Tags:[\"pp_full\"],Health:300.0f,NoAI:1b,NoGravity:1b,Silent:1b,PersistenceRequired:1b}",
+    "summon minecraft:wither 12.5 80 17.5 {Tags:[\"pp_powered\"],Health:150.0f,NoAI:1b,NoGravity:1b,Silent:1b,PersistenceRequired:1b}",
+    "summon minecraft:sheep 7.5 80 12.5 {Tags:[\"pp_victim\"],NoAI:1b,NoGravity:1b,Silent:1b}",
+    "summon minecraft:wither 12.5 80 12.5 {Tags:[\"pp_spawner\"],Invul:1,Health:100.0f,NoGravity:1b,Silent:1b,PersistenceRequired:1b}"
+  ],
+  "steps": [
+    {
+      "command": "execute if entity @e[tag=pp_full,nbt={Health:300.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_powered,nbt={Health:150.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_victim,nbt={Health:8.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_spawner,nbt={Invul:1,Health:100.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[tag=pp_full,nbt={Health:300.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_powered,nbt={Health:150.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute unless entity @e[tag=pp_victim,nbt={Health:8.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_spawner,nbt={Invul:0,Health:100.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:wither_skull]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    }
+  ],
+  "cleanup": [
+    "kill @e[type=!minecraft:player]"
+  ],
+  "notes": "One verified simulation tick completes Invul:1 before any skull attack. NoAI on observers prevents regeneration. Source invulnerability and sheep death are positive controls; ordinary TNT damage and NoAI/countdown suppression are checked separately. This opt-in isolated arena requires a connected creative headless client; it does not prove a complete boss fight."
+}
