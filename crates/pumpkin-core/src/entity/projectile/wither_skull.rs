@@ -1,12 +1,13 @@
 use std::sync::atomic::{AtomicBool, Ordering};
 
-use pumpkin_data::{damage::DamageType, effect::StatusEffect, potion::Effect, tracked_data};
+use pumpkin_data::{Block, damage::DamageType, effect::StatusEffect, potion::Effect, tracked_data};
 use pumpkin_nbt::compound::NbtCompound;
 use pumpkin_util::{Difficulty, math::vector3::Vector3};
 
 use crate::{
     entity::{
         Entity, EntityBase,
+        boss::wither::WitherEntity,
         projectile::{ProjectileHit, ThrownItemEntity},
     },
     server::Server,
@@ -75,6 +76,14 @@ impl WitherSkullEntity {
 }
 
 impl EntityBase for WitherSkullEntity {
+    fn get_block_explosion_resistance(&self, block: &Block, resistance: f32) -> f32 {
+        if self.is_dangerous() && WitherEntity::can_destroy(block) {
+            resistance.min(0.8)
+        } else {
+            resistance
+        }
+    }
+
     fn get_owner_id(&self) -> Option<i32> {
         self.thrown.owner_id
     }

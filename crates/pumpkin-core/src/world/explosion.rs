@@ -47,7 +47,7 @@ pub trait ExplosionDamageCalculator: Send + Sync {
     /// Returns the block's explosion resistance. If None, the block is treated as air/empty.
     fn get_block_explosion_resistance(
         &self,
-        _explosion: &Explosion,
+        explosion: &Explosion,
         _world: &World,
         _pos: &BlockPos,
         block: &Block,
@@ -56,7 +56,10 @@ pub trait ExplosionDamageCalculator: Send + Sync {
         if block.default_state.is_air() && fluid.is_empty {
             None
         } else {
-            Some(fluid.blast_resistance.max(block.blast_resistance))
+            let resistance = fluid.blast_resistance.max(block.blast_resistance);
+            Some(explosion.source.map_or(resistance, |source| {
+                source.get_block_explosion_resistance(block, resistance)
+            }))
         }
     }
 

@@ -1,0 +1,208 @@
+{
+  "schema_version": 1,
+  "id": "wither-dangerous-skull-resistance",
+  "title": "Dangerous Wither skull block resistance",
+  "category": "entities",
+  "description": "Drive normal and dangerous Wither skulls into resistant blocks. Dangerous skulls destroy obsidian while ordinary skulls, Wither-immune blocks and disabled mob griefing preserve their blocks.",
+  "tags": [
+    "entity",
+    "wither",
+    "explosion"
+  ],
+  "setup": [
+    "tick freeze",
+    "gamemode creative @a",
+    "difficulty easy",
+    "gamerule spawn_mobs false",
+    "forceload add 0 0 31 31",
+    "fill 0 79 0 31 79 31 minecraft:bedrock",
+    "fill 0 80 0 31 94 31 minecraft:air",
+    "tp @a 20.5 84 20.5"
+  ],
+  "steps": [
+    {
+      "command": "kill @e[type=minecraft:wither_skull]"
+    },
+    {
+      "command": "fill 8 81 7 12 84 10 minecraft:air"
+    },
+    {
+      "command": "gamerule mob_griefing true"
+    },
+    {
+      "command": "setblock 10 82 8 minecraft:obsidian"
+    },
+    {
+      "command": "execute if block 10 82 8 minecraft:obsidian",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "summon minecraft:wither_skull 9.9 82.5 8.5 {Tags:[\"pp_shot\"],dangerous:0b,Motion:[0.4d,0.0d,0.0d]}"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_shot,nbt={dangerous:0b}]",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 4
+    },
+    {
+      "command": "execute unless entity @e[tag=pp_shot]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 10 82 8 minecraft:obsidian",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:wither_skull]"
+    },
+    {
+      "command": "fill 8 81 7 12 84 10 minecraft:air"
+    },
+    {
+      "command": "gamerule mob_griefing true"
+    },
+    {
+      "command": "setblock 10 82 8 minecraft:obsidian"
+    },
+    {
+      "command": "execute if block 10 82 8 minecraft:obsidian",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "summon minecraft:wither_skull 9.9 82.5 8.5 {Tags:[\"pp_shot\"],dangerous:1b,Motion:[0.4d,0.0d,0.0d]}"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_shot,nbt={dangerous:1b}]",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 4
+    },
+    {
+      "command": "execute unless entity @e[tag=pp_shot]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 10 82 8 minecraft:air",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:wither_skull]"
+    },
+    {
+      "command": "fill 8 81 7 12 84 10 minecraft:air"
+    },
+    {
+      "command": "gamerule mob_griefing true"
+    },
+    {
+      "command": "setblock 10 82 8 minecraft:bedrock"
+    },
+    {
+      "command": "execute if block 10 82 8 minecraft:bedrock",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "summon minecraft:wither_skull 9.9 82.5 8.5 {Tags:[\"pp_shot\"],dangerous:1b,Motion:[0.4d,0.0d,0.0d]}"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_shot,nbt={dangerous:1b}]",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 4
+    },
+    {
+      "command": "execute unless entity @e[tag=pp_shot]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 10 82 8 minecraft:bedrock",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:wither_skull]"
+    },
+    {
+      "command": "fill 8 81 7 12 84 10 minecraft:air"
+    },
+    {
+      "command": "gamerule mob_griefing false"
+    },
+    {
+      "command": "setblock 10 82 8 minecraft:obsidian"
+    },
+    {
+      "command": "execute if block 10 82 8 minecraft:obsidian",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "summon minecraft:wither_skull 9.9 82.5 8.5 {Tags:[\"pp_shot\"],dangerous:1b,Motion:[0.4d,0.0d,0.0d]}"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_shot,nbt={dangerous:1b}]",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 4
+    },
+    {
+      "command": "execute unless entity @e[tag=pp_shot]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 10 82 8 minecraft:obsidian",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:wither_skull]"
+    },
+    {
+      "command": "fill 8 81 7 12 84 10 minecraft:air"
+    },
+    {
+      "command": "gamerule mob_griefing true"
+    },
+    {
+      "command": "setblock 10 82 8 minecraft:crying_obsidian"
+    },
+    {
+      "command": "execute if block 10 82 8 minecraft:crying_obsidian",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "summon minecraft:wither_skull 9.9 82.5 8.5 {Tags:[\"pp_shot\"],dangerous:1b,Motion:[0.4d,0.0d,0.0d]}"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_shot,nbt={dangerous:1b}]",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 4
+    },
+    {
+      "command": "execute unless entity @e[tag=pp_shot]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 10 82 8 minecraft:air",
+      "observe": true,
+      "expect_contains": "Test passed"
+    }
+  ],
+  "cleanup": [
+    "kill @e[type=!minecraft:player]"
+  ],
+  "notes": "Isolated block impacts at a frozen-tick barrier. Five impacts cover ordinary obsidian, dangerous obsidian, dangerous bedrock, disabled mob griefing and dangerous crying obsidian. The hit block is one tenth of a block ahead; four verified ticks allow impact/consumption. Does not validate flight speed, direct-hit damage, drops or client rendering."
+}

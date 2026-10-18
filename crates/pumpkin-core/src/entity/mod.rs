@@ -233,6 +233,10 @@ pub trait EntityBase: Send + Sync + std::any::Any {
         false
     }
 
+    fn get_block_explosion_resistance(&self, _block: &Block, resistance: f32) -> f32 {
+        resistance
+    }
+
     fn get_gravity(&self) -> f64 {
         0.0
     }
