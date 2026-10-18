@@ -1,0 +1,743 @@
+{
+  "schema_version": 1,
+  "id": "wither-silent-sounds",
+  "title": "Wither Silent state controls spawn and shot sounds while retaliation still sounds",
+  "category": "entities",
+  "description": "Bounded boss arena checks Silent through spawn and data updates, shot events and delayed retaliation block breaks.",
+  "tags": [
+    "entity",
+    "wither",
+    "sound"
+  ],
+  "setup": [
+    "tick freeze",
+    "difficulty easy",
+    "gamemode creative @a",
+    "gamerule spawn_mobs false",
+    "gamerule mob_griefing false",
+    "gamerule global_sound_events true",
+    "forceload add 0 0 31 31",
+    "fill 0 79 0 31 79 31 minecraft:bedrock",
+    "tp @a 16.5 84 16.5"
+  ],
+  "steps": [
+    {
+      "command": "say PARITY_SOUND_CASE=audible-spawn"
+    },
+    {
+      "command": "kill @e[type=!minecraft:player]",
+      "wait_ticks": 25
+    },
+    {
+      "command": "fill 6 80 6 12 86 12 minecraft:air"
+    },
+    {
+      "command": "gamerule mob_griefing false"
+    },
+    {
+      "command": "summon minecraft:wither 8.5 80 8.5 {Tags:[\"pp_boss\"],NoGravity:1b,Silent:0b,PersistenceRequired:1b,Invul:1}"
+    },
+    {
+      "command": "say PARITY_CAPTURE=audible-spawn",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss,nbt=!{Silent:1b}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "say PARITY_SOUND_CASE=silent-spawn"
+    },
+    {
+      "command": "kill @e[type=!minecraft:player]",
+      "wait_ticks": 25
+    },
+    {
+      "command": "fill 6 80 6 12 86 12 minecraft:air"
+    },
+    {
+      "command": "gamerule mob_griefing false"
+    },
+    {
+      "command": "summon minecraft:wither 8.5 80 8.5 {Tags:[\"pp_boss\"],NoGravity:1b,Silent:1b,PersistenceRequired:1b,Invul:1}"
+    },
+    {
+      "command": "say PARITY_CAPTURE=silent-spawn",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss,nbt={Silent:1b}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "say PARITY_SOUND_CASE=reenabled-spawn"
+    },
+    {
+      "command": "kill @e[type=!minecraft:player]",
+      "wait_ticks": 25
+    },
+    {
+      "command": "fill 6 80 6 12 86 12 minecraft:air"
+    },
+    {
+      "command": "gamerule mob_griefing false"
+    },
+    {
+      "command": "summon minecraft:wither 8.5 80 8.5 {Tags:[\"pp_boss\"],NoGravity:1b,Silent:1b,PersistenceRequired:1b,Invul:1}"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Silent:0b}"
+    },
+    {
+      "command": "say PARITY_CAPTURE=reenabled-spawn",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss,nbt=!{Silent:1b}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "say PARITY_SOUND_CASE=removed-spawn"
+    },
+    {
+      "command": "kill @e[type=!minecraft:player]",
+      "wait_ticks": 25
+    },
+    {
+      "command": "fill 6 80 6 12 86 12 minecraft:air"
+    },
+    {
+      "command": "gamerule mob_griefing false"
+    },
+    {
+      "command": "summon minecraft:wither 8.5 80 8.5 {Tags:[\"pp_boss\"],NoGravity:1b,Silent:1b,PersistenceRequired:1b,Invul:1}"
+    },
+    {
+      "command": "data remove entity @e[tag=pp_boss,limit=1] Silent"
+    },
+    {
+      "command": "say PARITY_CAPTURE=removed-spawn",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss,nbt=!{Silent:1b}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "say PARITY_SOUND_CASE=silent-updated-spawn"
+    },
+    {
+      "command": "kill @e[type=!minecraft:player]",
+      "wait_ticks": 25
+    },
+    {
+      "command": "fill 6 80 6 12 86 12 minecraft:air"
+    },
+    {
+      "command": "gamerule mob_griefing false"
+    },
+    {
+      "command": "summon minecraft:wither 8.5 80 8.5 {Tags:[\"pp_boss\"],NoGravity:1b,Silent:1b,PersistenceRequired:1b,Invul:1}"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Silent:0b}"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Silent:1b}"
+    },
+    {
+      "command": "say PARITY_CAPTURE=silent-updated-spawn",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss,nbt={Silent:1b}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "say PARITY_SOUND_CASE=audible-shot"
+    },
+    {
+      "command": "kill @e[type=!minecraft:player]",
+      "wait_ticks": 25
+    },
+    {
+      "command": "fill 6 80 6 12 86 12 minecraft:air"
+    },
+    {
+      "command": "gamerule mob_griefing false"
+    },
+    {
+      "command": "summon minecraft:wither 8.5 80 8.5 {Tags:[\"pp_boss\"],NoGravity:1b,Silent:0b,PersistenceRequired:1b,Invul:0}"
+    },
+    {
+      "command": "summon minecraft:sheep 16.5 80 8.5 {Tags:[\"pp_target\"],NoAI:1b,NoGravity:1b}"
+    },
+    {
+      "command": "say PARITY_CAPTURE=audible-shot",
+      "wait_ticks": 80
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss,nbt=!{Silent:1b}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "say PARITY_SOUND_CASE=silent-shot"
+    },
+    {
+      "command": "kill @e[type=!minecraft:player]",
+      "wait_ticks": 25
+    },
+    {
+      "command": "fill 6 80 6 12 86 12 minecraft:air"
+    },
+    {
+      "command": "gamerule mob_griefing false"
+    },
+    {
+      "command": "summon minecraft:wither 8.5 80 8.5 {Tags:[\"pp_boss\"],NoGravity:1b,Silent:1b,PersistenceRequired:1b,Invul:0}"
+    },
+    {
+      "command": "summon minecraft:sheep 16.5 80 8.5 {Tags:[\"pp_target\"],NoAI:1b,NoGravity:1b}"
+    },
+    {
+      "command": "say PARITY_CAPTURE=silent-shot",
+      "wait_ticks": 80
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss,nbt={Silent:1b}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "say PARITY_SOUND_CASE=audible-break"
+    },
+    {
+      "command": "kill @e[type=!minecraft:player]",
+      "wait_ticks": 25
+    },
+    {
+      "command": "fill 6 80 6 12 86 12 minecraft:air"
+    },
+    {
+      "command": "gamerule mob_griefing true"
+    },
+    {
+      "command": "summon minecraft:wither 8.5 80 8.5 {Tags:[\"pp_boss\"],NoGravity:1b,Silent:0b,PersistenceRequired:1b,Invul:0}"
+    },
+    {
+      "command": "setblock 8 80 8 minecraft:dirt"
+    },
+    {
+      "command": "damage @e[tag=pp_boss,limit=1] 1 minecraft:generic"
+    },
+    {
+      "command": "say PARITY_CAPTURE=audible-break"
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 8.5 80 8.5",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 8.5 80 8.5",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 8.5 80 8.5",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 8.5 80 8.5",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 8.5 80 8.5",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 8.5 80 8.5",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 8.5 80 8.5",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 8.5 80 8.5",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 8.5 80 8.5",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 8.5 80 8.5",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 8.5 80 8.5",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 8.5 80 8.5",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 8.5 80 8.5",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 8.5 80 8.5",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 8.5 80 8.5",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 8.5 80 8.5",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 8.5 80 8.5",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 8.5 80 8.5",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 8.5 80 8.5",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 8.5 80 8.5",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if block 8 80 8 minecraft:air",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss,nbt=!{Silent:1b}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "say PARITY_SOUND_CASE=silent-break"
+    },
+    {
+      "command": "kill @e[type=!minecraft:player]",
+      "wait_ticks": 25
+    },
+    {
+      "command": "fill 6 80 6 12 86 12 minecraft:air"
+    },
+    {
+      "command": "gamerule mob_griefing true"
+    },
+    {
+      "command": "summon minecraft:wither 8.5 80 8.5 {Tags:[\"pp_boss\"],NoGravity:1b,Silent:1b,PersistenceRequired:1b,Invul:0}"
+    },
+    {
+      "command": "setblock 8 80 8 minecraft:dirt"
+    },
+    {
+      "command": "damage @e[tag=pp_boss,limit=1] 1 minecraft:generic"
+    },
+    {
+      "command": "say PARITY_CAPTURE=silent-break"
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 8.5 80 8.5",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 8.5 80 8.5",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 8.5 80 8.5",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 8.5 80 8.5",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 8.5 80 8.5",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 8.5 80 8.5",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 8.5 80 8.5",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 8.5 80 8.5",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 8.5 80 8.5",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 8.5 80 8.5",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 8.5 80 8.5",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 8.5 80 8.5",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 8.5 80 8.5",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 8.5 80 8.5",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 8.5 80 8.5",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 8.5 80 8.5",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 8.5 80 8.5",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 8.5 80 8.5",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 8.5 80 8.5",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 8.5 80 8.5",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if block 8 80 8 minecraft:air",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss,nbt={Silent:1b}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "say PARITY_SOUND_CASE=silent-no-break"
+    },
+    {
+      "command": "kill @e[type=!minecraft:player]",
+      "wait_ticks": 25
+    },
+    {
+      "command": "fill 6 80 6 12 86 12 minecraft:air"
+    },
+    {
+      "command": "gamerule mob_griefing true"
+    },
+    {
+      "command": "summon minecraft:wither 8.5 80 8.5 {Tags:[\"pp_boss\"],NoGravity:1b,Silent:1b,PersistenceRequired:1b,Invul:0}"
+    },
+    {
+      "command": "setblock 8 80 8 minecraft:air"
+    },
+    {
+      "command": "damage @e[tag=pp_boss,limit=1] 1 minecraft:generic"
+    },
+    {
+      "command": "say PARITY_CAPTURE=silent-no-break"
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 8.5 80 8.5",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 8.5 80 8.5",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 8.5 80 8.5",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 8.5 80 8.5",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 8.5 80 8.5",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 8.5 80 8.5",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 8.5 80 8.5",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 8.5 80 8.5",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 8.5 80 8.5",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 8.5 80 8.5",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 8.5 80 8.5",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 8.5 80 8.5",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 8.5 80 8.5",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 8.5 80 8.5",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 8.5 80 8.5",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 8.5 80 8.5",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 8.5 80 8.5",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 8.5 80 8.5",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 8.5 80 8.5",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 8.5 80 8.5",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if block 8 80 8 minecraft:air",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 8 80 8 minecraft:air",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss,nbt={Silent:1b}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "say PARITY_SOUND_CASE=silent-grief-disabled"
+    },
+    {
+      "command": "kill @e[type=!minecraft:player]",
+      "wait_ticks": 25
+    },
+    {
+      "command": "fill 6 80 6 12 86 12 minecraft:air"
+    },
+    {
+      "command": "gamerule mob_griefing false"
+    },
+    {
+      "command": "summon minecraft:wither 8.5 80 8.5 {Tags:[\"pp_boss\"],NoGravity:1b,Silent:1b,PersistenceRequired:1b,Invul:0}"
+    },
+    {
+      "command": "setblock 8 80 8 minecraft:dirt"
+    },
+    {
+      "command": "damage @e[tag=pp_boss,limit=1] 1 minecraft:generic"
+    },
+    {
+      "command": "say PARITY_CAPTURE=silent-grief-disabled"
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 8.5 80 8.5",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 8.5 80 8.5",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 8.5 80 8.5",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 8.5 80 8.5",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 8.5 80 8.5",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 8.5 80 8.5",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 8.5 80 8.5",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 8.5 80 8.5",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 8.5 80 8.5",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 8.5 80 8.5",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 8.5 80 8.5",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 8.5 80 8.5",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 8.5 80 8.5",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 8.5 80 8.5",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 8.5 80 8.5",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 8.5 80 8.5",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 8.5 80 8.5",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 8.5 80 8.5",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 8.5 80 8.5",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 8.5 80 8.5",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if block 8 80 8 minecraft:dirt",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss,nbt={Silent:1b}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    }
+  ],
+  "cleanup": [
+    "kill @e[type=!minecraft:player]",
+    "gamerule mob_griefing false",
+    "fill 6 80 6 12 86 12 minecraft:air"
+  ]
+}

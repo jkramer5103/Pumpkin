@@ -606,7 +606,7 @@ impl WitherEntity {
                         }
                     }
 
-                    if destroyed && !entity.silent.load(Ordering::Relaxed) {
+                    if destroyed {
                         world.sync_world_event(
                             WorldEvent::SoundWitherBlockBreak,
                             entity.block_pos.load(),

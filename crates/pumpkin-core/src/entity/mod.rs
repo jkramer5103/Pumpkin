@@ -4039,6 +4039,9 @@ impl Entity {
         nbt.put_short("Fire", self.fire_ticks.load(Relaxed) as i16);
         nbt.put_bool("OnGround", self.on_ground.load(Relaxed));
         nbt.put_bool("Invulnerable", self.invulnerable.load(Relaxed));
+        if self.is_silent() {
+            nbt.put_bool("Silent", true);
+        }
         nbt.put_int("PortalCooldown", self.portal_cooldown.load(Relaxed) as i32);
         if self.has_visual_fire.load(Relaxed) {
             nbt.put_bool("HasVisualFire", true);
@@ -4086,6 +4089,7 @@ impl Entity {
     }
 
     pub fn read_nbt_non_mut(&self, nbt: &NbtCompound) {
+        self.set_silent(nbt.get_bool("Silent").unwrap_or(false));
         if let Some(position) = nbt.get_list("Pos")
             && position.len() >= 3
         {
