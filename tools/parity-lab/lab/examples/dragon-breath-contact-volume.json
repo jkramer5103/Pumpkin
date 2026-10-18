@@ -1,0 +1,373 @@
+{
+  "schema_version": 1,
+  "id": "dragon-breath-contact-volume",
+  "title": "Dragon breath uses a thin horizontal contact volume",
+  "description": "Two actual emitted-flame trials compare vertical misses, overlapping victims and horizontal radius. The NoAI emitter is moved away after emission; all test entities remain in the seeded chunk.",
+  "category": "entity",
+  "tags": [
+    "ender-dragon",
+    "area-effect-cloud",
+    "damage"
+  ],
+  "setup": [
+    "tick freeze",
+    "difficulty normal",
+    "gamerule spawn_mobs false",
+    "gamerule mob_griefing false",
+    "forceload add 0 0 15 15",
+    "gamemode creative ParitySmoke",
+    "tp ParitySmoke 20 100 20",
+    "kill @e[type=minecraft:ender_dragon]",
+    "kill @e[type=minecraft:area_effect_cloud]",
+    "kill @e[type=minecraft:sheep]",
+    "kill @e[type=minecraft:marker,tag=volume_center]"
+  ],
+  "steps": [
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "kill @e[type=minecraft:area_effect_cloud]"
+    },
+    {
+      "command": "kill @e[type=minecraft:sheep]"
+    },
+    {
+      "command": "kill @e[type=minecraft:marker,tag=volume_center]"
+    },
+    {
+      "command": "fill 0 79 0 15 79 15 minecraft:stone"
+    },
+    {
+      "command": "execute if block 8 79 3 minecraft:stone",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 8.0 100.0 12.0 {Silent:1b,NoGravity:1b,PersistenceRequired:1b,DragonPhase:5}"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon] 8 100 12 0 0",
+      "wait_ticks": 10
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:area_effect_cloud]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,limit=1] {NoAI:1b}"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon] 30 100 30"
+    },
+    {
+      "command": "execute at @e[type=minecraft:area_effect_cloud,limit=1] run summon minecraft:marker ~ ~ ~ {Tags:[\"volume_center\"]}"
+    },
+    {
+      "command": "fill 0 60 0 15 81 15 minecraft:air"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:area_effect_cloud,limit=1] Pos"
+    },
+    {
+      "command": "execute at @e[type=minecraft:marker,tag=volume_center,limit=1] run summon minecraft:sheep ~0 ~0 ~0 {NoAI:1b,NoGravity:1b,Silent:1b,PersistenceRequired:1b,Tags:[\"volume_center\"]}"
+    },
+    {
+      "command": "execute at @e[type=minecraft:marker,tag=volume_center,limit=1] run summon minecraft:sheep ~2 ~0.5 ~0 {NoAI:1b,NoGravity:1b,Silent:1b,PersistenceRequired:1b,Tags:[\"volume_above_boundary\"]}"
+    },
+    {
+      "command": "execute at @e[type=minecraft:marker,tag=volume_center,limit=1] run summon minecraft:sheep ~0 ~2 ~2 {NoAI:1b,NoGravity:1b,Silent:1b,PersistenceRequired:1b,Tags:[\"volume_above\"]}"
+    },
+    {
+      "command": "execute at @e[type=minecraft:marker,tag=volume_center,limit=1] run summon minecraft:sheep ~0 ~-2 ~-2 {NoAI:1b,NoGravity:1b,Silent:1b,PersistenceRequired:1b,Tags:[\"volume_below\"]}"
+    },
+    {
+      "command": "execute at @e[type=minecraft:marker,tag=volume_center,limit=1] run summon minecraft:sheep ~-2 ~-1 ~0 {NoAI:1b,NoGravity:1b,Silent:1b,PersistenceRequired:1b,Tags:[\"volume_overlap\"]}"
+    },
+    {
+      "command": "execute at @e[type=minecraft:marker,tag=volume_center,limit=1] run summon minecraft:sheep ~4.95 ~-1 ~0 {NoAI:1b,NoGravity:1b,Silent:1b,PersistenceRequired:1b,Tags:[\"volume_edge_overlap\"]}"
+    },
+    {
+      "command": "execute at @e[type=minecraft:marker,tag=volume_center,limit=1] run summon minecraft:sheep ~0 ~0 ~-5.1 {NoAI:1b,NoGravity:1b,Silent:1b,PersistenceRequired:1b,Tags:[\"volume_outside\"]}"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:sheep,nbt={Health:8.0f}]",
+      "wait_ticks": 20,
+      "observe": true,
+      "expect_contains": "Test passed. Count: 7"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:sheep,tag=volume_center,nbt={Health:5.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:sheep,tag=volume_center,limit=1] Health"
+    },
+    {
+      "command": "execute at @e[type=minecraft:marker,tag=volume_center,limit=1] positioned ~0 ~0 ~0 if entity @e[type=minecraft:sheep,tag=volume_center,distance=..0.01]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:sheep,tag=volume_above_boundary,nbt={Health:8.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:sheep,tag=volume_above_boundary,limit=1] Health"
+    },
+    {
+      "command": "execute at @e[type=minecraft:marker,tag=volume_center,limit=1] positioned ~2 ~0.5 ~0 if entity @e[type=minecraft:sheep,tag=volume_above_boundary,distance=..0.01]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:sheep,tag=volume_above,nbt={Health:8.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:sheep,tag=volume_above,limit=1] Health"
+    },
+    {
+      "command": "execute at @e[type=minecraft:marker,tag=volume_center,limit=1] positioned ~0 ~2 ~2 if entity @e[type=minecraft:sheep,tag=volume_above,distance=..0.01]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:sheep,tag=volume_below,nbt={Health:8.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:sheep,tag=volume_below,limit=1] Health"
+    },
+    {
+      "command": "execute at @e[type=minecraft:marker,tag=volume_center,limit=1] positioned ~0 ~-2 ~-2 if entity @e[type=minecraft:sheep,tag=volume_below,distance=..0.01]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:sheep,tag=volume_overlap,nbt={Health:5.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:sheep,tag=volume_overlap,limit=1] Health"
+    },
+    {
+      "command": "execute at @e[type=minecraft:marker,tag=volume_center,limit=1] positioned ~-2 ~-1 ~0 if entity @e[type=minecraft:sheep,tag=volume_overlap,distance=..0.01]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:sheep,tag=volume_edge_overlap,nbt={Health:5.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:sheep,tag=volume_edge_overlap,limit=1] Health"
+    },
+    {
+      "command": "execute at @e[type=minecraft:marker,tag=volume_center,limit=1] positioned ~4.95 ~-1 ~0 if entity @e[type=minecraft:sheep,tag=volume_edge_overlap,distance=..0.01]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:sheep,tag=volume_outside,nbt={Health:8.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:sheep,tag=volume_outside,limit=1] Health"
+    },
+    {
+      "command": "execute at @e[type=minecraft:marker,tag=volume_center,limit=1] positioned ~0 ~0 ~-5.1 if entity @e[type=minecraft:sheep,tag=volume_outside,distance=..0.01]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:area_effect_cloud]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "kill @e[type=minecraft:area_effect_cloud]"
+    },
+    {
+      "command": "kill @e[type=minecraft:sheep]"
+    },
+    {
+      "command": "kill @e[type=minecraft:marker,tag=volume_center]"
+    },
+    {
+      "command": "fill 0 79 0 15 79 15 minecraft:stone"
+    },
+    {
+      "command": "execute if block 8 79 3 minecraft:stone",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 8.0 100.0 12.0 {Silent:1b,NoGravity:1b,PersistenceRequired:1b,DragonPhase:5}"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon] 8 100 12 0 0",
+      "wait_ticks": 10
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:area_effect_cloud]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,limit=1] {NoAI:1b}"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon] 30 100 30"
+    },
+    {
+      "command": "execute at @e[type=minecraft:area_effect_cloud,limit=1] run summon minecraft:marker ~ ~ ~ {Tags:[\"volume_center\"]}"
+    },
+    {
+      "command": "fill 0 60 0 15 81 15 minecraft:air"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:area_effect_cloud,limit=1] Pos"
+    },
+    {
+      "command": "execute at @e[type=minecraft:marker,tag=volume_center,limit=1] run summon minecraft:sheep ~0 ~0 ~0 {NoAI:1b,NoGravity:1b,Silent:1b,PersistenceRequired:1b,Tags:[\"volume_center\"]}"
+    },
+    {
+      "command": "execute at @e[type=minecraft:marker,tag=volume_center,limit=1] run summon minecraft:sheep ~2 ~0.5 ~0 {NoAI:1b,NoGravity:1b,Silent:1b,PersistenceRequired:1b,Tags:[\"volume_above_boundary\"]}"
+    },
+    {
+      "command": "execute at @e[type=minecraft:marker,tag=volume_center,limit=1] run summon minecraft:sheep ~0 ~2 ~2 {NoAI:1b,NoGravity:1b,Silent:1b,PersistenceRequired:1b,Tags:[\"volume_above\"]}"
+    },
+    {
+      "command": "execute at @e[type=minecraft:marker,tag=volume_center,limit=1] run summon minecraft:sheep ~0 ~-2 ~-2 {NoAI:1b,NoGravity:1b,Silent:1b,PersistenceRequired:1b,Tags:[\"volume_below\"]}"
+    },
+    {
+      "command": "execute at @e[type=minecraft:marker,tag=volume_center,limit=1] run summon minecraft:sheep ~-2 ~-1 ~0 {NoAI:1b,NoGravity:1b,Silent:1b,PersistenceRequired:1b,Tags:[\"volume_overlap\"]}"
+    },
+    {
+      "command": "execute at @e[type=minecraft:marker,tag=volume_center,limit=1] run summon minecraft:sheep ~4.95 ~-1 ~0 {NoAI:1b,NoGravity:1b,Silent:1b,PersistenceRequired:1b,Tags:[\"volume_edge_overlap\"]}"
+    },
+    {
+      "command": "execute at @e[type=minecraft:marker,tag=volume_center,limit=1] run summon minecraft:sheep ~0 ~0 ~-5.1 {NoAI:1b,NoGravity:1b,Silent:1b,PersistenceRequired:1b,Tags:[\"volume_outside\"]}"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:sheep,nbt={Health:8.0f}]",
+      "wait_ticks": 20,
+      "observe": true,
+      "expect_contains": "Test passed. Count: 7"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:sheep,tag=volume_center,nbt={Health:5.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:sheep,tag=volume_center,limit=1] Health"
+    },
+    {
+      "command": "execute at @e[type=minecraft:marker,tag=volume_center,limit=1] positioned ~0 ~0 ~0 if entity @e[type=minecraft:sheep,tag=volume_center,distance=..0.01]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:sheep,tag=volume_above_boundary,nbt={Health:8.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:sheep,tag=volume_above_boundary,limit=1] Health"
+    },
+    {
+      "command": "execute at @e[type=minecraft:marker,tag=volume_center,limit=1] positioned ~2 ~0.5 ~0 if entity @e[type=minecraft:sheep,tag=volume_above_boundary,distance=..0.01]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:sheep,tag=volume_above,nbt={Health:8.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:sheep,tag=volume_above,limit=1] Health"
+    },
+    {
+      "command": "execute at @e[type=minecraft:marker,tag=volume_center,limit=1] positioned ~0 ~2 ~2 if entity @e[type=minecraft:sheep,tag=volume_above,distance=..0.01]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:sheep,tag=volume_below,nbt={Health:8.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:sheep,tag=volume_below,limit=1] Health"
+    },
+    {
+      "command": "execute at @e[type=minecraft:marker,tag=volume_center,limit=1] positioned ~0 ~-2 ~-2 if entity @e[type=minecraft:sheep,tag=volume_below,distance=..0.01]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:sheep,tag=volume_overlap,nbt={Health:5.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:sheep,tag=volume_overlap,limit=1] Health"
+    },
+    {
+      "command": "execute at @e[type=minecraft:marker,tag=volume_center,limit=1] positioned ~-2 ~-1 ~0 if entity @e[type=minecraft:sheep,tag=volume_overlap,distance=..0.01]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:sheep,tag=volume_edge_overlap,nbt={Health:5.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:sheep,tag=volume_edge_overlap,limit=1] Health"
+    },
+    {
+      "command": "execute at @e[type=minecraft:marker,tag=volume_center,limit=1] positioned ~4.95 ~-1 ~0 if entity @e[type=minecraft:sheep,tag=volume_edge_overlap,distance=..0.01]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:sheep,tag=volume_outside,nbt={Health:8.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:sheep,tag=volume_outside,limit=1] Health"
+    },
+    {
+      "command": "execute at @e[type=minecraft:marker,tag=volume_center,limit=1] positioned ~0 ~0 ~-5.1 if entity @e[type=minecraft:sheep,tag=volume_outside,distance=..0.01]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:area_effect_cloud]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1"
+    }
+  ],
+  "cleanup": [
+    "kill @e[type=minecraft:ender_dragon]",
+    "kill @e[type=minecraft:area_effect_cloud]",
+    "kill @e[type=minecraft:sheep]",
+    "kill @e[type=minecraft:marker,tag=volume_center]"
+  ]
+}

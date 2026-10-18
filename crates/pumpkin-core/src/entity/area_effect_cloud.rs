@@ -59,6 +59,14 @@ impl AreaEffectCloudEntity {
         duration != -1 && age - wait_time >= duration
     }
 
+    fn effect_bounds(pos: Vector3<f64>, radius: f64) -> BoundingBox {
+        let height = f64::from(pumpkin_data::entity::EntityType::AREA_EFFECT_CLOUD.dimension[1]);
+        BoundingBox::new(
+            Vector3::new(pos.x - radius, pos.y, pos.z - radius),
+            Vector3::new(pos.x + radius, pos.y + height, pos.z + radius),
+        )
+    }
+
     #[allow(clippy::new_ret_no_self)]
     pub fn new(entity: Entity) -> Arc<dyn EntityBase> {
         entity
@@ -300,9 +308,7 @@ impl EntityBase for AreaEffectCloudEntity {
             .radius
             .lock()
             .unwrap_or_else(std::sync::PoisonError::into_inner) as f64;
-        let min = Vector3::new(pos.x - r, pos.y - r, pos.z - r);
-        let max = Vector3::new(pos.x + r, pos.y + r, pos.z + r);
-        let aabb = BoundingBox::new(min, max);
+        let aabb = Self::effect_bounds(pos, r);
         let world = self.entity.world.load();
 
         let mut candidates = world.get_entities_at_box(&aabb);
@@ -343,15 +349,12 @@ impl EntityBase for AreaEffectCloudEntity {
                 .unwrap_or_else(std::sync::PoisonError::into_inner)
                 as f64;
             let pos_e = cand_clone.get_entity().pos.load();
-            let dx = pos_e.x - pos.x;
-            let dy = pos_e.y - pos.y;
-            let dz = pos_e.z - pos.z;
-            let dist = (dx * dx + dy * dy + dz * dz).sqrt();
-            if dist > radius_f {
+            let dist_sq = pos.squared_distance_to_vec_xz(pos_e);
+            if dist_sq > radius_f * radius_f {
                 continue;
             }
 
-            let scale = 1.0f32 - (dist as f32 / radius_f as f32);
+            let scale = 1.0f32 - (dist_sq.sqrt() as f32 / radius_f as f32);
 
             // Decide whether this contact will actually apply an effect
             let effs_clone = self
@@ -470,6 +473,24 @@ impl EntityBase for AreaEffectCloudEntity {
 #[cfg(test)]
 mod tests {
     use super::AreaEffectCloudEntity;
+    use pumpkin_util::math::{boundingbox::BoundingBox, vector3::Vector3};
+
+    #[test]
+    fn cloud_contact_requires_vertical_hitbox_overlap() {
+        let bounds = AreaEffectCloudEntity::effect_bounds(Vector3::new(8.0, 80.0, 3.0), 5.0);
+        for (min_y, max_y, expected) in [
+            (80.0, 81.3, true),
+            (80.5, 81.8, false),
+            (82.0, 83.3, false),
+            (78.0, 79.3, false),
+            (78.7, 80.0, false),
+            (79.0, 80.3, true),
+        ] {
+            let victim =
+                BoundingBox::new(Vector3::new(7.5, min_y, 2.5), Vector3::new(8.5, max_y, 3.5));
+            assert_eq!(bounds.intersects(&victim), expected, "{min_y}..{max_y}");
+        }
+    }
 
     #[test]
     fn cloud_duration_starts_after_wait_time_and_expires_at_the_boundary() {
