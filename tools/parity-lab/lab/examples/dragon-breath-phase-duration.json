@@ -1,0 +1,278 @@
+{
+  "schema_version": 1,
+  "id": "dragon-breath-phase-duration",
+  "title": "Sitting dragon breath remains active through tick199 and ends at200",
+  "description": "Two bounded natural phase-duration trials, one with an AI pause. Track the original cloud and late victim damage relative to its actual position. Phase5 and its first cloud must survive beyond100 active ticks through199, and end at200. Does not assert scanning or the complete flame cycle.",
+  "category": "entity",
+  "tags": [
+    "ender-dragon",
+    "ai",
+    "area-effect-cloud"
+  ],
+  "setup": [
+    "tick freeze",
+    "difficulty normal",
+    "gamerule spawn_mobs false",
+    "gamerule mob_griefing false",
+    "forceload add -48 -48 47 47",
+    "gamemode creative ParitySmoke",
+    "tp ParitySmoke 20.0 80.0 20.0"
+  ],
+  "steps": [
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "kill @e[type=minecraft:area_effect_cloud]"
+    },
+    {
+      "command": "kill @e[type=minecraft:sheep]"
+    },
+    {
+      "command": "kill @e[type=minecraft:marker,tag=duration_center]"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.5 100.0 0.5 {Silent:1b,NoGravity:1b,PersistenceRequired:1b,UUID:[I;0,0,0,300],DragonPhase:5}",
+      "wait_ticks": 10
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:area_effect_cloud]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1"
+    },
+    {
+      "command": "tag @e[type=minecraft:area_effect_cloud] add original_flame"
+    },
+    {
+      "command": "execute at @e[type=minecraft:area_effect_cloud,tag=original_flame,limit=1] run summon minecraft:marker ~ ~ ~ {Tags:[\"duration_center\"]}"
+    },
+    {
+      "command": "tp 00000000-0000-0000-0000-00000000012c 30.0 100.0 30.0"
+    },
+    {
+      "command": "data get entity 00000000-0000-0000-0000-00000000012c DragonPhase",
+      "wait_ticks": 90
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,nbt={DragonPhase:5}]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:area_effect_cloud,tag=original_flame]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1"
+    },
+    {
+      "command": "data get entity 00000000-0000-0000-0000-00000000012c DragonPhase",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,nbt={DragonPhase:5}]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:area_effect_cloud,tag=original_flame]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1"
+    },
+    {
+      "command": "data get entity 00000000-0000-0000-0000-00000000012c DragonPhase",
+      "wait_ticks": 19
+    },
+    {
+      "command": "execute at @e[type=minecraft:marker,tag=duration_center,limit=1] run summon minecraft:sheep ~ ~ ~ {NoAI:1b,NoGravity:1b,Silent:1b,Tags:[\"late_breath_victim\"]}"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:sheep,tag=late_breath_victim,nbt={Health:8.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:sheep,tag=late_breath_victim,limit=1] Health",
+      "wait_ticks": 5
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:sheep,tag=late_breath_victim,nbt={Health:5.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:sheep,tag=late_breath_victim,limit=1] Health"
+    },
+    {
+      "command": "kill @e[type=minecraft:sheep]"
+    },
+    {
+      "command": "data get entity 00000000-0000-0000-0000-00000000012c DragonPhase",
+      "wait_ticks": 74
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,nbt={DragonPhase:5}]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:area_effect_cloud,tag=original_flame]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1"
+    },
+    {
+      "command": "data get entity 00000000-0000-0000-0000-00000000012c DragonPhase",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:ender_dragon,nbt={DragonPhase:5}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:area_effect_cloud,tag=original_flame]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity 00000000-0000-0000-0000-00000000012c DragonPhase"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "kill @e[type=minecraft:area_effect_cloud]"
+    },
+    {
+      "command": "kill @e[type=minecraft:sheep]"
+    },
+    {
+      "command": "kill @e[type=minecraft:marker,tag=duration_center]"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.5 100.0 0.5 {Silent:1b,NoGravity:1b,PersistenceRequired:1b,UUID:[I;0,0,0,301],DragonPhase:5}",
+      "wait_ticks": 10
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:area_effect_cloud]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1"
+    },
+    {
+      "command": "tag @e[type=minecraft:area_effect_cloud] add original_flame"
+    },
+    {
+      "command": "execute at @e[type=minecraft:area_effect_cloud,tag=original_flame,limit=1] run summon minecraft:marker ~ ~ ~ {Tags:[\"duration_center\"]}"
+    },
+    {
+      "command": "tp 00000000-0000-0000-0000-00000000012d 30.0 100.0 30.0"
+    },
+    {
+      "command": "data merge entity 00000000-0000-0000-0000-00000000012d {NoAI:1b}",
+      "wait_ticks": 30
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,nbt={DragonPhase:5}]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:area_effect_cloud,tag=original_flame]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1"
+    },
+    {
+      "command": "data merge entity 00000000-0000-0000-0000-00000000012d {NoAI:0b}"
+    },
+    {
+      "command": "data get entity 00000000-0000-0000-0000-00000000012d DragonPhase",
+      "wait_ticks": 90
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,nbt={DragonPhase:5}]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:area_effect_cloud,tag=original_flame]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1"
+    },
+    {
+      "command": "data get entity 00000000-0000-0000-0000-00000000012d DragonPhase",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,nbt={DragonPhase:5}]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:area_effect_cloud,tag=original_flame]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1"
+    },
+    {
+      "command": "data get entity 00000000-0000-0000-0000-00000000012d DragonPhase",
+      "wait_ticks": 19
+    },
+    {
+      "command": "execute at @e[type=minecraft:marker,tag=duration_center,limit=1] run summon minecraft:sheep ~ ~ ~ {NoAI:1b,NoGravity:1b,Silent:1b,Tags:[\"late_breath_victim\"]}"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:sheep,tag=late_breath_victim,nbt={Health:8.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:sheep,tag=late_breath_victim,limit=1] Health",
+      "wait_ticks": 5
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:sheep,tag=late_breath_victim,nbt={Health:5.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:sheep,tag=late_breath_victim,limit=1] Health"
+    },
+    {
+      "command": "kill @e[type=minecraft:sheep]"
+    },
+    {
+      "command": "data get entity 00000000-0000-0000-0000-00000000012d DragonPhase",
+      "wait_ticks": 74
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,nbt={DragonPhase:5}]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:area_effect_cloud,tag=original_flame]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1"
+    },
+    {
+      "command": "data get entity 00000000-0000-0000-0000-00000000012d DragonPhase",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:ender_dragon,nbt={DragonPhase:5}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:area_effect_cloud,tag=original_flame]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity 00000000-0000-0000-0000-00000000012d DragonPhase"
+    }
+  ],
+  "cleanup": [
+    "kill @e[type=minecraft:ender_dragon]",
+    "kill @e[type=minecraft:area_effect_cloud]",
+    "kill @e[type=minecraft:sheep]",
+    "kill @e[type=minecraft:marker,tag=duration_center]"
+  ]
+}

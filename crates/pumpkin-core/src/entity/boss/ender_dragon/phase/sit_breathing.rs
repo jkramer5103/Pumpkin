@@ -6,6 +6,7 @@ use pumpkin_data::entity::EntityType;
 use pumpkin_util::math::vector3::Vector3;
 
 const WARMUP_TIME: i32 = 10;
+const FLAME_DURATION: i32 = 200;
 
 pub struct SitBreathingPhase;
 
@@ -51,7 +52,7 @@ impl super::Phase for SitBreathingPhase {
             .unwrap_or_else(std::sync::PoisonError::into_inner);
         *timer += 1;
 
-        if *timer > 100 {
+        if *timer >= FLAME_DURATION {
             *timer = 0;
             drop(timer);
             dragon.set_phase(EnderDragonPhase::SitAttacking);
