@@ -121,6 +121,10 @@ impl BlockBehaviour for NetherPortalBlock {
     }
 
     fn on_entity_collision(&self, args: OnEntityCollisionArgs<'_>) {
+        let entity = args.entity.get_entity();
+        if entity.entity_type == &EntityType::WITHER {
+            return;
+        }
         let target_world =
             if args.world.dimension.minecraft_name == Dimension::THE_NETHER.minecraft_name {
                 args.server.get_world_from_dimension(&Dimension::OVERWORLD)
@@ -137,9 +141,7 @@ impl BlockBehaviour for NetherPortalBlock {
             args.position,
             target_world.dimension.minecraft_name
         );
-        args.entity
-            .get_entity()
-            .try_use_portal(target_world, *args.position);
+        entity.try_use_portal(target_world, *args.position);
     }
 
     fn on_state_replaced(&self, args: OnStateReplacedArgs<'_>) {

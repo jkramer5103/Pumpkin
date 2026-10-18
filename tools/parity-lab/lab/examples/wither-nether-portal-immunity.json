@@ -1,0 +1,158 @@
+{
+  "schema_version": 1,
+  "id": "wither-nether-portal-immunity",
+  "title": "Withers cannot enter Nether portals",
+  "category": "entities",
+  "description": "Full-health, powered and spawn-invulnerable Withers remain at Nether portal contacts without gaining a portal cooldown. An eligible sheep leaves its source box and an away boss stays put. Ordinary-mob dimension migration is outside this boss oracle. Destination creation is left to the server; this test checks portal exclusion, not portal generation or destination selection.",
+  "tags": [
+    "entity",
+    "wither",
+    "portal"
+  ],
+  "setup": [
+    "tick freeze",
+    "gamemode creative @a",
+    "difficulty easy",
+    "gamerule mob_griefing false",
+    "gamerule spawn_mobs false",
+    "forceload add 0 0 31 31",
+    "fill 0 79 0 31 79 31 minecraft:bedrock",
+    "fill 0 80 0 31 96 31 minecraft:air",
+    "tp @a 28.5 92 28.5"
+  ],
+  "steps": [
+    {
+      "command": "fill 4 79 5 7 83 5 minecraft:obsidian"
+    },
+    {
+      "command": "fill 5 80 5 6 82 5 minecraft:nether_portal"
+    },
+    {
+      "command": "execute if block 5 80 5 minecraft:nether_portal",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "summon minecraft:wither 5.5 80 5.5 {Tags:[\"pp_boss_0\"],NoAI:1b,NoGravity:1b,Silent:1b,Health:300.0f,Invul:0}",
+      "wait_ticks": 12
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss_0,x=5,y=80,z=5,dx=0,dy=0,dz=0]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[distance=0..,tag=pp_boss_0,nbt={Health:300.0f,Invul:0}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[tag=pp_boss_0,limit=1] Pos"
+    },
+    {
+      "command": "execute if entity @e[distance=0..,tag=pp_boss_0,nbt={PortalCooldown:0}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "fill 12 79 5 15 83 5 minecraft:obsidian"
+    },
+    {
+      "command": "fill 13 80 5 14 82 5 minecraft:nether_portal"
+    },
+    {
+      "command": "execute if block 13 80 5 minecraft:nether_portal",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "summon minecraft:wither 13.5 80 5.5 {Tags:[\"pp_boss_1\"],NoAI:1b,NoGravity:1b,Silent:1b,Health:150.0f,Invul:0}",
+      "wait_ticks": 12
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss_1,x=13,y=80,z=5,dx=0,dy=0,dz=0]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[distance=0..,tag=pp_boss_1,nbt={Health:150.0f,Invul:0}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[tag=pp_boss_1,limit=1] Pos"
+    },
+    {
+      "command": "execute if entity @e[distance=0..,tag=pp_boss_1,nbt={PortalCooldown:0}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "fill 20 79 5 23 83 5 minecraft:obsidian"
+    },
+    {
+      "command": "fill 21 80 5 22 82 5 minecraft:nether_portal"
+    },
+    {
+      "command": "execute if block 21 80 5 minecraft:nether_portal",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "summon minecraft:wither 21.5 80 5.5 {Tags:[\"pp_boss_2\"],NoAI:1b,NoGravity:1b,Silent:1b,Health:100.0f,Invul:200}",
+      "wait_ticks": 12
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss_2,x=21,y=80,z=5,dx=0,dy=0,dz=0]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[distance=0..,tag=pp_boss_2,nbt={Health:100.0f,Invul:200}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[tag=pp_boss_2,limit=1] Pos"
+    },
+    {
+      "command": "execute if entity @e[distance=0..,tag=pp_boss_2,nbt={PortalCooldown:0}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "fill 4 79 15 7 83 15 minecraft:obsidian"
+    },
+    {
+      "command": "fill 5 80 15 6 82 15 minecraft:nether_portal"
+    },
+    {
+      "command": "summon minecraft:sheep 5.5 80 15.5 {Tags:[\"pp_control\"],NoAI:1b,NoGravity:1b,Silent:1b}",
+      "wait_ticks": 12
+    },
+    {
+      "command": "execute unless entity @e[tag=pp_control,x=5,y=80,z=15,dx=0,dy=0,dz=0]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "summon minecraft:wither 13.5 80 15.5 {Tags:[\"pp_away\"],NoAI:1b,NoGravity:1b,Silent:1b}",
+      "wait_ticks": 4
+    },
+    {
+      "command": "execute if entity @e[tag=pp_away,x=13,y=80,z=15,dx=0,dy=0,dz=0]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    }
+  ],
+  "cleanup": [
+    "tp @e[type=minecraft:wither] 15.5 80 25.5",
+    "tp @e[type=minecraft:sheep] 15.5 80 25.5",
+    "kill @e[type=minecraft:wither]",
+    "kill @e[type=minecraft:sheep]",
+    "execute in minecraft:the_nether run tp @e[type=minecraft:wither,distance=0..] 15.5 80 25.5",
+    "execute in minecraft:the_nether run kill @e[type=minecraft:wither,distance=0..]",
+    "execute in minecraft:the_nether run kill @e[type=minecraft:sheep,distance=0..]",
+    "fill 0 80 0 31 96 31 minecraft:air"
+  ]
+}
