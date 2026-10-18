@@ -1,0 +1,289 @@
+{
+  "schema_version": 1,
+  "id": "dragon-sitting-roar",
+  "title": "Sitting dragons always breathe after a complete roar",
+  "description": "Isolated ParitySmoke arena. Check the 40/41-tick phase boundary, fresh roar clocks after reentry, and NoAI pause. Eight fresh roars cover the former randomized completion. Does not validate breath damage or the complete sitting cycle.",
+  "category": "entity",
+  "tags": [
+    "ender-dragon",
+    "phase",
+    "ai"
+  ],
+  "setup": [
+    "tick freeze",
+    "difficulty normal",
+    "gamerule spawn_mobs false",
+    "gamerule mob_griefing false",
+    "forceload add -48 -48 47 47",
+    "gamemode creative ParitySmoke",
+    "tp ParitySmoke 20.0 80.0 20.0",
+    "kill @e[type=minecraft:ender_dragon]"
+  ],
+  "steps": [
+    {
+      "command": "summon minecraft:ender_dragon 0.5 100.0 0.5 {Silent:1b,NoGravity:1b,PersistenceRequired:1b,UUID:[I;0,0,0,23],DragonPhase:7}"
+    },
+    {
+      "command": "data get entity 00000000-0000-0000-0000-000000000017 DragonPhase",
+      "observe": true,
+      "expect_contains": "following entity data: 7",
+      "wait_ticks": 40
+    },
+    {
+      "command": "data get entity 00000000-0000-0000-0000-000000000017 DragonPhase",
+      "observe": true,
+      "expect_contains": "following entity data: 7",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity 00000000-0000-0000-0000-000000000017 DragonPhase",
+      "observe": true,
+      "expect_contains": "following entity data: 5"
+    },
+    {
+      "command": "kill 00000000-0000-0000-0000-000000000017"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.5 100.0 0.5 {Silent:1b,NoGravity:1b,PersistenceRequired:1b,UUID:[I;0,0,0,23],DragonPhase:7}"
+    },
+    {
+      "command": "data get entity 00000000-0000-0000-0000-000000000017 DragonPhase",
+      "observe": true,
+      "expect_contains": "following entity data: 7",
+      "wait_ticks": 40
+    },
+    {
+      "command": "data get entity 00000000-0000-0000-0000-000000000017 DragonPhase",
+      "observe": true,
+      "expect_contains": "following entity data: 7",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity 00000000-0000-0000-0000-000000000017 DragonPhase",
+      "observe": true,
+      "expect_contains": "following entity data: 5"
+    },
+    {
+      "command": "kill 00000000-0000-0000-0000-000000000017"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.5 100.0 0.5 {Silent:1b,NoGravity:1b,PersistenceRequired:1b,UUID:[I;0,0,0,23],DragonPhase:7}"
+    },
+    {
+      "command": "data get entity 00000000-0000-0000-0000-000000000017 DragonPhase",
+      "observe": true,
+      "expect_contains": "following entity data: 7",
+      "wait_ticks": 40
+    },
+    {
+      "command": "data get entity 00000000-0000-0000-0000-000000000017 DragonPhase",
+      "observe": true,
+      "expect_contains": "following entity data: 7",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity 00000000-0000-0000-0000-000000000017 DragonPhase",
+      "observe": true,
+      "expect_contains": "following entity data: 5"
+    },
+    {
+      "command": "kill 00000000-0000-0000-0000-000000000017"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.5 100.0 0.5 {Silent:1b,NoGravity:1b,PersistenceRequired:1b,UUID:[I;0,0,0,23],DragonPhase:7}"
+    },
+    {
+      "command": "data get entity 00000000-0000-0000-0000-000000000017 DragonPhase",
+      "observe": true,
+      "expect_contains": "following entity data: 7",
+      "wait_ticks": 40
+    },
+    {
+      "command": "data get entity 00000000-0000-0000-0000-000000000017 DragonPhase",
+      "observe": true,
+      "expect_contains": "following entity data: 7",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity 00000000-0000-0000-0000-000000000017 DragonPhase",
+      "observe": true,
+      "expect_contains": "following entity data: 5"
+    },
+    {
+      "command": "kill 00000000-0000-0000-0000-000000000017"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.5 100.0 0.5 {Silent:1b,NoGravity:1b,PersistenceRequired:1b,UUID:[I;0,0,0,23],DragonPhase:7}"
+    },
+    {
+      "command": "data get entity 00000000-0000-0000-0000-000000000017 DragonPhase",
+      "observe": true,
+      "expect_contains": "following entity data: 7",
+      "wait_ticks": 40
+    },
+    {
+      "command": "data get entity 00000000-0000-0000-0000-000000000017 DragonPhase",
+      "observe": true,
+      "expect_contains": "following entity data: 7",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity 00000000-0000-0000-0000-000000000017 DragonPhase",
+      "observe": true,
+      "expect_contains": "following entity data: 5"
+    },
+    {
+      "command": "kill 00000000-0000-0000-0000-000000000017"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.5 100.0 0.5 {Silent:1b,NoGravity:1b,PersistenceRequired:1b,UUID:[I;0,0,0,23],DragonPhase:7}"
+    },
+    {
+      "command": "data get entity 00000000-0000-0000-0000-000000000017 DragonPhase",
+      "observe": true,
+      "expect_contains": "following entity data: 7",
+      "wait_ticks": 40
+    },
+    {
+      "command": "data get entity 00000000-0000-0000-0000-000000000017 DragonPhase",
+      "observe": true,
+      "expect_contains": "following entity data: 7",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity 00000000-0000-0000-0000-000000000017 DragonPhase",
+      "observe": true,
+      "expect_contains": "following entity data: 5"
+    },
+    {
+      "command": "kill 00000000-0000-0000-0000-000000000017"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.5 100.0 0.5 {Silent:1b,NoGravity:1b,PersistenceRequired:1b,UUID:[I;0,0,0,23],DragonPhase:7}"
+    },
+    {
+      "command": "data get entity 00000000-0000-0000-0000-000000000017 DragonPhase",
+      "observe": true,
+      "expect_contains": "following entity data: 7",
+      "wait_ticks": 40
+    },
+    {
+      "command": "data get entity 00000000-0000-0000-0000-000000000017 DragonPhase",
+      "observe": true,
+      "expect_contains": "following entity data: 7",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity 00000000-0000-0000-0000-000000000017 DragonPhase",
+      "observe": true,
+      "expect_contains": "following entity data: 5"
+    },
+    {
+      "command": "kill 00000000-0000-0000-0000-000000000017"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.5 100.0 0.5 {Silent:1b,NoGravity:1b,PersistenceRequired:1b,UUID:[I;0,0,0,23],DragonPhase:7}"
+    },
+    {
+      "command": "data get entity 00000000-0000-0000-0000-000000000017 DragonPhase",
+      "observe": true,
+      "expect_contains": "following entity data: 7",
+      "wait_ticks": 40
+    },
+    {
+      "command": "data get entity 00000000-0000-0000-0000-000000000017 DragonPhase",
+      "observe": true,
+      "expect_contains": "following entity data: 7",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity 00000000-0000-0000-0000-000000000017 DragonPhase",
+      "observe": true,
+      "expect_contains": "following entity data: 5"
+    },
+    {
+      "command": "kill 00000000-0000-0000-0000-000000000017"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.5 100.0 0.5 {Silent:1b,NoGravity:1b,PersistenceRequired:1b,UUID:[I;0,0,0,23],DragonPhase:7}"
+    },
+    {
+      "command": "data get entity 00000000-0000-0000-0000-000000000017 DragonPhase",
+      "observe": true,
+      "expect_contains": "following entity data: 7",
+      "wait_ticks": 30
+    },
+    {
+      "command": "data merge entity 00000000-0000-0000-0000-000000000017 {DragonPhase:10}"
+    },
+    {
+      "command": "data get entity 00000000-0000-0000-0000-000000000017 DragonPhase",
+      "observe": true,
+      "expect_contains": "following entity data: 10",
+      "wait_ticks": 3
+    },
+    {
+      "command": "data merge entity 00000000-0000-0000-0000-000000000017 {DragonPhase:7}"
+    },
+    {
+      "command": "data get entity 00000000-0000-0000-0000-000000000017 DragonPhase",
+      "observe": true,
+      "expect_contains": "following entity data: 7",
+      "wait_ticks": 40
+    },
+    {
+      "command": "data get entity 00000000-0000-0000-0000-000000000017 DragonPhase",
+      "observe": true,
+      "expect_contains": "following entity data: 7",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity 00000000-0000-0000-0000-000000000017 DragonPhase",
+      "observe": true,
+      "expect_contains": "following entity data: 5"
+    },
+    {
+      "command": "kill 00000000-0000-0000-0000-000000000017"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.5 100.0 0.5 {Silent:1b,NoGravity:1b,PersistenceRequired:1b,UUID:[I;0,0,0,23],DragonPhase:7,NoAI:1b}"
+    },
+    {
+      "command": "data get entity 00000000-0000-0000-0000-000000000017 DragonPhase",
+      "observe": true,
+      "expect_contains": "following entity data: 7",
+      "wait_ticks": 50
+    },
+    {
+      "command": "data get entity 00000000-0000-0000-0000-000000000017 DragonPhase",
+      "observe": true,
+      "expect_contains": "following entity data: 7"
+    },
+    {
+      "command": "data merge entity 00000000-0000-0000-0000-000000000017 {NoAI:0b}"
+    },
+    {
+      "command": "data get entity 00000000-0000-0000-0000-000000000017 DragonPhase",
+      "observe": true,
+      "expect_contains": "following entity data: 7",
+      "wait_ticks": 40
+    },
+    {
+      "command": "data get entity 00000000-0000-0000-0000-000000000017 DragonPhase",
+      "observe": true,
+      "expect_contains": "following entity data: 7",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity 00000000-0000-0000-0000-000000000017 DragonPhase",
+      "observe": true,
+      "expect_contains": "following entity data: 5"
+    },
+    {
+      "command": "kill 00000000-0000-0000-0000-000000000017"
+    }
+  ],
+  "cleanup": [
+    "kill 00000000-0000-0000-0000-000000000017"
+  ]
+}

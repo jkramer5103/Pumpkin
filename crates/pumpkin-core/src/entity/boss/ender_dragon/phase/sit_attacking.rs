@@ -1,6 +1,8 @@
 use super::EnderDragonPhase;
 use crate::entity::boss::ender_dragon::EnderDragonEntity;
 
+const ROAR_DURATION: i32 = 40;
+
 pub struct SitAttackingPhase;
 
 impl super::Phase for SitAttackingPhase {
@@ -9,6 +11,10 @@ impl super::Phase for SitAttackingPhase {
     }
 
     fn begin(&self, dragon: &EnderDragonEntity) {
+        *dragon
+            .sit_attack_timer
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner) = 0;
         *dragon
             .target_location
             .lock()
@@ -22,25 +28,14 @@ impl super::Phase for SitAttackingPhase {
             .unwrap_or_else(std::sync::PoisonError::into_inner);
         *timer += 1;
 
-        if *timer > 40 {
-            *timer = 0;
-            let should_breathe = rand::random_bool(0.5);
-            let should_take_off = *dragon
-                .ticks_sitting
-                .lock()
-                .unwrap_or_else(std::sync::PoisonError::into_inner)
-                > 200;
+        if *timer > ROAR_DURATION {
             drop(timer);
 
-            if should_breathe {
-                dragon.set_phase(EnderDragonPhase::SitBreathing);
-                *dragon
-                    .breathing_timer
-                    .lock()
-                    .unwrap_or_else(std::sync::PoisonError::into_inner) = 0;
-            } else if should_take_off {
-                dragon.set_phase(EnderDragonPhase::TakingOff);
-            }
+            dragon.set_phase(EnderDragonPhase::SitBreathing);
+            *dragon
+                .breathing_timer
+                .lock()
+                .unwrap_or_else(std::sync::PoisonError::into_inner) = 0;
         } else {
             drop(timer);
         }
