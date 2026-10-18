@@ -90,12 +90,12 @@ impl super::Phase for SitBreathingPhase {
                     true,
                     true,
                 )],
-                600, // duration
-                5.0, // radius
-                20,  // reapplication delay
-                20,  // wait time
-                0.0, // radius on use
-                0,   // duration on use
+                FLAME_DURATION, // duration after the cloud's wait time
+                5.0,            // radius
+                20,             // reapplication delay
+                20,             // wait time
+                0.0,            // radius on use
+                0,              // duration on use
             );
             // Sitting dragon flames keep their radius instead of shrinking like potions.
             if let Some(flame) = cloud.cast_any().downcast_ref::<AreaEffectCloudEntity>() {

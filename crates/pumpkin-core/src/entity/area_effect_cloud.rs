@@ -55,6 +55,10 @@ pub struct AreaEffectCloudEntity {
 }
 
 impl AreaEffectCloudEntity {
+    const fn has_expired(age: i32, wait_time: i32, duration: i32) -> bool {
+        duration != -1 && age - wait_time >= duration
+    }
+
     #[allow(clippy::new_ret_no_self)]
     pub fn new(entity: Entity) -> Arc<dyn EntityBase> {
         entity
@@ -219,7 +223,11 @@ impl EntityBase for AreaEffectCloudEntity {
                 .duration
                 .lock()
                 .unwrap_or_else(std::sync::PoisonError::into_inner);
-            if *age > duration {
+            let wait_time = *self
+                .wait_time
+                .lock()
+                .unwrap_or_else(std::sync::PoisonError::into_inner);
+            if Self::has_expired(*age, wait_time, duration) {
                 // Remove old entities
                 self.entity.remove();
                 return;
@@ -456,5 +464,39 @@ impl EntityBase for AreaEffectCloudEntity {
 
     fn cast_any(&self) -> &dyn std::any::Any {
         self
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::AreaEffectCloudEntity;
+
+    #[test]
+    fn cloud_duration_starts_after_wait_time_and_expires_at_the_boundary() {
+        // Sitting dragon flames have a 20-tick wait and a 200-tick duration.
+        for age in [0, 19, 20, 200, 219] {
+            assert!(!AreaEffectCloudEntity::has_expired(age, 20, 200));
+        }
+        for age in [220, 221, 600] {
+            assert!(AreaEffectCloudEntity::has_expired(age, 20, 200));
+        }
+        assert!(!AreaEffectCloudEntity::has_expired(19, 0, 20));
+        assert!(AreaEffectCloudEntity::has_expired(20, 0, 20));
+        assert!(!AreaEffectCloudEntity::has_expired(21, 20, 2));
+        assert!(AreaEffectCloudEntity::has_expired(22, 20, 2));
+    }
+
+    #[test]
+    fn zero_duration_cloud_expires_when_wait_time_ends() {
+        assert!(!AreaEffectCloudEntity::has_expired(19, 20, 0));
+        assert!(AreaEffectCloudEntity::has_expired(20, 20, 0));
+    }
+
+    #[test]
+    fn indefinite_cloud_does_not_expire_from_age() {
+        for age in [0, 19, 20, 220, 600, i32::MAX] {
+            assert!(!AreaEffectCloudEntity::has_expired(age, 20, -1));
+            assert!(!AreaEffectCloudEntity::has_expired(age, 0, -1));
+        }
     }
 }
