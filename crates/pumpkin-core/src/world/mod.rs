@@ -187,6 +187,8 @@ use uuid::Uuid;
 use weather::Weather;
 
 const MAX_LIGHT_LEVEL: u8 = 15;
+const GLOBAL_EVENT_SOUND_DISTANCE: f64 = 32.0;
+const LEVEL_EVENT_BROADCAST_RADIUS: f64 = 64.0;
 
 fn bedrock_chest_block_actor(state_id: BlockStateId, position: BlockPos) -> Option<NbtCompound> {
     let (block, _) = BlockState::from_id_with_block(state_id);
@@ -5785,7 +5787,38 @@ impl World {
     }
 
     pub fn sync_global_world_event(&self, world_event: WorldEvent, position: BlockPos, data: i32) {
-        self.broadcast_packet_all(&CWorldEvent::new(world_event as i32, position, data, true));
+        if !self.level_info.load().game_rules.global_sound_events {
+            let origin = position.0.to_f64();
+            let players = self.players.load();
+            let recipients = players.iter().filter(|player| {
+                player.position().squared_distance_to_vec(&origin)
+                    < LEVEL_EVENT_BROADCAST_RADIUS * LEVEL_EVENT_BROADCAST_RADIUS
+            });
+            Self::broadcast_java_grouped(
+                &CWorldEvent::new(world_event as i32, position, data, false),
+                Self::collect_java_recipients_by_version(recipients),
+            );
+            return;
+        }
+
+        let Some(server) = self.server.upgrade() else {
+            return;
+        };
+        for world in server.worlds.load().iter() {
+            for player in world.players.load().iter() {
+                let sound_pos = global_level_event_position(
+                    position,
+                    player.position(),
+                    std::ptr::eq(self, world.as_ref()),
+                );
+                player.try_send_client_packet(&CWorldEvent::new(
+                    world_event as i32,
+                    sound_pos,
+                    data,
+                    true,
+                ));
+            }
+        }
     }
 
     pub fn set_block_destroy_stage(&self, entity_id: i32, location: BlockPos, stage: i8) {
@@ -7284,6 +7317,25 @@ impl WorldPortalExt for WorldPortal {
     }
 }
 
+fn global_level_event_position(
+    position: BlockPos,
+    observer: Vector3<f64>,
+    same_world: bool,
+) -> BlockPos {
+    if !same_world {
+        return BlockPos::floored_v(observer);
+    }
+    let center = position.to_centered_f64();
+    let sound_pos = if observer.squared_distance_to_vec(&center)
+        < GLOBAL_EVENT_SOUND_DISTANCE * GLOBAL_EVENT_SOUND_DISTANCE
+    {
+        center
+    } else {
+        observer + (center - observer).normalize() * GLOBAL_EVENT_SOUND_DISTANCE
+    };
+    BlockPos::floored_v(sound_pos)
+}
+
 struct CubicCurve {
     a: f32,
     b: f32,
@@ -7384,12 +7436,42 @@ mod tests {
         fluid::Fluid,
     };
     use pumpkin_nbt::compound::NbtCompound;
-    use pumpkin_util::math::position::BlockPos;
+    use pumpkin_util::math::{position::BlockPos, vector3::Vector3};
     use uuid::Uuid;
 
     use super::{
-        World, bedrock_block_breaking_rate, bedrock_chest_block_actor, merge_entity_records,
+        World, bedrock_block_breaking_rate, bedrock_chest_block_actor, global_level_event_position,
+        merge_entity_records,
     };
+
+    #[test]
+    fn global_level_events_position_the_sound_for_each_observer() {
+        let position = BlockPos::new(24, 80, 24);
+        for (observer, same_world, expected) in [
+            (Vector3::new(15.0, 84.0, 15.0), true, position),
+            (
+                Vector3::new(-24.0, 84.0, -24.0),
+                true,
+                BlockPos::new(-2, 82, -2),
+            ),
+            (Vector3::new(-7.5, 80.5, 24.5), true, position),
+            (
+                Vector3::new(-8.5, 80.5, 24.5),
+                true,
+                BlockPos::new(23, 80, 24),
+            ),
+            (
+                Vector3::new(-24.2, 90.7, 13.8),
+                false,
+                BlockPos::new(-25, 90, 13),
+            ),
+        ] {
+            assert_eq!(
+                global_level_event_position(position, observer, same_world),
+                expected,
+            );
+        }
+    }
 
     fn record(uuid: Option<Uuid>, id: &str) -> NbtCompound {
         let mut nbt = NbtCompound::new();

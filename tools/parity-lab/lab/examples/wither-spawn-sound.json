@@ -1,0 +1,280 @@
+{
+  "schema_version": 1,
+  "id": "wither-spawn-sound",
+  "title": "Wither spawn completion sound dispatch",
+  "category": "entities",
+  "description": "Complete spawn invulnerability near and outside tracking range, with NoAI, charging and local-sound controls. A protocol client must additionally inspect level event 1023 flag, count and observer-relative position.",
+  "tags": [
+    "wither",
+    "boss",
+    "sound",
+    "packet"
+  ],
+  "setup": [
+    "gamemode creative @a",
+    "difficulty easy",
+    "gamerule mob_griefing false",
+    "gamerule spawn_mobs false",
+    "forceload add 0 0 31 31"
+  ],
+  "steps": [
+    {
+      "command": "say PARITY_SOUND_CASE=near"
+    },
+    {
+      "command": "kill @e[type=!minecraft:player]",
+      "wait_ticks": 25
+    },
+    {
+      "command": "gamerule global_sound_events true"
+    },
+    {
+      "command": "tp @a 15.0 84.0 15.0",
+      "wait_ticks": 2
+    },
+    {
+      "command": "execute if entity @a[nbt={Pos:[15.0d,84.0d,15.0d]}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "fill 20 79 20 28 79 28 minecraft:bedrock"
+    },
+    {
+      "command": "summon minecraft:wither 24.0 80.0 24.0 {Tags:[\"pp_boss\"],NoGravity:1b,Health:300.0f,Invul:1,Silent:0b,NoAI:0b}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss,nbt={Invul:0}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss,nbt={Health:300.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "say PARITY_SOUND_CASE=distant"
+    },
+    {
+      "command": "kill @e[type=!minecraft:player]",
+      "wait_ticks": 25
+    },
+    {
+      "command": "gamerule global_sound_events true"
+    },
+    {
+      "command": "tp @a -24.0 84.0 -24.0",
+      "wait_ticks": 2
+    },
+    {
+      "command": "execute if entity @a[nbt={Pos:[-24.0d,84.0d,-24.0d]}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "fill 20 79 20 28 79 28 minecraft:bedrock"
+    },
+    {
+      "command": "summon minecraft:wither 24.0 80.0 24.0 {Tags:[\"pp_boss\"],NoGravity:1b,Health:300.0f,Invul:1,Silent:0b,NoAI:0b}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss,nbt={Invul:0}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss,nbt={Health:300.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "say PARITY_SOUND_CASE=charging"
+    },
+    {
+      "command": "kill @e[type=!minecraft:player]",
+      "wait_ticks": 25
+    },
+    {
+      "command": "gamerule global_sound_events true"
+    },
+    {
+      "command": "tp @a 15.0 84.0 15.0",
+      "wait_ticks": 2
+    },
+    {
+      "command": "execute if entity @a[nbt={Pos:[15.0d,84.0d,15.0d]}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "fill 20 79 20 28 79 28 minecraft:bedrock"
+    },
+    {
+      "command": "summon minecraft:wither 24.0 80.0 24.0 {Tags:[\"pp_boss\"],NoGravity:1b,Health:300.0f,Invul:2,Silent:0b,NoAI:0b}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss,nbt={Invul:1}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss,nbt={Health:300.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "say PARITY_SOUND_CASE=noai"
+    },
+    {
+      "command": "kill @e[type=!minecraft:player]",
+      "wait_ticks": 25
+    },
+    {
+      "command": "gamerule global_sound_events true"
+    },
+    {
+      "command": "tp @a 15.0 84.0 15.0",
+      "wait_ticks": 2
+    },
+    {
+      "command": "execute if entity @a[nbt={Pos:[15.0d,84.0d,15.0d]}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "fill 20 79 20 28 79 28 minecraft:bedrock"
+    },
+    {
+      "command": "summon minecraft:wither 24.0 80.0 24.0 {Tags:[\"pp_boss\"],NoGravity:1b,Health:300.0f,Invul:1,Silent:0b,NoAI:1b}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss,nbt={Invul:1}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss,nbt={Health:300.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "say PARITY_SOUND_CASE=active"
+    },
+    {
+      "command": "kill @e[type=!minecraft:player]",
+      "wait_ticks": 25
+    },
+    {
+      "command": "gamerule global_sound_events true"
+    },
+    {
+      "command": "tp @a 15.0 84.0 15.0",
+      "wait_ticks": 2
+    },
+    {
+      "command": "execute if entity @a[nbt={Pos:[15.0d,84.0d,15.0d]}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "fill 20 79 20 28 79 28 minecraft:bedrock"
+    },
+    {
+      "command": "summon minecraft:wither 24.0 80.0 24.0 {Tags:[\"pp_boss\"],NoGravity:1b,Health:300.0f,Invul:0,Silent:0b,NoAI:0b}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss,nbt={Invul:0}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss,nbt={Health:300.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "say PARITY_SOUND_CASE=local-near"
+    },
+    {
+      "command": "kill @e[type=!minecraft:player]",
+      "wait_ticks": 25
+    },
+    {
+      "command": "gamerule global_sound_events false"
+    },
+    {
+      "command": "tp @a 15.0 84.0 15.0",
+      "wait_ticks": 2
+    },
+    {
+      "command": "execute if entity @a[nbt={Pos:[15.0d,84.0d,15.0d]}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "fill 20 79 20 28 79 28 minecraft:bedrock"
+    },
+    {
+      "command": "summon minecraft:wither 24.0 80.0 24.0 {Tags:[\"pp_boss\"],NoGravity:1b,Health:300.0f,Invul:1,Silent:0b,NoAI:0b}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss,nbt={Invul:0}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss,nbt={Health:300.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "say PARITY_SOUND_CASE=local-distant"
+    },
+    {
+      "command": "kill @e[type=!minecraft:player]",
+      "wait_ticks": 25
+    },
+    {
+      "command": "gamerule global_sound_events false"
+    },
+    {
+      "command": "tp @a -24.0 84.0 -24.0",
+      "wait_ticks": 2
+    },
+    {
+      "command": "execute if entity @a[nbt={Pos:[-24.0d,84.0d,-24.0d]}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "fill 20 79 20 28 79 28 minecraft:bedrock"
+    },
+    {
+      "command": "summon minecraft:wither 24.0 80.0 24.0 {Tags:[\"pp_boss\"],NoGravity:1b,Health:300.0f,Invul:1,Silent:0b,NoAI:0b}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss,nbt={Invul:0}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss,nbt={Health:300.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    }
+  ],
+  "cleanup": [
+    "kill @e[type=!minecraft:player]",
+    "gamerule global_sound_events true",
+    "tp @a 15 84 15"
+  ],
+  "notes": "Run in an isolated scratch world with protocol777 observer. near/distant each receive one global event at (24,80,24)/(-2,82,-2); charging/NoAI/active receive none. With global_sound_events false, near receives one local event at (24,80,24) and distant (>64 blocks) receives none. Commands alone do not validate sound packets or rendered audio. Silent boss setup is excluded because current Pumpkin does not read Silent from entity NBT; its existing in-memory sound gate is unchanged and not live-tested here. Two settling ticks after teleport update observer tracking before spawning."
+}
