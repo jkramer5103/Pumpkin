@@ -1,0 +1,187 @@
+{
+  "schema_version": 1,
+  "id": "wither-skull-occluded-blast",
+  "title": "Wither skull minimum blast damage behind a wall",
+  "category": "entities",
+  "description": "Normal and dangerous skulls hit an intact wall. A fully covered cow within two blocks loses exactly one HP; invulnerable and distant cows retain their health.",
+  "tags": [
+    "entity",
+    "wither",
+    "combat",
+    "explosion"
+  ],
+  "setup": [
+    "tick freeze",
+    "gamemode creative @a",
+    "difficulty easy",
+    "gamerule spawn_mobs false",
+    "gamerule mob_griefing false",
+    "forceload add 0 0 31 31",
+    "fill 0 79 0 31 79 31 minecraft:bedrock",
+    "fill 0 80 0 31 94 31 minecraft:air",
+    "fill 20 80 18 20 88 23 minecraft:stone",
+    "tp @a 16.5 84 16.5"
+  ],
+  "steps": [
+    {
+      "command": "kill @e[tag=pp_victim]"
+    },
+    {
+      "command": "kill @e[tag=pp_invulnerable]"
+    },
+    {
+      "command": "kill @e[tag=pp_outside]",
+      "wait_ticks": 25
+    },
+    {
+      "command": "execute unless entity @e[tag=pp_victim]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "summon minecraft:cow 21.5 82.5 20.5 {Tags:[\"pp_victim\"],NoAI:1b,NoGravity:1b,Silent:1b,Health:10.0f}"
+    },
+    {
+      "command": "summon minecraft:cow 21.5 82.5 19.5 {Tags:[\"pp_invulnerable\"],NoAI:1b,NoGravity:1b,Invulnerable:1b,Health:10.0f}"
+    },
+    {
+      "command": "summon minecraft:cow 24.5 82.5 20.5 {Tags:[\"pp_outside\"],NoAI:1b,NoGravity:1b,Health:10.0f}"
+    },
+    {
+      "command": "execute if block 20 82 20 minecraft:stone",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_victim,nbt={Health:10.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "summon minecraft:wither_skull 19.9 82.5 20.5 {Tags:[\"pp_shot\"],dangerous:0b,Motion:[0.4d,0.0d,0.0d]}"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_shot]",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 4
+    },
+    {
+      "command": "execute unless entity @e[tag=pp_shot]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 20 82 20 minecraft:stone",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_victim,nbt={Health:9.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_invulnerable,nbt={Health:10.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_outside,nbt={Health:10.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[tag=pp_victim,limit=1] Health"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_victim,nbt={Motion:[0.0d,0.0d,0.0d]}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[tag=pp_victim]"
+    },
+    {
+      "command": "kill @e[tag=pp_invulnerable]"
+    },
+    {
+      "command": "kill @e[tag=pp_outside]",
+      "wait_ticks": 25
+    },
+    {
+      "command": "execute unless entity @e[tag=pp_victim]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "summon minecraft:cow 21.5 82.5 20.5 {Tags:[\"pp_victim\"],NoAI:1b,NoGravity:1b,Silent:1b,Health:10.0f}"
+    },
+    {
+      "command": "summon minecraft:cow 21.5 82.5 19.5 {Tags:[\"pp_invulnerable\"],NoAI:1b,NoGravity:1b,Invulnerable:1b,Health:10.0f}"
+    },
+    {
+      "command": "summon minecraft:cow 24.5 82.5 20.5 {Tags:[\"pp_outside\"],NoAI:1b,NoGravity:1b,Health:10.0f}"
+    },
+    {
+      "command": "execute if block 20 82 20 minecraft:stone",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_victim,nbt={Health:10.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "summon minecraft:wither_skull 19.9 82.5 20.5 {Tags:[\"pp_shot\"],dangerous:1b,Motion:[0.4d,0.0d,0.0d]}"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_shot]",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 4
+    },
+    {
+      "command": "execute unless entity @e[tag=pp_shot]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 20 82 20 minecraft:stone",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_victim,nbt={Health:9.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_invulnerable,nbt={Health:10.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_outside,nbt={Health:10.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[tag=pp_victim,limit=1] Health"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_victim,nbt={Motion:[0.0d,0.0d,0.0d]}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    }
+  ],
+  "cleanup": [
+    "kill @e[type=minecraft:wither_skull]",
+    "kill @e[tag=pp_victim]",
+    "kill @e[tag=pp_invulnerable]",
+    "kill @e[tag=pp_outside]",
+    "fill 20 80 18 20 88 23 minecraft:air",
+    "tick unfreeze"
+  ]
+}

@@ -439,10 +439,6 @@ impl<'a> Explosion<'a> {
                 Self::calculate_exposure(&self.pos, entity, world) as f64
             };
 
-            if exposure == 0.0 {
-                continue;
-            }
-
             if should_damage {
                 let damage =
                     calc.get_entity_damage_amount(self, entity_base.as_ref(), exposure as f32);
@@ -454,6 +450,11 @@ impl<'a> Explosion<'a> {
                     self.source,
                     cause.as_deref(),
                 );
+            }
+
+            // Fully occluded entities still receive the calculator's minimum damage.
+            if exposure == 0.0 {
+                continue;
             }
 
             // Calculate and apply knockback
