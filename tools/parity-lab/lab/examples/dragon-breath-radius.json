@@ -1,0 +1,345 @@
+{
+  "schema_version": 1,
+  "id": "dragon-breath-radius",
+  "title": "Sitting dragon breath keeps a five-block footprint",
+  "description": "Isolated emitted-cloud arena with a real headless player. Move the NoAI emitter away after emission. Fresh sheep four blocks from each actual cloud center must take damage, sheep 5.5 blocks away must remain healthy, with sheep 4.9 blocks away after elapsed time and an outside control after crowd contacts. Damage amounts, placement, particles, duration and full-fight parity are not asserted.",
+  "category": "entity",
+  "tags": [
+    "ender-dragon",
+    "ai",
+    "area-effect-cloud"
+  ],
+  "setup": [
+    "tick freeze",
+    "difficulty normal",
+    "gamerule spawn_mobs false",
+    "gamerule mob_griefing false",
+    "forceload add -48 -48 47 47",
+    "gamemode creative ParitySmoke",
+    "tp ParitySmoke 20.0 80.0 20.0",
+    "kill @e[type=minecraft:ender_dragon]",
+    "kill @e[type=minecraft:area_effect_cloud]",
+    "kill @e[type=minecraft:sheep]",
+    "kill @e[type=minecraft:marker,tag=breath_center]"
+  ],
+  "steps": [
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "kill @e[type=minecraft:area_effect_cloud]"
+    },
+    {
+      "command": "kill @e[type=minecraft:sheep]"
+    },
+    {
+      "command": "kill @e[type=minecraft:marker,tag=breath_center]"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.5 100.0 0.5 {Silent:1b,NoGravity:1b,PersistenceRequired:1b,UUID:[I;0,0,0,280],DragonPhase:5}",
+      "wait_ticks": 10
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:area_effect_cloud]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1"
+    },
+    {
+      "command": "data merge entity 00000000-0000-0000-0000-000000000118 {NoAI:1b}"
+    },
+    {
+      "command": "tp 00000000-0000-0000-0000-000000000118 30.0 100.0 30.0"
+    },
+    {
+      "command": "execute at @e[type=minecraft:area_effect_cloud,limit=1] run summon minecraft:marker ~ ~ ~ {Tags:[\"breath_center\"]}"
+    },
+    {
+      "command": "execute at @e[type=minecraft:marker,tag=breath_center,limit=1] run summon minecraft:sheep ~4.0 ~ ~ {NoAI:1b,NoGravity:1b,Silent:1b,PersistenceRequired:1b,Tags:[\"radius_inside\"]}"
+    },
+    {
+      "command": "execute at @e[type=minecraft:marker,tag=breath_center,limit=1] run summon minecraft:sheep ~5.5 ~ ~ {NoAI:1b,NoGravity:1b,Silent:1b,PersistenceRequired:1b,Tags:[\"radius_outside\"]}"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:sheep,tag=radius_inside]",
+      "wait_ticks": 20,
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1"
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:sheep,tag=radius_inside,nbt={Health:8.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:sheep,tag=radius_inside,limit=1] Health",
+      "observe": true,
+      "expect_contains": "following entity data:"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:sheep,tag=radius_outside,nbt={Health:8.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:sheep,tag=radius_outside,limit=1] Health",
+      "observe": true,
+      "expect_contains": "following entity data:"
+    },
+    {
+      "command": "kill @e[type=minecraft:sheep]"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:area_effect_cloud]",
+      "wait_ticks": 60,
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1"
+    },
+    {
+      "command": "execute at @e[type=minecraft:marker,tag=breath_center,limit=1] run summon minecraft:sheep ~4.9 ~ ~ {NoAI:1b,NoGravity:1b,Silent:1b,PersistenceRequired:1b,Tags:[\"radius_inside\"]}"
+    },
+    {
+      "command": "execute at @e[type=minecraft:marker,tag=breath_center,limit=1] run summon minecraft:sheep ~5.5 ~ ~ {NoAI:1b,NoGravity:1b,Silent:1b,PersistenceRequired:1b,Tags:[\"radius_outside\"]}"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:sheep,tag=radius_inside]",
+      "wait_ticks": 20,
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1"
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:sheep,tag=radius_inside,nbt={Health:8.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:sheep,tag=radius_inside,limit=1] Health",
+      "observe": true,
+      "expect_contains": "following entity data:"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:sheep,tag=radius_outside,nbt={Health:8.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:sheep,tag=radius_outside,limit=1] Health",
+      "observe": true,
+      "expect_contains": "following entity data:"
+    },
+    {
+      "command": "kill @e[type=minecraft:sheep]"
+    },
+    {
+      "command": "execute at @e[type=minecraft:marker,tag=breath_center,limit=1] run summon minecraft:sheep ~ ~ ~ {NoAI:1b,NoGravity:1b,Silent:1b,PersistenceRequired:1b,Tags:[\"radius_crowd\"]}"
+    },
+    {
+      "command": "execute at @e[type=minecraft:marker,tag=breath_center,limit=1] run summon minecraft:sheep ~ ~ ~ {NoAI:1b,NoGravity:1b,Silent:1b,PersistenceRequired:1b,Tags:[\"radius_crowd\"]}"
+    },
+    {
+      "command": "execute at @e[type=minecraft:marker,tag=breath_center,limit=1] run summon minecraft:sheep ~ ~ ~ {NoAI:1b,NoGravity:1b,Silent:1b,PersistenceRequired:1b,Tags:[\"radius_crowd\"]}"
+    },
+    {
+      "command": "execute at @e[type=minecraft:marker,tag=breath_center,limit=1] run summon minecraft:sheep ~ ~ ~ {NoAI:1b,NoGravity:1b,Silent:1b,PersistenceRequired:1b,Tags:[\"radius_crowd\"]}"
+    },
+    {
+      "command": "execute at @e[type=minecraft:marker,tag=breath_center,limit=1] run summon minecraft:sheep ~ ~ ~ {NoAI:1b,NoGravity:1b,Silent:1b,PersistenceRequired:1b,Tags:[\"radius_crowd\"]}"
+    },
+    {
+      "command": "execute at @e[type=minecraft:marker,tag=breath_center,limit=1] run summon minecraft:sheep ~ ~ ~ {NoAI:1b,NoGravity:1b,Silent:1b,PersistenceRequired:1b,Tags:[\"radius_crowd\"]}"
+    },
+    {
+      "command": "execute at @e[type=minecraft:marker,tag=breath_center,limit=1] run summon minecraft:sheep ~ ~ ~ {NoAI:1b,NoGravity:1b,Silent:1b,PersistenceRequired:1b,Tags:[\"radius_crowd\"]}"
+    },
+    {
+      "command": "execute at @e[type=minecraft:marker,tag=breath_center,limit=1] run summon minecraft:sheep ~5.5 ~ ~ {NoAI:1b,NoGravity:1b,Silent:1b,PersistenceRequired:1b,Tags:[\"radius_outside\"]}"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:sheep,tag=radius_crowd]",
+      "wait_ticks": 20,
+      "observe": true,
+      "expect_contains": "Test passed. Count: 7"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:sheep,tag=radius_outside,nbt={Health:8.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:sheep,tag=radius_outside,limit=1] Health",
+      "observe": true,
+      "expect_contains": "following entity data:"
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:sheep,tag=radius_crowd,nbt={Health:8.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:area_effect_cloud]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "kill @e[type=minecraft:area_effect_cloud]"
+    },
+    {
+      "command": "kill @e[type=minecraft:sheep]"
+    },
+    {
+      "command": "kill @e[type=minecraft:marker,tag=breath_center]"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.5 100.0 0.5 {Silent:1b,NoGravity:1b,PersistenceRequired:1b,UUID:[I;0,0,0,280],DragonPhase:5}",
+      "wait_ticks": 10
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:area_effect_cloud]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1"
+    },
+    {
+      "command": "data merge entity 00000000-0000-0000-0000-000000000118 {NoAI:1b}"
+    },
+    {
+      "command": "tp 00000000-0000-0000-0000-000000000118 30.0 100.0 30.0"
+    },
+    {
+      "command": "execute at @e[type=minecraft:area_effect_cloud,limit=1] run summon minecraft:marker ~ ~ ~ {Tags:[\"breath_center\"]}"
+    },
+    {
+      "command": "execute at @e[type=minecraft:marker,tag=breath_center,limit=1] run summon minecraft:sheep ~4.0 ~ ~ {NoAI:1b,NoGravity:1b,Silent:1b,PersistenceRequired:1b,Tags:[\"radius_inside\"]}"
+    },
+    {
+      "command": "execute at @e[type=minecraft:marker,tag=breath_center,limit=1] run summon minecraft:sheep ~5.5 ~ ~ {NoAI:1b,NoGravity:1b,Silent:1b,PersistenceRequired:1b,Tags:[\"radius_outside\"]}"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:sheep,tag=radius_inside]",
+      "wait_ticks": 20,
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1"
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:sheep,tag=radius_inside,nbt={Health:8.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:sheep,tag=radius_inside,limit=1] Health",
+      "observe": true,
+      "expect_contains": "following entity data:"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:sheep,tag=radius_outside,nbt={Health:8.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:sheep,tag=radius_outside,limit=1] Health",
+      "observe": true,
+      "expect_contains": "following entity data:"
+    },
+    {
+      "command": "kill @e[type=minecraft:sheep]"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:area_effect_cloud]",
+      "wait_ticks": 60,
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1"
+    },
+    {
+      "command": "execute at @e[type=minecraft:marker,tag=breath_center,limit=1] run summon minecraft:sheep ~4.9 ~ ~ {NoAI:1b,NoGravity:1b,Silent:1b,PersistenceRequired:1b,Tags:[\"radius_inside\"]}"
+    },
+    {
+      "command": "execute at @e[type=minecraft:marker,tag=breath_center,limit=1] run summon minecraft:sheep ~5.5 ~ ~ {NoAI:1b,NoGravity:1b,Silent:1b,PersistenceRequired:1b,Tags:[\"radius_outside\"]}"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:sheep,tag=radius_inside]",
+      "wait_ticks": 20,
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1"
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:sheep,tag=radius_inside,nbt={Health:8.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:sheep,tag=radius_inside,limit=1] Health",
+      "observe": true,
+      "expect_contains": "following entity data:"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:sheep,tag=radius_outside,nbt={Health:8.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:sheep,tag=radius_outside,limit=1] Health",
+      "observe": true,
+      "expect_contains": "following entity data:"
+    },
+    {
+      "command": "kill @e[type=minecraft:sheep]"
+    },
+    {
+      "command": "execute at @e[type=minecraft:marker,tag=breath_center,limit=1] run summon minecraft:sheep ~ ~ ~ {NoAI:1b,NoGravity:1b,Silent:1b,PersistenceRequired:1b,Tags:[\"radius_crowd\"]}"
+    },
+    {
+      "command": "execute at @e[type=minecraft:marker,tag=breath_center,limit=1] run summon minecraft:sheep ~ ~ ~ {NoAI:1b,NoGravity:1b,Silent:1b,PersistenceRequired:1b,Tags:[\"radius_crowd\"]}"
+    },
+    {
+      "command": "execute at @e[type=minecraft:marker,tag=breath_center,limit=1] run summon minecraft:sheep ~ ~ ~ {NoAI:1b,NoGravity:1b,Silent:1b,PersistenceRequired:1b,Tags:[\"radius_crowd\"]}"
+    },
+    {
+      "command": "execute at @e[type=minecraft:marker,tag=breath_center,limit=1] run summon minecraft:sheep ~ ~ ~ {NoAI:1b,NoGravity:1b,Silent:1b,PersistenceRequired:1b,Tags:[\"radius_crowd\"]}"
+    },
+    {
+      "command": "execute at @e[type=minecraft:marker,tag=breath_center,limit=1] run summon minecraft:sheep ~ ~ ~ {NoAI:1b,NoGravity:1b,Silent:1b,PersistenceRequired:1b,Tags:[\"radius_crowd\"]}"
+    },
+    {
+      "command": "execute at @e[type=minecraft:marker,tag=breath_center,limit=1] run summon minecraft:sheep ~ ~ ~ {NoAI:1b,NoGravity:1b,Silent:1b,PersistenceRequired:1b,Tags:[\"radius_crowd\"]}"
+    },
+    {
+      "command": "execute at @e[type=minecraft:marker,tag=breath_center,limit=1] run summon minecraft:sheep ~ ~ ~ {NoAI:1b,NoGravity:1b,Silent:1b,PersistenceRequired:1b,Tags:[\"radius_crowd\"]}"
+    },
+    {
+      "command": "execute at @e[type=minecraft:marker,tag=breath_center,limit=1] run summon minecraft:sheep ~5.5 ~ ~ {NoAI:1b,NoGravity:1b,Silent:1b,PersistenceRequired:1b,Tags:[\"radius_outside\"]}"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:sheep,tag=radius_crowd]",
+      "wait_ticks": 20,
+      "observe": true,
+      "expect_contains": "Test passed. Count: 7"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:sheep,tag=radius_outside,nbt={Health:8.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:sheep,tag=radius_outside,limit=1] Health",
+      "observe": true,
+      "expect_contains": "following entity data:"
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:sheep,tag=radius_crowd,nbt={Health:8.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:area_effect_cloud]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1"
+    }
+  ],
+  "cleanup": [
+    "kill @e[type=minecraft:ender_dragon]",
+    "kill @e[type=minecraft:area_effect_cloud]",
+    "kill @e[type=minecraft:sheep]",
+    "kill @e[type=minecraft:marker,tag=breath_center]"
+  ]
+}

@@ -90,12 +90,19 @@ impl super::Phase for SitBreathingPhase {
                     true,
                 )],
                 600, // duration
-                3.0, // radius
+                5.0, // radius
                 20,  // reapplication delay
                 20,  // wait time
-                0.5, // radius on use
+                0.0, // radius on use
                 0,   // duration on use
             );
+            // Sitting dragon flames keep their radius instead of shrinking like potions.
+            if let Some(flame) = cloud.cast_any().downcast_ref::<AreaEffectCloudEntity>() {
+                *flame
+                    .radius_on_tick
+                    .lock()
+                    .unwrap_or_else(std::sync::PoisonError::into_inner) = 0.0;
+            }
             *dragon
                 .flame
                 .lock()
