@@ -697,8 +697,7 @@ impl Mob for WitherEntity {
                 && (src_type == &EntityType::ARROW
                     || src_type == &EntityType::SPECTRAL_ARROW
                     || src_type == &EntityType::TRIDENT
-                    || src_type == &EntityType::WIND_CHARGE
-                    || src_type == &EntityType::BREEZE_WIND_CHARGE)
+                    || src_type == &EntityType::WIND_CHARGE)
             {
                 return false;
             }
