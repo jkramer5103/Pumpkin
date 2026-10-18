@@ -42,7 +42,7 @@ pub struct AreaEffectCloudEntity {
     pub age: Mutex<i32>,
     /// ticks between reapplications to the same entity
     pub reapplication_delay: Mutex<i32>,
-    /// map of `entity_id` -> ticks remaining until that entity can be affected again
+    /// map of `entity_id` -> cloud age when that entity can be affected again
     pub reapplication_map: Mutex<HashMap<i32, i32>>,
     /// linear radius change per tick
     pub radius_on_tick: Mutex<f32>,
@@ -55,6 +55,14 @@ pub struct AreaEffectCloudEntity {
 }
 
 impl AreaEffectCloudEntity {
+    fn tick_victims(victims: &mut HashMap<i32, i32>, age: i32) -> bool {
+        if age % 5 != 0 {
+            return false;
+        }
+        victims.retain(|_, next_application| age < *next_application);
+        true
+    }
+
     const fn has_expired(age: i32, wait_time: i32, duration: i32) -> bool {
         duration != -1 && age - wait_time >= duration
     }
@@ -290,16 +298,15 @@ impl EntityBase for AreaEffectCloudEntity {
             );
         }
 
-        // Tick down reapplication map
+        // Vanilla samples victims every five ticks, using absolute age deadlines.
         {
             let mut map = self
                 .reapplication_map
                 .lock()
                 .unwrap_or_else(std::sync::PoisonError::into_inner);
-            map.retain(|_, v| {
-                *v -= 1;
-                *v > 0
-            });
+            if !Self::tick_victims(&mut map, age) {
+                return;
+            }
         }
 
         // Apply effects to nearby entities if eligible
@@ -407,7 +414,7 @@ impl EntityBase for AreaEffectCloudEntity {
             self.reapplication_map
                 .lock()
                 .unwrap_or_else(std::sync::PoisonError::into_inner)
-                .insert(ent_id, delay);
+                .insert(ent_id, age + delay);
 
             // Apply radius-on-use (shrink)
             let radius_on_use = *self
@@ -472,8 +479,28 @@ impl EntityBase for AreaEffectCloudEntity {
 
 #[cfg(test)]
 mod tests {
+    use std::collections::HashMap;
+
     use super::AreaEffectCloudEntity;
     use pumpkin_util::math::{boundingbox::BoundingBox, vector3::Vector3};
+
+    #[test]
+    fn cloud_samples_new_and_returning_victims_on_five_tick_boundaries() {
+        // A victim enters an already active cloud at age 21, between samples.
+        for (delay, expected) in [(20, vec![25, 45, 65]), (7, vec![25, 35, 45, 55, 65])] {
+            let mut victims = HashMap::new();
+            let mut contacts = Vec::new();
+            for age in 21..=65 {
+                if AreaEffectCloudEntity::tick_victims(&mut victims, age)
+                    && !victims.contains_key(&1)
+                {
+                    contacts.push(age);
+                    victims.insert(1, age + delay);
+                }
+            }
+            assert_eq!(contacts, expected);
+        }
+    }
 
     #[test]
     fn cloud_contact_requires_vertical_hitbox_overlap() {

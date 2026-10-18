@@ -1,0 +1,227 @@
+{
+  "schema_version": 1,
+  "category": "entity",
+  "tags": [
+    "ender-dragon",
+    "area-effect-cloud",
+    "damage"
+  ],
+  "setup": [
+    "tick freeze",
+    "difficulty normal",
+    "gamerule spawn_mobs false",
+    "gamerule mob_griefing false",
+    "forceload add 0 0 15 15",
+    "gamemode creative ParitySmoke",
+    "tp ParitySmoke 20 100 20",
+    "kill @e[type=minecraft:ender_dragon]",
+    "kill @e[type=minecraft:area_effect_cloud]",
+    "kill @e[type=minecraft:sheep]",
+    "kill @e[type=minecraft:marker,tag=cadence_center]"
+  ],
+  "cleanup": [
+    "kill @e[type=minecraft:ender_dragon]",
+    "kill @e[type=minecraft:area_effect_cloud]",
+    "kill @e[type=minecraft:sheep]",
+    "kill @e[type=minecraft:marker,tag=cadence_center]"
+  ],
+  "id": "dragon-breath-damage-cadence",
+  "title": "Dragon breath samples victims every five ticks",
+  "description": "Two emitted flame trials introduce a sheep between damage samples and check first contact plus reapplication boundaries.",
+  "steps": [
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "kill @e[type=minecraft:area_effect_cloud]"
+    },
+    {
+      "command": "kill @e[type=minecraft:sheep]"
+    },
+    {
+      "command": "kill @e[type=minecraft:marker,tag=cadence_center]"
+    },
+    {
+      "command": "fill 0 79 0 15 79 15 minecraft:stone"
+    },
+    {
+      "command": "execute if block 8 79 3 minecraft:stone",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 8.0 100.0 12.0 {Silent:1b,NoGravity:1b,PersistenceRequired:1b,DragonPhase:5}"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon] 8 100 12 0 0",
+      "wait_ticks": 10
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:area_effect_cloud]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,limit=1] {NoAI:1b}"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon] 30 100 30"
+    },
+    {
+      "command": "execute at @e[type=minecraft:area_effect_cloud,limit=1] run summon minecraft:marker ~ ~ ~ {Tags:[\"cadence_center\"]}"
+    },
+    {
+      "command": "fill 0 60 0 15 81 15 minecraft:air"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:area_effect_cloud,limit=1] Pos"
+    },
+    {
+      "command": "time query gametime",
+      "wait_ticks": 21
+    },
+    {
+      "command": "execute at @e[type=minecraft:marker,tag=cadence_center,limit=1] run summon minecraft:sheep ~ ~ ~ {NoAI:1b,NoGravity:1b,Silent:1b,PersistenceRequired:1b,Tags:[\"cadence_victim\"]}"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:sheep,tag=cadence_victim,nbt={Health:8.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:sheep,tag=cadence_victim,nbt={Health:8.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1",
+      "wait_ticks": 2
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:sheep,tag=cadence_victim,nbt={Health:8.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:sheep,tag=cadence_victim,nbt={Health:5.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1",
+      "wait_ticks": 19
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:sheep,tag=cadence_victim,nbt={Health:5.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:sheep,tag=cadence_victim,nbt={Health:2.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1"
+    },
+    {
+      "command": "execute at @e[type=minecraft:marker,tag=cadence_center,limit=1] if entity @e[type=minecraft:sheep,tag=cadence_victim,distance=..0.01]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:area_effect_cloud,limit=1] Age"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "kill @e[type=minecraft:area_effect_cloud]"
+    },
+    {
+      "command": "kill @e[type=minecraft:sheep]"
+    },
+    {
+      "command": "kill @e[type=minecraft:marker,tag=cadence_center]"
+    },
+    {
+      "command": "fill 0 79 0 15 79 15 minecraft:stone"
+    },
+    {
+      "command": "execute if block 8 79 3 minecraft:stone",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 8.0 100.0 12.0 {Silent:1b,NoGravity:1b,PersistenceRequired:1b,DragonPhase:5}"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon] 8 100 12 0 0",
+      "wait_ticks": 10
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:area_effect_cloud]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,limit=1] {NoAI:1b}"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon] 30 100 30"
+    },
+    {
+      "command": "execute at @e[type=minecraft:area_effect_cloud,limit=1] run summon minecraft:marker ~ ~ ~ {Tags:[\"cadence_center\"]}"
+    },
+    {
+      "command": "fill 0 60 0 15 81 15 minecraft:air"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:area_effect_cloud,limit=1] Pos"
+    },
+    {
+      "command": "time query gametime",
+      "wait_ticks": 21
+    },
+    {
+      "command": "execute at @e[type=minecraft:marker,tag=cadence_center,limit=1] run summon minecraft:sheep ~ ~ ~ {NoAI:1b,NoGravity:1b,Silent:1b,PersistenceRequired:1b,Tags:[\"cadence_victim\"]}"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:sheep,tag=cadence_victim,nbt={Health:8.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:sheep,tag=cadence_victim,nbt={Health:8.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1",
+      "wait_ticks": 2
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:sheep,tag=cadence_victim,nbt={Health:8.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:sheep,tag=cadence_victim,nbt={Health:5.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1",
+      "wait_ticks": 19
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:sheep,tag=cadence_victim,nbt={Health:5.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:sheep,tag=cadence_victim,nbt={Health:2.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1"
+    },
+    {
+      "command": "execute at @e[type=minecraft:marker,tag=cadence_center,limit=1] if entity @e[type=minecraft:sheep,tag=cadence_victim,distance=..0.01]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:area_effect_cloud,limit=1] Age"
+    }
+  ]
+}
