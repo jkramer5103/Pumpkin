@@ -1,0 +1,291 @@
+{
+  "schema_version": 1,
+  "id": "wither-side-head-firing-slots",
+  "title": "Wither side-head target slot and skull direction",
+  "category": "entities",
+  "description": "Two separately tracked sheep distinguish the target slots associated with each physical skull origin. Requires the companion raw-packet regression checker; command controls alone cannot detect the defect.",
+  "tags": [
+    "wither",
+    "entity",
+    "projectile",
+    "regression"
+  ],
+  "setup": [
+    "difficulty easy",
+    "gamerule mob_griefing false",
+    "gamerule spawn_mobs false",
+    "forceload add 0 0 15 15",
+    "fill 0 79 0 15 79 15 minecraft:bedrock",
+    "gamemode creative @a",
+    "tp @a 8.0 86.0 8.0",
+    "summon minecraft:wither 8.0 80.0 3.0 {Tags:[\"pp_boss\"],NoGravity:1b,Silent:1b,PersistenceRequired:1b,Rotation:[0.0f,0.0f]}",
+    "summon minecraft:sheep 4.0 80.0 13.0 {Tags:[\"pp_left\"],NoAI:1b,NoGravity:1b,Silent:1b,PersistenceRequired:1b}",
+    "summon minecraft:sheep 12.0 80.0 13.0 {Tags:[\"pp_right\"],NoAI:1b,NoGravity:1b,Silent:1b,PersistenceRequired:1b}"
+  ],
+  "steps": [
+    {
+      "command": "tp @e[tag=pp_boss] 8.0 80.0 3.0 0 0"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "kill @e[type=minecraft:wither_skull]"
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 8.0 80.0 3.0 0 0"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "kill @e[type=minecraft:wither_skull]"
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 8.0 80.0 3.0 0 0"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "kill @e[type=minecraft:wither_skull]"
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 8.0 80.0 3.0 0 0"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "kill @e[type=minecraft:wither_skull]"
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 8.0 80.0 3.0 0 0"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "kill @e[type=minecraft:wither_skull]"
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 8.0 80.0 3.0 0 0"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "kill @e[type=minecraft:wither_skull]"
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 8.0 80.0 3.0 0 0"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "kill @e[type=minecraft:wither_skull]"
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 8.0 80.0 3.0 0 0"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "kill @e[type=minecraft:wither_skull]"
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 8.0 80.0 3.0 0 0"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "kill @e[type=minecraft:wither_skull]"
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 8.0 80.0 3.0 0 0"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "kill @e[type=minecraft:wither_skull]"
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 8.0 80.0 3.0 0 0"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "kill @e[type=minecraft:wither_skull]"
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 8.0 80.0 3.0 0 0"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "kill @e[type=minecraft:wither_skull]"
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 8.0 80.0 3.0 0 0"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "kill @e[type=minecraft:wither_skull]"
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 8.0 80.0 3.0 0 0"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "kill @e[type=minecraft:wither_skull]"
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 8.0 80.0 3.0 0 0"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "kill @e[type=minecraft:wither_skull]"
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 8.0 80.0 3.0 0 0"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "kill @e[type=minecraft:wither_skull]"
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 8.0 80.0 3.0 0 0"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "kill @e[type=minecraft:wither_skull]"
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 8.0 80.0 3.0 0 0"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "kill @e[type=minecraft:wither_skull]"
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 8.0 80.0 3.0 0 0"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "kill @e[type=minecraft:wither_skull]"
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 8.0 80.0 3.0 0 0"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "kill @e[type=minecraft:wither_skull]"
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 8.0 80.0 3.0 0 0"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "kill @e[type=minecraft:wither_skull]"
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 8.0 80.0 3.0 0 0"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "kill @e[type=minecraft:wither_skull]"
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 8.0 80.0 3.0 0 0"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "kill @e[type=minecraft:wither_skull]"
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 8.0 80.0 3.0 0 0"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "kill @e[type=minecraft:wither_skull]"
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 8.0 80.0 3.0 0 0"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "kill @e[type=minecraft:wither_skull]"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss,nbt={Health:300.0f,Invul:0}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_left,nbt={Health:8.0f}] if entity @e[tag=pp_right,nbt={Health:8.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    }
+  ],
+  "cleanup": [
+    "kill @e[type=!minecraft:player]"
+  ],
+  "notes": "Opt-in isolated one-chunk arena with a connected creative client. Capture add-entity and Wither metadata packets per tick, waiting for entity work after each tick barrier. Remove skulls before their next tick. Use a fresh scratch server per trial. Repeat six trials, retain two with distinct target IDs in slots17/18, and run tests/check_wither_side_head_packets.py on the report. A generic scenario replay checks health controls only; it is not slot-correspondence evidence. See docs/wither-side-head-firing-slots.md."
+}

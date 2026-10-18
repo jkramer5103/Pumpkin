@@ -505,7 +505,7 @@ impl WitherEntity {
                             wither_pos.y + rand::random_range(-5.0..5.0),
                             wither_pos.z + rand::random_range(-10.0..10.0),
                         );
-                        self.perform_ranged_attack(i, xt, yt, zt, true);
+                        self.perform_ranged_attack(i + 1, xt, yt, zt, true);
                         self.idle_head_updates[i - 1].store(0, Ordering::Relaxed);
                     }
 
@@ -520,7 +520,7 @@ impl WitherEntity {
                             {
                                 let eye_h = target.get_entity().get_eye_height();
                                 self.perform_ranged_attack(
-                                    i,
+                                    i + 1,
                                     t_pos.x,
                                     t_pos.y + eye_h * 0.5,
                                     t_pos.z,
