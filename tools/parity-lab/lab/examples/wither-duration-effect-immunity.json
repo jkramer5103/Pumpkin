@@ -1,0 +1,238 @@
+{
+  "schema_version": 1,
+  "id": "wither-duration-effect-immunity",
+  "title": "Withers reject effects from tipped and spectral arrows",
+  "category": "entities",
+  "description": "Land real arrow hits on full-health Withers and sheep. Withers take the impact but reject duration effects; sheep receive the same payload. Resistance V must not shield a Wither from a later magic hit. NoAI holds the bosses still and prevents regeneration.",
+  "tags": [
+    "entity",
+    "wither",
+    "combat"
+  ],
+  "setup": [
+    "tick freeze",
+    "gamemode creative @a",
+    "difficulty easy",
+    "gamerule mob_griefing false",
+    "gamerule spawn_mobs false",
+    "forceload add 0 0 31 31",
+    "fill 0 79 0 31 79 31 minecraft:bedrock",
+    "fill 0 80 0 31 96 31 minecraft:air",
+    "tp @a 28.5 92 28.5"
+  ],
+  "steps": [
+    {
+      "command": "summon minecraft:wither 5.5 80 10.5 {Tags:[\"pp_case_0\"],NoAI:1b,NoGravity:1b,Silent:1b,Health:300.0f}"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_case_0,nbt={Health:300.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "summon minecraft:arrow 5.5 81 7.5 {Tags:[\"pp_shot\"],Motion:[0.0d,0.0d,0.8d],NoGravity:1b,damage:1.0d,item:{id:\"minecraft:tipped_arrow\",count:1,components:{\"minecraft:potion_contents\":{custom_effects:[{id:\"minecraft:resistance\",duration:3200,amplifier:4}]}}}}",
+      "wait_ticks": 8
+    },
+    {
+      "command": "execute unless entity @e[tag=pp_case_0,nbt={Health:300.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[tag=pp_case_0,limit=1] Health"
+    },
+    {
+      "command": "execute unless entity @e[tag=pp_case_0,nbt={active_effects:[{id:\"minecraft:resistance\"}]}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[tag=pp_case_0,limit=1] active_effects"
+    },
+    {
+      "command": "time query gametime",
+      "wait_ticks": 25
+    },
+    {
+      "command": "data merge entity @e[tag=pp_case_0,limit=1] {Health:300.0f}"
+    },
+    {
+      "command": "data get entity @e[tag=pp_case_0,limit=1] Health"
+    },
+    {
+      "command": "damage @e[tag=pp_case_0,limit=1] 4 minecraft:magic"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_case_0,nbt={Health:296.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[tag=pp_case_0,limit=1] Health"
+    },
+    {
+      "command": "summon minecraft:sheep 13.5 80 10.5 {Tags:[\"pp_case_1\"],NoAI:1b,NoGravity:1b,Silent:1b,Health:8.0f}"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_case_1,nbt={Health:8.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "summon minecraft:arrow 13.5 81 7.5 {Tags:[\"pp_shot\"],Motion:[0.0d,0.0d,0.8d],NoGravity:1b,damage:1.0d,item:{id:\"minecraft:tipped_arrow\",count:1,components:{\"minecraft:potion_contents\":{custom_effects:[{id:\"minecraft:resistance\",duration:3200,amplifier:4}]}}}}",
+      "wait_ticks": 8
+    },
+    {
+      "command": "execute unless entity @e[tag=pp_case_1,nbt={Health:8.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[tag=pp_case_1,limit=1] Health"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_case_1,nbt={active_effects:[{id:\"minecraft:resistance\"}]}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[tag=pp_case_1,limit=1] active_effects"
+    },
+    {
+      "command": "time query gametime",
+      "wait_ticks": 25
+    },
+    {
+      "command": "data merge entity @e[tag=pp_case_1,limit=1] {Health:8.0f}"
+    },
+    {
+      "command": "data get entity @e[tag=pp_case_1,limit=1] Health"
+    },
+    {
+      "command": "damage @e[tag=pp_case_1,limit=1] 4 minecraft:magic"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_case_1,nbt={Health:8.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[tag=pp_case_1,limit=1] Health"
+    },
+    {
+      "command": "summon minecraft:wither 21.5 80 10.5 {Tags:[\"pp_case_2\"],NoAI:1b,NoGravity:1b,Silent:1b,Health:300.0f}"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_case_2,nbt={Health:300.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "summon minecraft:arrow 21.5 81 7.5 {Tags:[\"pp_shot\"],Motion:[0.0d,0.0d,0.8d],NoGravity:1b,damage:1.0d,item:{id:\"minecraft:tipped_arrow\",count:1,components:{\"minecraft:potion_contents\":{custom_effects:[{id:\"minecraft:slowness\",duration:3200,amplifier:0}]}}}}",
+      "wait_ticks": 8
+    },
+    {
+      "command": "execute unless entity @e[tag=pp_case_2,nbt={Health:300.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[tag=pp_case_2,limit=1] Health"
+    },
+    {
+      "command": "execute unless entity @e[tag=pp_case_2,nbt={active_effects:[{id:\"minecraft:slowness\"}]}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[tag=pp_case_2,limit=1] active_effects"
+    },
+    {
+      "command": "summon minecraft:sheep 5.5 80 22.5 {Tags:[\"pp_case_3\"],NoAI:1b,NoGravity:1b,Silent:1b,Health:8.0f}"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_case_3,nbt={Health:8.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "summon minecraft:arrow 5.5 81 19.5 {Tags:[\"pp_shot\"],Motion:[0.0d,0.0d,0.8d],NoGravity:1b,damage:1.0d,item:{id:\"minecraft:tipped_arrow\",count:1,components:{\"minecraft:potion_contents\":{custom_effects:[{id:\"minecraft:slowness\",duration:3200,amplifier:0}]}}}}",
+      "wait_ticks": 8
+    },
+    {
+      "command": "execute unless entity @e[tag=pp_case_3,nbt={Health:8.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[tag=pp_case_3,limit=1] Health"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_case_3,nbt={active_effects:[{id:\"minecraft:slowness\"}]}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[tag=pp_case_3,limit=1] active_effects"
+    },
+    {
+      "command": "summon minecraft:wither 13.5 80 22.5 {Tags:[\"pp_case_4\"],NoAI:1b,NoGravity:1b,Silent:1b,Health:300.0f}"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_case_4,nbt={Health:300.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "summon minecraft:spectral_arrow 13.5 81 19.5 {Tags:[\"pp_shot\"],Motion:[0.0d,0.0d,0.8d],NoGravity:1b,damage:1.0d}",
+      "wait_ticks": 8
+    },
+    {
+      "command": "execute unless entity @e[tag=pp_case_4,nbt={Health:300.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[tag=pp_case_4,limit=1] Health"
+    },
+    {
+      "command": "execute unless entity @e[tag=pp_case_4,nbt={active_effects:[{id:\"minecraft:glowing\"}]}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[tag=pp_case_4,limit=1] active_effects"
+    },
+    {
+      "command": "summon minecraft:sheep 21.5 80 22.5 {Tags:[\"pp_case_5\"],NoAI:1b,NoGravity:1b,Silent:1b,Health:8.0f}"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_case_5,nbt={Health:8.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "summon minecraft:spectral_arrow 21.5 81 19.5 {Tags:[\"pp_shot\"],Motion:[0.0d,0.0d,0.8d],NoGravity:1b,damage:1.0d}",
+      "wait_ticks": 8
+    },
+    {
+      "command": "execute unless entity @e[tag=pp_case_5,nbt={Health:8.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[tag=pp_case_5,limit=1] Health"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_case_5,nbt={active_effects:[{id:\"minecraft:glowing\"}]}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[tag=pp_case_5,limit=1] active_effects"
+    }
+  ],
+  "cleanup": [
+    "kill @e[type=!minecraft:player]"
+  ]
+}

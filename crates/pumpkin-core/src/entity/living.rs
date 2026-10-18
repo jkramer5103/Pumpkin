@@ -953,6 +953,11 @@ impl LivingEntity {
 
     #[expect(clippy::too_many_lines)]
     pub fn add_effect(&self, effect: Effect) {
+        // WitherBoss.addEffect rejects every effect before applying it.
+        if self.entity.entity_type == &EntityType::WITHER {
+            return;
+        }
+
         let mut effect_event =
             crate::plugin::api::events::entity::entity_potion_effect::EntityPotionEffectEvent::new(
                 self.entity.entity_id,
