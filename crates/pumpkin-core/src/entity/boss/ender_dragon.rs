@@ -851,7 +851,7 @@ impl EnderDragonEntity {
             .phase
             .lock()
             .unwrap_or_else(std::sync::PoisonError::into_inner);
-        let phase = self.phase_manager.get_phase(phase_type);
+        let mut phase = self.phase_manager.get_phase(phase_type);
 
         if phase_type.is_sitting() {
             *self
@@ -869,7 +869,21 @@ impl EnderDragonEntity {
             return;
         }
 
-        if phase_type != EnderDragonPhase::Dying {
+        let next_phase_type = *self
+            .phase
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner);
+        if next_phase_type != phase_type {
+            // Vanilla ticks the newly selected phase once before steering.
+            phase = self.phase_manager.get_phase(next_phase_type);
+            phase.tick(self);
+        }
+
+        if self.mob_entity.living_entity.entity.is_removed() {
+            return;
+        }
+
+        if phase.get_type() != EnderDragonPhase::Dying {
             let target_location = *self
                 .target_location
                 .lock()

@@ -1,0 +1,223 @@
+{
+  "schema_version": 1,
+  "id": "dragon-phase-redispatch",
+  "title": "Dragons tick a newly selected phase in the same AI step",
+  "description": "Bounded ParitySmoke arena: restore roar phase7, assert phase5 at tick41, cloud absent through49 and present at50/51. Repeat and pause AI at transition for20ticks. Does not validate the complete sitting cycle, cloud properties or natural phase entry.",
+  "category": "entity",
+  "tags": [
+    "ender-dragon",
+    "ai",
+    "phase"
+  ],
+  "setup": [
+    "tick freeze",
+    "difficulty normal",
+    "gamerule spawn_mobs false",
+    "gamerule mob_griefing false",
+    "forceload add -48 -48 47 47",
+    "gamemode creative ParitySmoke",
+    "tp ParitySmoke 20.0 80.0 20.0",
+    "kill @e[type=minecraft:ender_dragon]",
+    "kill @e[type=minecraft:area_effect_cloud]"
+  ],
+  "steps": [
+    {
+      "command": "summon minecraft:ender_dragon 0.5 100.0 0.5 {Silent:1b,NoGravity:1b,PersistenceRequired:1b,UUID:[I;0,0,0,25],DragonPhase:7}"
+    },
+    {
+      "command": "data get entity 00000000-0000-0000-0000-000000000019 DragonPhase",
+      "wait_ticks": 40,
+      "observe": true,
+      "expect_contains": "following entity data: 7"
+    },
+    {
+      "command": "data get entity 00000000-0000-0000-0000-000000000019 DragonPhase",
+      "observe": true,
+      "expect_contains": "following entity data: 7"
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:area_effect_cloud]",
+      "wait_ticks": 1,
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity 00000000-0000-0000-0000-000000000019 DragonPhase",
+      "observe": true,
+      "expect_contains": "following entity data: 5"
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:area_effect_cloud]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity 00000000-0000-0000-0000-000000000019 Health",
+      "wait_ticks": 8,
+      "observe": true,
+      "expect_contains": "following entity data: 200"
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:area_effect_cloud]",
+      "wait_ticks": 1,
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:area_effect_cloud]",
+      "wait_ticks": 1,
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:area_effect_cloud]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1"
+    },
+    {
+      "command": "kill 00000000-0000-0000-0000-000000000019"
+    },
+    {
+      "command": "kill @e[type=minecraft:area_effect_cloud]"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.5 100.0 0.5 {Silent:1b,NoGravity:1b,PersistenceRequired:1b,UUID:[I;0,0,0,25],DragonPhase:7}"
+    },
+    {
+      "command": "data get entity 00000000-0000-0000-0000-000000000019 DragonPhase",
+      "wait_ticks": 40,
+      "observe": true,
+      "expect_contains": "following entity data: 7"
+    },
+    {
+      "command": "data get entity 00000000-0000-0000-0000-000000000019 DragonPhase",
+      "observe": true,
+      "expect_contains": "following entity data: 7"
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:area_effect_cloud]",
+      "wait_ticks": 1,
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity 00000000-0000-0000-0000-000000000019 DragonPhase",
+      "observe": true,
+      "expect_contains": "following entity data: 5"
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:area_effect_cloud]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity 00000000-0000-0000-0000-000000000019 Health",
+      "wait_ticks": 8,
+      "observe": true,
+      "expect_contains": "following entity data: 200"
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:area_effect_cloud]",
+      "wait_ticks": 1,
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:area_effect_cloud]",
+      "wait_ticks": 1,
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:area_effect_cloud]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1"
+    },
+    {
+      "command": "kill 00000000-0000-0000-0000-000000000019"
+    },
+    {
+      "command": "kill @e[type=minecraft:area_effect_cloud]"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.5 100.0 0.5 {Silent:1b,NoGravity:1b,PersistenceRequired:1b,UUID:[I;0,0,0,25],DragonPhase:7}"
+    },
+    {
+      "command": "data get entity 00000000-0000-0000-0000-000000000019 DragonPhase",
+      "wait_ticks": 40,
+      "observe": true,
+      "expect_contains": "following entity data: 7"
+    },
+    {
+      "command": "data get entity 00000000-0000-0000-0000-000000000019 DragonPhase",
+      "observe": true,
+      "expect_contains": "following entity data: 7"
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:area_effect_cloud]",
+      "wait_ticks": 1,
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity 00000000-0000-0000-0000-000000000019 DragonPhase",
+      "observe": true,
+      "expect_contains": "following entity data: 5"
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:area_effect_cloud]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data merge entity 00000000-0000-0000-0000-000000000019 {NoAI:1b}",
+      "wait_ticks": 20
+    },
+    {
+      "command": "data get entity 00000000-0000-0000-0000-000000000019 DragonPhase",
+      "observe": true,
+      "expect_contains": "following entity data: 5"
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:area_effect_cloud]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data merge entity 00000000-0000-0000-0000-000000000019 {NoAI:0b}"
+    },
+    {
+      "command": "data get entity 00000000-0000-0000-0000-000000000019 Health",
+      "wait_ticks": 8,
+      "observe": true,
+      "expect_contains": "following entity data: 200"
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:area_effect_cloud]",
+      "wait_ticks": 1,
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:area_effect_cloud]",
+      "wait_ticks": 1,
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:area_effect_cloud]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1"
+    },
+    {
+      "command": "kill 00000000-0000-0000-0000-000000000019"
+    },
+    {
+      "command": "kill @e[type=minecraft:area_effect_cloud]"
+    }
+  ],
+  "cleanup": [
+    "kill 00000000-0000-0000-0000-000000000019",
+    "kill @e[type=minecraft:area_effect_cloud]"
+  ]
+}
