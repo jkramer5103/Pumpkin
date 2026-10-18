@@ -5,6 +5,8 @@ use crate::entity::{
 use pumpkin_data::entity::EntityType;
 use pumpkin_util::math::vector3::Vector3;
 
+const WARMUP_TIME: i32 = 10;
+
 pub struct SitBreathingPhase;
 
 impl super::Phase for SitBreathingPhase {
@@ -13,6 +15,10 @@ impl super::Phase for SitBreathingPhase {
     }
 
     fn begin(&self, dragon: &EnderDragonEntity) {
+        *dragon
+            .breathing_timer
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner) = 0;
         *dragon
             .target_location
             .lock()
@@ -38,7 +44,7 @@ impl super::Phase for SitBreathingPhase {
             .breathing_timer
             .lock()
             .unwrap_or_else(std::sync::PoisonError::into_inner);
-        if timer_val == 1 {
+        if timer_val == WARMUP_TIME {
             let entity = &dragon.mob_entity.living_entity.entity;
             let pos = entity.pos.load();
             let yaw = entity.yaw.load().to_radians() as f64;
