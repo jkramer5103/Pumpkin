@@ -222,6 +222,7 @@ pub struct EnderDragonEntity {
     pub ticks_sitting: Mutex<i32>,
     pub sit_attack_timer: Mutex<i32>,
     pub breathing_timer: Mutex<i32>,
+    pub flame: Mutex<Option<uuid::Uuid>>,
 }
 
 impl EnderDragonEntity {
@@ -273,6 +274,7 @@ impl EnderDragonEntity {
             ticks_sitting: Mutex::new(0),
             sit_attack_timer: Mutex::new(0),
             breathing_timer: Mutex::new(0),
+            flame: Mutex::new(None),
         })
     }
 

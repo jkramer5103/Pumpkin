@@ -25,6 +25,25 @@ impl super::Phase for SitBreathingPhase {
             .unwrap_or_else(std::sync::PoisonError::into_inner) = None;
     }
 
+    fn end(&self, dragon: &EnderDragonEntity) {
+        let flame = dragon
+            .flame
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner)
+            .take();
+        if let Some(uuid) = flame
+            && let Some(cloud) = dragon
+                .mob_entity
+                .living_entity
+                .entity
+                .world
+                .load()
+                .get_entity_by_uuid(uuid)
+        {
+            cloud.get_entity().remove();
+        }
+    }
+
     fn tick(&self, dragon: &EnderDragonEntity) {
         let mut timer = dragon
             .breathing_timer
@@ -77,6 +96,11 @@ impl super::Phase for SitBreathingPhase {
                 0.5,  // radius on use
                 -100, // duration on use
             );
+            *dragon
+                .flame
+                .lock()
+                .unwrap_or_else(std::sync::PoisonError::into_inner) =
+                Some(cloud.get_entity().entity_uuid);
             world.spawn_entity(cloud);
         }
     }

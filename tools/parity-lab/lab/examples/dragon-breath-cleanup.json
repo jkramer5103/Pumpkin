@@ -1,0 +1,208 @@
+{
+  "schema_version": 1,
+  "id": "dragon-breath-cleanup",
+  "title": "Sitting dragon breath ends with its phase",
+  "description": "Isolated ParitySmoke arena. Verify a live breath cloud damages a sheep, then stops damaging and disappears when phase5 ends. Cover NoAI/same-phase preservation, two dragons and unrelated cloud retention. Restores phases through NBT; no whole-fight or visual proof.",
+  "category": "entity",
+  "tags": [
+    "ender-dragon",
+    "ai",
+    "area-effect-cloud"
+  ],
+  "setup": [
+    "tick freeze",
+    "difficulty normal",
+    "gamerule spawn_mobs false",
+    "gamerule mob_griefing false",
+    "forceload add -48 -48 47 47",
+    "gamemode creative ParitySmoke",
+    "tp ParitySmoke 20.0 80.0 20.0",
+    "kill @e[type=minecraft:ender_dragon]",
+    "kill @e[type=minecraft:area_effect_cloud]",
+    "kill @e[type=minecraft:sheep]"
+  ],
+  "steps": [
+    {
+      "command": "summon minecraft:ender_dragon 0.5 100.0 0.5 {Silent:1b,NoGravity:1b,PersistenceRequired:1b,UUID:[I;0,0,0,26],DragonPhase:5}",
+      "wait_ticks": 10
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:area_effect_cloud]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1"
+    },
+    {
+      "command": "data merge entity 00000000-0000-0000-0000-00000000001a {NoAI:1b}"
+    },
+    {
+      "command": "execute at @e[type=minecraft:area_effect_cloud,limit=1] run summon minecraft:sheep ~ ~ ~ {NoAI:1b,NoGravity:1b,Silent:1b,PersistenceRequired:1b,UUID:[I;0,0,0,28]}",
+      "wait_ticks": 20
+    },
+    {
+      "command": "data get entity 00000000-0000-0000-0000-00000000001c Health",
+      "observe": true,
+      "expect_contains": "following entity data: 5"
+    },
+    {
+      "command": "data merge entity 00000000-0000-0000-0000-00000000001a {DragonPhase:5}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:area_effect_cloud]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1"
+    },
+    {
+      "command": "data merge entity 00000000-0000-0000-0000-00000000001c {Health:8.0f}"
+    },
+    {
+      "command": "data merge entity 00000000-0000-0000-0000-00000000001a {DragonPhase:10}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:area_effect_cloud]",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 25
+    },
+    {
+      "command": "data get entity 00000000-0000-0000-0000-00000000001c Health",
+      "observe": true,
+      "expect_contains": "following entity data: 8"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "kill @e[type=minecraft:area_effect_cloud]"
+    },
+    {
+      "command": "kill @e[type=minecraft:sheep]"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.5 100.0 0.5 {Silent:1b,NoGravity:1b,PersistenceRequired:1b,UUID:[I;0,0,0,26],DragonPhase:5}",
+      "wait_ticks": 10
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:area_effect_cloud]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1"
+    },
+    {
+      "command": "data merge entity 00000000-0000-0000-0000-00000000001a {NoAI:1b}"
+    },
+    {
+      "command": "execute at @e[type=minecraft:area_effect_cloud,limit=1] run summon minecraft:sheep ~ ~ ~ {NoAI:1b,NoGravity:1b,Silent:1b,PersistenceRequired:1b,UUID:[I;0,0,0,30]}",
+      "wait_ticks": 20
+    },
+    {
+      "command": "data get entity 00000000-0000-0000-0000-00000000001e Health",
+      "observe": true,
+      "expect_contains": "following entity data: 5"
+    },
+    {
+      "command": "data merge entity 00000000-0000-0000-0000-00000000001a {DragonPhase:5}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:area_effect_cloud]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1"
+    },
+    {
+      "command": "data merge entity 00000000-0000-0000-0000-00000000001e {Health:8.0f}"
+    },
+    {
+      "command": "data merge entity 00000000-0000-0000-0000-00000000001a {DragonPhase:7}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:area_effect_cloud]",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 25
+    },
+    {
+      "command": "data get entity 00000000-0000-0000-0000-00000000001e Health",
+      "observe": true,
+      "expect_contains": "following entity data: 8"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "kill @e[type=minecraft:area_effect_cloud]"
+    },
+    {
+      "command": "kill @e[type=minecraft:sheep]"
+    },
+    {
+      "command": "summon minecraft:ender_dragon -20.5 100.0 0.5 {Silent:1b,NoGravity:1b,PersistenceRequired:1b,UUID:[I;0,0,0,26],DragonPhase:5}",
+      "wait_ticks": 10
+    },
+    {
+      "command": "data merge entity 00000000-0000-0000-0000-00000000001a {NoAI:1b}"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 20.5 100.0 0.5 {Silent:1b,NoGravity:1b,PersistenceRequired:1b,UUID:[I;0,0,0,27],DragonPhase:5}",
+      "wait_ticks": 10
+    },
+    {
+      "command": "data merge entity 00000000-0000-0000-0000-00000000001b {NoAI:1b}"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:area_effect_cloud]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 2"
+    },
+    {
+      "command": "data merge entity 00000000-0000-0000-0000-00000000001a {DragonPhase:10}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:area_effect_cloud]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1"
+    },
+    {
+      "command": "data merge entity 00000000-0000-0000-0000-00000000001b {DragonPhase:10}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:area_effect_cloud]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "summon minecraft:area_effect_cloud 0.5 120.0 0.5 {UUID:[I;0,0,0,29],Duration:600,WaitTime:600}"
+    },
+    {
+      "command": "data merge entity 00000000-0000-0000-0000-00000000001a {DragonPhase:5}",
+      "wait_ticks": 3
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:area_effect_cloud]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1"
+    },
+    {
+      "command": "data merge entity 00000000-0000-0000-0000-00000000001a {DragonPhase:10}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:area_effect_cloud]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1"
+    },
+    {
+      "command": "execute if entity 00000000-0000-0000-0000-00000000001d",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1"
+    }
+  ],
+  "cleanup": [
+    "kill @e[type=minecraft:ender_dragon]",
+    "kill @e[type=minecraft:area_effect_cloud]",
+    "kill @e[type=minecraft:sheep]"
+  ]
+}
