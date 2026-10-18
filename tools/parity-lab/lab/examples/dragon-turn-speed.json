@@ -1,0 +1,324 @@
+{
+  "schema_version": 1,
+  "id": "dragon-turn-speed",
+  "title": "Dragon default steering responds to horizontal flight speed",
+  "description": "Fresh hovering dragons establish a fixed target, then receive matched position, yaw and horizontal motion before one controlled steering tick. Two trials include disabled AI and landing override controls.",
+  "category": "entity",
+  "tags": [
+    "ender-dragon",
+    "ai"
+  ],
+  "setup": [
+    "tick freeze",
+    "difficulty normal",
+    "gamerule spawn_mobs false",
+    "gamerule mob_griefing false",
+    "forceload add -48 -48 47 47",
+    "gamemode creative ParitySmoke",
+    "tp ParitySmoke 40 100 40",
+    "setblock 0 79 0 minecraft:bedrock"
+  ],
+  "steps": [
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0 100 0 {PersistenceRequired:1b,NoAI:0b,DragonPhase:10,Tags:[\"turn_speed\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=turn_speed,limit=1] 30 100 0 0 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=turn_speed,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=turn_speed,limit=1] Rotation"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=turn_speed,nbt={DragonPhase:10},y_rotation=-3.510000..-3.490000]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0 100 0 {PersistenceRequired:1b,NoAI:0b,DragonPhase:10,Tags:[\"turn_speed\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=turn_speed,limit=1] 30 100 0 0 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=turn_speed,limit=1] {Motion:[0.5d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=turn_speed,limit=1] Rotation"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=turn_speed,nbt={DragonPhase:10},y_rotation=-1.565556..-1.545556]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0 100 0 {PersistenceRequired:1b,NoAI:0b,DragonPhase:10,Tags:[\"turn_speed\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=turn_speed,limit=1] 30 100 0 0 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=turn_speed,limit=1] {Motion:[1.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=turn_speed,limit=1] Rotation"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=turn_speed,nbt={DragonPhase:10},y_rotation=-0.885000..-0.865000]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0 100 0 {PersistenceRequired:1b,NoAI:0b,DragonPhase:10,Tags:[\"turn_speed\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=turn_speed,limit=1] 30 100 0 0 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=turn_speed,limit=1] {Motion:[3.0d,0.0d,4.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=turn_speed,limit=1] Rotation"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=turn_speed,nbt={DragonPhase:10},y_rotation=-0.107222..-0.087222]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0 100 0 {PersistenceRequired:1b,DragonPhase:10,Tags:[\"turn_speed\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=turn_speed,limit=1] 30 100 0 0 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=turn_speed,limit=1] {NoAI:1b,Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=turn_speed,nbt={DragonPhase:10},y_rotation=-0.01..0.01]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 30 100 0 {PersistenceRequired:1b,DragonPhase:3,Rotation:[0.0f,0.0f],Tags:[\"turn_speed\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=turn_speed,nbt={DragonPhase:3},y_rotation=-5.01..-4.99]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0 100 0 {PersistenceRequired:1b,NoAI:0b,DragonPhase:10,Tags:[\"turn_speed\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=turn_speed,limit=1] 30 100 0 0 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=turn_speed,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=turn_speed,limit=1] Rotation"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=turn_speed,nbt={DragonPhase:10},y_rotation=-3.510000..-3.490000]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0 100 0 {PersistenceRequired:1b,NoAI:0b,DragonPhase:10,Tags:[\"turn_speed\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=turn_speed,limit=1] 30 100 0 0 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=turn_speed,limit=1] {Motion:[0.5d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=turn_speed,limit=1] Rotation"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=turn_speed,nbt={DragonPhase:10},y_rotation=-1.565556..-1.545556]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0 100 0 {PersistenceRequired:1b,NoAI:0b,DragonPhase:10,Tags:[\"turn_speed\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=turn_speed,limit=1] 30 100 0 0 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=turn_speed,limit=1] {Motion:[1.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=turn_speed,limit=1] Rotation"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=turn_speed,nbt={DragonPhase:10},y_rotation=-0.885000..-0.865000]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0 100 0 {PersistenceRequired:1b,NoAI:0b,DragonPhase:10,Tags:[\"turn_speed\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=turn_speed,limit=1] 30 100 0 0 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=turn_speed,limit=1] {Motion:[3.0d,0.0d,4.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=turn_speed,limit=1] Rotation"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=turn_speed,nbt={DragonPhase:10},y_rotation=-0.107222..-0.087222]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0 100 0 {PersistenceRequired:1b,DragonPhase:10,Tags:[\"turn_speed\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=turn_speed,limit=1] 30 100 0 0 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=turn_speed,limit=1] {NoAI:1b,Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=turn_speed,nbt={DragonPhase:10},y_rotation=-0.01..0.01]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 30 100 0 {PersistenceRequired:1b,DragonPhase:3,Rotation:[0.0f,0.0f],Tags:[\"turn_speed\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=turn_speed,nbt={DragonPhase:3},y_rotation=-5.01..-4.99]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 30 100 0 {PersistenceRequired:1b,DragonPhase:9,Rotation:[0.0f,0.0f],Motion:[0.0d,0.0d,0.0d],Tags:[\"turn_speed\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=turn_speed,limit=1] Rotation"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=turn_speed,nbt={DragonPhase:9},y_rotation=-3.510000..-3.490000]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 30 100 0 {PersistenceRequired:1b,DragonPhase:9,Rotation:[0.0f,0.0f],Motion:[1.0d,0.0d,0.0d],Tags:[\"turn_speed\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=turn_speed,limit=1] Rotation"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=turn_speed,nbt={DragonPhase:9},y_rotation=-0.885000..-0.865000]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 30 100 0 {PersistenceRequired:1b,DragonPhase:9,Rotation:[0.0f,0.0f],Motion:[0.0d,0.0d,0.0d],Tags:[\"turn_speed\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=turn_speed,limit=1] Rotation"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=turn_speed,nbt={DragonPhase:9},y_rotation=-3.510000..-3.490000]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 30 100 0 {PersistenceRequired:1b,DragonPhase:9,Rotation:[0.0f,0.0f],Motion:[1.0d,0.0d,0.0d],Tags:[\"turn_speed\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=turn_speed,limit=1] Rotation"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=turn_speed,nbt={DragonPhase:9},y_rotation=-0.885000..-0.865000]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    }
+  ],
+  "cleanup": [
+    "kill @e[type=minecraft:ender_dragon]"
+  ]
+}

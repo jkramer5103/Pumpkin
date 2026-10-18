@@ -28,6 +28,11 @@ pub use sit_scanning::SitScanningPhase;
 pub use strafing::StrafingPhase;
 pub use taking_off::TakingOffPhase;
 
+fn default_turn_speed(velocity: Vector3<f64>) -> f32 {
+    let rot_speed = velocity.x.hypot(velocity.z) as f32 + 1.0;
+    0.7 / rot_speed.min(40.0) / rot_speed
+}
+
 pub trait Phase: Send + Sync {
     fn get_type(&self) -> EnderDragonPhase;
     fn tick(&self, dragon: &EnderDragonEntity);
@@ -39,8 +44,8 @@ pub trait Phase: Send + Sync {
     fn get_fly_speed(&self) -> f32 {
         0.6
     }
-    fn get_turn_speed(&self, _dragon: &EnderDragonEntity) -> f32 {
-        0.1
+    fn get_turn_speed(&self, dragon: &EnderDragonEntity) -> f32 {
+        default_turn_speed(dragon.mob_entity.living_entity.entity.velocity.load())
     }
     fn get_fly_target_location(&self) -> Option<Vector3<f64>> {
         None
@@ -153,7 +158,31 @@ impl PhaseManager {
 
 #[cfg(test)]
 mod tests {
-    use super::{EnderDragonPhase, PhaseManager};
+    use super::{EnderDragonPhase, PhaseManager, default_turn_speed};
+    use pumpkin_util::math::vector3::Vector3;
+
+    #[test]
+    fn default_turn_speed_matches_observed_hover_turns() {
+        for (velocity, observed_yaw) in [
+            (Vector3::new(0.0, 0.0, 0.0), -3.5f32),
+            (Vector3::new(0.5, 0.0, 0.0), -1.555_555_7),
+            (Vector3::new(1.0, 0.0, 0.0), -0.875),
+            (Vector3::new(3.0, 0.0, 4.0), -0.097_222_23),
+        ] {
+            // Fresh dragons facing away from their target clamp yaw error to -50.
+            let yaw = -50.0 * default_turn_speed(velocity) * 0.1;
+            assert!((yaw - observed_yaw).abs() < 1.0e-6);
+            let vertical = Vector3::new(-velocity.x, 10.0, -velocity.z);
+            assert_eq!(default_turn_speed(velocity), default_turn_speed(vertical));
+        }
+    }
+
+    #[test]
+    fn default_turn_speed_caps_only_the_first_speed_factor() {
+        for (speed, expected) in [(39.0, 0.000_437_5), (79.0, 0.000_218_75)] {
+            assert!((default_turn_speed(Vector3::new(speed, 0.0, 0.0)) - expected).abs() < 1.0e-9);
+        }
+    }
 
     #[test]
     fn saved_vanilla_phase_ids_select_the_corresponding_handler() {
