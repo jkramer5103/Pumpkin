@@ -1,0 +1,116 @@
+{
+  "schema_version": 1,
+  "id": "wither-bossbar-tracking",
+  "title": "Wither bossbar observer membership",
+  "category": "entities",
+  "description": "Active charging Wither stays fixed while observer moves vertically beyond50 blocks and horizontally outside the32-block tracker range. Protocol client must correlate bossbar additions/removals with entity tracking; vanilla ignores vertical distance. NoAI timing is excluded because PR4092 already changes it.",
+  "tags": [
+    "wither",
+    "boss",
+    "bossbar",
+    "packet"
+  ],
+  "setup": [
+    "gamemode creative @a",
+    "difficulty easy",
+    "gamerule mob_griefing false",
+    "gamerule spawn_mobs false",
+    "forceload add 0 0 95 31",
+    "fill 20 79 20 28 79 28 minecraft:bedrock",
+    "tp @a 15.0 84.0 15.0",
+    "summon minecraft:wither 24.0 80.0 24.0 {Tags:[\"pp_boss\"],Health:300.0f,Invul:200}"
+  ],
+  "steps": [
+    {
+      "command": "say PARITY_BOSSBAR_CASE=near"
+    },
+    {
+      "command": "tp @a 15.0 84.0 15.0",
+      "wait_ticks": 6
+    },
+    {
+      "command": "execute if entity @a[nbt={Pos:[15.0d,84.0d,15.0d]}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss,nbt={Health:300.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss,x=23,y=79,z=23,dx=2,dy=4,dz=2]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "say PARITY_BOSSBAR_CASE=vertical"
+    },
+    {
+      "command": "tp @a 15.0 144.0 15.0",
+      "wait_ticks": 6
+    },
+    {
+      "command": "execute if entity @a[nbt={Pos:[15.0d,144.0d,15.0d]}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss,nbt={Health:300.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss,x=23,y=79,z=23,dx=2,dy=4,dz=2]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "say PARITY_BOSSBAR_CASE=untracked"
+    },
+    {
+      "command": "tp @a 64.0 84.0 24.0",
+      "wait_ticks": 6
+    },
+    {
+      "command": "execute if entity @a[nbt={Pos:[64.0d,84.0d,24.0d]}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss,nbt={Health:300.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss,x=23,y=79,z=23,dx=2,dy=4,dz=2]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "say PARITY_BOSSBAR_CASE=return"
+    },
+    {
+      "command": "tp @a 15.0 84.0 15.0",
+      "wait_ticks": 6
+    },
+    {
+      "command": "execute if entity @a[nbt={Pos:[15.0d,84.0d,15.0d]}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss,nbt={Health:300.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss,x=23,y=79,z=23,dx=2,dy=4,dz=2]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    }
+  ],
+  "cleanup": [
+    "kill @e[type=!minecraft:player]"
+  ]
+}

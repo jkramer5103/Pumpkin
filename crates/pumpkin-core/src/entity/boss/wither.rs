@@ -311,15 +311,17 @@ impl WitherEntity {
     }
 
     fn update_bossbar(&self, world: &Arc<crate::world::World>, progress: f32) {
-        let pos = self.mob_entity.living_entity.entity.pos.load();
-        let tracking_radius_sq = 50.0 * 50.0;
+        let entity_id = self.mob_entity.living_entity.entity.entity_id;
+        let tracked = world.entity_tracker.get_tracked_entity(entity_id);
         let players = world.players.load();
 
+        // Vanilla WitherBoss adds and removes bossbar viewers with entity tracking.
         let current: Vec<Uuid> = players
             .iter()
             .filter(|p| {
-                let p_pos = p.living_entity.entity.pos.load();
-                (p_pos - pos).length_squared() < tracking_radius_sq
+                tracked
+                    .as_ref()
+                    .is_some_and(|tracked| tracked.seen_by.contains(&p.gameprofile.id))
             })
             .map(|p| p.gameprofile.id)
             .collect();
