@@ -107,12 +107,12 @@ impl Phase for SitScanningPhase {
             });
             dragon.set_phase(EnderDragonPhase::TakingOff);
             if let Some(target) = target {
+                dragon.set_phase(EnderDragonPhase::Charging);
                 *dragon
-                    .target_player
+                    .target_location
                     .lock()
                     .unwrap_or_else(std::sync::PoisonError::into_inner) =
-                    Some(target.gameprofile.id);
-                dragon.set_phase(EnderDragonPhase::Charging);
+                    Some(target.get_entity().pos.load());
             }
         }
     }

@@ -212,6 +212,7 @@ pub struct EnderDragonEntity {
     pub holding_pattern_clockwise: Mutex<bool>,
     pub target_location: Mutex<Option<Vector3<f64>>>,
     pub fireball_charge: Mutex<i32>,
+    pub time_since_charge: Mutex<i32>,
 
     pub nodes: Mutex<[Option<DragonNode>; NODE_COUNT]>,
     pub path: Mutex<Vec<usize>>,
@@ -268,6 +269,7 @@ impl EnderDragonEntity {
             holding_pattern_clockwise: Mutex::new(true),
             target_location: Mutex::new(None),
             fireball_charge: Mutex::new(0),
+            time_since_charge: Mutex::new(0),
             nodes: Mutex::new([None; NODE_COUNT]),
             path: Mutex::new(Vec::new()),
             target_node: Mutex::new(0),

@@ -1,0 +1,18 @@
+# Dragon charge target and recovery
+
+Pumpkin retargeted its charge to the player's current position every tick, substituted an arena point when the player was missing, and immediately entered hovering within five blocks. Vanilla captures the player's position once when scanning selects a charge. Entering charging clears the previous target and recovery timer; a restored charge has no target and returns to holding pattern on its first AI tick.
+
+The correction captures that fixed point after entering the phase. A squared distance below 100 or above 22500, or a horizontal collision, starts recovery. Subsequent ticks increment the timer even after leaving that range. Vanilla also increments it again while the trigger remains true, and checks the ten-tick deadline before that second increment. Completion returns to circling. Ending the phase clears Pumpkin's shared steering target so the next phase does not inherit charge steering.
+
+Reference: Minecraft 26.3 `DragonChargePlayerPhase.doServerTick/begin`, `DragonSittingScanningPhase.doServerTick`, and `EnderDragon.aiStep`. Decompiled Java stays outside Git. Fork master was already an ancestor; fresh upstream master retains the old charging code. Open PRs 3407 and 3661 cover multipart hitboxes, despawn and crystal behavior; PR4092 covers shared AI and does not edit dragon code. None implements this charge lifecycle.
+
+Validation:
+
+- All 477 `pumpkin-core` library tests, workspace formatting, core Clippy with all targets/features, and the debug server build passed under the shared Cargo lock and resource limits. All three focused regressions fail when the old immediate close-range decision is restored.
+- The regressions cover strict distance boundaries, collision-triggered recovery, recovery continuing after leaving the target, the second timer increment while a trigger persists, and a missing target.
+- Across two isolated `dragon-charge-target.json` trials, vanilla and patched Pumpkin each pass 46/46 checks; baseline passes 42/46. Exactly four expected baseline checks fail: recovery after approaching the original point while the player has moved, and aborting a restored targetless charge. Each target advances 230 controlled ticks, with identical inputs, matching fixture/source/binary hashes, a connected headless player, and confirmed process shutdown. Both Pumpkin saves complete; vanilla's final save marker is not observed within the harness grace period.
+- Logs contain no server errors or panics. Both vanilla and patched Pumpkin emit the expected targetless-charge warnings; existing development/debug, offline-mode, Java native-access and proc-macro future-compatibility warnings remain.
+
+Limits: server-state and headless protocol-client evidence only, without rendered-client or complete boss-fight proof. Teleports isolate charge state from unresolved general flight physics and turn speed. Pumpkin has no shared vertical-collision flag; this patch consumes the available horizontal flag and does not change shared collision plumbing. Vanilla dragons use no-physics movement, which normally leaves both collision flags false. Collision-trigger coverage is a focused Rust check, not a live collision claim. Natural charging trajectories, targeting sneak/invisibility scaling and whole-fight integration remain separate work.
+
+Manual follow-up: in an isolated End arena, let a perched dragon select a distant survival player, then move sideways after it starts charging. Check that the dragon continues toward the original point before returning to circling. Capture a recording of target movement and the charge; no rendered-client recording was made for this change.

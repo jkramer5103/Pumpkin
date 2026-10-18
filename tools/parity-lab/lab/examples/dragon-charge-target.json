@@ -1,0 +1,351 @@
+{
+  "schema_version": 1,
+  "id": "dragon-charge-target",
+  "title": "Dragon retains its charge target and recovers before circling",
+  "description": "Two isolated trials use a distant survival player to start a charge, move the player, and teleport the dragon to the original target. Teleports separate charge phase state from general flight physics.",
+  "category": "entity",
+  "tags": [
+    "ender-dragon",
+    "ai"
+  ],
+  "setup": [
+    "tick freeze",
+    "difficulty normal",
+    "gamerule spawn_mobs false",
+    "gamerule mob_griefing false",
+    "forceload add -48 -48 47 47",
+    "gamemode creative ParitySmoke",
+    "tp ParitySmoke 30 100 0",
+    "gamerule random_tick_speed 0"
+  ],
+  "steps": [
+    {
+      "command": "gamemode creative ParitySmoke"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "tp ParitySmoke 30 100 0"
+    },
+    {
+      "command": "effect give ParitySmoke minecraft:resistance infinite 4 true"
+    },
+    {
+      "command": "gamemode survival ParitySmoke"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0 100 0 {PersistenceRequired:1b,NoAI:1b,DragonPhase:6,Tags:[\"charging\"]}"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=charging,limit=1] {NoAI:0b}",
+      "wait_ticks": 100
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=charging,limit=1,nbt={DragonPhase:8}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "tp ParitySmoke -30 100 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=charging,limit=1] 30 100 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=charging,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=charging,limit=1,nbt={DragonPhase:8}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=charging,limit=1] 0 100 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=charging,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=charging,limit=1,nbt={DragonPhase:8}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=charging,limit=1] 0 100 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=charging,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=charging,limit=1] 0 100 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=charging,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=charging,limit=1] 0 100 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=charging,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=charging,limit=1] 0 100 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=charging,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=charging,limit=1] 0 100 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=charging,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=charging,limit=1] 0 100 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=charging,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=charging,limit=1] 0 100 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=charging,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=charging,limit=1,nbt={DragonPhase:8}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=charging,limit=1] 0 100 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=charging,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=charging,limit=1,nbt={DragonPhase:8}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=charging,limit=1] 0 100 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=charging,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:ender_dragon,tag=charging,limit=1,nbt={DragonPhase:8}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "gamemode creative ParitySmoke"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0 100 0 {PersistenceRequired:1b,NoAI:1b,DragonPhase:8,Tags:[\"charging\"]}"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=charging,limit=1] {NoAI:1b}",
+      "wait_ticks": 3
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=charging,limit=1,nbt={DragonPhase:8}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=charging,limit=1] {NoAI:0b}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:ender_dragon,tag=charging,limit=1,nbt={DragonPhase:8}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "gamemode creative ParitySmoke"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "tp ParitySmoke 30 100 0"
+    },
+    {
+      "command": "effect give ParitySmoke minecraft:resistance infinite 4 true"
+    },
+    {
+      "command": "gamemode survival ParitySmoke"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0 100 0 {PersistenceRequired:1b,NoAI:1b,DragonPhase:6,Tags:[\"charging\"]}"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=charging,limit=1] {NoAI:0b}",
+      "wait_ticks": 100
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=charging,limit=1,nbt={DragonPhase:8}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "tp ParitySmoke -30 100 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=charging,limit=1] 30 100 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=charging,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=charging,limit=1,nbt={DragonPhase:8}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=charging,limit=1] 0 100 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=charging,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=charging,limit=1,nbt={DragonPhase:8}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=charging,limit=1] 0 100 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=charging,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=charging,limit=1] 0 100 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=charging,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=charging,limit=1] 0 100 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=charging,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=charging,limit=1] 0 100 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=charging,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=charging,limit=1] 0 100 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=charging,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=charging,limit=1] 0 100 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=charging,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=charging,limit=1] 0 100 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=charging,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=charging,limit=1,nbt={DragonPhase:8}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=charging,limit=1] 0 100 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=charging,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=charging,limit=1,nbt={DragonPhase:8}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=charging,limit=1] 0 100 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=charging,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:ender_dragon,tag=charging,limit=1,nbt={DragonPhase:8}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "gamemode creative ParitySmoke"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0 100 0 {PersistenceRequired:1b,NoAI:1b,DragonPhase:8,Tags:[\"charging\"]}"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=charging,limit=1] {NoAI:1b}",
+      "wait_ticks": 3
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=charging,limit=1,nbt={DragonPhase:8}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=charging,limit=1] {NoAI:0b}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:ender_dragon,tag=charging,limit=1,nbt={DragonPhase:8}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    }
+  ],
+  "cleanup": [
+    "gamemode creative ParitySmoke",
+    "kill @e[type=minecraft:ender_dragon]"
+  ]
+}
