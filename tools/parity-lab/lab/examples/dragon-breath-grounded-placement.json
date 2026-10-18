@@ -1,0 +1,436 @@
+{
+  "schema_version": 1,
+  "id": "dragon-breath-grounded-placement",
+  "title": "Sitting dragon breath is placed ahead of its head on the ground",
+  "description": "Two trials each of forward, rotated elevated, and empty-column placement. Enter breath naturally after a roar so head flight history has settled. Pause AI after emission to isolate cloud damage from dragon contact. Sheep at the expected ground cloud take damage; sheep at the old body-relative cloud position remain healthy.",
+  "category": "entity",
+  "tags": [
+    "ender-dragon",
+    "ai",
+    "area-effect-cloud"
+  ],
+  "setup": [
+    "tick freeze",
+    "difficulty normal",
+    "gamerule spawn_mobs false",
+    "gamerule mob_griefing false",
+    "forceload add -32 -32 31 31",
+    "gamemode creative ParitySmoke",
+    "tp ParitySmoke 20 80 20"
+  ],
+  "steps": [
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "kill @e[type=minecraft:area_effect_cloud]"
+    },
+    {
+      "command": "kill @e[type=minecraft:sheep]"
+    },
+    {
+      "command": "fill -12 76 -12 12 104 12 minecraft:air"
+    },
+    {
+      "command": "fill -12 79 -12 12 79 12 minecraft:stone"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.5 100.0 0.5 {Silent:1b,NoGravity:1b,PersistenceRequired:1b,DragonPhase:7}"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon] 0.5 100.0 0.5 0 0",
+      "wait_ticks": 50
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,limit=1] {NoAI:1b}"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:area_effect_cloud,limit=1] Pos"
+    },
+    {
+      "command": "execute positioned 0.49 79.99 -8.51 if entity @e[type=minecraft:area_effect_cloud,dx=0.02,dy=0.02,dz=0.02]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute positioned 0.5 80 -8.5 if entity @e[type=minecraft:area_effect_cloud,distance=..0.01]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon] 25 100 25"
+    },
+    {
+      "command": "summon minecraft:sheep 0.5 80 -8.5 {NoAI:1b,NoGravity:1b,Silent:1b,Tags:[\"front\"]}"
+    },
+    {
+      "command": "summon minecraft:sheep 0.5 100.5 2.5 {NoAI:1b,NoGravity:1b,Silent:1b,Tags:[\"old_center\"]}"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,limit=1] DragonPhase",
+      "wait_ticks": 25
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:sheep,tag=front,nbt={Health:5.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:sheep,tag=old_center,nbt={Health:8.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,nbt={DragonPhase:5,NoAI:1b}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "kill @e[type=minecraft:area_effect_cloud]"
+    },
+    {
+      "command": "kill @e[type=minecraft:sheep]"
+    },
+    {
+      "command": "fill -12 76 -12 12 104 12 minecraft:air"
+    },
+    {
+      "command": "fill -12 79 -12 12 79 12 minecraft:stone"
+    },
+    {
+      "command": "fill 8 89 -1 10 89 2 minecraft:stone"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.5 100.0 0.5 {Silent:1b,NoGravity:1b,PersistenceRequired:1b,DragonPhase:7}"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon] 0.5 100.0 0.5 90 0",
+      "wait_ticks": 50
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,limit=1] {NoAI:1b}"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:area_effect_cloud,limit=1] Pos"
+    },
+    {
+      "command": "execute positioned 9.49 89.99 0.49 if entity @e[type=minecraft:area_effect_cloud,dx=0.02,dy=0.02,dz=0.02]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute positioned 9.5 90 0.5 if entity @e[type=minecraft:area_effect_cloud,distance=..0.01]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon] 25 100 25"
+    },
+    {
+      "command": "summon minecraft:sheep 9.5 90 0.5 {NoAI:1b,NoGravity:1b,Silent:1b,Tags:[\"front\"]}"
+    },
+    {
+      "command": "summon minecraft:sheep -1.5 100.5 0.5 {NoAI:1b,NoGravity:1b,Silent:1b,Tags:[\"old_center\"]}"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,limit=1] DragonPhase",
+      "wait_ticks": 25
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:sheep,tag=front,nbt={Health:5.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:sheep,tag=old_center,nbt={Health:8.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,nbt={DragonPhase:5,NoAI:1b}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "kill @e[type=minecraft:area_effect_cloud]"
+    },
+    {
+      "command": "kill @e[type=minecraft:sheep]"
+    },
+    {
+      "command": "fill -12 76 -12 12 104 12 minecraft:air"
+    },
+    {
+      "command": "fill -12 79 -12 12 79 12 minecraft:stone"
+    },
+    {
+      "command": "fill 0 0 -9 1 100 -8 minecraft:air"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.5 100.0 0.5 {Silent:1b,NoGravity:1b,PersistenceRequired:1b,DragonPhase:7}"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon] 0.5 100.0 0.5 0 0",
+      "wait_ticks": 50
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,limit=1] {NoAI:1b}"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:area_effect_cloud,limit=1] Pos"
+    },
+    {
+      "command": "execute positioned 0.49 99.99 -8.51 if entity @e[type=minecraft:area_effect_cloud,dx=0.02,dy=0.02,dz=0.02]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute positioned 0.5 100 -8.5 if entity @e[type=minecraft:area_effect_cloud,distance=..0.01]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon] 25 100 25"
+    },
+    {
+      "command": "summon minecraft:sheep 0.5 100 -8.5 {NoAI:1b,NoGravity:1b,Silent:1b,Tags:[\"front\"]}"
+    },
+    {
+      "command": "summon minecraft:sheep 0.5 100.5 2.5 {NoAI:1b,NoGravity:1b,Silent:1b,Tags:[\"old_center\"]}"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,limit=1] DragonPhase",
+      "wait_ticks": 25
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:sheep,tag=front,nbt={Health:5.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:sheep,tag=old_center,nbt={Health:8.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,nbt={DragonPhase:5,NoAI:1b}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "kill @e[type=minecraft:area_effect_cloud]"
+    },
+    {
+      "command": "kill @e[type=minecraft:sheep]"
+    },
+    {
+      "command": "fill -12 76 -12 12 104 12 minecraft:air"
+    },
+    {
+      "command": "fill -12 79 -12 12 79 12 minecraft:stone"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.5 100.0 0.5 {Silent:1b,NoGravity:1b,PersistenceRequired:1b,DragonPhase:7}"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon] 0.5 100.0 0.5 0 0",
+      "wait_ticks": 50
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,limit=1] {NoAI:1b}"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:area_effect_cloud,limit=1] Pos"
+    },
+    {
+      "command": "execute positioned 0.49 79.99 -8.51 if entity @e[type=minecraft:area_effect_cloud,dx=0.02,dy=0.02,dz=0.02]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute positioned 0.5 80 -8.5 if entity @e[type=minecraft:area_effect_cloud,distance=..0.01]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon] 25 100 25"
+    },
+    {
+      "command": "summon minecraft:sheep 0.5 80 -8.5 {NoAI:1b,NoGravity:1b,Silent:1b,Tags:[\"front\"]}"
+    },
+    {
+      "command": "summon minecraft:sheep 0.5 100.5 2.5 {NoAI:1b,NoGravity:1b,Silent:1b,Tags:[\"old_center\"]}"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,limit=1] DragonPhase",
+      "wait_ticks": 25
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:sheep,tag=front,nbt={Health:5.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:sheep,tag=old_center,nbt={Health:8.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,nbt={DragonPhase:5,NoAI:1b}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "kill @e[type=minecraft:area_effect_cloud]"
+    },
+    {
+      "command": "kill @e[type=minecraft:sheep]"
+    },
+    {
+      "command": "fill -12 76 -12 12 104 12 minecraft:air"
+    },
+    {
+      "command": "fill -12 79 -12 12 79 12 minecraft:stone"
+    },
+    {
+      "command": "fill 8 89 -1 10 89 2 minecraft:stone"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.5 100.0 0.5 {Silent:1b,NoGravity:1b,PersistenceRequired:1b,DragonPhase:7}"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon] 0.5 100.0 0.5 90 0",
+      "wait_ticks": 50
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,limit=1] {NoAI:1b}"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:area_effect_cloud,limit=1] Pos"
+    },
+    {
+      "command": "execute positioned 9.49 89.99 0.49 if entity @e[type=minecraft:area_effect_cloud,dx=0.02,dy=0.02,dz=0.02]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute positioned 9.5 90 0.5 if entity @e[type=minecraft:area_effect_cloud,distance=..0.01]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon] 25 100 25"
+    },
+    {
+      "command": "summon minecraft:sheep 9.5 90 0.5 {NoAI:1b,NoGravity:1b,Silent:1b,Tags:[\"front\"]}"
+    },
+    {
+      "command": "summon minecraft:sheep -1.5 100.5 0.5 {NoAI:1b,NoGravity:1b,Silent:1b,Tags:[\"old_center\"]}"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,limit=1] DragonPhase",
+      "wait_ticks": 25
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:sheep,tag=front,nbt={Health:5.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:sheep,tag=old_center,nbt={Health:8.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,nbt={DragonPhase:5,NoAI:1b}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "kill @e[type=minecraft:area_effect_cloud]"
+    },
+    {
+      "command": "kill @e[type=minecraft:sheep]"
+    },
+    {
+      "command": "fill -12 76 -12 12 104 12 minecraft:air"
+    },
+    {
+      "command": "fill -12 79 -12 12 79 12 minecraft:stone"
+    },
+    {
+      "command": "fill 0 0 -9 1 100 -8 minecraft:air"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.5 100.0 0.5 {Silent:1b,NoGravity:1b,PersistenceRequired:1b,DragonPhase:7}"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon] 0.5 100.0 0.5 0 0",
+      "wait_ticks": 50
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,limit=1] {NoAI:1b}"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:area_effect_cloud,limit=1] Pos"
+    },
+    {
+      "command": "execute positioned 0.49 99.99 -8.51 if entity @e[type=minecraft:area_effect_cloud,dx=0.02,dy=0.02,dz=0.02]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute positioned 0.5 100 -8.5 if entity @e[type=minecraft:area_effect_cloud,distance=..0.01]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon] 25 100 25"
+    },
+    {
+      "command": "summon minecraft:sheep 0.5 100 -8.5 {NoAI:1b,NoGravity:1b,Silent:1b,Tags:[\"front\"]}"
+    },
+    {
+      "command": "summon minecraft:sheep 0.5 100.5 2.5 {NoAI:1b,NoGravity:1b,Silent:1b,Tags:[\"old_center\"]}"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,limit=1] DragonPhase",
+      "wait_ticks": 25
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:sheep,tag=front,nbt={Health:5.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:sheep,tag=old_center,nbt={Health:8.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,nbt={DragonPhase:5,NoAI:1b}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    }
+  ],
+  "cleanup": [
+    "kill @e[type=minecraft:ender_dragon]",
+    "kill @e[type=minecraft:area_effect_cloud]",
+    "kill @e[type=minecraft:sheep]"
+  ]
+}

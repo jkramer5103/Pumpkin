@@ -3,12 +3,43 @@ use crate::entity::{
     Entity, area_effect_cloud::AreaEffectCloudEntity, boss::ender_dragon::EnderDragonEntity,
 };
 use pumpkin_data::entity::EntityType;
+use pumpkin_util::math::position::BlockPos;
 use pumpkin_util::math::vector3::Vector3;
 
 const WARMUP_TIME: i32 = 10;
 const FLAME_DURATION: i32 = 200;
+const FLAME_RADIUS: f64 = 5.0;
 
 pub struct SitBreathingPhase;
+
+impl SitBreathingPhase {
+    fn flame_position(
+        dragon_pos: Vector3<f64>,
+        head_pos: Vector3<f64>,
+        mut is_empty_block: impl FnMut(BlockPos) -> bool,
+    ) -> Vector3<f64> {
+        let look =
+            Vector3::new(head_pos.x - dragon_pos.x, 0.0, head_pos.z - dragon_pos.z).normalize();
+        let x = head_pos.x + look.x * FLAME_RADIUS / 2.0;
+        let z = head_pos.z + look.z * FLAME_RADIUS / 2.0;
+        // Vanilla's head part is one block tall; start at its vertical midpoint.
+        let initial_y = head_pos.y + 0.5;
+        let mut y = initial_y;
+        while is_empty_block(BlockPos::new(
+            x.floor() as i32,
+            y.floor() as i32,
+            z.floor() as i32,
+        )) {
+            y -= 1.0;
+            // This is vanilla's zero cutoff, independent of the dimension's min Y.
+            if y < 0.0 {
+                y = initial_y;
+                break;
+            }
+        }
+        Vector3::new(x, y.floor() + 1.0, z)
+    }
+}
 
 impl super::Phase for SitBreathingPhase {
     fn get_type(&self) -> EnderDragonPhase {
@@ -66,13 +97,12 @@ impl super::Phase for SitBreathingPhase {
             .unwrap_or_else(std::sync::PoisonError::into_inner);
         if timer_val == WARMUP_TIME {
             let entity = &dragon.mob_entity.living_entity.entity;
-            let pos = entity.pos.load();
-            let yaw = entity.yaw.load().to_radians() as f64;
             let world = entity.world.load();
-
-            // Spawn the lingering cloud at the dragon's head position
-            let offset = Vector3::new(-yaw.sin() * 2.0, 0.5, yaw.cos() * 2.0);
-            let cloud_pos = pos.add(&offset);
+            let cloud_pos = Self::flame_position(
+                entity.pos.load(),
+                dragon.parts[0].entity.pos.load(),
+                |pos| world.get_block_state(&pos).is_air(),
+            );
 
             let cloud_entity =
                 Entity::new(world.clone(), cloud_pos, &EntityType::AREA_EFFECT_CLOUD);
@@ -90,12 +120,12 @@ impl super::Phase for SitBreathingPhase {
                     true,
                     true,
                 )],
-                FLAME_DURATION, // duration after the cloud's wait time
-                5.0,            // radius
-                20,             // reapplication delay
-                20,             // wait time
-                0.0,            // radius on use
-                0,              // duration on use
+                FLAME_DURATION,      // duration after the cloud's wait time
+                FLAME_RADIUS as f32, // radius
+                20,                  // reapplication delay
+                20,                  // wait time
+                0.0,                 // radius on use
+                0,                   // duration on use
             );
             // Sitting dragon flames keep their radius instead of shrinking like potions.
             if let Some(flame) = cloud.cast_any().downcast_ref::<AreaEffectCloudEntity>() {
@@ -111,5 +141,60 @@ impl super::Phase for SitBreathingPhase {
                 Some(cloud.get_entity().entity_uuid);
             world.spawn_entity(cloud);
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::SitBreathingPhase;
+    use pumpkin_util::math::{position::BlockPos, vector3::Vector3};
+
+    #[test]
+    fn flame_is_ahead_of_head_and_above_first_non_air_block() {
+        let pos = SitBreathingPhase::flame_position(
+            Vector3::new(0.5, 100.0, 0.5),
+            Vector3::new(0.5, 99.0, -6.0),
+            |pos| {
+                assert_eq!(pos.0.x, 0);
+                assert_eq!(pos.0.z, -9);
+                pos.0.y > 79
+            },
+        );
+        assert_eq!(pos, Vector3::new(0.5, 80.0, -8.5));
+
+        let rotated = SitBreathingPhase::flame_position(
+            Vector3::new(0.5, 100.0, 0.5),
+            Vector3::new(7.0, 99.0, 0.5),
+            |pos| pos != BlockPos::new(9, 89, 0),
+        );
+        assert_eq!(rotated, Vector3::new(9.5, 90.0, 0.5));
+    }
+
+    #[test]
+    fn empty_column_restores_head_height_before_searching_below_zero() {
+        let pos = SitBreathingPhase::flame_position(
+            Vector3::new(0.5, 100.0, 0.5),
+            Vector3::new(0.5, 99.0, -6.0),
+            |pos| {
+                assert!(pos.0.y >= 0);
+                true
+            },
+        );
+        assert_eq!(pos, Vector3::new(0.5, 100.0, -8.5));
+    }
+
+    #[test]
+    fn occupied_start_uses_floor_and_does_not_search_downward() {
+        let mut sampled = Vec::new();
+        let pos = SitBreathingPhase::flame_position(
+            Vector3::new(-2.5, 20.0, -2.5),
+            Vector3::new(-2.5, 18.75, -9.0),
+            |pos| {
+                sampled.push(pos);
+                false
+            },
+        );
+        assert_eq!(sampled, vec![BlockPos::new(-3, 19, -12)]);
+        assert_eq!(pos, Vector3::new(-2.5, 20.0, -11.5));
     }
 }
