@@ -1,0 +1,100 @@
+{
+  "schema_version": 1,
+  "id": "wither-skull-kill-healing",
+  "title": "Wither heals from a direct skull kill",
+  "category": "entities",
+  "description": "A naturally owned skull kills a weakened sheep; its wounded NoAI shooter gains exactly five health.",
+  "tags": [
+    "entity",
+    "wither",
+    "combat"
+  ],
+  "setup": [
+    "tick freeze",
+    "gamemode creative @a",
+    "difficulty easy",
+    "gamerule mob_griefing false",
+    "gamerule spawn_mobs false",
+    "forceload add 0 0 31 31",
+    "fill 0 79 0 31 79 31 minecraft:bedrock",
+    "fill 0 80 0 31 94 31 minecraft:air",
+    "tp @a 16.5 84 16.5",
+    "summon minecraft:wither 4.5 80 8.5 {Tags:[\"pp_shooter\"],NoGravity:1b,Silent:1b,PersistenceRequired:1b,Invul:0}",
+    "summon minecraft:sheep 23.5 80 8.5 {Tags:[\"pp_target\"],NoAI:1b,NoGravity:1b,Silent:1b}"
+  ],
+  "steps": [
+    {
+      "command": "execute if entity @e[tag=pp_shooter]",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 20
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:wither_skull]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "tag @e[type=minecraft:wither_skull,limit=1] add pp_shot"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_shooter,limit=1] {NoAI:1b}"
+    },
+    {
+      "command": "kill @e[tag=pp_target]"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_shooter,limit=1] {Health:200.0f}"
+    },
+    {
+      "command": "kill @e[type=minecraft:wither_skull,tag=!pp_shot]"
+    },
+    {
+      "command": "tp @e[tag=pp_shooter] 4.5 80 8.5"
+    },
+    {
+      "command": "summon minecraft:sheep 20.5 82 20.5 {Tags:[\"pp_impact_target\"],NoAI:1b,NoGravity:1b,Silent:1b,Health:4.0f}"
+    },
+    {
+      "command": "tp @e[tag=pp_shot] 19.01 82.1 20.5"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_shot,limit=1] {Motion:[1.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_impact_target]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_shooter,nbt={Health:200.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_shot]",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 3
+    },
+    {
+      "command": "execute unless entity @e[tag=pp_shot]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_shooter,nbt={Health:205.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute unless entity @e[tag=pp_impact_target,nbt=!{Health:0.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    }
+  ],
+  "cleanup": [
+    "kill @e[type=!minecraft:player]"
+  ],
+  "notes": "Capture the real owned shot before pausing and wounding the shooter. The distant NoAI shooter cannot regenerate. Death accepts either zero-health corpses or vanilla selector exclusion. Supplemental isolated trials cover surviving and invulnerable targets and max-health clamping. Explosion damage, arbitrary owner types, plugins and a whole fight are outside this fixture."
+}
