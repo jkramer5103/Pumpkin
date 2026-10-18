@@ -1,5 +1,6 @@
 use std::sync::Arc;
 
+use pumpkin_data::entity::EntityType;
 use pumpkin_macros::pumpkin_block;
 
 use crate::block::entities::end_gateway::EndGatewayBlockEntity;
@@ -11,6 +12,9 @@ pub struct EndGatewayBlock;
 impl BlockBehaviour for EndGatewayBlock {
     fn on_entity_collision(&self, args: OnEntityCollisionArgs<'_>) {
         let entity = args.entity.get_entity();
+        if entity.entity_type == &EntityType::WITHER {
+            return;
+        }
         if entity
             .portal_cooldown
             .load(std::sync::atomic::Ordering::Relaxed)

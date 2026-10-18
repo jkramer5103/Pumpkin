@@ -1,0 +1,73 @@
+{
+  "schema_version": 1,
+  "id": "wither-gateway-cooldown-full",
+  "title": "Wither full contact cannot activate End gateways",
+  "category": "entities",
+  "description": "A Wither with slight horizontal motion intersects a destinationless End gateway for four ticks. The packet oracle requires no cooldown block event for Wither contact at (5,80,5). Full-health, powered and spawn-invulnerable cases isolate boss portal eligibility. A later sheep remains healthy at the same gateway; its packets are retained as context, without a vanilla cooldown expectation. The gateway age remains well below its periodic attention timer.",
+  "tags": [
+    "entity",
+    "wither",
+    "portal"
+  ],
+  "setup": [
+    "tick freeze",
+    "gamemode creative @a",
+    "difficulty easy",
+    "gamerule mob_griefing false",
+    "gamerule spawn_mobs false",
+    "forceload add 0 0 31 31",
+    "fill 0 79 0 31 79 31 minecraft:bedrock",
+    "fill 0 80 0 31 96 31 minecraft:air",
+    "tp @a 15.5 86 15.5"
+  ],
+  "steps": [
+    {
+      "command": "setblock 5 80 5 minecraft:end_gateway"
+    },
+    {
+      "command": "execute if block 5 80 5 minecraft:end_gateway",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "summon minecraft:wither 5.5 80 5.5 {Tags:[\"pp_boss\"],NoAI:1b,NoGravity:1b,Motion:[0.01d,0.0d,0.0d],Silent:1b,Health:300.0f,Invul:0}",
+      "wait_ticks": 4
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss,x=5,y=80,z=5,dx=0,dy=0,dz=0]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss,nbt={Health:300.0f,Invul:0}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "tp @e[tag=pp_boss] 13.5 80 5.5"
+    },
+    {
+      "command": "summon minecraft:sheep 5.5 80 5.5 {Tags:[\"pp_control\"],NoAI:1b,NoGravity:1b,Motion:[0.01d,0.0d,0.0d],Silent:1b}",
+      "wait_ticks": 4
+    },
+    {
+      "command": "execute if entity @e[tag=pp_control,x=5,y=80,z=5,dx=0,dy=0,dz=0]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_control,nbt={Health:8.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get block 5 80 5 Age"
+    }
+  ],
+  "cleanup": [
+    "kill @e[type=minecraft:wither]",
+    "kill @e[type=minecraft:sheep]",
+    "kill @e[type=minecraft:item]",
+    "setblock 5 80 5 minecraft:air"
+  ]
+}
