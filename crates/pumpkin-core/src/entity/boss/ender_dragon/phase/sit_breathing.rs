@@ -89,12 +89,12 @@ impl super::Phase for SitBreathingPhase {
                     true,
                     true,
                 )],
-                600,  // duration
-                3.0,  // radius
-                20,   // reapplication delay
-                20,   // wait time
-                0.5,  // radius on use
-                -100, // duration on use
+                600, // duration
+                3.0, // radius
+                20,  // reapplication delay
+                20,  // wait time
+                0.5, // radius on use
+                0,   // duration on use
             );
             *dragon
                 .flame

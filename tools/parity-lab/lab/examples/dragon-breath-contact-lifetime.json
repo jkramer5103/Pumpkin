@@ -1,0 +1,235 @@
+{
+  "schema_version": 1,
+  "id": "dragon-breath-contact-lifetime",
+  "title": "Sitting dragon breath survives victim contacts",
+  "description": "Isolated ParitySmoke arena. Six sheep contact a real dragon-created cloud: each must take damage and the cloud must remain available for a seventh sheep. Pause the emitting dragon with NoAI and move it away after emission to isolate cloud lifetime. Initial radius, natural shrink, phase duration and whole-fight/visual behavior are outside this check.",
+  "category": "entity",
+  "tags": [
+    "ender-dragon",
+    "ai",
+    "area-effect-cloud"
+  ],
+  "setup": [
+    "tick freeze",
+    "difficulty normal",
+    "gamerule spawn_mobs false",
+    "gamerule mob_griefing false",
+    "forceload add -48 -48 47 47",
+    "gamemode creative ParitySmoke",
+    "tp ParitySmoke 20.0 80.0 20.0",
+    "kill @e[type=minecraft:ender_dragon]",
+    "kill @e[type=minecraft:area_effect_cloud]",
+    "kill @e[type=minecraft:sheep]",
+    "kill @e[type=minecraft:marker,tag=breath_center]"
+  ],
+  "steps": [
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "kill @e[type=minecraft:area_effect_cloud]"
+    },
+    {
+      "command": "kill @e[type=minecraft:sheep]"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.5 100.0 0.5 {Silent:1b,NoGravity:1b,PersistenceRequired:1b,UUID:[I;0,0,0,270],DragonPhase:5}",
+      "wait_ticks": 10
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:area_effect_cloud]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1"
+    },
+    {
+      "command": "data merge entity 00000000-0000-0000-0000-00000000010e {NoAI:1b}"
+    },
+    {
+      "command": "tp 00000000-0000-0000-0000-00000000010e 30.0 100.0 30.0"
+    },
+    {
+      "command": "execute at @e[type=minecraft:area_effect_cloud,limit=1] run summon minecraft:marker ~ ~ ~ {Tags:[\"breath_center\"]}"
+    },
+    {
+      "command": "execute at @e[type=minecraft:area_effect_cloud,limit=1] run summon minecraft:sheep ~ ~ ~ {NoAI:1b,NoGravity:1b,Silent:1b,PersistenceRequired:1b,UUID:[I;0,0,0,280]}"
+    },
+    {
+      "command": "execute at @e[type=minecraft:area_effect_cloud,limit=1] run summon minecraft:sheep ~ ~ ~ {NoAI:1b,NoGravity:1b,Silent:1b,PersistenceRequired:1b,UUID:[I;0,0,0,281]}"
+    },
+    {
+      "command": "execute at @e[type=minecraft:area_effect_cloud,limit=1] run summon minecraft:sheep ~ ~ ~ {NoAI:1b,NoGravity:1b,Silent:1b,PersistenceRequired:1b,UUID:[I;0,0,0,282]}"
+    },
+    {
+      "command": "execute at @e[type=minecraft:area_effect_cloud,limit=1] run summon minecraft:sheep ~ ~ ~ {NoAI:1b,NoGravity:1b,Silent:1b,PersistenceRequired:1b,UUID:[I;0,0,0,283]}"
+    },
+    {
+      "command": "execute at @e[type=minecraft:area_effect_cloud,limit=1] run summon minecraft:sheep ~ ~ ~ {NoAI:1b,NoGravity:1b,Silent:1b,PersistenceRequired:1b,UUID:[I;0,0,0,284]}"
+    },
+    {
+      "command": "execute at @e[type=minecraft:area_effect_cloud,limit=1] run summon minecraft:sheep ~ ~ ~ {NoAI:1b,NoGravity:1b,Silent:1b,PersistenceRequired:1b,UUID:[I;0,0,0,285]}",
+      "wait_ticks": 20
+    },
+    {
+      "command": "data get entity 00000000-0000-0000-0000-000000000118 Health",
+      "observe": true,
+      "expect_contains": "following entity data: 5"
+    },
+    {
+      "command": "data get entity 00000000-0000-0000-0000-000000000119 Health",
+      "observe": true,
+      "expect_contains": "following entity data: 5"
+    },
+    {
+      "command": "data get entity 00000000-0000-0000-0000-00000000011a Health",
+      "observe": true,
+      "expect_contains": "following entity data: 5"
+    },
+    {
+      "command": "data get entity 00000000-0000-0000-0000-00000000011b Health",
+      "observe": true,
+      "expect_contains": "following entity data: 5"
+    },
+    {
+      "command": "data get entity 00000000-0000-0000-0000-00000000011c Health",
+      "observe": true,
+      "expect_contains": "following entity data: 5"
+    },
+    {
+      "command": "data get entity 00000000-0000-0000-0000-00000000011d Health",
+      "observe": true,
+      "expect_contains": "following entity data: 5"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:area_effect_cloud]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1"
+    },
+    {
+      "command": "kill @e[type=minecraft:sheep]"
+    },
+    {
+      "command": "execute at @e[type=minecraft:marker,tag=breath_center,limit=1] run summon minecraft:sheep ~ ~ ~ {NoAI:1b,NoGravity:1b,Silent:1b,PersistenceRequired:1b,UUID:[I;0,0,0,286]}",
+      "wait_ticks": 20
+    },
+    {
+      "command": "data get entity 00000000-0000-0000-0000-00000000011e Health",
+      "observe": true,
+      "expect_contains": "following entity data: 5"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:area_effect_cloud]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1"
+    },
+    {
+      "command": "kill @e[type=minecraft:marker,tag=breath_center]"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "kill @e[type=minecraft:area_effect_cloud]"
+    },
+    {
+      "command": "kill @e[type=minecraft:sheep]"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.5 100.0 0.5 {Silent:1b,NoGravity:1b,PersistenceRequired:1b,UUID:[I;0,0,0,271],DragonPhase:5}",
+      "wait_ticks": 10
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:area_effect_cloud]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1"
+    },
+    {
+      "command": "data merge entity 00000000-0000-0000-0000-00000000010f {NoAI:1b}"
+    },
+    {
+      "command": "tp 00000000-0000-0000-0000-00000000010f 30.0 100.0 30.0"
+    },
+    {
+      "command": "execute at @e[type=minecraft:area_effect_cloud,limit=1] run summon minecraft:marker ~ ~ ~ {Tags:[\"breath_center\"]}"
+    },
+    {
+      "command": "execute at @e[type=minecraft:area_effect_cloud,limit=1] run summon minecraft:sheep ~ ~ ~ {NoAI:1b,NoGravity:1b,Silent:1b,PersistenceRequired:1b,UUID:[I;0,0,0,290]}"
+    },
+    {
+      "command": "execute at @e[type=minecraft:area_effect_cloud,limit=1] run summon minecraft:sheep ~ ~ ~ {NoAI:1b,NoGravity:1b,Silent:1b,PersistenceRequired:1b,UUID:[I;0,0,0,291]}"
+    },
+    {
+      "command": "execute at @e[type=minecraft:area_effect_cloud,limit=1] run summon minecraft:sheep ~ ~ ~ {NoAI:1b,NoGravity:1b,Silent:1b,PersistenceRequired:1b,UUID:[I;0,0,0,292]}"
+    },
+    {
+      "command": "execute at @e[type=minecraft:area_effect_cloud,limit=1] run summon minecraft:sheep ~ ~ ~ {NoAI:1b,NoGravity:1b,Silent:1b,PersistenceRequired:1b,UUID:[I;0,0,0,293]}"
+    },
+    {
+      "command": "execute at @e[type=minecraft:area_effect_cloud,limit=1] run summon minecraft:sheep ~ ~ ~ {NoAI:1b,NoGravity:1b,Silent:1b,PersistenceRequired:1b,UUID:[I;0,0,0,294]}"
+    },
+    {
+      "command": "execute at @e[type=minecraft:area_effect_cloud,limit=1] run summon minecraft:sheep ~ ~ ~ {NoAI:1b,NoGravity:1b,Silent:1b,PersistenceRequired:1b,UUID:[I;0,0,0,295]}",
+      "wait_ticks": 20
+    },
+    {
+      "command": "data get entity 00000000-0000-0000-0000-000000000122 Health",
+      "observe": true,
+      "expect_contains": "following entity data: 5"
+    },
+    {
+      "command": "data get entity 00000000-0000-0000-0000-000000000123 Health",
+      "observe": true,
+      "expect_contains": "following entity data: 5"
+    },
+    {
+      "command": "data get entity 00000000-0000-0000-0000-000000000124 Health",
+      "observe": true,
+      "expect_contains": "following entity data: 5"
+    },
+    {
+      "command": "data get entity 00000000-0000-0000-0000-000000000125 Health",
+      "observe": true,
+      "expect_contains": "following entity data: 5"
+    },
+    {
+      "command": "data get entity 00000000-0000-0000-0000-000000000126 Health",
+      "observe": true,
+      "expect_contains": "following entity data: 5"
+    },
+    {
+      "command": "data get entity 00000000-0000-0000-0000-000000000127 Health",
+      "observe": true,
+      "expect_contains": "following entity data: 5"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:area_effect_cloud]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1"
+    },
+    {
+      "command": "kill @e[type=minecraft:sheep]"
+    },
+    {
+      "command": "execute at @e[type=minecraft:marker,tag=breath_center,limit=1] run summon minecraft:sheep ~ ~ ~ {NoAI:1b,NoGravity:1b,Silent:1b,PersistenceRequired:1b,UUID:[I;0,0,0,296]}",
+      "wait_ticks": 20
+    },
+    {
+      "command": "data get entity 00000000-0000-0000-0000-000000000128 Health",
+      "observe": true,
+      "expect_contains": "following entity data: 5"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:area_effect_cloud]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1"
+    },
+    {
+      "command": "kill @e[type=minecraft:marker,tag=breath_center]"
+    }
+  ],
+  "cleanup": [
+    "kill @e[type=minecraft:ender_dragon]",
+    "kill @e[type=minecraft:area_effect_cloud]",
+    "kill @e[type=minecraft:sheep]",
+    "kill @e[type=minecraft:marker,tag=breath_center]"
+  ]
+}
