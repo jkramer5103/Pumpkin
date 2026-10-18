@@ -39,7 +39,7 @@ pub trait Phase: Send + Sync {
     fn get_fly_speed(&self) -> f32 {
         0.6
     }
-    fn get_turn_speed(&self) -> f32 {
+    fn get_turn_speed(&self, _dragon: &EnderDragonEntity) -> f32 {
         0.1
     }
     fn get_fly_target_location(&self) -> Option<Vector3<f64>> {
