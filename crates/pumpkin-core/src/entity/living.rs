@@ -2994,6 +2994,10 @@ impl LivingEntity {
             amount = by_block_event.damage;
         }
 
+        if let Some(mob) = caller.get_mob() {
+            mob.on_damage_attempt();
+        }
+
         let world = self.entity.world.load();
         let is_fire_damage = damage_type.has_tag(&tag::DamageType::MINECRAFT_IS_FIRE);
 

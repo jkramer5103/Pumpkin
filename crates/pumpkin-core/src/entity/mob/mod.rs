@@ -955,6 +955,9 @@ pub trait Mob: EntityBase + Send + Sync {
         self.pre_damage(damage_type, source)
     }
 
+    /// Runs after damage events accept a hit, before shield and hurt-cooldown rejection.
+    fn on_damage_attempt(&self) {}
+
     fn on_damage(&self, _damage_type: DamageType, _source: Option<&dyn EntityBase>) {}
 
     fn on_attack(&self, _target: &dyn EntityBase) {}

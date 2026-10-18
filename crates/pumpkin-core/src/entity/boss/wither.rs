@@ -712,7 +712,8 @@ impl Mob for WitherEntity {
         true
     }
 
-    fn on_damage(&self, _damage_type: DamageType, _source: Option<&dyn EntityBase>) {
+    fn on_damage_attempt(&self) {
+        // Vanilla primes retaliation before LivingEntity can reject a hit on cooldown.
         if self.destroy_blocks_tick.load(Ordering::Relaxed) <= 0 {
             self.destroy_blocks_tick.store(20, Ordering::Relaxed);
         }

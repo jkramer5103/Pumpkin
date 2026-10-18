@@ -1,0 +1,462 @@
+{
+  "schema_version": 1,
+  "id": "wither-hurt-cooldown-retaliation",
+  "title": "Wither retaliation counts hurt-cooldown-rejected hits",
+  "category": "entities",
+  "description": "Six or seven hits without ticking accumulate enough side-head pressure for dangerous skulls on the first resumed AI step. Five hits and true immunity controls do not. NoAI isolates damage from AI scheduling.",
+  "tags": [
+    "entity",
+    "wither",
+    "combat",
+    "ai"
+  ],
+  "setup": [
+    "tick freeze",
+    "gamemode creative @a",
+    "difficulty normal",
+    "gamerule spawn_mobs false",
+    "gamerule mob_griefing false",
+    "forceload add 0 0 31 31",
+    "fill 0 79 0 31 79 31 minecraft:bedrock",
+    "fill 0 80 0 31 99 31 minecraft:air",
+    "tp @a 16.5 84 16.5"
+  ],
+  "steps": [
+    {
+      "command": "kill @e[type=!minecraft:player]",
+      "wait_ticks": 30
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:wither]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "summon minecraft:wither 8.5 85 8.5 {Tags:[\"pp_boss\"],NoAI:1b,NoGravity:1b,Silent:1b,PersistenceRequired:1b,Invul:0}"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss,nbt={Health:300.0f,NoAI:1b}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "damage @e[tag=pp_boss,limit=1] 1 minecraft:generic"
+    },
+    {
+      "command": "damage @e[tag=pp_boss,limit=1] 1 minecraft:generic"
+    },
+    {
+      "command": "damage @e[tag=pp_boss,limit=1] 1 minecraft:generic"
+    },
+    {
+      "command": "damage @e[tag=pp_boss,limit=1] 1 minecraft:generic"
+    },
+    {
+      "command": "damage @e[tag=pp_boss,limit=1] 1 minecraft:generic"
+    },
+    {
+      "command": "damage @e[tag=pp_boss,limit=1] 1 minecraft:generic"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss,nbt={Health:299.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:wither_skull]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {NoAI:0b}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:wither_skull,nbt={dangerous:1b}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:wither_skull,nbt={dangerous:0b}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss,x=5,y=79,z=5,dx=10,dy=15,dz=10]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=!minecraft:player]",
+      "wait_ticks": 30
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:wither]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "summon minecraft:wither 8.5 85 8.5 {Tags:[\"pp_boss\"],NoAI:1b,NoGravity:1b,Silent:1b,PersistenceRequired:1b,Invul:0}"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss,nbt={Health:300.0f,NoAI:1b}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "damage @e[tag=pp_boss,limit=1] 1 minecraft:generic"
+    },
+    {
+      "command": "damage @e[tag=pp_boss,limit=1] 1 minecraft:generic"
+    },
+    {
+      "command": "damage @e[tag=pp_boss,limit=1] 1 minecraft:generic"
+    },
+    {
+      "command": "damage @e[tag=pp_boss,limit=1] 1 minecraft:generic"
+    },
+    {
+      "command": "damage @e[tag=pp_boss,limit=1] 1 minecraft:generic"
+    },
+    {
+      "command": "damage @e[tag=pp_boss,limit=1] 1 minecraft:generic"
+    },
+    {
+      "command": "damage @e[tag=pp_boss,limit=1] 1 minecraft:generic"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss,nbt={Health:299.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:wither_skull]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {NoAI:0b}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:wither_skull,nbt={dangerous:1b}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:wither_skull,nbt={dangerous:0b}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss,x=5,y=79,z=5,dx=10,dy=15,dz=10]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=!minecraft:player]",
+      "wait_ticks": 30
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:wither]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "summon minecraft:wither 8.5 85 8.5 {Tags:[\"pp_boss\"],NoAI:1b,NoGravity:1b,Silent:1b,PersistenceRequired:1b,Invul:0}"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss,nbt={Health:300.0f,NoAI:1b}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "damage @e[tag=pp_boss,limit=1] 1 minecraft:generic"
+    },
+    {
+      "command": "damage @e[tag=pp_boss,limit=1] 1 minecraft:generic"
+    },
+    {
+      "command": "damage @e[tag=pp_boss,limit=1] 1 minecraft:generic"
+    },
+    {
+      "command": "damage @e[tag=pp_boss,limit=1] 1 minecraft:generic"
+    },
+    {
+      "command": "damage @e[tag=pp_boss,limit=1] 1 minecraft:generic"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss,nbt={Health:299.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:wither_skull]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {NoAI:0b}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:wither_skull,nbt={dangerous:1b}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:wither_skull,nbt={dangerous:0b}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss,x=5,y=79,z=5,dx=10,dy=15,dz=10]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=!minecraft:player]",
+      "wait_ticks": 30
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:wither]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "summon minecraft:wither 8.5 85 8.5 {Tags:[\"pp_boss\"],NoAI:1b,NoGravity:1b,Silent:1b,PersistenceRequired:1b,Invul:0}"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss,nbt={Health:300.0f,NoAI:1b}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "damage @e[tag=pp_boss,limit=1] 1 minecraft:generic"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss,nbt={Health:299.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:wither_skull]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {NoAI:0b}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:wither_skull,nbt={dangerous:1b}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:wither_skull,nbt={dangerous:0b}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss,x=5,y=79,z=5,dx=10,dy=15,dz=10]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=!minecraft:player]",
+      "wait_ticks": 30
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:wither]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "summon minecraft:wither 8.5 85 8.5 {Tags:[\"pp_boss\"],NoAI:1b,NoGravity:1b,Silent:1b,PersistenceRequired:1b,Invul:0}"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss,nbt={Health:300.0f,NoAI:1b}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "damage @e[tag=pp_boss,limit=1] 1 minecraft:drown"
+    },
+    {
+      "command": "damage @e[tag=pp_boss,limit=1] 1 minecraft:drown"
+    },
+    {
+      "command": "damage @e[tag=pp_boss,limit=1] 1 minecraft:drown"
+    },
+    {
+      "command": "damage @e[tag=pp_boss,limit=1] 1 minecraft:drown"
+    },
+    {
+      "command": "damage @e[tag=pp_boss,limit=1] 1 minecraft:drown"
+    },
+    {
+      "command": "damage @e[tag=pp_boss,limit=1] 1 minecraft:drown"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss,nbt={Health:300.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:wither_skull]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {NoAI:0b}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:wither_skull,nbt={dangerous:1b}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:wither_skull,nbt={dangerous:0b}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss,x=5,y=79,z=5,dx=10,dy=15,dz=10]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=!minecraft:player]",
+      "wait_ticks": 30
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:wither]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "summon minecraft:wither 8.5 85 8.5 {Tags:[\"pp_boss\"],NoAI:1b,NoGravity:1b,Silent:1b,PersistenceRequired:1b,Invul:200}"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss,nbt={Health:300.0f,NoAI:1b}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "damage @e[tag=pp_boss,limit=1] 1 minecraft:generic"
+    },
+    {
+      "command": "damage @e[tag=pp_boss,limit=1] 1 minecraft:generic"
+    },
+    {
+      "command": "damage @e[tag=pp_boss,limit=1] 1 minecraft:generic"
+    },
+    {
+      "command": "damage @e[tag=pp_boss,limit=1] 1 minecraft:generic"
+    },
+    {
+      "command": "damage @e[tag=pp_boss,limit=1] 1 minecraft:generic"
+    },
+    {
+      "command": "damage @e[tag=pp_boss,limit=1] 1 minecraft:generic"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss,nbt={Health:300.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:wither_skull]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {NoAI:0b}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:wither_skull,nbt={dangerous:1b}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:wither_skull,nbt={dangerous:0b}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss,x=5,y=79,z=5,dx=10,dy=15,dz=10]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=!minecraft:player]",
+      "wait_ticks": 30
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:wither]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "summon minecraft:wither 8.5 85 8.5 {Tags:[\"pp_boss\"],NoAI:1b,NoGravity:1b,Silent:1b,PersistenceRequired:1b,Invulnerable:1b,Invul:0}"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss,nbt={Health:300.0f,NoAI:1b}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "damage @e[tag=pp_boss,limit=1] 1 minecraft:generic"
+    },
+    {
+      "command": "damage @e[tag=pp_boss,limit=1] 1 minecraft:generic"
+    },
+    {
+      "command": "damage @e[tag=pp_boss,limit=1] 1 minecraft:generic"
+    },
+    {
+      "command": "damage @e[tag=pp_boss,limit=1] 1 minecraft:generic"
+    },
+    {
+      "command": "damage @e[tag=pp_boss,limit=1] 1 minecraft:generic"
+    },
+    {
+      "command": "damage @e[tag=pp_boss,limit=1] 1 minecraft:generic"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss,nbt={Health:300.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:wither_skull]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {NoAI:0b}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:wither_skull,nbt={dangerous:1b}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:wither_skull,nbt={dangerous:0b}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss,x=5,y=79,z=5,dx=10,dy=15,dz=10]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    }
+  ],
+  "cleanup": [
+    "kill @e[type=!minecraft:player]"
+  ]
+}
