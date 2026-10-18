@@ -1,0 +1,247 @@
+{
+  "schema_version": 1,
+  "id": "wither-skull-ownerless-damage",
+  "title": "Ownerless Wither skulls deal magic impact damage",
+  "category": "entities",
+  "description": "An ownerless skull hits the top of an iron golem, over two blocks above its feet so its explosion cannot mask direct damage. Magic ignores armor; a 6 HP golem survives on 1 HP.",
+  "tags": [
+    "entity",
+    "wither",
+    "combat",
+    "projectile"
+  ],
+  "setup": [
+    "tick freeze",
+    "gamemode creative @a",
+    "difficulty easy",
+    "gamerule spawn_mobs false",
+    "gamerule mob_griefing false",
+    "forceload add 0 0 31 31",
+    "fill 0 79 0 31 79 31 minecraft:bedrock",
+    "fill 0 80 0 31 94 31 minecraft:air",
+    "tp @a 16.5 84 16.5"
+  ],
+  "steps": [
+    {
+      "command": "kill @e[tag=pp_victim]",
+      "wait_ticks": 25
+    },
+    {
+      "command": "execute unless entity @e[tag=pp_victim]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "summon minecraft:iron_golem 20.5 82 20.5 {Tags:[\"pp_victim\"],NoAI:1b,NoGravity:1b,Silent:1b,Health:100.0f}"
+    },
+    {
+      "command": "attribute @e[tag=pp_victim,limit=1] minecraft:armor base set 0"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_victim,nbt={Health:100.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "summon minecraft:wither_skull 19.01 84.5 20.5 {Tags:[\"pp_shot\"],dangerous:0b,Motion:[1.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_shot]",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 3
+    },
+    {
+      "command": "execute unless entity @e[tag=pp_shot]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_victim,nbt={Health:95.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[tag=pp_victim,limit=1] Health"
+    },
+    {
+      "command": "data get entity @e[tag=pp_victim,limit=1] Pos",
+      "wait_ticks": 25
+    },
+    {
+      "command": "execute if entity @e[tag=pp_victim,nbt={Health:95.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[tag=pp_victim,limit=1] Health"
+    },
+    {
+      "command": "kill @e[tag=pp_victim]",
+      "wait_ticks": 25
+    },
+    {
+      "command": "execute unless entity @e[tag=pp_victim]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "summon minecraft:iron_golem 20.5 82 20.5 {Tags:[\"pp_victim\"],NoAI:1b,NoGravity:1b,Silent:1b,Health:100.0f}"
+    },
+    {
+      "command": "attribute @e[tag=pp_victim,limit=1] minecraft:armor base set 0"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_victim,nbt={Health:100.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "summon minecraft:wither_skull 19.01 84.5 20.5 {Tags:[\"pp_shot\"],dangerous:1b,Motion:[1.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_shot]",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 3
+    },
+    {
+      "command": "execute unless entity @e[tag=pp_shot]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_victim,nbt={Health:95.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[tag=pp_victim,limit=1] Health"
+    },
+    {
+      "command": "data get entity @e[tag=pp_victim,limit=1] Pos",
+      "wait_ticks": 25
+    },
+    {
+      "command": "execute if entity @e[tag=pp_victim,nbt={Health:95.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[tag=pp_victim,limit=1] Health"
+    },
+    {
+      "command": "kill @e[tag=pp_victim]",
+      "wait_ticks": 25
+    },
+    {
+      "command": "execute unless entity @e[tag=pp_victim]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "summon minecraft:iron_golem 20.5 82 20.5 {Tags:[\"pp_victim\"],NoAI:1b,NoGravity:1b,Silent:1b,Health:100.0f}"
+    },
+    {
+      "command": "attribute @e[tag=pp_victim,limit=1] minecraft:armor base set 20"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_victim,nbt={Health:100.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "summon minecraft:wither_skull 19.01 84.5 20.5 {Tags:[\"pp_shot\"],dangerous:0b,Motion:[1.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_shot]",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 3
+    },
+    {
+      "command": "execute unless entity @e[tag=pp_shot]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_victim,nbt={Health:95.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[tag=pp_victim,limit=1] Health"
+    },
+    {
+      "command": "data get entity @e[tag=pp_victim,limit=1] Pos",
+      "wait_ticks": 25
+    },
+    {
+      "command": "execute if entity @e[tag=pp_victim,nbt={Health:95.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[tag=pp_victim,limit=1] Health"
+    },
+    {
+      "command": "kill @e[tag=pp_victim]",
+      "wait_ticks": 25
+    },
+    {
+      "command": "execute unless entity @e[tag=pp_victim]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "summon minecraft:iron_golem 20.5 82 20.5 {Tags:[\"pp_victim\"],NoAI:1b,NoGravity:1b,Silent:1b,Health:6.0f}"
+    },
+    {
+      "command": "attribute @e[tag=pp_victim,limit=1] minecraft:armor base set 0"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_victim,nbt={Health:6.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "summon minecraft:wither_skull 19.01 84.5 20.5 {Tags:[\"pp_shot\"],dangerous:0b,Motion:[1.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_shot]",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 3
+    },
+    {
+      "command": "execute unless entity @e[tag=pp_shot]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_victim,nbt={Health:1.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[tag=pp_victim,limit=1] Health"
+    },
+    {
+      "command": "data get entity @e[tag=pp_victim,limit=1] Pos",
+      "wait_ticks": 25
+    },
+    {
+      "command": "execute if entity @e[tag=pp_victim,nbt={Health:1.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[tag=pp_victim,limit=1] Health"
+    }
+  ],
+  "cleanup": [
+    "kill @e[type=minecraft:wither_skull]",
+    "kill @e[tag=pp_victim]",
+    "tick unfreeze"
+  ]
+}

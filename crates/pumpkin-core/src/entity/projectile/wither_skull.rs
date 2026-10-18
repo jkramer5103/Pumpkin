@@ -128,7 +128,16 @@ impl EntityBase for WitherSkullEntity {
         if let ProjectileHit::Entity { ref entity, .. } = hit {
             let difficulty = world.level_info.load().difficulty;
 
-            let damaged = entity.damage(entity.as_ref(), 8.0, DamageType::WITHER_SKULL);
+            let owner = self
+                .thrown
+                .owner_id
+                .and_then(|id| world.get_entity_by_id(id));
+            let living_owner = owner.as_ref().and_then(|owner| owner.get_living_entity());
+            let damaged = if living_owner.is_some() {
+                entity.damage(entity.as_ref(), 8.0, DamageType::WITHER_SKULL)
+            } else {
+                entity.damage(entity.as_ref(), 5.0, DamageType::MAGIC)
+            };
 
             // Living entities remain in the world during their death animation.
             let target_alive = entity.get_entity().is_alive()
@@ -137,11 +146,7 @@ impl EntityBase for WitherSkullEntity {
                     .is_none_or(|living| living.health.load() > 0.0);
             if damaged
                 && !target_alive
-                && let Some(owner) = self
-                    .thrown
-                    .owner_id
-                    .and_then(|id| world.get_entity_by_id(id))
-                && let Some(living_owner) = owner.get_living_entity()
+                && let Some(living_owner) = living_owner
                 && living_owner.health.load() > 0.0
             {
                 living_owner.heal(5.0);
