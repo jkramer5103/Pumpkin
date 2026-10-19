@@ -19,6 +19,7 @@ use crate::{
 pub struct WitherPattern {
     blocks: [BlockPos; 7],
     base: BlockPos,
+    yaw: f32,
 }
 
 #[must_use]
@@ -54,6 +55,11 @@ pub fn find_wither_pattern(world: &Arc<World>, skull_pos: &BlockPos) -> Option<W
                 return Some(WitherPattern {
                     blocks: [center, skull1_pos, skull2_pos, top_middle, arm1, arm2, base],
                     base,
+                    yaw: if dir == BlockDirection::West {
+                        90.0
+                    } else {
+                        0.0
+                    },
                 });
             }
         }
@@ -75,6 +81,8 @@ fn spawn_wither(world: &Arc<World>, pattern: &WitherPattern) {
     let mut spawn_pos = pattern.base.to_f64();
     spawn_pos.y += 0.55;
     let entity = Entity::new(world.clone(), spawn_pos, &EntityType::WITHER);
+    entity.yaw.store(pattern.yaw);
+    entity.body_yaw.store(pattern.yaw);
     let wither = WitherEntity::new(entity);
     wither.make_invulnerable();
     world.spawn_entity(wither);
