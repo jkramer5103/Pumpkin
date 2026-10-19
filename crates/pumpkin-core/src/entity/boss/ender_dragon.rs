@@ -800,7 +800,7 @@ impl EnderDragonEntity {
             .yaw_rot_accel
             .lock()
             .unwrap_or_else(std::sync::PoisonError::into_inner);
-        let rot2 = (yaw - yaw_accel * 0.01) * (std::f32::consts::PI / 180.0);
+        let rot2 = yaw * (std::f32::consts::PI / 180.0) - yaw_accel * 0.01;
         let ss2 = rot2.sin() as f64;
         let cc2 = rot2.cos() as f64;
 

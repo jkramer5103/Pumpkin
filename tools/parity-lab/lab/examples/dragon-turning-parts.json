@@ -1,0 +1,1020 @@
+{
+  "schema_version": 1,
+  "id": "dragon-turning-parts",
+  "title": "Turning dragon head and neck block footprint",
+  "description": "Two isolated trials check block interactions after one controlled turning tick; corrected, previous and distant footprints plus straight and NoAI controls.",
+  "category": "entity",
+  "tags": [
+    "ender-dragon",
+    "ai"
+  ],
+  "setup": [
+    "tick freeze",
+    "difficulty normal",
+    "gamerule spawn_mobs false",
+    "gamerule mob_griefing true",
+    "forceload add -48 -48 47 47",
+    "gamemode creative ParitySmoke",
+    "tp ParitySmoke 40 100 40"
+  ],
+  "steps": [
+    {
+      "command": "say Wait for arena chunks",
+      "wait_ticks": 5
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "fill -10 98 -40 10 110 40 minecraft:air"
+    },
+    {
+      "command": "say TRIAL_1_negative-new"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.0 100.0 0.0 {PersistenceRequired:1b,DragonPhase:10,Tags:[\"turn_parts\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=turn_parts,limit=1] 0.0 100.0 -30.0 0 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=turn_parts,limit=1] {Motion:[0.0d,0.0d,0.0d],NoAI:0b}"
+    },
+    {
+      "command": "setblock 2 100 -36 minecraft:stone"
+    },
+    {
+      "command": "execute if block 2 100 -36 minecraft:stone",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "say turning_tick",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=turn_parts,limit=1] Rotation"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=turn_parts,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=turn_parts,limit=1] Motion"
+    },
+    {
+      "command": "execute if block 2 100 -36 minecraft:air",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "fill -10 98 -40 10 110 40 minecraft:air"
+    },
+    {
+      "command": "say TRIAL_1_negative-old"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.0 100.0 0.0 {PersistenceRequired:1b,DragonPhase:10,Tags:[\"turn_parts\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=turn_parts,limit=1] 0.0 100.0 -30.0 0 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=turn_parts,limit=1] {Motion:[0.0d,0.0d,0.0d],NoAI:0b}"
+    },
+    {
+      "command": "setblock -2 100 -36 minecraft:stone"
+    },
+    {
+      "command": "execute if block -2 100 -36 minecraft:stone",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "say turning_tick",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=turn_parts,limit=1] Rotation"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=turn_parts,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=turn_parts,limit=1] Motion"
+    },
+    {
+      "command": "execute if block -2 100 -36 minecraft:stone",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "fill -10 98 -40 10 110 40 minecraft:air"
+    },
+    {
+      "command": "say TRIAL_1_positive-new"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.0 100.0 0.0 {PersistenceRequired:1b,DragonPhase:10,Tags:[\"turn_parts\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=turn_parts,limit=1] 0.0 100.0 30.0 180 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=turn_parts,limit=1] {Motion:[0.0d,0.0d,0.0d],NoAI:0b}"
+    },
+    {
+      "command": "setblock -3 100 35 minecraft:stone"
+    },
+    {
+      "command": "execute if block -3 100 35 minecraft:stone",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "say turning_tick",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=turn_parts,limit=1] Rotation"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=turn_parts,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=turn_parts,limit=1] Motion"
+    },
+    {
+      "command": "execute if block -3 100 35 minecraft:air",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "fill -10 98 -40 10 110 40 minecraft:air"
+    },
+    {
+      "command": "say TRIAL_1_positive-old"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.0 100.0 0.0 {PersistenceRequired:1b,DragonPhase:10,Tags:[\"turn_parts\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=turn_parts,limit=1] 0.0 100.0 30.0 180 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=turn_parts,limit=1] {Motion:[0.0d,0.0d,0.0d],NoAI:0b}"
+    },
+    {
+      "command": "setblock 1 100 35 minecraft:stone"
+    },
+    {
+      "command": "execute if block 1 100 35 minecraft:stone",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "say turning_tick",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=turn_parts,limit=1] Rotation"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=turn_parts,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=turn_parts,limit=1] Motion"
+    },
+    {
+      "command": "execute if block 1 100 35 minecraft:stone",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "fill -10 98 -40 10 110 40 minecraft:air"
+    },
+    {
+      "command": "say TRIAL_1_straight"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.0 100.0 0.0 {PersistenceRequired:1b,DragonPhase:10,Tags:[\"turn_parts\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=turn_parts,limit=1] 0.0 100.0 30.0 0 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=turn_parts,limit=1] {Motion:[0.0d,0.0d,0.0d],NoAI:0b}"
+    },
+    {
+      "command": "setblock 0 100 24 minecraft:stone"
+    },
+    {
+      "command": "execute if block 0 100 24 minecraft:stone",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "say turning_tick",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=turn_parts,limit=1] Rotation"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=turn_parts,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=turn_parts,limit=1] Motion"
+    },
+    {
+      "command": "execute if block 0 100 24 minecraft:air",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "fill -10 98 -40 10 110 40 minecraft:air"
+    },
+    {
+      "command": "say TRIAL_1_distant"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.0 100.0 0.0 {PersistenceRequired:1b,DragonPhase:10,Tags:[\"turn_parts\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=turn_parts,limit=1] 0.0 100.0 -30.0 0 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=turn_parts,limit=1] {Motion:[0.0d,0.0d,0.0d],NoAI:0b}"
+    },
+    {
+      "command": "setblock 8 100 -36 minecraft:stone"
+    },
+    {
+      "command": "execute if block 8 100 -36 minecraft:stone",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "say turning_tick",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=turn_parts,limit=1] Rotation"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=turn_parts,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=turn_parts,limit=1] Motion"
+    },
+    {
+      "command": "execute if block 8 100 -36 minecraft:stone",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "fill -10 98 -40 10 110 40 minecraft:air"
+    },
+    {
+      "command": "say TRIAL_1_no-ai"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.0 100.0 0.0 {PersistenceRequired:1b,DragonPhase:10,Tags:[\"turn_parts\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=turn_parts,limit=1] 0.0 100.0 -30.0 0 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=turn_parts,limit=1] {Motion:[0.0d,0.0d,0.0d],NoAI:1b}"
+    },
+    {
+      "command": "setblock 2 100 -36 minecraft:stone"
+    },
+    {
+      "command": "execute if block 2 100 -36 minecraft:stone",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "say turning_tick",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=turn_parts,limit=1] Rotation"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=turn_parts,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=turn_parts,limit=1] Motion"
+    },
+    {
+      "command": "execute if block 2 100 -36 minecraft:stone",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "fill -10 98 -40 10 110 40 minecraft:air"
+    },
+    {
+      "command": "say TRIAL_2_negative-new"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.0 100.0 0.0 {PersistenceRequired:1b,DragonPhase:10,Tags:[\"turn_parts\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=turn_parts,limit=1] 0.0 100.0 -30.0 0 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=turn_parts,limit=1] {Motion:[0.0d,0.0d,0.0d],NoAI:0b}"
+    },
+    {
+      "command": "setblock 2 100 -36 minecraft:stone"
+    },
+    {
+      "command": "execute if block 2 100 -36 minecraft:stone",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "say turning_tick",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=turn_parts,limit=1] Rotation"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=turn_parts,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=turn_parts,limit=1] Motion"
+    },
+    {
+      "command": "execute if block 2 100 -36 minecraft:air",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "fill -10 98 -40 10 110 40 minecraft:air"
+    },
+    {
+      "command": "say TRIAL_2_negative-old"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.0 100.0 0.0 {PersistenceRequired:1b,DragonPhase:10,Tags:[\"turn_parts\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=turn_parts,limit=1] 0.0 100.0 -30.0 0 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=turn_parts,limit=1] {Motion:[0.0d,0.0d,0.0d],NoAI:0b}"
+    },
+    {
+      "command": "setblock -2 100 -36 minecraft:stone"
+    },
+    {
+      "command": "execute if block -2 100 -36 minecraft:stone",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "say turning_tick",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=turn_parts,limit=1] Rotation"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=turn_parts,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=turn_parts,limit=1] Motion"
+    },
+    {
+      "command": "execute if block -2 100 -36 minecraft:stone",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "fill -10 98 -40 10 110 40 minecraft:air"
+    },
+    {
+      "command": "say TRIAL_2_positive-new"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.0 100.0 0.0 {PersistenceRequired:1b,DragonPhase:10,Tags:[\"turn_parts\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=turn_parts,limit=1] 0.0 100.0 30.0 180 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=turn_parts,limit=1] {Motion:[0.0d,0.0d,0.0d],NoAI:0b}"
+    },
+    {
+      "command": "setblock -3 100 35 minecraft:stone"
+    },
+    {
+      "command": "execute if block -3 100 35 minecraft:stone",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "say turning_tick",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=turn_parts,limit=1] Rotation"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=turn_parts,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=turn_parts,limit=1] Motion"
+    },
+    {
+      "command": "execute if block -3 100 35 minecraft:air",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "fill -10 98 -40 10 110 40 minecraft:air"
+    },
+    {
+      "command": "say TRIAL_2_positive-old"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.0 100.0 0.0 {PersistenceRequired:1b,DragonPhase:10,Tags:[\"turn_parts\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=turn_parts,limit=1] 0.0 100.0 30.0 180 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=turn_parts,limit=1] {Motion:[0.0d,0.0d,0.0d],NoAI:0b}"
+    },
+    {
+      "command": "setblock 1 100 35 minecraft:stone"
+    },
+    {
+      "command": "execute if block 1 100 35 minecraft:stone",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "say turning_tick",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=turn_parts,limit=1] Rotation"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=turn_parts,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=turn_parts,limit=1] Motion"
+    },
+    {
+      "command": "execute if block 1 100 35 minecraft:stone",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "fill -10 98 -40 10 110 40 minecraft:air"
+    },
+    {
+      "command": "say TRIAL_2_straight"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.0 100.0 0.0 {PersistenceRequired:1b,DragonPhase:10,Tags:[\"turn_parts\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=turn_parts,limit=1] 0.0 100.0 30.0 0 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=turn_parts,limit=1] {Motion:[0.0d,0.0d,0.0d],NoAI:0b}"
+    },
+    {
+      "command": "setblock 0 100 24 minecraft:stone"
+    },
+    {
+      "command": "execute if block 0 100 24 minecraft:stone",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "say turning_tick",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=turn_parts,limit=1] Rotation"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=turn_parts,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=turn_parts,limit=1] Motion"
+    },
+    {
+      "command": "execute if block 0 100 24 minecraft:air",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "fill -10 98 -40 10 110 40 minecraft:air"
+    },
+    {
+      "command": "say TRIAL_2_distant"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.0 100.0 0.0 {PersistenceRequired:1b,DragonPhase:10,Tags:[\"turn_parts\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=turn_parts,limit=1] 0.0 100.0 -30.0 0 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=turn_parts,limit=1] {Motion:[0.0d,0.0d,0.0d],NoAI:0b}"
+    },
+    {
+      "command": "setblock 8 100 -36 minecraft:stone"
+    },
+    {
+      "command": "execute if block 8 100 -36 minecraft:stone",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "say turning_tick",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=turn_parts,limit=1] Rotation"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=turn_parts,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=turn_parts,limit=1] Motion"
+    },
+    {
+      "command": "execute if block 8 100 -36 minecraft:stone",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "fill -10 98 -40 10 110 40 minecraft:air"
+    },
+    {
+      "command": "say TRIAL_2_no-ai"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.0 100.0 0.0 {PersistenceRequired:1b,DragonPhase:10,Tags:[\"turn_parts\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=turn_parts,limit=1] 0.0 100.0 -30.0 0 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=turn_parts,limit=1] {Motion:[0.0d,0.0d,0.0d],NoAI:1b}"
+    },
+    {
+      "command": "setblock 2 100 -36 minecraft:stone"
+    },
+    {
+      "command": "execute if block 2 100 -36 minecraft:stone",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "say turning_tick",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=turn_parts,limit=1] Rotation"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=turn_parts,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=turn_parts,limit=1] Motion"
+    },
+    {
+      "command": "execute if block 2 100 -36 minecraft:stone",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "fill -10 98 -40 10 110 40 minecraft:air"
+    },
+    {
+      "command": "say TRIAL_1_opposite-new"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.0 100.0 0.0 {PersistenceRequired:1b,DragonPhase:10,Tags:[\"turn_parts\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=turn_parts,limit=1] 0.0 100.0 -30.0 1 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=turn_parts,limit=1] {Motion:[0.0d,0.0d,0.0d],NoAI:0b}"
+    },
+    {
+      "command": "setblock -3 100 -36 minecraft:stone"
+    },
+    {
+      "command": "execute if block -3 100 -36 minecraft:stone",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "say turning_tick",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=turn_parts,limit=1] Rotation"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=turn_parts,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=turn_parts,limit=1] Motion"
+    },
+    {
+      "command": "execute if block -3 100 -36 minecraft:air",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "fill -10 98 -40 10 110 40 minecraft:air"
+    },
+    {
+      "command": "say TRIAL_1_opposite-old"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.0 100.0 0.0 {PersistenceRequired:1b,DragonPhase:10,Tags:[\"turn_parts\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=turn_parts,limit=1] 0.0 100.0 -30.0 1 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=turn_parts,limit=1] {Motion:[0.0d,0.0d,0.0d],NoAI:0b}"
+    },
+    {
+      "command": "setblock 1 100 -36 minecraft:stone"
+    },
+    {
+      "command": "execute if block 1 100 -36 minecraft:stone",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "say turning_tick",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=turn_parts,limit=1] Rotation"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=turn_parts,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=turn_parts,limit=1] Motion"
+    },
+    {
+      "command": "execute if block 1 100 -36 minecraft:stone",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "fill -10 98 -40 10 110 40 minecraft:air"
+    },
+    {
+      "command": "say TRIAL_1_neck-new"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.0 100.0 0.0 {PersistenceRequired:1b,DragonPhase:10,Tags:[\"turn_parts\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=turn_parts,limit=1] 0.0 100.0 -30.0 0 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=turn_parts,limit=1] {Motion:[0.0d,0.0d,0.0d],NoAI:0b}"
+    },
+    {
+      "command": "setblock 2 102 -36 minecraft:stone"
+    },
+    {
+      "command": "execute if block 2 102 -36 minecraft:stone",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "say turning_tick",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=turn_parts,limit=1] Rotation"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=turn_parts,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=turn_parts,limit=1] Motion"
+    },
+    {
+      "command": "execute if block 2 102 -36 minecraft:air",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "fill -10 98 -40 10 110 40 minecraft:air"
+    },
+    {
+      "command": "say TRIAL_1_neck-old"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.0 100.0 0.0 {PersistenceRequired:1b,DragonPhase:10,Tags:[\"turn_parts\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=turn_parts,limit=1] 0.0 100.0 -30.0 0 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=turn_parts,limit=1] {Motion:[0.0d,0.0d,0.0d],NoAI:0b}"
+    },
+    {
+      "command": "setblock -2 102 -36 minecraft:stone"
+    },
+    {
+      "command": "execute if block -2 102 -36 minecraft:stone",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "say turning_tick",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=turn_parts,limit=1] Rotation"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=turn_parts,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=turn_parts,limit=1] Motion"
+    },
+    {
+      "command": "execute if block -2 102 -36 minecraft:stone",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "fill -10 98 -40 10 110 40 minecraft:air"
+    },
+    {
+      "command": "say TRIAL_2_opposite-new"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.0 100.0 0.0 {PersistenceRequired:1b,DragonPhase:10,Tags:[\"turn_parts\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=turn_parts,limit=1] 0.0 100.0 -30.0 1 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=turn_parts,limit=1] {Motion:[0.0d,0.0d,0.0d],NoAI:0b}"
+    },
+    {
+      "command": "setblock -3 100 -36 minecraft:stone"
+    },
+    {
+      "command": "execute if block -3 100 -36 minecraft:stone",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "say turning_tick",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=turn_parts,limit=1] Rotation"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=turn_parts,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=turn_parts,limit=1] Motion"
+    },
+    {
+      "command": "execute if block -3 100 -36 minecraft:air",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "fill -10 98 -40 10 110 40 minecraft:air"
+    },
+    {
+      "command": "say TRIAL_2_opposite-old"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.0 100.0 0.0 {PersistenceRequired:1b,DragonPhase:10,Tags:[\"turn_parts\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=turn_parts,limit=1] 0.0 100.0 -30.0 1 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=turn_parts,limit=1] {Motion:[0.0d,0.0d,0.0d],NoAI:0b}"
+    },
+    {
+      "command": "setblock 1 100 -36 minecraft:stone"
+    },
+    {
+      "command": "execute if block 1 100 -36 minecraft:stone",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "say turning_tick",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=turn_parts,limit=1] Rotation"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=turn_parts,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=turn_parts,limit=1] Motion"
+    },
+    {
+      "command": "execute if block 1 100 -36 minecraft:stone",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "fill -10 98 -40 10 110 40 minecraft:air"
+    },
+    {
+      "command": "say TRIAL_2_neck-new"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.0 100.0 0.0 {PersistenceRequired:1b,DragonPhase:10,Tags:[\"turn_parts\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=turn_parts,limit=1] 0.0 100.0 -30.0 0 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=turn_parts,limit=1] {Motion:[0.0d,0.0d,0.0d],NoAI:0b}"
+    },
+    {
+      "command": "setblock 2 102 -36 minecraft:stone"
+    },
+    {
+      "command": "execute if block 2 102 -36 minecraft:stone",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "say turning_tick",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=turn_parts,limit=1] Rotation"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=turn_parts,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=turn_parts,limit=1] Motion"
+    },
+    {
+      "command": "execute if block 2 102 -36 minecraft:air",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "fill -10 98 -40 10 110 40 minecraft:air"
+    },
+    {
+      "command": "say TRIAL_2_neck-old"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.0 100.0 0.0 {PersistenceRequired:1b,DragonPhase:10,Tags:[\"turn_parts\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=turn_parts,limit=1] 0.0 100.0 -30.0 0 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=turn_parts,limit=1] {Motion:[0.0d,0.0d,0.0d],NoAI:0b}"
+    },
+    {
+      "command": "setblock -2 102 -36 minecraft:stone"
+    },
+    {
+      "command": "execute if block -2 102 -36 minecraft:stone",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "say turning_tick",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=turn_parts,limit=1] Rotation"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=turn_parts,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=turn_parts,limit=1] Motion"
+    },
+    {
+      "command": "execute if block -2 102 -36 minecraft:stone",
+      "observe": true,
+      "expect_contains": "Test passed"
+    }
+  ],
+  "cleanup": [
+    "kill @e[type=minecraft:ender_dragon]",
+    "fill -10 98 -40 10 110 40 minecraft:air"
+  ]
+}
