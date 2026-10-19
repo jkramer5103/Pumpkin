@@ -5,6 +5,7 @@ use pumpkin_data::tag::{self, Taggable};
 use pumpkin_data::{Block, BlockStateId};
 use pumpkin_nbt::compound::NbtCompound;
 use pumpkin_util::gamemode::GameMode;
+use pumpkin_util::math::boundingbox::{BoundingBox, EntityDimensions};
 use pumpkin_util::math::position::BlockPos;
 use pumpkin_util::math::vector3::Vector3;
 use pumpkin_util::math::wrap_degrees;
@@ -34,6 +35,16 @@ const FLAP_SPEED: f32 = 0.2;
 pub const FLY_ACCEL: f64 = 0.1;
 pub const FLY_SPEED: f64 = 0.6;
 const ARENA_RADIUS: f64 = 192.0;
+const PART_DIMENSIONS: [(f32, f32); 8] = [
+    (1.0, 1.0), // Head
+    (3.0, 3.0), // Neck
+    (5.0, 3.0), // Body
+    (2.0, 2.0), // Tails
+    (2.0, 2.0),
+    (2.0, 2.0),
+    (4.0, 2.0), // Wings
+    (4.0, 2.0),
+];
 
 const NODE_ADJACENCY: [u32; NODE_COUNT] = [
     6146, 8197, 8202, 16404, 32808, 32848, 65696, 131392, 131712, 263424, 526848, 525313, 1581057,
@@ -239,14 +250,23 @@ impl EnderDragonEntity {
         let _ = Entity::reserve_ids(8);
 
         let mut parts = Vec::new();
-        for i in 1..=8 {
+        for (i, (width, height)) in PART_DIMENSIONS.iter().enumerate() {
             let part_entity = Entity::from_uuid_with_id(
-                base_id + i,
+                base_id + i as i32 + 1,
                 uuid::Uuid::new_v4(),
                 world.clone(),
                 entity.pos.load(),
                 &EntityType::ENDER_DRAGON,
             );
+            let dimensions = EntityDimensions::new(*width, *height, *height);
+            part_entity.entity_dimension.store(dimensions);
+            let part_pos = part_entity.pos.load();
+            part_entity.bounding_box.store(BoundingBox::new_from_pos(
+                part_pos.x,
+                part_pos.y,
+                part_pos.z,
+                &dimensions,
+            ));
             let part = Arc::new(EnderDragonPart::new(part_entity, dragon_uuid));
             // TODO: world.add_entity_silent(part.clone() as Arc<dyn EntityBase>);
             parts.push(part);
@@ -709,28 +729,25 @@ impl EnderDragonEntity {
             && !block.has_tag(&tag::Block::MINECRAFT_DRAGON_IMMUNE)
     }
 
-    fn tick_block_breaking(&self) {
-        let phase_type = *self
-            .phase
-            .lock()
-            .unwrap_or_else(std::sync::PoisonError::into_inner);
-        if phase_type.is_sitting() || phase_type == EnderDragonPhase::Dying {
-            return;
-        }
-
+    fn check_walls(&self, bbox: BoundingBox) -> bool {
         let world = self.mob_entity.living_entity.entity.world.load();
-        let bbox = self.mob_entity.living_entity.entity.bounding_box.load();
-
         let min = bbox.min_block_pos();
-        let max = bbox.max_block_pos();
+        // Vanilla checkWalls includes blocks on the maximum faces, too.
+        let max = BlockPos::floored_v(bbox.max);
 
+        let mut hit_wall = false;
         let mob_griefing = world.level_info.load().game_rules.mob_griefing;
         for pos in BlockPos::iterate(min, max) {
             let block = world.get_block(&pos);
-            if Self::can_destroy_block(block, mob_griefing) {
-                world.set_block_state(&pos, BlockStateId::AIR, BlockFlags::NOTIFY_ALL);
+            if !block.is_air() && !block.has_tag(&tag::Block::MINECRAFT_DRAGON_TRANSPARENT) {
+                if Self::can_destroy_block(block, mob_griefing) {
+                    world.set_block_state(&pos, BlockStateId::AIR, BlockFlags::NOTIFY_ALL);
+                } else {
+                    hit_wall = true;
+                }
             }
         }
+        hit_wall
     }
 
     fn tick_parts(&self) {
@@ -881,7 +898,6 @@ impl EnderDragonEntity {
                 .unwrap_or_else(std::sync::PoisonError::into_inner) += 1;
         } else {
             self.handle_player_collisions();
-            self.tick_block_breaking();
         }
 
         phase.tick(self);
@@ -921,6 +937,14 @@ impl EnderDragonEntity {
         }
 
         self.tick_parts();
+        // Check every volume after movement; the next flight tick uses this result.
+        let in_wall = self.check_walls(self.parts[0].entity.bounding_box.load())
+            | self.check_walls(self.parts[1].entity.bounding_box.load())
+            | self.check_walls(self.parts[2].entity.bounding_box.load());
+        *self
+            .in_wall
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner) = in_wall;
     }
 
     pub fn hurt(&self, damage: f32) {

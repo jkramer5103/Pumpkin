@@ -1,0 +1,1671 @@
+{
+  "schema_version": 1,
+  "id": "dragon-wall-slowdown",
+  "title": "Dragon protected walls slow the next flight tick",
+  "description": "Two isolated trials test head, neck, body, immune and gamerule protected blocks, distant wing and tail controls, and clearing walls. Raw state records movement before and after detection.",
+  "category": "entity",
+  "tags": [
+    "ender-dragon",
+    "ai"
+  ],
+  "setup": [
+    "tick freeze",
+    "difficulty normal",
+    "gamerule spawn_mobs false",
+    "forceload add -48 -48 47 47",
+    "gamemode creative ParitySmoke",
+    "tp ParitySmoke 40 100 40"
+  ],
+  "steps": [
+    {
+      "command": "say Wait for isolated arena chunks",
+      "wait_ticks": 5
+    },
+    {
+      "command": "execute if block -10 100 15 minecraft:air",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block -10 100 40 minecraft:air",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 10 100 15 minecraft:air",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 10 100 40 minecraft:air",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "fill -10 98 15 10 110 40 minecraft:air"
+    },
+    {
+      "command": "gamerule mob_griefing true"
+    },
+    {
+      "command": "say TRIAL_1_air"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.0 100.0 0.0 {PersistenceRequired:1b,DragonPhase:10,Tags:[\"wall_check\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] 0.0 100.0 30.0 0 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] {Motion:[0.0d,0.0d,0.0d],NoAI:0b}"
+    },
+    {
+      "command": "setblock 0 100 29 minecraft:air",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] Pos"
+    },
+    {
+      "command": "execute positioned 0.0 100.0 29.940000001341105 if entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1,distance=..0.0001]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] Motion"
+    },
+    {
+      "command": "say after_first",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] Pos"
+    },
+    {
+      "command": "execute positioned 0.0 100.0 29.82300000395626 if entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1,distance=..0.0001]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] Motion"
+    },
+    {
+      "command": "execute if block 0 100 29 minecraft:air",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "fill -10 98 15 10 110 40 minecraft:air",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] Pos"
+    },
+    {
+      "command": "execute positioned 0.0 100.0 29.65185000778176 if entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1,distance=..0.0001]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "say wall_clear_one_tick",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] Pos"
+    },
+    {
+      "command": "execute positioned 0.0 100.0 29.42925751275709 if entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1,distance=..0.0001]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "fill -10 98 15 10 110 40 minecraft:air"
+    },
+    {
+      "command": "gamerule mob_griefing true"
+    },
+    {
+      "command": "say TRIAL_1_body_bedrock"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.0 100.0 0.0 {PersistenceRequired:1b,DragonPhase:10,Tags:[\"wall_check\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] 0.0 100.0 30.0 0 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] {Motion:[0.0d,0.0d,0.0d],NoAI:0b}"
+    },
+    {
+      "command": "setblock 0 100 29 minecraft:bedrock",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] Pos"
+    },
+    {
+      "command": "execute positioned 0.0 100.0 29.940000001341105 if entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1,distance=..0.0001]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] Motion"
+    },
+    {
+      "command": "say after_first",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] Pos"
+    },
+    {
+      "command": "execute positioned 0.0 100.0 29.84640000203848 if entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1,distance=..0.0001]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] Motion"
+    },
+    {
+      "command": "execute if block 0 100 29 minecraft:bedrock",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "fill -10 98 15 10 110 40 minecraft:air",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] Pos"
+    },
+    {
+      "command": "execute positioned 0.0 100.0 29.709480003058612 if entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1,distance=..0.0001]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "say wall_clear_one_tick",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] Pos"
+    },
+    {
+      "command": "execute positioned 0.0 100.0 29.48688750803394 if entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1,distance=..0.0001]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "fill -10 98 15 10 110 40 minecraft:air"
+    },
+    {
+      "command": "gamerule mob_griefing true"
+    },
+    {
+      "command": "say TRIAL_1_head_bedrock"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.0 100.0 0.0 {PersistenceRequired:1b,DragonPhase:10,Tags:[\"wall_check\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] 0.0 100.0 30.0 0 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] {Motion:[0.0d,0.0d,0.0d],NoAI:0b}"
+    },
+    {
+      "command": "setblock 0 100 23 minecraft:bedrock",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] Pos"
+    },
+    {
+      "command": "execute positioned 0.0 100.0 29.940000001341105 if entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1,distance=..0.0001]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] Motion"
+    },
+    {
+      "command": "say after_first",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] Pos"
+    },
+    {
+      "command": "execute positioned 0.0 100.0 29.84640000203848 if entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1,distance=..0.0001]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] Motion"
+    },
+    {
+      "command": "execute if block 0 100 23 minecraft:bedrock",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "fill -10 98 15 10 110 40 minecraft:air",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] Pos"
+    },
+    {
+      "command": "execute positioned 0.0 100.0 29.709480003058612 if entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1,distance=..0.0001]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "say wall_clear_one_tick",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] Pos"
+    },
+    {
+      "command": "execute positioned 0.0 100.0 29.48688750803394 if entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1,distance=..0.0001]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "fill -10 98 15 10 110 40 minecraft:air"
+    },
+    {
+      "command": "gamerule mob_griefing true"
+    },
+    {
+      "command": "say TRIAL_1_neck_bedrock"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.0 100.0 0.0 {PersistenceRequired:1b,DragonPhase:10,Tags:[\"wall_check\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] 0.0 100.0 30.0 0 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] {Motion:[0.0d,0.0d,0.0d],NoAI:0b}"
+    },
+    {
+      "command": "setblock 1 100 24 minecraft:bedrock",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] Pos"
+    },
+    {
+      "command": "execute positioned 0.0 100.0 29.940000001341105 if entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1,distance=..0.0001]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] Motion"
+    },
+    {
+      "command": "say after_first",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] Pos"
+    },
+    {
+      "command": "execute positioned 0.0 100.0 29.84640000203848 if entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1,distance=..0.0001]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] Motion"
+    },
+    {
+      "command": "execute if block 1 100 24 minecraft:bedrock",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "fill -10 98 15 10 110 40 minecraft:air",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] Pos"
+    },
+    {
+      "command": "execute positioned 0.0 100.0 29.709480003058612 if entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1,distance=..0.0001]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "say wall_clear_one_tick",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] Pos"
+    },
+    {
+      "command": "execute positioned 0.0 100.0 29.48688750803394 if entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1,distance=..0.0001]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "fill -10 98 15 10 110 40 minecraft:air"
+    },
+    {
+      "command": "gamerule mob_griefing true"
+    },
+    {
+      "command": "say TRIAL_1_stone_breaks"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.0 100.0 0.0 {PersistenceRequired:1b,DragonPhase:10,Tags:[\"wall_check\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] 0.0 100.0 30.0 0 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] {Motion:[0.0d,0.0d,0.0d],NoAI:0b}"
+    },
+    {
+      "command": "setblock 0 100 29 minecraft:stone",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] Pos"
+    },
+    {
+      "command": "execute positioned 0.0 100.0 29.940000001341105 if entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1,distance=..0.0001]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] Motion"
+    },
+    {
+      "command": "say after_first",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] Pos"
+    },
+    {
+      "command": "execute positioned 0.0 100.0 29.82300000395626 if entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1,distance=..0.0001]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] Motion"
+    },
+    {
+      "command": "execute if block 0 100 29 minecraft:air",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "fill -10 98 15 10 110 40 minecraft:air",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] Pos"
+    },
+    {
+      "command": "execute positioned 0.0 100.0 29.65185000778176 if entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1,distance=..0.0001]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "say wall_clear_one_tick",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] Pos"
+    },
+    {
+      "command": "execute positioned 0.0 100.0 29.42925751275709 if entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1,distance=..0.0001]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "fill -10 98 15 10 110 40 minecraft:air"
+    },
+    {
+      "command": "gamerule mob_griefing false"
+    },
+    {
+      "command": "say TRIAL_1_stone_protected"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.0 100.0 0.0 {PersistenceRequired:1b,DragonPhase:10,Tags:[\"wall_check\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] 0.0 100.0 30.0 0 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] {Motion:[0.0d,0.0d,0.0d],NoAI:0b}"
+    },
+    {
+      "command": "setblock 0 100 29 minecraft:stone",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] Pos"
+    },
+    {
+      "command": "execute positioned 0.0 100.0 29.940000001341105 if entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1,distance=..0.0001]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] Motion"
+    },
+    {
+      "command": "say after_first",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] Pos"
+    },
+    {
+      "command": "execute positioned 0.0 100.0 29.84640000203848 if entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1,distance=..0.0001]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] Motion"
+    },
+    {
+      "command": "execute if block 0 100 29 minecraft:stone",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "fill -10 98 15 10 110 40 minecraft:air",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] Pos"
+    },
+    {
+      "command": "execute positioned 0.0 100.0 29.709480003058612 if entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1,distance=..0.0001]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "say wall_clear_one_tick",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] Pos"
+    },
+    {
+      "command": "execute positioned 0.0 100.0 29.48688750803394 if entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1,distance=..0.0001]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "fill -10 98 15 10 110 40 minecraft:air"
+    },
+    {
+      "command": "gamerule mob_griefing true"
+    },
+    {
+      "command": "say TRIAL_1_outside_parts"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.0 100.0 0.0 {PersistenceRequired:1b,DragonPhase:10,Tags:[\"wall_check\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] 0.0 100.0 30.0 0 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] {Motion:[0.0d,0.0d,0.0d],NoAI:0b}"
+    },
+    {
+      "command": "setblock 7 100 29 minecraft:bedrock",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] Pos"
+    },
+    {
+      "command": "execute positioned 0.0 100.0 29.940000001341105 if entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1,distance=..0.0001]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] Motion"
+    },
+    {
+      "command": "say after_first",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] Pos"
+    },
+    {
+      "command": "execute positioned 0.0 100.0 29.82300000395626 if entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1,distance=..0.0001]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] Motion"
+    },
+    {
+      "command": "execute if block 7 100 29 minecraft:bedrock",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "fill -10 98 15 10 110 40 minecraft:air",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] Pos"
+    },
+    {
+      "command": "execute positioned 0.0 100.0 29.65185000778176 if entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1,distance=..0.0001]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "say wall_clear_one_tick",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] Pos"
+    },
+    {
+      "command": "execute positioned 0.0 100.0 29.42925751275709 if entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1,distance=..0.0001]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "fill -10 98 15 10 110 40 minecraft:air"
+    },
+    {
+      "command": "gamerule mob_griefing true"
+    },
+    {
+      "command": "say TRIAL_1_wing_ignored"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.0 100.0 0.0 {PersistenceRequired:1b,DragonPhase:10,Tags:[\"wall_check\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] 0.0 100.0 30.0 0 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] {Motion:[0.0d,0.0d,0.0d],NoAI:0b}"
+    },
+    {
+      "command": "setblock 5 102 30 minecraft:bedrock",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] Pos"
+    },
+    {
+      "command": "execute positioned 0.0 100.0 29.940000001341105 if entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1,distance=..0.0001]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] Motion"
+    },
+    {
+      "command": "say after_first",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] Pos"
+    },
+    {
+      "command": "execute positioned 0.0 100.0 29.82300000395626 if entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1,distance=..0.0001]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] Motion"
+    },
+    {
+      "command": "execute if block 5 102 30 minecraft:bedrock",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "fill -10 98 15 10 110 40 minecraft:air",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] Pos"
+    },
+    {
+      "command": "execute positioned 0.0 100.0 29.65185000778176 if entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1,distance=..0.0001]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "say wall_clear_one_tick",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] Pos"
+    },
+    {
+      "command": "execute positioned 0.0 100.0 29.42925751275709 if entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1,distance=..0.0001]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "fill -10 98 15 10 110 40 minecraft:air"
+    },
+    {
+      "command": "gamerule mob_griefing true"
+    },
+    {
+      "command": "say TRIAL_1_tail_ignored"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.0 100.0 0.0 {PersistenceRequired:1b,DragonPhase:10,Tags:[\"wall_check\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] 0.0 100.0 30.0 0 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] {Motion:[0.0d,0.0d,0.0d],NoAI:0b}"
+    },
+    {
+      "command": "setblock 0 101 34 minecraft:bedrock",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] Pos"
+    },
+    {
+      "command": "execute positioned 0.0 100.0 29.940000001341105 if entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1,distance=..0.0001]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] Motion"
+    },
+    {
+      "command": "say after_first",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] Pos"
+    },
+    {
+      "command": "execute positioned 0.0 100.0 29.82300000395626 if entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1,distance=..0.0001]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] Motion"
+    },
+    {
+      "command": "execute if block 0 101 34 minecraft:bedrock",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "fill -10 98 15 10 110 40 minecraft:air",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] Pos"
+    },
+    {
+      "command": "execute positioned 0.0 100.0 29.65185000778176 if entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1,distance=..0.0001]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "say wall_clear_one_tick",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] Pos"
+    },
+    {
+      "command": "execute positioned 0.0 100.0 29.42925751275709 if entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1,distance=..0.0001]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "fill -10 98 15 10 110 40 minecraft:air"
+    },
+    {
+      "command": "gamerule mob_griefing true"
+    },
+    {
+      "command": "say TRIAL_1_upper_boundary"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.0 100.0 0.0 {PersistenceRequired:1b,DragonPhase:10,Tags:[\"wall_check\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] 0.0 100.0 30.0 0 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] {Motion:[0.0d,0.0d,0.0d],NoAI:0b}"
+    },
+    {
+      "command": "setblock 0 103 29 minecraft:bedrock",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] Pos"
+    },
+    {
+      "command": "execute positioned 0.0 100.0 29.940000001341105 if entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1,distance=..0.0001]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] Motion"
+    },
+    {
+      "command": "say after_first",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] Pos"
+    },
+    {
+      "command": "execute positioned 0.0 100.0 29.84640000203848 if entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1,distance=..0.0001]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] Motion"
+    },
+    {
+      "command": "execute if block 0 103 29 minecraft:bedrock",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "fill -10 98 15 10 110 40 minecraft:air",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] Pos"
+    },
+    {
+      "command": "execute positioned 0.0 100.0 29.709480003058612 if entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1,distance=..0.0001]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "say wall_clear_one_tick",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] Pos"
+    },
+    {
+      "command": "execute positioned 0.0 100.0 29.48688750803394 if entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1,distance=..0.0001]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "fill -10 98 15 10 110 40 minecraft:air"
+    },
+    {
+      "command": "gamerule mob_griefing true"
+    },
+    {
+      "command": "say TRIAL_2_air"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.0 100.0 0.0 {PersistenceRequired:1b,DragonPhase:10,Tags:[\"wall_check\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] 0.0 100.0 30.0 0 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] {Motion:[0.0d,0.0d,0.0d],NoAI:0b}"
+    },
+    {
+      "command": "setblock 0 100 29 minecraft:air",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] Pos"
+    },
+    {
+      "command": "execute positioned 0.0 100.0 29.940000001341105 if entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1,distance=..0.0001]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] Motion"
+    },
+    {
+      "command": "say after_first",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] Pos"
+    },
+    {
+      "command": "execute positioned 0.0 100.0 29.82300000395626 if entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1,distance=..0.0001]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] Motion"
+    },
+    {
+      "command": "execute if block 0 100 29 minecraft:air",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "fill -10 98 15 10 110 40 minecraft:air",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] Pos"
+    },
+    {
+      "command": "execute positioned 0.0 100.0 29.65185000778176 if entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1,distance=..0.0001]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "say wall_clear_one_tick",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] Pos"
+    },
+    {
+      "command": "execute positioned 0.0 100.0 29.42925751275709 if entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1,distance=..0.0001]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "fill -10 98 15 10 110 40 minecraft:air"
+    },
+    {
+      "command": "gamerule mob_griefing true"
+    },
+    {
+      "command": "say TRIAL_2_body_bedrock"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.0 100.0 0.0 {PersistenceRequired:1b,DragonPhase:10,Tags:[\"wall_check\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] 0.0 100.0 30.0 0 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] {Motion:[0.0d,0.0d,0.0d],NoAI:0b}"
+    },
+    {
+      "command": "setblock 0 100 29 minecraft:bedrock",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] Pos"
+    },
+    {
+      "command": "execute positioned 0.0 100.0 29.940000001341105 if entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1,distance=..0.0001]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] Motion"
+    },
+    {
+      "command": "say after_first",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] Pos"
+    },
+    {
+      "command": "execute positioned 0.0 100.0 29.84640000203848 if entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1,distance=..0.0001]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] Motion"
+    },
+    {
+      "command": "execute if block 0 100 29 minecraft:bedrock",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "fill -10 98 15 10 110 40 minecraft:air",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] Pos"
+    },
+    {
+      "command": "execute positioned 0.0 100.0 29.709480003058612 if entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1,distance=..0.0001]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "say wall_clear_one_tick",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] Pos"
+    },
+    {
+      "command": "execute positioned 0.0 100.0 29.48688750803394 if entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1,distance=..0.0001]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "fill -10 98 15 10 110 40 minecraft:air"
+    },
+    {
+      "command": "gamerule mob_griefing true"
+    },
+    {
+      "command": "say TRIAL_2_head_bedrock"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.0 100.0 0.0 {PersistenceRequired:1b,DragonPhase:10,Tags:[\"wall_check\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] 0.0 100.0 30.0 0 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] {Motion:[0.0d,0.0d,0.0d],NoAI:0b}"
+    },
+    {
+      "command": "setblock 0 100 23 minecraft:bedrock",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] Pos"
+    },
+    {
+      "command": "execute positioned 0.0 100.0 29.940000001341105 if entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1,distance=..0.0001]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] Motion"
+    },
+    {
+      "command": "say after_first",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] Pos"
+    },
+    {
+      "command": "execute positioned 0.0 100.0 29.84640000203848 if entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1,distance=..0.0001]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] Motion"
+    },
+    {
+      "command": "execute if block 0 100 23 minecraft:bedrock",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "fill -10 98 15 10 110 40 minecraft:air",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] Pos"
+    },
+    {
+      "command": "execute positioned 0.0 100.0 29.709480003058612 if entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1,distance=..0.0001]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "say wall_clear_one_tick",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] Pos"
+    },
+    {
+      "command": "execute positioned 0.0 100.0 29.48688750803394 if entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1,distance=..0.0001]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "fill -10 98 15 10 110 40 minecraft:air"
+    },
+    {
+      "command": "gamerule mob_griefing true"
+    },
+    {
+      "command": "say TRIAL_2_neck_bedrock"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.0 100.0 0.0 {PersistenceRequired:1b,DragonPhase:10,Tags:[\"wall_check\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] 0.0 100.0 30.0 0 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] {Motion:[0.0d,0.0d,0.0d],NoAI:0b}"
+    },
+    {
+      "command": "setblock 1 100 24 minecraft:bedrock",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] Pos"
+    },
+    {
+      "command": "execute positioned 0.0 100.0 29.940000001341105 if entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1,distance=..0.0001]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] Motion"
+    },
+    {
+      "command": "say after_first",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] Pos"
+    },
+    {
+      "command": "execute positioned 0.0 100.0 29.84640000203848 if entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1,distance=..0.0001]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] Motion"
+    },
+    {
+      "command": "execute if block 1 100 24 minecraft:bedrock",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "fill -10 98 15 10 110 40 minecraft:air",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] Pos"
+    },
+    {
+      "command": "execute positioned 0.0 100.0 29.709480003058612 if entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1,distance=..0.0001]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "say wall_clear_one_tick",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] Pos"
+    },
+    {
+      "command": "execute positioned 0.0 100.0 29.48688750803394 if entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1,distance=..0.0001]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "fill -10 98 15 10 110 40 minecraft:air"
+    },
+    {
+      "command": "gamerule mob_griefing true"
+    },
+    {
+      "command": "say TRIAL_2_stone_breaks"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.0 100.0 0.0 {PersistenceRequired:1b,DragonPhase:10,Tags:[\"wall_check\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] 0.0 100.0 30.0 0 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] {Motion:[0.0d,0.0d,0.0d],NoAI:0b}"
+    },
+    {
+      "command": "setblock 0 100 29 minecraft:stone",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] Pos"
+    },
+    {
+      "command": "execute positioned 0.0 100.0 29.940000001341105 if entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1,distance=..0.0001]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] Motion"
+    },
+    {
+      "command": "say after_first",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] Pos"
+    },
+    {
+      "command": "execute positioned 0.0 100.0 29.82300000395626 if entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1,distance=..0.0001]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] Motion"
+    },
+    {
+      "command": "execute if block 0 100 29 minecraft:air",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "fill -10 98 15 10 110 40 minecraft:air",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] Pos"
+    },
+    {
+      "command": "execute positioned 0.0 100.0 29.65185000778176 if entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1,distance=..0.0001]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "say wall_clear_one_tick",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] Pos"
+    },
+    {
+      "command": "execute positioned 0.0 100.0 29.42925751275709 if entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1,distance=..0.0001]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "fill -10 98 15 10 110 40 minecraft:air"
+    },
+    {
+      "command": "gamerule mob_griefing false"
+    },
+    {
+      "command": "say TRIAL_2_stone_protected"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.0 100.0 0.0 {PersistenceRequired:1b,DragonPhase:10,Tags:[\"wall_check\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] 0.0 100.0 30.0 0 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] {Motion:[0.0d,0.0d,0.0d],NoAI:0b}"
+    },
+    {
+      "command": "setblock 0 100 29 minecraft:stone",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] Pos"
+    },
+    {
+      "command": "execute positioned 0.0 100.0 29.940000001341105 if entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1,distance=..0.0001]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] Motion"
+    },
+    {
+      "command": "say after_first",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] Pos"
+    },
+    {
+      "command": "execute positioned 0.0 100.0 29.84640000203848 if entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1,distance=..0.0001]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] Motion"
+    },
+    {
+      "command": "execute if block 0 100 29 minecraft:stone",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "fill -10 98 15 10 110 40 minecraft:air",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] Pos"
+    },
+    {
+      "command": "execute positioned 0.0 100.0 29.709480003058612 if entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1,distance=..0.0001]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "say wall_clear_one_tick",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] Pos"
+    },
+    {
+      "command": "execute positioned 0.0 100.0 29.48688750803394 if entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1,distance=..0.0001]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "fill -10 98 15 10 110 40 minecraft:air"
+    },
+    {
+      "command": "gamerule mob_griefing true"
+    },
+    {
+      "command": "say TRIAL_2_outside_parts"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.0 100.0 0.0 {PersistenceRequired:1b,DragonPhase:10,Tags:[\"wall_check\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] 0.0 100.0 30.0 0 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] {Motion:[0.0d,0.0d,0.0d],NoAI:0b}"
+    },
+    {
+      "command": "setblock 7 100 29 minecraft:bedrock",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] Pos"
+    },
+    {
+      "command": "execute positioned 0.0 100.0 29.940000001341105 if entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1,distance=..0.0001]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] Motion"
+    },
+    {
+      "command": "say after_first",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] Pos"
+    },
+    {
+      "command": "execute positioned 0.0 100.0 29.82300000395626 if entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1,distance=..0.0001]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] Motion"
+    },
+    {
+      "command": "execute if block 7 100 29 minecraft:bedrock",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "fill -10 98 15 10 110 40 minecraft:air",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] Pos"
+    },
+    {
+      "command": "execute positioned 0.0 100.0 29.65185000778176 if entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1,distance=..0.0001]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "say wall_clear_one_tick",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] Pos"
+    },
+    {
+      "command": "execute positioned 0.0 100.0 29.42925751275709 if entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1,distance=..0.0001]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "fill -10 98 15 10 110 40 minecraft:air"
+    },
+    {
+      "command": "gamerule mob_griefing true"
+    },
+    {
+      "command": "say TRIAL_2_wing_ignored"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.0 100.0 0.0 {PersistenceRequired:1b,DragonPhase:10,Tags:[\"wall_check\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] 0.0 100.0 30.0 0 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] {Motion:[0.0d,0.0d,0.0d],NoAI:0b}"
+    },
+    {
+      "command": "setblock 5 102 30 minecraft:bedrock",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] Pos"
+    },
+    {
+      "command": "execute positioned 0.0 100.0 29.940000001341105 if entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1,distance=..0.0001]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] Motion"
+    },
+    {
+      "command": "say after_first",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] Pos"
+    },
+    {
+      "command": "execute positioned 0.0 100.0 29.82300000395626 if entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1,distance=..0.0001]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] Motion"
+    },
+    {
+      "command": "execute if block 5 102 30 minecraft:bedrock",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "fill -10 98 15 10 110 40 minecraft:air",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] Pos"
+    },
+    {
+      "command": "execute positioned 0.0 100.0 29.65185000778176 if entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1,distance=..0.0001]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "say wall_clear_one_tick",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] Pos"
+    },
+    {
+      "command": "execute positioned 0.0 100.0 29.42925751275709 if entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1,distance=..0.0001]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "fill -10 98 15 10 110 40 minecraft:air"
+    },
+    {
+      "command": "gamerule mob_griefing true"
+    },
+    {
+      "command": "say TRIAL_2_tail_ignored"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.0 100.0 0.0 {PersistenceRequired:1b,DragonPhase:10,Tags:[\"wall_check\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] 0.0 100.0 30.0 0 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] {Motion:[0.0d,0.0d,0.0d],NoAI:0b}"
+    },
+    {
+      "command": "setblock 0 101 34 minecraft:bedrock",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] Pos"
+    },
+    {
+      "command": "execute positioned 0.0 100.0 29.940000001341105 if entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1,distance=..0.0001]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] Motion"
+    },
+    {
+      "command": "say after_first",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] Pos"
+    },
+    {
+      "command": "execute positioned 0.0 100.0 29.82300000395626 if entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1,distance=..0.0001]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] Motion"
+    },
+    {
+      "command": "execute if block 0 101 34 minecraft:bedrock",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "fill -10 98 15 10 110 40 minecraft:air",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] Pos"
+    },
+    {
+      "command": "execute positioned 0.0 100.0 29.65185000778176 if entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1,distance=..0.0001]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "say wall_clear_one_tick",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] Pos"
+    },
+    {
+      "command": "execute positioned 0.0 100.0 29.42925751275709 if entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1,distance=..0.0001]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "fill -10 98 15 10 110 40 minecraft:air"
+    },
+    {
+      "command": "gamerule mob_griefing true"
+    },
+    {
+      "command": "say TRIAL_2_upper_boundary"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.0 100.0 0.0 {PersistenceRequired:1b,DragonPhase:10,Tags:[\"wall_check\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] 0.0 100.0 30.0 0 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] {Motion:[0.0d,0.0d,0.0d],NoAI:0b}"
+    },
+    {
+      "command": "setblock 0 103 29 minecraft:bedrock",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] Pos"
+    },
+    {
+      "command": "execute positioned 0.0 100.0 29.940000001341105 if entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1,distance=..0.0001]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] Motion"
+    },
+    {
+      "command": "say after_first",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] Pos"
+    },
+    {
+      "command": "execute positioned 0.0 100.0 29.84640000203848 if entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1,distance=..0.0001]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] Motion"
+    },
+    {
+      "command": "execute if block 0 103 29 minecraft:bedrock",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "fill -10 98 15 10 110 40 minecraft:air",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] Pos"
+    },
+    {
+      "command": "execute positioned 0.0 100.0 29.709480003058612 if entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1,distance=..0.0001]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "say wall_clear_one_tick",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1] Pos"
+    },
+    {
+      "command": "execute positioned 0.0 100.0 29.48688750803394 if entity @e[type=minecraft:ender_dragon,tag=wall_check,limit=1,distance=..0.0001]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    }
+  ],
+  "cleanup": [
+    "kill @e[type=minecraft:ender_dragon]",
+    "fill -10 98 15 10 110 40 minecraft:air",
+    "gamerule mob_griefing false"
+  ],
+  "notes": "Requires headless protocol client and controlled ticks in isolated scratch servers; no rendered-client claim."
+}
