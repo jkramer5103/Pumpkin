@@ -39,3 +39,25 @@ Rust validation passed: 444 `pumpkin-core` library tests, workspace formatting,
 Cargo operations used the shared build lock, one job, disabled debug info and
 incremental compilation, and the prescribed memory/CPU limits. The existing
 `proc-macro-error2` future-compatibility warning remains.
+
+Final live comparison used the same fixture and command sequence for two trials
+per target, with 389 controlled ticks each:
+
+| Target | Checks passed | Failures |
+| --- | ---: | --- |
+| Vanilla 26.3 | 126/126 | None |
+| Baseline `3391fffed` | 110/126 | Eight Wither mounts, each confirmed by state and passenger packet |
+| Patched Pumpkin | 126/126 | None |
+
+The baseline incorrectly picked up all four Wither states in both trials.
+Ordinary cow/zombie pickup and forced Wither mounting passed on every target.
+Fixture, command-sequence, patched-source and copied-binary hashes were checked.
+All three scratch servers stopped and boss cleanup passed. Both Pumpkin saves
+completed. Final server and client logs contained no ERROR, panic or uncaught
+thread-exception lines. Vanilla's complete-save marker was not observed within
+the shutdown grace period.
+
+An earlier observation read cow passenger state before its tick finished even
+though its later passenger packet confirmed mounting. The final comparison
+settled stepped ticks while frozen before reading state. Earlier exploratory
+samples are excluded from the table.
