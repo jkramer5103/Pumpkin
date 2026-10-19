@@ -1,0 +1,361 @@
+{
+  "schema_version": 1,
+  "id": "dragon-half-turn",
+  "title": "Dragon flight chooses vanilla half-turn direction",
+  "description": "Two trials establish a hover target, then isolate one steering tick with matched position, yaw and zero motion. Exact half-turns test yaw and lateral movement; adjacent headings, straight flight and NoAI are controls.",
+  "category": "entity",
+  "tags": [
+    "ender-dragon",
+    "ai"
+  ],
+  "setup": [
+    "tick freeze",
+    "difficulty normal",
+    "gamerule spawn_mobs false",
+    "gamerule mob_griefing false",
+    "forceload add -48 -48 47 47",
+    "gamemode creative ParitySmoke",
+    "tp ParitySmoke 40 100 40"
+  ],
+  "steps": [
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.0 100.0 0.0 {PersistenceRequired:1b,DragonPhase:10,Tags:[\"half_turn\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=half_turn,limit=1] 0.0 100.0 -30.0 0 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=half_turn,limit=1] {Motion:[0.0d,0.0d,0.0d],NoAI:0b}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=half_turn,limit=1] Rotation"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=half_turn,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=half_turn,limit=1] Motion"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=half_turn,nbt={DragonPhase:10},y_rotation=-3.510..-3.490]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.0 100.0 0.0 {PersistenceRequired:1b,DragonPhase:10,Tags:[\"half_turn\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=half_turn,limit=1] 0.0 100.0 30.0 180 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=half_turn,limit=1] {Motion:[0.0d,0.0d,0.0d],NoAI:0b}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=half_turn,limit=1] Rotation"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=half_turn,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=half_turn,limit=1] Motion"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=half_turn,nbt={DragonPhase:10},y_rotation=176.490..176.510]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.0 100.0 0.0 {PersistenceRequired:1b,DragonPhase:10,Tags:[\"half_turn\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=half_turn,limit=1] 0.0 100.0 -30.0 1 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=half_turn,limit=1] {Motion:[0.0d,0.0d,0.0d],NoAI:0b}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=half_turn,limit=1] Rotation"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=half_turn,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=half_turn,limit=1] Motion"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=half_turn,nbt={DragonPhase:10},y_rotation=4.490..4.510]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.0 100.0 0.0 {PersistenceRequired:1b,DragonPhase:10,Tags:[\"half_turn\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=half_turn,limit=1] 0.0 100.0 -30.0 -1 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=half_turn,limit=1] {Motion:[0.0d,0.0d,0.0d],NoAI:0b}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=half_turn,limit=1] Rotation"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=half_turn,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=half_turn,limit=1] Motion"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=half_turn,nbt={DragonPhase:10},y_rotation=-4.510..-4.490]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.0 100.0 0.0 {PersistenceRequired:1b,DragonPhase:10,Tags:[\"half_turn\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=half_turn,limit=1] 0.0 100.0 30.0 0 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=half_turn,limit=1] {Motion:[0.0d,0.0d,0.0d],NoAI:0b}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=half_turn,limit=1] Rotation"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=half_turn,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=half_turn,limit=1] Motion"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=half_turn,nbt={DragonPhase:10},y_rotation=-0.010..0.010]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.0 100.0 0.0 {PersistenceRequired:1b,DragonPhase:10,Tags:[\"half_turn\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=half_turn,limit=1] 0.0 100.0 -30.0 0 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=half_turn,limit=1] {Motion:[0.0d,0.0d,0.0d],NoAI:1b}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=half_turn,limit=1] Rotation"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=half_turn,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=half_turn,limit=1] Motion"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=half_turn,nbt={DragonPhase:10},y_rotation=-0.010..0.010]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.0 100.0 0.0 {PersistenceRequired:1b,DragonPhase:10,Tags:[\"half_turn\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=half_turn,limit=1] 0.0 100.0 -30.0 0 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=half_turn,limit=1] {Motion:[0.0d,0.0d,0.0d],NoAI:0b}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=half_turn,limit=1] Rotation"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=half_turn,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=half_turn,limit=1] Motion"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=half_turn,nbt={DragonPhase:10},y_rotation=-3.510..-3.490]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.0 100.0 0.0 {PersistenceRequired:1b,DragonPhase:10,Tags:[\"half_turn\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=half_turn,limit=1] 0.0 100.0 30.0 180 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=half_turn,limit=1] {Motion:[0.0d,0.0d,0.0d],NoAI:0b}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=half_turn,limit=1] Rotation"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=half_turn,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=half_turn,limit=1] Motion"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=half_turn,nbt={DragonPhase:10},y_rotation=176.490..176.510]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.0 100.0 0.0 {PersistenceRequired:1b,DragonPhase:10,Tags:[\"half_turn\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=half_turn,limit=1] 0.0 100.0 -30.0 1 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=half_turn,limit=1] {Motion:[0.0d,0.0d,0.0d],NoAI:0b}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=half_turn,limit=1] Rotation"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=half_turn,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=half_turn,limit=1] Motion"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=half_turn,nbt={DragonPhase:10},y_rotation=4.490..4.510]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.0 100.0 0.0 {PersistenceRequired:1b,DragonPhase:10,Tags:[\"half_turn\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=half_turn,limit=1] 0.0 100.0 -30.0 -1 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=half_turn,limit=1] {Motion:[0.0d,0.0d,0.0d],NoAI:0b}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=half_turn,limit=1] Rotation"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=half_turn,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=half_turn,limit=1] Motion"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=half_turn,nbt={DragonPhase:10},y_rotation=-4.510..-4.490]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.0 100.0 0.0 {PersistenceRequired:1b,DragonPhase:10,Tags:[\"half_turn\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=half_turn,limit=1] 0.0 100.0 30.0 0 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=half_turn,limit=1] {Motion:[0.0d,0.0d,0.0d],NoAI:0b}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=half_turn,limit=1] Rotation"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=half_turn,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=half_turn,limit=1] Motion"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=half_turn,nbt={DragonPhase:10},y_rotation=-0.010..0.010]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.0 100.0 0.0 {PersistenceRequired:1b,DragonPhase:10,Tags:[\"half_turn\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=half_turn,limit=1] 0.0 100.0 -30.0 0 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=half_turn,limit=1] {Motion:[0.0d,0.0d,0.0d],NoAI:1b}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=half_turn,limit=1] Rotation"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=half_turn,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=half_turn,limit=1] Motion"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=half_turn,nbt={DragonPhase:10},y_rotation=-0.010..0.010]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    }
+  ],
+  "cleanup": [
+    "kill @e[type=minecraft:ender_dragon]"
+  ]
+}

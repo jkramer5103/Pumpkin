@@ -7,6 +7,7 @@ use pumpkin_nbt::compound::NbtCompound;
 use pumpkin_util::gamemode::GameMode;
 use pumpkin_util::math::position::BlockPos;
 use pumpkin_util::math::vector3::Vector3;
+use pumpkin_util::math::wrap_degrees;
 use pumpkin_world::{chunk::ChunkHeightmapType, world::BlockFlags};
 use std::sync::atomic::Ordering;
 use std::sync::{Arc, Mutex};
@@ -440,6 +441,11 @@ impl EnderDragonEntity {
         Vector3::new(vec.x * cos - vec.z * sin, vec.y, vec.z * cos + vec.x * sin)
     }
 
+    fn flight_turn_delta(xdd: f64, zdd: f64, yaw: f32) -> f32 {
+        // Vanilla wraps to [-180, 180), so an exact reversal turns negatively.
+        wrap_degrees(180.0 - (xdd.atan2(zdd).to_degrees() as f32) - yaw).clamp(-50.0, 50.0)
+    }
+
     pub fn steer_toward(
         &self,
         pos: Vector3<f64>,
@@ -483,12 +489,7 @@ impl EnderDragonEntity {
 
         let dot = (dir.dot(&aim) as f32 + 0.5).max(0.0) / 1.5;
         if xdd.abs() > 1.0E-5 || zdd.abs() > 1.0E-5 {
-            let mut y_rot_d =
-                (180.0 - (xdd.atan2(zdd).to_degrees() as f32) - yaw).rem_euclid(360.0);
-            if y_rot_d > 180.0 {
-                y_rot_d -= 360.0;
-            }
-            y_rot_d = y_rot_d.clamp(-50.0, 50.0);
+            let y_rot_d = Self::flight_turn_delta(xdd, zdd, yaw);
 
             let mut y_rot_a = self
                 .yaw_rot_accel
@@ -1010,6 +1011,31 @@ mod tests {
     use pumpkin_data::Block;
     use pumpkin_util::gamemode::GameMode;
     use pumpkin_util::math::vector3::Vector3;
+
+    #[test]
+    fn flight_reversals_take_the_negative_half_turn() {
+        for yaw in [0.0, 360.0, -360.0] {
+            assert_eq!(EnderDragonEntity::flight_turn_delta(0.0, 30.0, yaw), -50.0);
+        }
+        for yaw in [180.0, -180.0] {
+            assert_eq!(EnderDragonEntity::flight_turn_delta(0.0, -30.0, yaw), -50.0);
+        }
+    }
+
+    #[test]
+    fn flight_turns_on_either_side_of_the_reversal_keep_their_direction() {
+        assert_eq!(EnderDragonEntity::flight_turn_delta(0.0, 30.0, 1.0), 50.0);
+        assert_eq!(EnderDragonEntity::flight_turn_delta(0.0, 30.0, -1.0), -50.0);
+        assert_eq!(
+            EnderDragonEntity::flight_turn_delta(0.0, -30.0, 10.0),
+            -10.0
+        );
+        assert_eq!(
+            EnderDragonEntity::flight_turn_delta(0.0, -30.0, -10.0),
+            10.0
+        );
+        assert_eq!(EnderDragonEntity::flight_turn_delta(0.0, -30.0, 0.0), 0.0);
+    }
 
     #[test]
     fn contact_damage_waits_three_ticks_after_any_living_attacker_hit() {
