@@ -1420,7 +1420,11 @@ impl LivingEntity {
 
         let should_swim_in_fluids = caller.get_player().is_none_or(|player| !player.is_flying());
 
-        self.entity.check_zero_velo();
+        // EnderDragon.aiStep owns flight, including small velocities and drag.
+        let dragon_flight = self.entity.entity_type == &EntityType::ENDER_DRAGON;
+        if !dragon_flight {
+            self.entity.check_zero_velo();
+        }
 
         let mut movement_input = self.movement_input.load();
 
@@ -1481,7 +1485,7 @@ impl LivingEntity {
 
         // Strider is the only entity that has canWalkOnFluid = false
 
-        if !effective_ai {
+        if !effective_ai || dragon_flight {
             // No travel.
         } else if (touching_water || self.entity.touching_lava.load(SeqCst))
             && should_swim_in_fluids

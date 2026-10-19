@@ -1,0 +1,422 @@
+{
+  "schema_version": 1,
+  "id": "dragon-flight-movement",
+  "title": "Dragon flight moves before applying its own drag",
+  "description": "Two trials isolate one and three hovering flight ticks, small and large initial motion, perched targetless behavior and NoAI controls. Position-distance assertions and recorded vectors detect movement before drag and prevent a second living travel step.",
+  "category": "entity",
+  "tags": [
+    "ender-dragon",
+    "ai"
+  ],
+  "setup": [
+    "tick freeze",
+    "difficulty normal",
+    "gamerule spawn_mobs false",
+    "gamerule mob_griefing false",
+    "forceload add -48 -48 47 47",
+    "gamemode creative ParitySmoke",
+    "tp ParitySmoke 40 100 40"
+  ],
+  "steps": [
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.0 100.0 0.0 {PersistenceRequired:1b,DragonPhase:10,Tags:[\"flight_move\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=flight_move,limit=1] 0.0 100.0 30.0 0 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=flight_move,limit=1] {Motion:[0.0d,0.0d,0.0d],NoAI:0b}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=flight_move,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=flight_move,limit=1] Motion"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=flight_move,limit=1] Rotation"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=flight_move,limit=1]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute positioned 0.0 100.0 29.940000001341105 if entity @e[type=minecraft:ender_dragon,tag=flight_move,limit=1,distance=..0.0001]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.0 100.0 0.0 {PersistenceRequired:1b,DragonPhase:10,Tags:[\"flight_move\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=flight_move,limit=1] 0.0 100.0 30.0 0 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=flight_move,limit=1] {Motion:[1.0d,1.0d,0.0d],NoAI:0b}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=flight_move,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=flight_move,limit=1] Motion"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=flight_move,limit=1] Rotation"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=flight_move,limit=1]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute positioned 1.0 101.0 29.940026003867388 if entity @e[type=minecraft:ender_dragon,tag=flight_move,limit=1,distance=..0.0001]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.0 100.0 0.0 {PersistenceRequired:1b,DragonPhase:10,Tags:[\"flight_move\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=flight_move,limit=1] 0.0 100.0 30.0 0 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=flight_move,limit=1] {Motion:[1.0d,1.0d,0.0d],NoAI:0b}",
+      "wait_ticks": 3
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=flight_move,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=flight_move,limit=1] Motion"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=flight_move,limit=1] Rotation"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=flight_move,limit=1]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute positioned 2.7518019606569974 102.73682351649744 29.66010169892164 if entity @e[type=minecraft:ender_dragon,tag=flight_move,limit=1,distance=..0.0001]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.0 100.0 0.0 {PersistenceRequired:1b,DragonPhase:5,Tags:[\"flight_move\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=flight_move,limit=1] 0.0 100.0 30.0 0 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=flight_move,limit=1] {Motion:[1.0d,1.0d,0.0d],NoAI:0b}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=flight_move,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=flight_move,limit=1] Motion"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=flight_move,limit=1] Rotation"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=flight_move,limit=1]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute positioned 0.0 100.0 30.0 if entity @e[type=minecraft:ender_dragon,tag=flight_move,limit=1,distance=..0.0001]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.0 100.0 0.0 {PersistenceRequired:1b,DragonPhase:10,Tags:[\"flight_move\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=flight_move,limit=1] 0.0 100.0 30.0 0 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=flight_move,limit=1] {Motion:[1.0d,1.0d,0.0d],NoAI:1b}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=flight_move,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=flight_move,limit=1] Motion"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=flight_move,limit=1] Rotation"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=flight_move,limit=1]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute positioned 0.0 100.0 30.0 if entity @e[type=minecraft:ender_dragon,tag=flight_move,limit=1,distance=..0.0001]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.0 100.0 0.0 {PersistenceRequired:1b,DragonPhase:10,Tags:[\"flight_move\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=flight_move,limit=1] 0.0 100.0 30.0 0 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=flight_move,limit=1] {Motion:[0.001d,0.001d,0.0d],NoAI:0b}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=flight_move,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=flight_move,limit=1] Motion"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=flight_move,limit=1] Rotation"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=flight_move,limit=1]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute positioned 0.001 100.001 29.940000001341105 if entity @e[type=minecraft:ender_dragon,tag=flight_move,limit=1,distance=..0.0001]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.0 100.0 0.0 {PersistenceRequired:1b,DragonPhase:10,Tags:[\"flight_move\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=flight_move,limit=1] 0.0 100.0 30.0 0 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=flight_move,limit=1] {Motion:[0.0d,0.0d,0.0d],NoAI:0b}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=flight_move,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=flight_move,limit=1] Motion"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=flight_move,limit=1] Rotation"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=flight_move,limit=1]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute positioned 0.0 100.0 29.940000001341105 if entity @e[type=minecraft:ender_dragon,tag=flight_move,limit=1,distance=..0.0001]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.0 100.0 0.0 {PersistenceRequired:1b,DragonPhase:10,Tags:[\"flight_move\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=flight_move,limit=1] 0.0 100.0 30.0 0 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=flight_move,limit=1] {Motion:[1.0d,1.0d,0.0d],NoAI:0b}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=flight_move,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=flight_move,limit=1] Motion"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=flight_move,limit=1] Rotation"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=flight_move,limit=1]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute positioned 1.0 101.0 29.940026003867388 if entity @e[type=minecraft:ender_dragon,tag=flight_move,limit=1,distance=..0.0001]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.0 100.0 0.0 {PersistenceRequired:1b,DragonPhase:10,Tags:[\"flight_move\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=flight_move,limit=1] 0.0 100.0 30.0 0 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=flight_move,limit=1] {Motion:[1.0d,1.0d,0.0d],NoAI:0b}",
+      "wait_ticks": 3
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=flight_move,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=flight_move,limit=1] Motion"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=flight_move,limit=1] Rotation"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=flight_move,limit=1]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute positioned 2.7518019606569974 102.73682351649744 29.66010169892164 if entity @e[type=minecraft:ender_dragon,tag=flight_move,limit=1,distance=..0.0001]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.0 100.0 0.0 {PersistenceRequired:1b,DragonPhase:5,Tags:[\"flight_move\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=flight_move,limit=1] 0.0 100.0 30.0 0 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=flight_move,limit=1] {Motion:[1.0d,1.0d,0.0d],NoAI:0b}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=flight_move,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=flight_move,limit=1] Motion"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=flight_move,limit=1] Rotation"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=flight_move,limit=1]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute positioned 0.0 100.0 30.0 if entity @e[type=minecraft:ender_dragon,tag=flight_move,limit=1,distance=..0.0001]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.0 100.0 0.0 {PersistenceRequired:1b,DragonPhase:10,Tags:[\"flight_move\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=flight_move,limit=1] 0.0 100.0 30.0 0 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=flight_move,limit=1] {Motion:[1.0d,1.0d,0.0d],NoAI:1b}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=flight_move,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=flight_move,limit=1] Motion"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=flight_move,limit=1] Rotation"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=flight_move,limit=1]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute positioned 0.0 100.0 30.0 if entity @e[type=minecraft:ender_dragon,tag=flight_move,limit=1,distance=..0.0001]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.0 100.0 0.0 {PersistenceRequired:1b,DragonPhase:10,Tags:[\"flight_move\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=flight_move,limit=1] 0.0 100.0 30.0 0 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=flight_move,limit=1] {Motion:[0.001d,0.001d,0.0d],NoAI:0b}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=flight_move,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=flight_move,limit=1] Motion"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=flight_move,limit=1] Rotation"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=flight_move,limit=1]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute positioned 0.001 100.001 29.940000001341105 if entity @e[type=minecraft:ender_dragon,tag=flight_move,limit=1,distance=..0.0001]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    }
+  ],
+  "cleanup": [
+    "kill @e[type=minecraft:ender_dragon]"
+  ],
+  "notes": "Private comparison checks all observed vectors against the vanilla reference within 0.0001. Straight/inertia/multiple test flight; perched/noai must preserve position and motion when there is no flight target or AI is disabled."
+}

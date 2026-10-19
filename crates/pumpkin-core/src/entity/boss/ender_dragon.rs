@@ -506,6 +506,18 @@ impl EnderDragonEntity {
             Vector3::new(0.0, 0.0, -1.0),
         );
 
+        // Dragon flight moves with the accelerated velocity, before applying drag.
+        let in_wall = *self
+            .in_wall
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner);
+        let movement = if in_wall {
+            entity.velocity.load() * f64::from(0.8f32)
+        } else {
+            entity.velocity.load()
+        };
+        entity.move_entity(self, movement);
+
         let actual_vel = entity.velocity.load();
         let actual_dir = if actual_vel.length_squared() > 1e-6 {
             actual_vel.normalize()
@@ -515,7 +527,7 @@ impl EnderDragonEntity {
         let slide = 0.8 + 0.15 * (actual_dir.dot(&dir) + 1.0) / 2.0;
         entity.velocity.store(Vector3::new(
             actual_vel.x * slide,
-            actual_vel.y * 0.91,
+            actual_vel.y * f64::from(0.91f32),
             actual_vel.z * slide,
         ));
     }
