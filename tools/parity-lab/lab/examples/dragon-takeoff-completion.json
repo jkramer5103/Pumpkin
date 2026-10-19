@@ -1,0 +1,1177 @@
+{
+  "schema_version": 1,
+  "id": "dragon-takeoff-completion",
+  "title": "Dragon takeoff waits for initialization then leaves the podium radius",
+  "description": "Two trials isolate the first takeoff tick, re-entry, NoAI and strict three-dimensional ten-block podium boundary. Flight trajectories are not asserted.",
+  "category": "entity",
+  "tags": [
+    "ender-dragon",
+    "ai"
+  ],
+  "setup": [
+    "tick freeze",
+    "difficulty normal",
+    "gamerule spawn_mobs false",
+    "gamerule mob_griefing false",
+    "forceload add -48 -48 47 47",
+    "gamemode creative ParitySmoke",
+    "tp ParitySmoke 40 100 40"
+  ],
+  "steps": [
+    {
+      "command": "say Wait for arena chunks",
+      "wait_ticks": 5
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "fill -1 79 -1 1 135 1 minecraft:air"
+    },
+    {
+      "command": "setblock 0 79 0 minecraft:bedrock"
+    },
+    {
+      "command": "say TRIAL_1_inside-x"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.5 80.5 0.5 {PersistenceRequired:1b,DragonPhase:4,Tags:[\"takeoff\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1,nbt={DragonPhase:4}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] 10.499 80.5 0.5 0 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] {Motion:[0.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] DragonPhase"
+    },
+    {
+      "command": "say takeoff_completion_tick",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1,nbt={DragonPhase:4}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] DragonPhase"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "fill -1 79 -1 1 135 1 minecraft:air"
+    },
+    {
+      "command": "setblock 0 79 0 minecraft:bedrock"
+    },
+    {
+      "command": "say TRIAL_1_boundary-x"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.5 80.5 0.5 {PersistenceRequired:1b,DragonPhase:4,Tags:[\"takeoff\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1,nbt={DragonPhase:4}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] 10.5 80.5 0.5 0 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] {Motion:[0.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] DragonPhase"
+    },
+    {
+      "command": "say takeoff_completion_tick",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1,nbt={DragonPhase:4}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] DragonPhase"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "fill -1 79 -1 1 135 1 minecraft:air"
+    },
+    {
+      "command": "setblock 0 79 0 minecraft:bedrock"
+    },
+    {
+      "command": "say TRIAL_1_outside-negative"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.5 80.5 0.5 {PersistenceRequired:1b,DragonPhase:4,Tags:[\"takeoff\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1,nbt={DragonPhase:4}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] -9.501 80.5 0.5 0 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] {Motion:[0.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] DragonPhase"
+    },
+    {
+      "command": "say takeoff_completion_tick",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1,nbt={DragonPhase:4}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] DragonPhase"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "fill -1 79 -1 1 135 1 minecraft:air"
+    },
+    {
+      "command": "setblock 0 79 0 minecraft:bedrock"
+    },
+    {
+      "command": "say TRIAL_1_inside-y"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.5 80.5 0.5 {PersistenceRequired:1b,DragonPhase:4,Tags:[\"takeoff\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1,nbt={DragonPhase:4}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] 0.5 90.499 0.5 0 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] {Motion:[0.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] DragonPhase"
+    },
+    {
+      "command": "say takeoff_completion_tick",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1,nbt={DragonPhase:4}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] DragonPhase"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "fill -1 79 -1 1 135 1 minecraft:air"
+    },
+    {
+      "command": "setblock 0 79 0 minecraft:bedrock"
+    },
+    {
+      "command": "say TRIAL_1_boundary-y"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.5 80.5 0.5 {PersistenceRequired:1b,DragonPhase:4,Tags:[\"takeoff\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1,nbt={DragonPhase:4}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] 0.5 90.5 0.5 0 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] {Motion:[0.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] DragonPhase"
+    },
+    {
+      "command": "say takeoff_completion_tick",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1,nbt={DragonPhase:4}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] DragonPhase"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "fill -1 79 -1 1 135 1 minecraft:air"
+    },
+    {
+      "command": "setblock 0 79 0 minecraft:bedrock"
+    },
+    {
+      "command": "say TRIAL_1_diagonal-outside"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.5 80.5 0.5 {PersistenceRequired:1b,DragonPhase:4,Tags:[\"takeoff\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1,nbt={DragonPhase:4}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] 8.5 80.5 6.501 0 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] {Motion:[0.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] DragonPhase"
+    },
+    {
+      "command": "say takeoff_completion_tick",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1,nbt={DragonPhase:4}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] DragonPhase"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "fill -1 79 -1 1 135 1 minecraft:air"
+    },
+    {
+      "command": "setblock 0 79 0 minecraft:bedrock"
+    },
+    {
+      "command": "say TRIAL_1_diagonal-inside"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.5 80.5 0.5 {PersistenceRequired:1b,DragonPhase:4,Tags:[\"takeoff\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1,nbt={DragonPhase:4}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] 8.5 80.5 6.499 0 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] {Motion:[0.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] DragonPhase"
+    },
+    {
+      "command": "say takeoff_completion_tick",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1,nbt={DragonPhase:4}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] DragonPhase"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "fill -1 79 -1 1 135 1 minecraft:air"
+    },
+    {
+      "command": "setblock 0 109 0 minecraft:bedrock"
+    },
+    {
+      "command": "say TRIAL_1_raised-podium"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.5 80.5 0.5 {PersistenceRequired:1b,DragonPhase:4,Tags:[\"takeoff\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1,nbt={DragonPhase:4}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] 0.5 120.5 0.5 0 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] {Motion:[0.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] DragonPhase"
+    },
+    {
+      "command": "say takeoff_completion_tick",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1,nbt={DragonPhase:4}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] DragonPhase"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "fill -1 79 -1 1 135 1 minecraft:air"
+    },
+    {
+      "command": "setblock 0 104 0 minecraft:bedrock"
+    },
+    {
+      "command": "say TRIAL_1_first-fixed-target"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0 105 0 {PersistenceRequired:1b,DragonPhase:4,Tags:[\"takeoff\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1,nbt={DragonPhase:4}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] 0 105 0 0 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] {Motion:[0.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] DragonPhase"
+    },
+    {
+      "command": "say takeoff_completion_tick",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1,nbt={DragonPhase:4}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] DragonPhase"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "fill -1 79 -1 1 135 1 minecraft:air"
+    },
+    {
+      "command": "setblock 0 79 0 minecraft:bedrock"
+    },
+    {
+      "command": "say TRIAL_1_reentry-far"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.5 80.5 0.5 {PersistenceRequired:1b,DragonPhase:4,Tags:[\"takeoff\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1,nbt={DragonPhase:4}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] {DragonPhase:6}"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] {DragonPhase:4}"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] 30 100 0 0 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] {Motion:[0.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] DragonPhase"
+    },
+    {
+      "command": "say takeoff_completion_tick",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1,nbt={DragonPhase:4}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] DragonPhase"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] 30 100 0 0 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] {Motion:[0.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "say initialized_completion_tick",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1,nbt={DragonPhase:4}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] DragonPhase"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "fill -1 79 -1 1 135 1 minecraft:air"
+    },
+    {
+      "command": "setblock 0 79 0 minecraft:bedrock"
+    },
+    {
+      "command": "say TRIAL_1_noai-far"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.5 80.5 0.5 {PersistenceRequired:1b,DragonPhase:4,Tags:[\"takeoff\"],NoAI:1b}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1,nbt={DragonPhase:4}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] 30 100 0 0 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] {Motion:[0.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] {NoAI:0b}"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] DragonPhase"
+    },
+    {
+      "command": "say takeoff_completion_tick",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1,nbt={DragonPhase:4}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] DragonPhase"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] 30 100 0 0 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] {Motion:[0.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "say initialized_completion_tick",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1,nbt={DragonPhase:4}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] DragonPhase"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "fill -1 79 -1 1 135 1 minecraft:air"
+    },
+    {
+      "command": "setblock 0 79 0 minecraft:bedrock"
+    },
+    {
+      "command": "say TRIAL_2_inside-x"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.5 80.5 0.5 {PersistenceRequired:1b,DragonPhase:4,Tags:[\"takeoff\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1,nbt={DragonPhase:4}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] 10.499 80.5 0.5 0 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] {Motion:[0.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] DragonPhase"
+    },
+    {
+      "command": "say takeoff_completion_tick",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1,nbt={DragonPhase:4}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] DragonPhase"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "fill -1 79 -1 1 135 1 minecraft:air"
+    },
+    {
+      "command": "setblock 0 79 0 minecraft:bedrock"
+    },
+    {
+      "command": "say TRIAL_2_boundary-x"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.5 80.5 0.5 {PersistenceRequired:1b,DragonPhase:4,Tags:[\"takeoff\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1,nbt={DragonPhase:4}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] 10.5 80.5 0.5 0 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] {Motion:[0.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] DragonPhase"
+    },
+    {
+      "command": "say takeoff_completion_tick",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1,nbt={DragonPhase:4}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] DragonPhase"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "fill -1 79 -1 1 135 1 minecraft:air"
+    },
+    {
+      "command": "setblock 0 79 0 minecraft:bedrock"
+    },
+    {
+      "command": "say TRIAL_2_outside-negative"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.5 80.5 0.5 {PersistenceRequired:1b,DragonPhase:4,Tags:[\"takeoff\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1,nbt={DragonPhase:4}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] -9.501 80.5 0.5 0 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] {Motion:[0.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] DragonPhase"
+    },
+    {
+      "command": "say takeoff_completion_tick",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1,nbt={DragonPhase:4}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] DragonPhase"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "fill -1 79 -1 1 135 1 minecraft:air"
+    },
+    {
+      "command": "setblock 0 79 0 minecraft:bedrock"
+    },
+    {
+      "command": "say TRIAL_2_inside-y"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.5 80.5 0.5 {PersistenceRequired:1b,DragonPhase:4,Tags:[\"takeoff\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1,nbt={DragonPhase:4}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] 0.5 90.499 0.5 0 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] {Motion:[0.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] DragonPhase"
+    },
+    {
+      "command": "say takeoff_completion_tick",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1,nbt={DragonPhase:4}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] DragonPhase"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "fill -1 79 -1 1 135 1 minecraft:air"
+    },
+    {
+      "command": "setblock 0 79 0 minecraft:bedrock"
+    },
+    {
+      "command": "say TRIAL_2_boundary-y"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.5 80.5 0.5 {PersistenceRequired:1b,DragonPhase:4,Tags:[\"takeoff\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1,nbt={DragonPhase:4}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] 0.5 90.5 0.5 0 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] {Motion:[0.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] DragonPhase"
+    },
+    {
+      "command": "say takeoff_completion_tick",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1,nbt={DragonPhase:4}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] DragonPhase"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "fill -1 79 -1 1 135 1 minecraft:air"
+    },
+    {
+      "command": "setblock 0 79 0 minecraft:bedrock"
+    },
+    {
+      "command": "say TRIAL_2_diagonal-outside"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.5 80.5 0.5 {PersistenceRequired:1b,DragonPhase:4,Tags:[\"takeoff\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1,nbt={DragonPhase:4}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] 8.5 80.5 6.501 0 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] {Motion:[0.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] DragonPhase"
+    },
+    {
+      "command": "say takeoff_completion_tick",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1,nbt={DragonPhase:4}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] DragonPhase"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "fill -1 79 -1 1 135 1 minecraft:air"
+    },
+    {
+      "command": "setblock 0 79 0 minecraft:bedrock"
+    },
+    {
+      "command": "say TRIAL_2_diagonal-inside"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.5 80.5 0.5 {PersistenceRequired:1b,DragonPhase:4,Tags:[\"takeoff\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1,nbt={DragonPhase:4}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] 8.5 80.5 6.499 0 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] {Motion:[0.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] DragonPhase"
+    },
+    {
+      "command": "say takeoff_completion_tick",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1,nbt={DragonPhase:4}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] DragonPhase"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "fill -1 79 -1 1 135 1 minecraft:air"
+    },
+    {
+      "command": "setblock 0 109 0 minecraft:bedrock"
+    },
+    {
+      "command": "say TRIAL_2_raised-podium"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.5 80.5 0.5 {PersistenceRequired:1b,DragonPhase:4,Tags:[\"takeoff\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1,nbt={DragonPhase:4}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] 0.5 120.5 0.5 0 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] {Motion:[0.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] DragonPhase"
+    },
+    {
+      "command": "say takeoff_completion_tick",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1,nbt={DragonPhase:4}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] DragonPhase"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "fill -1 79 -1 1 135 1 minecraft:air"
+    },
+    {
+      "command": "setblock 0 104 0 minecraft:bedrock"
+    },
+    {
+      "command": "say TRIAL_2_first-fixed-target"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0 105 0 {PersistenceRequired:1b,DragonPhase:4,Tags:[\"takeoff\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1,nbt={DragonPhase:4}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] 0 105 0 0 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] {Motion:[0.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] DragonPhase"
+    },
+    {
+      "command": "say takeoff_completion_tick",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1,nbt={DragonPhase:4}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] DragonPhase"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "fill -1 79 -1 1 135 1 minecraft:air"
+    },
+    {
+      "command": "setblock 0 79 0 minecraft:bedrock"
+    },
+    {
+      "command": "say TRIAL_2_reentry-far"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.5 80.5 0.5 {PersistenceRequired:1b,DragonPhase:4,Tags:[\"takeoff\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1,nbt={DragonPhase:4}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] {DragonPhase:6}"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] {DragonPhase:4}"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] 30 100 0 0 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] {Motion:[0.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] DragonPhase"
+    },
+    {
+      "command": "say takeoff_completion_tick",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1,nbt={DragonPhase:4}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] DragonPhase"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] 30 100 0 0 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] {Motion:[0.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "say initialized_completion_tick",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1,nbt={DragonPhase:4}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] DragonPhase"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "fill -1 79 -1 1 135 1 minecraft:air"
+    },
+    {
+      "command": "setblock 0 79 0 minecraft:bedrock"
+    },
+    {
+      "command": "say TRIAL_2_noai-far"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.5 80.5 0.5 {PersistenceRequired:1b,DragonPhase:4,Tags:[\"takeoff\"],NoAI:1b}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1,nbt={DragonPhase:4}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] 30 100 0 0 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] {Motion:[0.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] {NoAI:0b}"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] DragonPhase"
+    },
+    {
+      "command": "say takeoff_completion_tick",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1,nbt={DragonPhase:4}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] DragonPhase"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] 30 100 0 0 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] {Motion:[0.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "say initialized_completion_tick",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1,nbt={DragonPhase:4}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=takeoff,limit=1] DragonPhase"
+    }
+  ],
+  "cleanup": [
+    "kill @e[type=minecraft:ender_dragon]",
+    "gamemode creative ParitySmoke",
+    "tick unfreeze"
+  ]
+}

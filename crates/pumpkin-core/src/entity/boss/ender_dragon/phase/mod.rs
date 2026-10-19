@@ -142,7 +142,7 @@ impl PhaseManager {
                 Arc::new(LandingPhase),
                 Arc::new(SitAttackingPhase),
                 Arc::new(SitBreathingPhase),
-                Arc::new(TakingOffPhase),
+                Arc::new(TakingOffPhase::default()),
                 Arc::new(HoveringPhase),
                 Arc::new(DyingPhase),
                 Arc::new(SitScanningPhase),

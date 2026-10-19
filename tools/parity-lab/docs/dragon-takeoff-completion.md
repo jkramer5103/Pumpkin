@@ -1,0 +1,13 @@
+# Dragon takeoff completion
+
+Vanilla keeps the first takeoff tick for target initialization. On subsequent ticks it ends takeoff when the dragon is at least 10 blocks from the center of the motion-blocking-no-leaves heightmap position over the fight podium. Pumpkin instead ends takeoff only when it is within four blocks of a fixed target at Y=105, and can end it on entry.
+
+The bounded change retains the existing approximate takeoff steering target, adds entry state local to each dragon phase manager, and uses vanilla’s strict three-dimensional podium departure check after initialization. Landing, path selection, multipart combat and the rest of the fight remain separate.
+
+Upstream: [PR3407](https://github.com/Pumpkin-MC/Pumpkin/pull/3407) contains a separate sitting-classification correction, so that candidate was deferred. PR3407 and [PR3661](https://github.com/Pumpkin-MC/Pumpkin/pull/3661) do not change takeoff completion. Fresh open-PR searches for takeoff, taking_off and podium found no overlapping correction.
+
+The immutable arena fixture ran twice per case, for 53 controlled ticks per target, with a connected headless protocol client. Vanilla and the patched binary each passed 121/121 checks; the current campaign baseline passed 103/121 with exactly 18 expected phase failures. Direct DragonPhase snapshots corroborate each failed phase observation, and all 22 pre-tick arena positions matched. Cases cover the exact horizontal/vertical/diagonal ten-block boundary, a raised podium, entry near the previous fixed point, phase re-entry and NoAI. All scratch servers stopped, both Pumpkin saves completed, and no server ERROR/panic lines were found. Vanilla final-save completion was not confirmed within the shutdown grace period.
+
+Under the shared Cargo lock and resource limits, `cargo fmt --all -- --check`, `cargo test --locked -p pumpkin-core --lib` (482 tests), `cargo clippy --locked -p pumpkin-core --all-targets --all-features`, and `cargo build --locked -p pumpkin` passed. The focused podium-boundary regression failed as expected with the old fixed-point predicate restored, then passed with the correction.
+
+Matching fixture and command-sequence hashes, validated Rust source hashes and the copied patched-binary hash were verified. The baseline takeoff implementation is identical to current upstream master. Initial exploratory vanilla selector syntax was incorrect and its report is excluded. No rendered-client, natural takeoff trajectory, landing, incoming multipart damage or whole-fight proof. The sitting-classification correction remains deferred to PR3407; existing warnings and approximate flight routes remain outside this patch.
