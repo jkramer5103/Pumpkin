@@ -1,5 +1,5 @@
 use pumpkin_data::{
-    Block, BlockDirection, BlockState, BlockStateId, entity::EntityType, world::WorldEvent,
+    Block, BlockDirection, BlockId, BlockState, BlockStateId, entity::EntityType, world::WorldEvent,
 };
 use pumpkin_macros::pumpkin_block;
 use pumpkin_util::{Difficulty, math::position::BlockPos};
@@ -25,8 +25,13 @@ pub struct WitherPattern {
 #[must_use]
 pub fn find_wither_pattern(world: &Arc<World>, skull_pos: &BlockPos) -> Option<WitherPattern> {
     let is_soul_block = |block: &Block| block == &Block::SOUL_SAND || block == &Block::SOUL_SOIL;
-    let is_skull =
-        |pos: &BlockPos| pos == skull_pos || world.get_block(pos) == &Block::WITHER_SKELETON_SKULL;
+    let is_skull = |pos: &BlockPos| {
+        pos == skull_pos
+            || matches!(
+                world.get_block(pos).id,
+                BlockId::WITHER_SKELETON_SKULL | BlockId::WITHER_SKELETON_WALL_SKULL
+            )
+    };
 
     for dir in [BlockDirection::North, BlockDirection::West] {
         let opposite = dir.opposite();
