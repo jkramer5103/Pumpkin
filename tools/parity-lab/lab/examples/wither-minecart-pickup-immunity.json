@@ -1,0 +1,277 @@
+{
+  "schema_version": 1,
+  "id": "wither-minecart-pickup-immunity",
+  "title": "Withers reject natural minecart pickup while forced mounting remains possible",
+  "category": "entities",
+  "description": "An empty moving cart overlaps active, powered, spawning and NoAI Withers. Cow and zombie pickup plus a forced ride are positive controls. Use an isolated arena with a connected creative client.",
+  "tags": [
+    "entity",
+    "wither",
+    "vehicle"
+  ],
+  "setup": [
+    "tick freeze",
+    "gamemode creative @a",
+    "difficulty easy",
+    "gamerule mob_griefing false",
+    "gamerule spawn_mobs false",
+    "forceload add 0 0 31 31",
+    "fill 0 79 0 31 79 31 minecraft:bedrock",
+    "tp @a 15 84 15",
+    "scoreboard objectives add mount dummy"
+  ],
+  "steps": [
+    {
+      "command": "say PARITY_MOUNT_CASE=active"
+    },
+    {
+      "command": "kill @e[type=!minecraft:player]",
+      "wait_ticks": 25
+    },
+    {
+      "command": "summon minecraft:wither 8.5 80 8.5 {Tags:[\"pp_subject\"],Silent:1b,PersistenceRequired:1b,Health:300.0f,Invul:0}"
+    },
+    {
+      "command": "summon minecraft:minecart 8.5 80 8.5 {Tags:[\"pp_cart\"],Motion:[0.2d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "scoreboard players set observed mount 0"
+    },
+    {
+      "command": "execute as @e[tag=pp_cart] on passengers if entity @s[tag=pp_subject] run scoreboard players set observed mount 1"
+    },
+    {
+      "command": "execute if score observed mount matches 0",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_subject]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_cart]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "say PARITY_MOUNT_CASE=powered"
+    },
+    {
+      "command": "kill @e[type=!minecraft:player]",
+      "wait_ticks": 25
+    },
+    {
+      "command": "summon minecraft:wither 8.5 80 8.5 {Tags:[\"pp_subject\"],Silent:1b,PersistenceRequired:1b,Health:150.0f,Invul:0}"
+    },
+    {
+      "command": "summon minecraft:minecart 8.5 80 8.5 {Tags:[\"pp_cart\"],Motion:[0.2d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "scoreboard players set observed mount 0"
+    },
+    {
+      "command": "execute as @e[tag=pp_cart] on passengers if entity @s[tag=pp_subject] run scoreboard players set observed mount 1"
+    },
+    {
+      "command": "execute if score observed mount matches 0",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_subject]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_cart]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "say PARITY_MOUNT_CASE=spawning"
+    },
+    {
+      "command": "kill @e[type=!minecraft:player]",
+      "wait_ticks": 25
+    },
+    {
+      "command": "summon minecraft:wither 8.5 80 8.5 {Tags:[\"pp_subject\"],Silent:1b,PersistenceRequired:1b,Health:100.0f,Invul:200}"
+    },
+    {
+      "command": "summon minecraft:minecart 8.5 80 8.5 {Tags:[\"pp_cart\"],Motion:[0.2d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "scoreboard players set observed mount 0"
+    },
+    {
+      "command": "execute as @e[tag=pp_cart] on passengers if entity @s[tag=pp_subject] run scoreboard players set observed mount 1"
+    },
+    {
+      "command": "execute if score observed mount matches 0",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_subject]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_cart]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "say PARITY_MOUNT_CASE=noai"
+    },
+    {
+      "command": "kill @e[type=!minecraft:player]",
+      "wait_ticks": 25
+    },
+    {
+      "command": "summon minecraft:wither 8.5 80 8.5 {Tags:[\"pp_subject\"],Silent:1b,PersistenceRequired:1b,Health:300.0f,Invul:0,NoAI:1b}"
+    },
+    {
+      "command": "summon minecraft:minecart 8.5 80 8.5 {Tags:[\"pp_cart\"],Motion:[0.2d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "scoreboard players set observed mount 0"
+    },
+    {
+      "command": "execute as @e[tag=pp_cart] on passengers if entity @s[tag=pp_subject] run scoreboard players set observed mount 1"
+    },
+    {
+      "command": "execute if score observed mount matches 0",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_subject]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_cart]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "say PARITY_MOUNT_CASE=cow"
+    },
+    {
+      "command": "kill @e[type=!minecraft:player]",
+      "wait_ticks": 25
+    },
+    {
+      "command": "summon minecraft:cow 8.5 80 8.5 {Tags:[\"pp_subject\"],Silent:1b,PersistenceRequired:1b,NoAI:1b}"
+    },
+    {
+      "command": "summon minecraft:minecart 8.5 80 8.5 {Tags:[\"pp_cart\"],Motion:[0.2d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "scoreboard players set observed mount 0"
+    },
+    {
+      "command": "execute as @e[tag=pp_cart] on passengers if entity @s[tag=pp_subject] run scoreboard players set observed mount 1"
+    },
+    {
+      "command": "execute if score observed mount matches 1",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_subject]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_cart]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "say PARITY_MOUNT_CASE=zombie"
+    },
+    {
+      "command": "kill @e[type=!minecraft:player]",
+      "wait_ticks": 25
+    },
+    {
+      "command": "summon minecraft:zombie 8.5 80 8.5 {Tags:[\"pp_subject\"],Silent:1b,PersistenceRequired:1b,NoAI:1b}"
+    },
+    {
+      "command": "summon minecraft:minecart 8.5 80 8.5 {Tags:[\"pp_cart\"],Motion:[0.2d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "scoreboard players set observed mount 0"
+    },
+    {
+      "command": "execute as @e[tag=pp_cart] on passengers if entity @s[tag=pp_subject] run scoreboard players set observed mount 1"
+    },
+    {
+      "command": "execute if score observed mount matches 1",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_subject]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_cart]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "say PARITY_MOUNT_CASE=forced"
+    },
+    {
+      "command": "kill @e[type=!minecraft:player]",
+      "wait_ticks": 25
+    },
+    {
+      "command": "summon minecraft:wither 8.5 80 8.5 {Tags:[\"pp_subject\"],Silent:1b,PersistenceRequired:1b,Health:300.0f,Invul:0,NoAI:1b}"
+    },
+    {
+      "command": "summon minecraft:minecart 8.5 80 8.5 {Tags:[\"pp_cart\"],Motion:[0.2d,0.0d,0.0d]}"
+    },
+    {
+      "command": "ride @e[tag=pp_subject,limit=1] mount @e[tag=pp_cart,limit=1]",
+      "wait_ticks": 1
+    },
+    {
+      "command": "scoreboard players set observed mount 0"
+    },
+    {
+      "command": "execute as @e[tag=pp_cart] on passengers if entity @s[tag=pp_subject] run scoreboard players set observed mount 1"
+    },
+    {
+      "command": "execute if score observed mount matches 1",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_subject]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_cart]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    }
+  ],
+  "cleanup": [
+    "kill @e[type=!minecraft:player]",
+    "scoreboard objectives remove mount"
+  ]
+}

@@ -521,6 +521,15 @@ pub trait EntityBase: Send + Sync + std::any::Any {
         self.get_entity().has_vehicle()
     }
 
+    fn can_ride(&self, vehicle: &dyn EntityBase) -> bool {
+        let entity = self.get_entity();
+        !entity.is_sneaking()
+            && entity.riding_cooldown.load(Relaxed) <= 0
+            && self
+                .get_mob()
+                .is_none_or(|mob| mob.can_ride_vehicle(vehicle))
+    }
+
     fn is_vehicle(&self) -> bool {
         self.get_entity().has_passengers()
     }
@@ -637,7 +646,7 @@ pub trait EntityBase: Send + Sync + std::any::Any {
                             && !is_other_minecart
                             && !other.is_passenger()
                             && other.is_pushable()
-                            && other.get_entity().riding_cooldown.load(Relaxed) == 0
+                            && other.can_ride(dyn_self)
                             && let Some(self_arc) = world.get_entity_by_id(self_entity.entity_id)
                         {
                             self_entity.add_passenger(self_arc, other.clone());

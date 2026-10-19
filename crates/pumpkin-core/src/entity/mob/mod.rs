@@ -786,6 +786,10 @@ impl MobEntity {
 }
 
 pub trait Mob: EntityBase + Send + Sync {
+    fn can_ride_vehicle(&self, _vehicle: &dyn EntityBase) -> bool {
+        true
+    }
+
     fn get_random(&self) -> rand::rngs::ThreadRng {
         rand::rng()
     }

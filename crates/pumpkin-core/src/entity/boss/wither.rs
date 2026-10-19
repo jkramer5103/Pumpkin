@@ -659,6 +659,10 @@ impl Mob for WitherEntity {
         &self.mob_entity
     }
 
+    fn can_ride_vehicle(&self, _vehicle: &dyn EntityBase) -> bool {
+        false
+    }
+
     fn remove_when_far_away(&self, _distance_sq: f64) -> bool {
         // Vanilla WitherBoss.checkDespawn only removes the boss on Peaceful,
         // which mob_tick handles independently of ordinary mob despawning.
