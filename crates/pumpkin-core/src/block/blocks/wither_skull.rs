@@ -2,7 +2,7 @@ use pumpkin_data::{
     Block, BlockDirection, BlockState, BlockStateId, entity::EntityType, world::WorldEvent,
 };
 use pumpkin_macros::pumpkin_block;
-use pumpkin_util::math::position::BlockPos;
+use pumpkin_util::{Difficulty, math::position::BlockPos};
 use pumpkin_world::world::BlockFlags;
 use std::sync::Arc;
 
@@ -93,6 +93,10 @@ impl BlockBehaviour for WitherSkeletonSkullBlock {
     fn placed(&self, args: PlacedArgs<'_>) {
         args.world
             .add_block_entity(Arc::new(SkullBlockEntity::new(*args.position)));
+
+        if args.world.level_info.load().difficulty == Difficulty::Peaceful {
+            return;
+        }
 
         if let Some(pattern) = find_wither_pattern(args.world, args.position) {
             spawn_wither(args.world, &pattern);

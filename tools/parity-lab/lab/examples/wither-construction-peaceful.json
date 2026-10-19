@@ -1,0 +1,411 @@
+{
+  "schema_version": 1,
+  "category": "entities",
+  "tags": [
+    "entity",
+    "wither",
+    "construction"
+  ],
+  "setup": [
+    "tick freeze",
+    "gamemode creative @a",
+    "op ParitySmoke",
+    "difficulty easy",
+    "gamerule mob_griefing false",
+    "gamerule spawn_mobs false",
+    "forceload add 0 0 31 31",
+    "fill 0 79 0 31 79 31 minecraft:bedrock",
+    "tp @a 15.5 81 19.5",
+    "item replace entity @a weapon.mainhand with minecraft:wither_skeleton_skull"
+  ],
+  "cleanup": [
+    "kill @e[type=!minecraft:player]",
+    "fill 12 80 12 18 85 18 minecraft:air",
+    "forceload remove all"
+  ],
+  "id": "wither-construction-peaceful",
+  "title": "Wither construction preserves the structure on Peaceful",
+  "description": "Isolated creative client placement regression. At each PARITY_BUILD_PLACE marker send one main-hand UseItemOn packet against the indicated soul-block top, then advance the specified ticks. Both axes alternate Peaceful and Easy; all seven structure blocks and boss presence are checked. Console-only execution cannot exercise the final-skull callback.",
+  "steps": [
+    {
+      "command": "say PARITY_BUILD_CASE=x-peaceful"
+    },
+    {
+      "command": "kill @e[type=!minecraft:player]",
+      "wait_ticks": 25
+    },
+    {
+      "command": "difficulty peaceful"
+    },
+    {
+      "command": "fill 12 80 12 18 85 18 minecraft:air"
+    },
+    {
+      "command": "setblock 15 81 15 minecraft:soul_sand"
+    },
+    {
+      "command": "setblock 14 82 15 minecraft:soul_sand"
+    },
+    {
+      "command": "setblock 15 82 15 minecraft:soul_sand"
+    },
+    {
+      "command": "setblock 16 82 15 minecraft:soul_sand"
+    },
+    {
+      "command": "setblock 14 81 15 minecraft:air"
+    },
+    {
+      "command": "setblock 16 81 15 minecraft:air"
+    },
+    {
+      "command": "setblock 14 83 15 minecraft:wither_skeleton_skull"
+    },
+    {
+      "command": "setblock 15 83 15 minecraft:wither_skeleton_skull"
+    },
+    {
+      "command": "tp @a 16.5 81 18.5"
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:wither]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "say PARITY_BUILD_PLACE=16,82,15",
+      "wait_ticks": 2
+    },
+    {
+      "command": "execute if block 15 81 15 minecraft:soul_sand",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 15 82 15 minecraft:soul_sand",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 15 83 15 minecraft:wither_skeleton_skull",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 14 82 15 minecraft:soul_sand",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 16 82 15 minecraft:soul_sand",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 14 83 15 minecraft:wither_skeleton_skull",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 16 83 15 minecraft:wither_skeleton_skull",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:wither]",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 20
+    },
+    {
+      "command": "execute if block 15 81 15 minecraft:soul_sand",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "say PARITY_BUILD_CASE=x-easy"
+    },
+    {
+      "command": "kill @e[type=!minecraft:player]",
+      "wait_ticks": 25
+    },
+    {
+      "command": "difficulty easy"
+    },
+    {
+      "command": "fill 12 80 12 18 85 18 minecraft:air"
+    },
+    {
+      "command": "setblock 15 81 15 minecraft:soul_sand"
+    },
+    {
+      "command": "setblock 14 82 15 minecraft:soul_sand"
+    },
+    {
+      "command": "setblock 15 82 15 minecraft:soul_sand"
+    },
+    {
+      "command": "setblock 16 82 15 minecraft:soul_sand"
+    },
+    {
+      "command": "setblock 14 81 15 minecraft:air"
+    },
+    {
+      "command": "setblock 16 81 15 minecraft:air"
+    },
+    {
+      "command": "setblock 14 83 15 minecraft:wither_skeleton_skull"
+    },
+    {
+      "command": "setblock 15 83 15 minecraft:wither_skeleton_skull"
+    },
+    {
+      "command": "tp @a 16.5 81 18.5"
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:wither]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "say PARITY_BUILD_PLACE=16,82,15",
+      "wait_ticks": 2
+    },
+    {
+      "command": "execute if block 15 81 15 minecraft:air",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 15 82 15 minecraft:air",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 15 83 15 minecraft:air",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 14 82 15 minecraft:air",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 16 82 15 minecraft:air",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 14 83 15 minecraft:air",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 16 83 15 minecraft:air",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:wither]",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 20
+    },
+    {
+      "command": "execute if block 15 81 15 minecraft:air",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "say PARITY_BUILD_CASE=z-peaceful"
+    },
+    {
+      "command": "kill @e[type=!minecraft:player]",
+      "wait_ticks": 25
+    },
+    {
+      "command": "difficulty peaceful"
+    },
+    {
+      "command": "fill 12 80 12 18 85 18 minecraft:air"
+    },
+    {
+      "command": "setblock 15 81 15 minecraft:soul_sand"
+    },
+    {
+      "command": "setblock 15 82 14 minecraft:soul_sand"
+    },
+    {
+      "command": "setblock 15 82 15 minecraft:soul_sand"
+    },
+    {
+      "command": "setblock 15 82 16 minecraft:soul_sand"
+    },
+    {
+      "command": "setblock 15 81 14 minecraft:air"
+    },
+    {
+      "command": "setblock 15 81 16 minecraft:air"
+    },
+    {
+      "command": "setblock 15 83 14 minecraft:wither_skeleton_skull"
+    },
+    {
+      "command": "setblock 15 83 15 minecraft:wither_skeleton_skull"
+    },
+    {
+      "command": "tp @a 15.5 81 19.5"
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:wither]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "say PARITY_BUILD_PLACE=15,82,16",
+      "wait_ticks": 2
+    },
+    {
+      "command": "execute if block 15 81 15 minecraft:soul_sand",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 15 82 15 minecraft:soul_sand",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 15 83 15 minecraft:wither_skeleton_skull",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 15 82 14 minecraft:soul_sand",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 15 82 16 minecraft:soul_sand",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 15 83 14 minecraft:wither_skeleton_skull",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 15 83 16 minecraft:wither_skeleton_skull",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:wither]",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 20
+    },
+    {
+      "command": "execute if block 15 81 15 minecraft:soul_sand",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "say PARITY_BUILD_CASE=z-easy"
+    },
+    {
+      "command": "kill @e[type=!minecraft:player]",
+      "wait_ticks": 25
+    },
+    {
+      "command": "difficulty easy"
+    },
+    {
+      "command": "fill 12 80 12 18 85 18 minecraft:air"
+    },
+    {
+      "command": "setblock 15 81 15 minecraft:soul_sand"
+    },
+    {
+      "command": "setblock 15 82 14 minecraft:soul_sand"
+    },
+    {
+      "command": "setblock 15 82 15 minecraft:soul_sand"
+    },
+    {
+      "command": "setblock 15 82 16 minecraft:soul_sand"
+    },
+    {
+      "command": "setblock 15 81 14 minecraft:air"
+    },
+    {
+      "command": "setblock 15 81 16 minecraft:air"
+    },
+    {
+      "command": "setblock 15 83 14 minecraft:wither_skeleton_skull"
+    },
+    {
+      "command": "setblock 15 83 15 minecraft:wither_skeleton_skull"
+    },
+    {
+      "command": "tp @a 15.5 81 19.5"
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:wither]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "say PARITY_BUILD_PLACE=15,82,16",
+      "wait_ticks": 2
+    },
+    {
+      "command": "execute if block 15 81 15 minecraft:air",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 15 82 15 minecraft:air",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 15 83 15 minecraft:air",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 15 82 14 minecraft:air",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 15 82 16 minecraft:air",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 15 83 14 minecraft:air",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 15 83 16 minecraft:air",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:wither]",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 20
+    },
+    {
+      "command": "execute if block 15 81 15 minecraft:air",
+      "observe": true,
+      "expect_contains": "Test passed"
+    }
+  ]
+}
