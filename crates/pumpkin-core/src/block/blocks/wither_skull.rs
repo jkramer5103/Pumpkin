@@ -45,6 +45,8 @@ pub fn find_wither_pattern(world: &Arc<World>, skull_pos: &BlockPos) -> Option<W
                 && is_soul_block(world.get_block(&base))
                 && is_soul_block(world.get_block(&arm1))
                 && is_soul_block(world.get_block(&arm2))
+                && world.get_block_state(&arm1.down()).is_air()
+                && world.get_block_state(&arm2.down()).is_air()
                 && is_skull(&center)
                 && is_skull(&skull1_pos)
                 && is_skull(&skull2_pos)
