@@ -48,18 +48,17 @@ impl LandingApproachPhase {
                 .nodes
                 .lock()
                 .unwrap_or_else(std::sync::PoisonError::into_inner);
+            // A failed search has no podium waypoint and must not begin descent.
+            let Some(route) = find_path(
+                &nodes,
+                current_node,
+                target_node,
+                dragon.has_alive_crystals(),
+            ) else {
+                return;
+            };
             // find_path skips the starting node. The podium is a final off-graph node.
-            path.extend(
-                find_path(
-                    &nodes,
-                    current_node,
-                    target_node,
-                    None,
-                    dragon.has_alive_crystals(),
-                )
-                .into_iter()
-                .filter_map(|index| nodes[index]),
-            );
+            path.extend(route.into_iter().filter_map(|index| nodes[index]));
             path.push_back(DragonNode::new(egg.x, egg.y, egg.z));
         }
         Self::navigate_to_next_path_node(dragon, &mut path);

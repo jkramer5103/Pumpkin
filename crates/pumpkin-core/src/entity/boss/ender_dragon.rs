@@ -91,11 +91,10 @@ pub fn find_path(
     nodes: &[Option<DragonNode>; NODE_COUNT],
     from: usize,
     to: usize,
-    final_node: Option<DragonNode>,
     crystals_alive: bool,
-) -> Vec<usize> {
-    if from == to && final_node.is_none() {
-        return vec![];
+) -> Option<Vec<usize>> {
+    if from == to {
+        return Some(vec![]);
     }
 
     let mut g = [f64::MAX; NODE_COUNT];
@@ -105,11 +104,6 @@ pub fn find_path(
         std::collections::BinaryHeap::new();
 
     let h = |n: usize| -> f64 {
-        if let Some(target) = final_node
-            && let Some(node) = nodes[n]
-        {
-            return node.dist_sq(&target).sqrt();
-        }
         match (nodes[n], nodes[to]) {
             (Some(a), Some(b)) => a.dist_sq(&b).sqrt(),
             _ => 0.0,
@@ -120,12 +114,17 @@ pub fn find_path(
     open.push((ordered_float::OrderedFloat(-h(from)), from));
 
     let start_index = if crystals_alive { 0 } else { 12 };
-    'outer: while let Some((_, cur)) = open.pop() {
+    let mut closest = from;
+    while let Some((_, cur)) = open.pop() {
         if closed[cur] {
             continue;
         }
         if cur == to {
-            break 'outer;
+            closest = to;
+            break;
+        }
+        if h(cur) < h(closest) {
+            closest = cur;
         }
         closed[cur] = true;
 
@@ -146,8 +145,12 @@ pub fn find_path(
         }
     }
 
+    // Exhausted searches may only return a route that got closer to the target.
+    if closest == from {
+        return None;
+    }
     let mut path = Vec::new();
-    let mut cur = to;
+    let mut cur = closest;
     while cur != NODE_COUNT {
         path.push(cur);
         cur = came_from[cur];
@@ -156,7 +159,7 @@ pub fn find_path(
     if path.first() == Some(&from) {
         path.remove(0);
     }
-    path
+    Some(path)
 }
 
 pub struct EnderDragonPart {
@@ -1070,10 +1073,30 @@ mod tests {
         ] {
             nodes[index] = Some(DragonNode::new(x, y, z));
         }
-        assert_eq!(find_path(&nodes, 12, 14, None, false), [13, 14]);
-        assert_eq!(find_path(&nodes, 14, 12, None, false), [13, 12]);
-        assert_eq!(find_path(&nodes, 12, 14, None, true), [0, 1, 2, 3, 14]);
-        assert_eq!(find_path(&nodes, 14, 12, None, true), [3, 2, 1, 0, 12]);
+        assert_eq!(find_path(&nodes, 12, 14, false), Some(vec![13, 14]));
+        assert_eq!(find_path(&nodes, 14, 12, false), Some(vec![13, 12]));
+        assert_eq!(find_path(&nodes, 12, 14, true), Some(vec![0, 1, 2, 3, 14]));
+        assert_eq!(find_path(&nodes, 14, 12, true), Some(vec![3, 2, 1, 0, 12]));
+    }
+
+    #[test]
+    fn unreachable_flight_paths_only_reconstruct_reachable_progress() {
+        let mut nodes = [None; NODE_COUNT];
+        for (index, x, z) in [
+            (0, 60.0, 0.0),
+            (12, 40.0, 0.0),
+            (13, 28.0, 28.0),
+            (14, 0.0, 40.0),
+        ] {
+            nodes[index] = Some(DragonNode::new(x, 73.0, z));
+        }
+        // With no crystals, node 0 is excluded from traversal. Node 12 is the
+        // closest reachable node, so 14 can approach it but 12 cannot improve.
+        assert_eq!(find_path(&nodes, 14, 0, false), Some(vec![13, 12]));
+        assert_eq!(find_path(&nodes, 12, 0, false), None);
+        // A route already at its destination is successful, even with no hops.
+        assert_eq!(find_path(&nodes, 12, 12, false), Some(vec![]));
+        assert_eq!(find_path(&nodes, 14, 0, true), Some(vec![13, 12, 0]));
     }
 
     #[test]

@@ -164,7 +164,7 @@ impl super::Phase for CirclingPhase {
                     .nodes
                     .lock()
                     .unwrap_or_else(std::sync::PoisonError::into_inner);
-                *path_lock = find_path(&nodes, i, j, None, crystals_alive);
+                *path_lock = find_path(&nodes, i, j, crystals_alive).unwrap_or_default();
                 drop(nodes);
                 path = path_lock;
             }

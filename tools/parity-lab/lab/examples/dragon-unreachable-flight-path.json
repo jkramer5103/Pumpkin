@@ -1,0 +1,221 @@
+{
+  "schema_version": 1,
+  "id": "dragon-unreachable-flight-path",
+  "title": "Dragon landing approaches respect failed and partial flight routes",
+  "description": "An empty podium column makes the target lookup fall back to unreachable outer node 0 without a dragon fight. Two nearby dragons have no improving route; one distant dragon has a partial route. Raised-podium recovery, NoAI and hovering control path availability and phase state.",
+  "category": "entity",
+  "tags": [
+    "ender-dragon",
+    "ai"
+  ],
+  "setup": [
+    "tick freeze",
+    "difficulty normal",
+    "gamerule spawn_mobs false",
+    "gamerule mob_griefing false",
+    "forceload add -96 -96 95 95",
+    "gamemode creative ParitySmoke",
+    "tp ParitySmoke 0 300 0"
+  ],
+  "steps": [
+    {
+      "command": "say Load arena chunks",
+      "wait_ticks": 40
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "fill 0 -64 0 0 319 0 minecraft:air"
+    },
+    {
+      "command": "execute if block 0 79 0 minecraft:air",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 40.0 90.0 0.0 {PersistenceRequired:1b,Silent:1b,DragonPhase:10,Tags:[\"stalled\"]}"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 40.0 120.0 0.0 {PersistenceRequired:1b,Silent:1b,DragonPhase:10,Tags:[\"stalled_two\"]}"
+    },
+    {
+      "command": "summon minecraft:ender_dragon -40.0 90.0 0.0 {PersistenceRequired:1b,Silent:1b,DragonPhase:10,Tags:[\"partial\"]}"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 40.0 160.0 0.0 {PersistenceRequired:1b,Silent:1b,NoAI:1b,DragonPhase:2,Tags:[\"noai\"]}"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.0 280.0 0.0 {PersistenceRequired:1b,Silent:1b,DragonPhase:10,Tags:[\"hover\"]}"
+    },
+    {
+      "command": "say Initialize dragons",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=stalled,limit=1] 40.0 90.0 0.0 0 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=stalled,limit=1] {DragonPhase:2,Motion:[0.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=stalled_two,limit=1] 40.0 120.0 0.0 0 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=stalled_two,limit=1] {DragonPhase:2,Motion:[0.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=partial,limit=1] -40.0 90.0 0.0 0 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=partial,limit=1] {DragonPhase:2,Motion:[0.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "say Failed and partial path decision",
+      "wait_ticks": 3
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=stalled,nbt={DragonPhase:2}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=stalled,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=stalled,limit=1] Motion"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=stalled_two,nbt={DragonPhase:2}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=stalled_two,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=stalled_two,limit=1] Motion"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=partial,nbt={DragonPhase:2}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute as @e[type=minecraft:ender_dragon,tag=partial,limit=1] run tp @s -40 240 0 0 0",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=partial,nbt={DragonPhase:2}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute as @e[type=minecraft:ender_dragon,tag=partial,nbt={DragonPhase:2}] run tp @s -40 240 0 0 0",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute as @e[type=minecraft:ender_dragon,tag=partial,nbt={DragonPhase:2}] run tp @s -40 240 0 0 0",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute as @e[type=minecraft:ender_dragon,tag=partial,nbt={DragonPhase:2}] run tp @s -40 240 0 0 0",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute as @e[type=minecraft:ender_dragon,tag=partial,nbt={DragonPhase:2}] run tp @s -40 240 0 0 0",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute as @e[type=minecraft:ender_dragon,tag=partial,nbt={DragonPhase:2}] run tp @s -40 240 0 0 0",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute as @e[type=minecraft:ender_dragon,tag=partial,nbt={DragonPhase:2}] run tp @s -40 240 0 0 0",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute as @e[type=minecraft:ender_dragon,tag=partial,nbt={DragonPhase:2}] run tp @s -40 240 0 0 0",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute as @e[type=minecraft:ender_dragon,tag=partial,nbt={DragonPhase:2}] run tp @s -40 240 0 0 0",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=partial,nbt={DragonPhase:3}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=stalled,nbt={DragonPhase:2}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=stalled_two,nbt={DragonPhase:2}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "setblock 0 79 0 minecraft:stone"
+    },
+    {
+      "command": "execute if block 0 79 0 minecraft:stone",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=stalled,limit=1] {DragonPhase:10,Motion:[0.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=stalled,limit=1] 40.0 90.0 0.0 0 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=stalled,limit=1] {DragonPhase:2,Motion:[0.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=stalled_two,limit=1] {DragonPhase:10,Motion:[0.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=stalled_two,limit=1] 40.0 120.0 0.0 0 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=stalled_two,limit=1] {DragonPhase:2,Motion:[0.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "say Reachable path recovery",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=stalled,nbt={DragonPhase:3}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=stalled_two,nbt={DragonPhase:3}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=noai,nbt={DragonPhase:2}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=hover,nbt={DragonPhase:10}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 5"
+    }
+  ],
+  "cleanup": [
+    "kill @e[type=minecraft:ender_dragon]",
+    "setblock 0 79 0 minecraft:air",
+    "execute unless entity @e[type=minecraft:ender_dragon]"
+  ]
+}
