@@ -138,7 +138,7 @@ impl PhaseManager {
                 Arc::new(StrafingPhase),
                 Arc::new(ChargingPhase),
                 Arc::new(FlyToPortalPhase),
-                Arc::new(LandingApproachPhase),
+                Arc::new(LandingApproachPhase::default()),
                 Arc::new(LandingPhase),
                 Arc::new(SitAttackingPhase),
                 Arc::new(SitBreathingPhase),

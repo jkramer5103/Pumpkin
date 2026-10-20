@@ -1,0 +1,204 @@
+{
+  "schema_version": 1,
+  "id": "dragon-landing-approach-route",
+  "title": "Dragon landing approach follows and completes flight paths",
+  "description": "A short approach enters descent before podium arrival. A longer approach consumes flight waypoints, then enters descent; re-entry rebuilds the route. High altitude teleports force the distant-target decision without depending on random waypoint heights. NoAI and hovering controls remain active. Creative observer is excluded as a combat target.",
+  "category": "entity",
+  "tags": [
+    "ender-dragon",
+    "ai"
+  ],
+  "setup": [
+    "tick freeze",
+    "difficulty normal",
+    "gamerule spawn_mobs false",
+    "gamerule mob_griefing false",
+    "forceload add -96 -96 95 95",
+    "gamemode creative ParitySmoke",
+    "tp ParitySmoke 0 300 0"
+  ],
+  "steps": [
+    {
+      "command": "say Wait for arena chunks",
+      "wait_ticks": 40
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "setblock 0 79 0 minecraft:stone"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 40 90 0 {PersistenceRequired:1b,Silent:1b,DragonPhase:10,Tags:[\"short\"]}"
+    },
+    {
+      "command": "summon minecraft:ender_dragon -40 90 0 {PersistenceRequired:1b,Silent:1b,DragonPhase:10,Tags:[\"route\"]}"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 40 160 0 {PersistenceRequired:1b,Silent:1b,DragonPhase:2,NoAI:1b,Tags:[\"noai\"]}"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0 280 0 {PersistenceRequired:1b,Silent:1b,DragonPhase:10,Tags:[\"hover\"]}"
+    },
+    {
+      "command": "say Initialize dragons",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=short,limit=1] {DragonPhase:2,Motion:[0.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=route,limit=1] {DragonPhase:2,Motion:[0.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "say Initial approach tick",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=short,nbt={DragonPhase:3}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=route,nbt={DragonPhase:2}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=route,limit=1] Rotation"
+    },
+    {
+      "command": "execute as @e[type=minecraft:ender_dragon,tag=route,nbt={DragonPhase:2}] run tp @s -40 240 0 0 0",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=route,limit=1] DragonPhase"
+    },
+    {
+      "command": "execute as @e[type=minecraft:ender_dragon,tag=route,nbt={DragonPhase:2}] run tp @s -40 240 0 0 0",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=route,limit=1] DragonPhase"
+    },
+    {
+      "command": "execute as @e[type=minecraft:ender_dragon,tag=route,nbt={DragonPhase:2}] run tp @s -40 240 0 0 0",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=route,limit=1] DragonPhase"
+    },
+    {
+      "command": "execute as @e[type=minecraft:ender_dragon,tag=route,nbt={DragonPhase:2}] run tp @s -40 240 0 0 0",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=route,limit=1] DragonPhase"
+    },
+    {
+      "command": "execute as @e[type=minecraft:ender_dragon,tag=route,nbt={DragonPhase:2}] run tp @s -40 240 0 0 0",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=route,limit=1] DragonPhase"
+    },
+    {
+      "command": "execute as @e[type=minecraft:ender_dragon,tag=route,nbt={DragonPhase:2}] run tp @s -40 240 0 0 0",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=route,limit=1] DragonPhase"
+    },
+    {
+      "command": "execute as @e[type=minecraft:ender_dragon,tag=route,nbt={DragonPhase:2}] run tp @s -40 240 0 0 0",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=route,limit=1] DragonPhase"
+    },
+    {
+      "command": "execute as @e[type=minecraft:ender_dragon,tag=route,nbt={DragonPhase:2}] run tp @s -40 240 0 0 0",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=route,limit=1] DragonPhase"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=route,nbt={DragonPhase:3}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=route,limit=1] {DragonPhase:10,Motion:[0.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=route] -40 90 0 0 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=route,limit=1] {DragonPhase:2,Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=route,nbt={DragonPhase:2}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute as @e[type=minecraft:ender_dragon,tag=route,nbt={DragonPhase:2}] run tp @s -40 240 0 0 0",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute as @e[type=minecraft:ender_dragon,tag=route,nbt={DragonPhase:2}] run tp @s -40 240 0 0 0",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute as @e[type=minecraft:ender_dragon,tag=route,nbt={DragonPhase:2}] run tp @s -40 240 0 0 0",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute as @e[type=minecraft:ender_dragon,tag=route,nbt={DragonPhase:2}] run tp @s -40 240 0 0 0",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute as @e[type=minecraft:ender_dragon,tag=route,nbt={DragonPhase:2}] run tp @s -40 240 0 0 0",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute as @e[type=minecraft:ender_dragon,tag=route,nbt={DragonPhase:2}] run tp @s -40 240 0 0 0",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute as @e[type=minecraft:ender_dragon,tag=route,nbt={DragonPhase:2}] run tp @s -40 240 0 0 0",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute as @e[type=minecraft:ender_dragon,tag=route,nbt={DragonPhase:2}] run tp @s -40 240 0 0 0",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=route,nbt={DragonPhase:3}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=noai,nbt={DragonPhase:2,NoAI:1b}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=hover,nbt={DragonPhase:10}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 4"
+    }
+  ],
+  "cleanup": [
+    "kill @e[type=minecraft:ender_dragon]",
+    "setblock 0 79 0 minecraft:air",
+    "execute unless entity @e[type=minecraft:ender_dragon]"
+  ]
+}
