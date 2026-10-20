@@ -1,0 +1,114 @@
+{
+  "schema_version": 1,
+  "id": "wither-lead-attachment",
+  "title": "Withers reject lead attachment without consuming the held lead",
+  "category": "entities",
+  "description": "A survival protocol client right-clicks each pp_target once at the PARITY_LEAD_INTERACT marker. Wither and zombie reject the lead; sheep attaches. Check server inventory counts plus entity link packets. Requires the bounded interaction driver described in the evidence doc.",
+  "tags": [
+    "wither",
+    "entity",
+    "interaction",
+    "regression"
+  ],
+  "setup": [
+    "gamemode survival @a",
+    "difficulty easy",
+    "gamerule mob_griefing false",
+    "gamerule spawn_mobs false",
+    "forceload add 0 0 31 31",
+    "fill 0 79 0 31 79 31 minecraft:bedrock",
+    "fill 0 80 0 31 95 31 minecraft:air",
+    "tp @a 15 80 13"
+  ],
+  "steps": [
+    {
+      "command": "say PARITY_LEAD_CASE=wither"
+    },
+    {
+      "command": "kill @e[type=!minecraft:player]",
+      "wait_ticks": 25
+    },
+    {
+      "command": "item replace entity @a weapon.mainhand with minecraft:lead 2"
+    },
+    {
+      "command": "summon minecraft:wither 15.0 80.0 15.0 {Tags:[\"pp_target\"],NoAI:1b,NoGravity:1b,Silent:1b,PersistenceRequired:1b}",
+      "wait_ticks": 2
+    },
+    {
+      "command": "say PARITY_LEAD_INTERACT=pp_target",
+      "wait_ticks": 2
+    },
+    {
+      "command": "clear @a minecraft:lead 0",
+      "observe": true,
+      "expect_contains": "Found 2 matching item(s)"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_target,nbt={NoAI:1b}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "say PARITY_LEAD_CASE=sheep"
+    },
+    {
+      "command": "kill @e[type=!minecraft:player]",
+      "wait_ticks": 25
+    },
+    {
+      "command": "item replace entity @a weapon.mainhand with minecraft:lead 2"
+    },
+    {
+      "command": "summon minecraft:sheep 15.0 80.0 15.0 {Tags:[\"pp_target\"],NoAI:1b,NoGravity:1b,Silent:1b,PersistenceRequired:1b}",
+      "wait_ticks": 2
+    },
+    {
+      "command": "say PARITY_LEAD_INTERACT=pp_target",
+      "wait_ticks": 2
+    },
+    {
+      "command": "clear @a minecraft:lead 0",
+      "observe": true,
+      "expect_contains": "Found 1 matching item(s)"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_target,nbt={NoAI:1b}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "say PARITY_LEAD_CASE=zombie"
+    },
+    {
+      "command": "kill @e[type=!minecraft:player]",
+      "wait_ticks": 25
+    },
+    {
+      "command": "item replace entity @a weapon.mainhand with minecraft:lead 2"
+    },
+    {
+      "command": "summon minecraft:zombie 15.0 80.0 15.0 {Tags:[\"pp_target\"],NoAI:1b,NoGravity:1b,Silent:1b,PersistenceRequired:1b}",
+      "wait_ticks": 2
+    },
+    {
+      "command": "say PARITY_LEAD_INTERACT=pp_target",
+      "wait_ticks": 2
+    },
+    {
+      "command": "clear @a minecraft:lead 0",
+      "observe": true,
+      "expect_contains": "Found 2 matching item(s)"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_target,nbt={NoAI:1b}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    }
+  ],
+  "cleanup": [
+    "kill @e[type=!minecraft:player]",
+    "clear @a",
+    "gamemode creative @a"
+  ]
+}

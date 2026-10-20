@@ -723,6 +723,10 @@ impl MobEntity {
         if item_stack.item.registry_key == "lead"
             || item_stack.item.registry_key == "minecraft:lead"
         {
+            // Vanilla Mob.canBeLeashed excludes Enemy mobs, including Withers.
+            if entity.entity_type.is_enemy {
+                return false;
+            }
             let diff = entity.pos.load() - player.get_entity().pos.load();
             let dist_sq = diff.length_squared();
             if dist_sq <= Entity::LEASH_SNAP_DISTANCE * Entity::LEASH_SNAP_DISTANCE {
