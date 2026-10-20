@@ -1,0 +1,84 @@
+{
+  "schema_version": 1,
+  "id": "wither-interrupted-idle-route",
+  "title": "Interrupted idle Wither stroll cancels navigation",
+  "category": "entities",
+  "description": "After detecting horizontal idle-flight movement, force Invul200 and observe32 ticks. Horizontal motion must settle, matching vanilla RandomStrollGoal.stop.",
+  "tags": [
+    "entity",
+    "wither",
+    "ai"
+  ],
+  "setup": [
+    "tick freeze",
+    "gamemode creative @a",
+    "difficulty easy",
+    "gamerule spawn_mobs false",
+    "gamerule mob_griefing false",
+    "forceload add 0 0 31 31",
+    "fill 0 79 0 31 96 31 minecraft:bedrock",
+    "fill 1 80 1 30 95 30 minecraft:air",
+    "tp @a 15.5 91 15.5"
+  ],
+  "steps": [
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Invul:200}",
+      "wait_ticks": 4
+    },
+    {
+      "command": "data get entity @e[tag=pp_boss,limit=1] Pos",
+      "wait_ticks": 4
+    },
+    {
+      "command": "data get entity @e[tag=pp_boss,limit=1] Pos",
+      "wait_ticks": 4
+    },
+    {
+      "command": "data get entity @e[tag=pp_boss,limit=1] Pos",
+      "wait_ticks": 4
+    },
+    {
+      "command": "data get entity @e[tag=pp_boss,limit=1] Pos",
+      "wait_ticks": 4
+    },
+    {
+      "command": "data get entity @e[tag=pp_boss,limit=1] Pos",
+      "wait_ticks": 4
+    },
+    {
+      "command": "data get entity @e[tag=pp_boss,limit=1] Pos",
+      "wait_ticks": 4
+    },
+    {
+      "command": "data get entity @e[tag=pp_boss,limit=1] Pos",
+      "wait_ticks": 4
+    },
+    {
+      "command": "data get entity @e[tag=pp_boss,limit=1] Pos"
+    },
+    {
+      "command": "execute unless entity @e[type=!minecraft:wither,type=!minecraft:player]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute unless entity @e[tag=pp_boss,nbt={NoAI:1b}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss,x=1,y=80,z=1,dx=29,dy=15,dz=29]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @a[gamemode=creative]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    }
+  ],
+  "cleanup": [
+    "kill @e[type=!minecraft:player]"
+  ],
+  "notes": "Specialized regression: summon one target-free Wither at15.5 84 15.5 with Health100,Silent1,NoGravity1,Invul0; set movement_speed and flying_speed to0.5. Step2 ticks at a time (max1200) until horizontal displacement in one sample exceeds0.02; require route detection before running steps. Include the position at interruption. Tail path length over the final12 of32 ticks must be <0.1 blocks. Repeat twice with ordinary active-flight and initially-Invul200 controls. Random route and detection timing differ across servers. Forced midlife invulnerability is a test stimulus, not natural construction. No rendered-client or whole-fight proof."
+}

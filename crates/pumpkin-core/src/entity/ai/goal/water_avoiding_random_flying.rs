@@ -82,8 +82,13 @@ impl Goal for WaterAvoidingRandomFlyingGoal {
         }
     }
 
-    fn stop(&mut self, _mob: &dyn Mob) {
+    fn stop(&mut self, mob: &dyn Mob) {
         self.target = None;
+        mob.get_mob_entity()
+            .navigator
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner)
+            .stop();
     }
 
     fn controls(&self) -> Controls {
