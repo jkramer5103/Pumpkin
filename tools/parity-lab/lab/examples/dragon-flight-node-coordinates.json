@@ -1,0 +1,391 @@
+{
+  "schema_version": 1,
+  "id": "dragon-flight-node-coordinates",
+  "title": "Dragon takeoff respects the vanilla diagonal flight-node boundary",
+  "description": "Two trials at and beside a negative-X diagonal node boundary, plus NoAI control. No fight/crystals. First takeoff tick only; exact random horizontal route is unasserted.",
+  "category": "entity",
+  "tags": [
+    "ender-dragon",
+    "ai"
+  ],
+  "setup": [
+    "tick freeze",
+    "difficulty normal",
+    "gamerule spawn_mobs false",
+    "gamerule mob_griefing false",
+    "forceload add -64 -64 79 63",
+    "gamemode creative ParitySmoke",
+    "tp ParitySmoke 0 120 0"
+  ],
+  "steps": [
+    {
+      "command": "say Wait for arena chunks",
+      "wait_ticks": 40
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "say TRIAL_1_z17_active"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 60 120 0 {PersistenceRequired:1b,DragonPhase:10,Tags:[\"node_coordinates_probe\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=node_coordinates_probe,limit=1] -44 120 17 225 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=node_coordinates_probe,limit=1] {Motion:[0.0d,0.0d,0.0d],DragonPhase:4,NoAI:0b}"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_coordinates_probe,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_coordinates_probe,limit=1] Motion"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_coordinates_probe,limit=1] DragonPhase"
+    },
+    {
+      "command": "say first_takeoff_tick",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_coordinates_probe,limit=1] Pos",
+      "observe": true,
+      "expect_contains": "119.99399999976158d"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_coordinates_probe,limit=1] Motion"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=node_coordinates_probe,limit=1,nbt={DragonPhase:4}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "say TRIAL_1_z18_active"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 60 120 0 {PersistenceRequired:1b,DragonPhase:10,Tags:[\"node_coordinates_probe\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=node_coordinates_probe,limit=1] -44 120 18 225 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=node_coordinates_probe,limit=1] {Motion:[0.0d,0.0d,0.0d],DragonPhase:4,NoAI:0b}"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_coordinates_probe,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_coordinates_probe,limit=1] Motion"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_coordinates_probe,limit=1] DragonPhase"
+    },
+    {
+      "command": "say first_takeoff_tick",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_coordinates_probe,limit=1] Pos",
+      "observe": true,
+      "expect_contains": ", 120"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_coordinates_probe,limit=1] Motion"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=node_coordinates_probe,limit=1,nbt={DragonPhase:4}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "say TRIAL_1_z19_active"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 60 120 0 {PersistenceRequired:1b,DragonPhase:10,Tags:[\"node_coordinates_probe\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=node_coordinates_probe,limit=1] -44 120 19 225 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=node_coordinates_probe,limit=1] {Motion:[0.0d,0.0d,0.0d],DragonPhase:4,NoAI:0b}"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_coordinates_probe,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_coordinates_probe,limit=1] Motion"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_coordinates_probe,limit=1] DragonPhase"
+    },
+    {
+      "command": "say first_takeoff_tick",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_coordinates_probe,limit=1] Pos",
+      "observe": true,
+      "expect_contains": ", 120"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_coordinates_probe,limit=1] Motion"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=node_coordinates_probe,limit=1,nbt={DragonPhase:4}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "say TRIAL_1_z18_noai"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 60 120 0 {PersistenceRequired:1b,DragonPhase:10,Tags:[\"node_coordinates_probe\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=node_coordinates_probe,limit=1] -44 120 18 225 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=node_coordinates_probe,limit=1] {Motion:[0.0d,0.0d,0.0d],DragonPhase:4,NoAI:1b}"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_coordinates_probe,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_coordinates_probe,limit=1] Motion"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_coordinates_probe,limit=1] DragonPhase"
+    },
+    {
+      "command": "say first_takeoff_tick",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_coordinates_probe,limit=1] Pos",
+      "observe": true,
+      "expect_contains": ", 120"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_coordinates_probe,limit=1] Motion"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=node_coordinates_probe,limit=1,nbt={DragonPhase:4}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "say TRIAL_2_z17_active"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 60 120 0 {PersistenceRequired:1b,DragonPhase:10,Tags:[\"node_coordinates_probe\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=node_coordinates_probe,limit=1] -44 120 17 225 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=node_coordinates_probe,limit=1] {Motion:[0.0d,0.0d,0.0d],DragonPhase:4,NoAI:0b}"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_coordinates_probe,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_coordinates_probe,limit=1] Motion"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_coordinates_probe,limit=1] DragonPhase"
+    },
+    {
+      "command": "say first_takeoff_tick",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_coordinates_probe,limit=1] Pos",
+      "observe": true,
+      "expect_contains": "119.99399999976158d"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_coordinates_probe,limit=1] Motion"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=node_coordinates_probe,limit=1,nbt={DragonPhase:4}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "say TRIAL_2_z18_active"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 60 120 0 {PersistenceRequired:1b,DragonPhase:10,Tags:[\"node_coordinates_probe\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=node_coordinates_probe,limit=1] -44 120 18 225 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=node_coordinates_probe,limit=1] {Motion:[0.0d,0.0d,0.0d],DragonPhase:4,NoAI:0b}"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_coordinates_probe,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_coordinates_probe,limit=1] Motion"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_coordinates_probe,limit=1] DragonPhase"
+    },
+    {
+      "command": "say first_takeoff_tick",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_coordinates_probe,limit=1] Pos",
+      "observe": true,
+      "expect_contains": ", 120"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_coordinates_probe,limit=1] Motion"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=node_coordinates_probe,limit=1,nbt={DragonPhase:4}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "say TRIAL_2_z19_active"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 60 120 0 {PersistenceRequired:1b,DragonPhase:10,Tags:[\"node_coordinates_probe\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=node_coordinates_probe,limit=1] -44 120 19 225 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=node_coordinates_probe,limit=1] {Motion:[0.0d,0.0d,0.0d],DragonPhase:4,NoAI:0b}"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_coordinates_probe,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_coordinates_probe,limit=1] Motion"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_coordinates_probe,limit=1] DragonPhase"
+    },
+    {
+      "command": "say first_takeoff_tick",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_coordinates_probe,limit=1] Pos",
+      "observe": true,
+      "expect_contains": ", 120"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_coordinates_probe,limit=1] Motion"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=node_coordinates_probe,limit=1,nbt={DragonPhase:4}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "say TRIAL_2_z18_noai"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 60 120 0 {PersistenceRequired:1b,DragonPhase:10,Tags:[\"node_coordinates_probe\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=node_coordinates_probe,limit=1] -44 120 18 225 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=node_coordinates_probe,limit=1] {Motion:[0.0d,0.0d,0.0d],DragonPhase:4,NoAI:1b}"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_coordinates_probe,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_coordinates_probe,limit=1] Motion"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_coordinates_probe,limit=1] DragonPhase"
+    },
+    {
+      "command": "say first_takeoff_tick",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_coordinates_probe,limit=1] Pos",
+      "observe": true,
+      "expect_contains": ", 120"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_coordinates_probe,limit=1] Motion"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=node_coordinates_probe,limit=1,nbt={DragonPhase:4}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    }
+  ],
+  "cleanup": [
+    "kill @e[type=minecraft:ender_dragon]",
+    "forceload remove -64 -64 79 63",
+    "tick unfreeze"
+  ]
+}

@@ -8,7 +8,7 @@ use pumpkin_util::gamemode::GameMode;
 use pumpkin_util::math::boundingbox::{BoundingBox, EntityDimensions};
 use pumpkin_util::math::position::BlockPos;
 use pumpkin_util::math::vector3::Vector3;
-use pumpkin_util::math::wrap_degrees;
+use pumpkin_util::math::{cos, sin, wrap_degrees};
 use pumpkin_world::{chunk::ChunkHeightmapType, world::BlockFlags};
 use std::sync::atomic::Ordering;
 use std::sync::{Arc, Mutex};
@@ -334,6 +334,24 @@ impl EnderDragonEntity {
         new_phase.begin(self);
     }
 
+    fn flight_node_horizontal_position(index: usize) -> (i32, i32) {
+        let (radius, count, multiplier) = if index < 12 {
+            (60.0, 12, index)
+        } else if index < 20 {
+            (40.0, 8, index - 12)
+        } else {
+            (20.0, 4, index - 20)
+        };
+        // Keep vanilla's shifted float angle: lookup-table rounding changes block columns.
+        let angle = 2.0
+            * (-std::f32::consts::PI
+                + (std::f64::consts::PI / f64::from(count)) as f32 * multiplier as f32);
+        (
+            (radius * cos(angle)).floor() as i32,
+            (radius * sin(angle)).floor() as i32,
+        )
+    }
+
     fn ensure_nodes_initialized(&self) {
         let mut initialized = self
             .nodes_initialized
@@ -354,29 +372,10 @@ impl EnderDragonEntity {
             .lock()
             .unwrap_or_else(std::sync::PoisonError::into_inner);
         for i in 0..NODE_COUNT {
-            let mut y_adjustment = 5;
-            let node_x;
-            let node_z;
-
-            if i < 12 {
-                node_x = fight_origin.0.x
-                    + (60.0 * ((i as f32) * std::f32::consts::TAU / 12.0).cos()) as i32;
-                node_z = fight_origin.0.z
-                    + (60.0 * ((i as f32) * std::f32::consts::TAU / 12.0).sin()) as i32;
-            } else if i < 20 {
-                let multiplier = i - 12;
-                node_x = fight_origin.0.x
-                    + (40.0 * ((multiplier as f32) * std::f32::consts::TAU / 8.0).cos()) as i32;
-                node_z = fight_origin.0.z
-                    + (40.0 * ((multiplier as f32) * std::f32::consts::TAU / 8.0).sin()) as i32;
-                y_adjustment += 10;
-            } else {
-                let multiplier = i - 20;
-                node_x = fight_origin.0.x
-                    + (20.0 * ((multiplier as f32) * std::f32::consts::TAU / 4.0).cos()) as i32;
-                node_z = fight_origin.0.z
-                    + (20.0 * ((multiplier as f32) * std::f32::consts::TAU / 4.0).sin()) as i32;
-            }
+            let (offset_x, offset_z) = Self::flight_node_horizontal_position(i);
+            let node_x = fight_origin.0.x + offset_x;
+            let node_z = fight_origin.0.z + offset_z;
+            let y_adjustment = if (12..20).contains(&i) { 15 } else { 5 };
 
             // Pumpkin's heightmap returns the top block, not the space above it.
             let height = world.get_heightmap_height(
@@ -1075,6 +1074,44 @@ mod tests {
     use pumpkin_data::Block;
     use pumpkin_util::gamemode::GameMode;
     use pumpkin_util::math::vector3::Vector3;
+
+    #[test]
+    fn flight_node_columns_match_vanilla_server_output() {
+        // Extracted with vanilla 26.3 Mth; negative diagonals distinguish floor from truncation.
+        let expected = [
+            (60, 0),
+            (51, 30),
+            (29, 51),
+            (0, 60),
+            (-31, 51),
+            (-52, 29),
+            (-60, 0),
+            (-52, -31),
+            (-30, -52),
+            (0, -60),
+            (29, -52),
+            (51, -30),
+            (40, 0),
+            (28, 28),
+            (0, 40),
+            (-29, 28),
+            (-40, 0),
+            (-29, -29),
+            (0, -40),
+            (28, -29),
+            (20, 0),
+            (0, 20),
+            (-20, 0),
+            (0, -20),
+        ];
+        for (index, position) in expected.into_iter().enumerate() {
+            assert_eq!(
+                EnderDragonEntity::flight_node_horizontal_position(index),
+                position,
+                "flight node {index}",
+            );
+        }
+    }
 
     #[test]
     fn nearest_flight_node_excludes_the_outer_ring_without_live_crystals() {
