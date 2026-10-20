@@ -288,7 +288,7 @@ impl EnderDragonEntity {
             phase: Mutex::new(EnderDragonPhase::Hovering),
             growl_time: Mutex::new(GROWL_COOLDOWN_BASE),
             yaw_rot_accel: Mutex::new(0.0),
-            holding_pattern_clockwise: Mutex::new(true),
+            holding_pattern_clockwise: Mutex::new(false),
             target_location: Mutex::new(None),
             fireball_charge: Mutex::new(0),
             time_since_charge: Mutex::new(0),

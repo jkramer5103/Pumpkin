@@ -1,0 +1,317 @@
+{
+  "schema_version": 1,
+  "id": "dragon-initial-circling-direction",
+  "title": "New dragons start circling in the vanilla direction",
+  "description": "Eight isolated dragons at middle-ring node12, half with preinitialized hovering nodes, take their first circling step without crystals. On the eight-node ring vanilla initial and random-reversal decisions both lead to node19.",
+  "category": "entity",
+  "tags": [
+    "ender-dragon",
+    "ai"
+  ],
+  "setup": [
+    "tick freeze",
+    "difficulty normal",
+    "gamerule spawn_mobs false",
+    "gamerule mob_griefing false",
+    "forceload add -80 -80 79 79",
+    "gamemode creative ParitySmoke",
+    "tp ParitySmoke 40 120 40"
+  ],
+  "steps": [
+    {
+      "command": "say Wait for arena chunks",
+      "wait_ticks": 5
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 40.0 160.0 0.0 {PersistenceRequired:1b,DragonPhase:0,Tags:[\"direction_0\"]}"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=direction_0,limit=1,nbt={Pos:[40.0d,160.0d,0.0d],Motion:[0.0d,0.0d,0.0d]}]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1"
+    },
+    {
+      "command": "say First circling step",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=direction_0,limit=1] Rotation"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=direction_0,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=direction_0,limit=1] Motion"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=direction_0,limit=1,nbt={DragonPhase:0}]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 40.0 160.0 0.0 {PersistenceRequired:1b,DragonPhase:10,Tags:[\"direction_1\"]}"
+    },
+    {
+      "command": "say Initialize flight nodes in hovering",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=direction_1,limit=1] 40.0 160.0 0.0 0 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=direction_1,limit=1] {Motion:[0.0d,0.0d,0.0d],DragonPhase:0}"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=direction_1,limit=1,nbt={Pos:[40.0d,160.0d,0.0d],Motion:[0.0d,0.0d,0.0d]}]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1"
+    },
+    {
+      "command": "say First circling step",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=direction_1,limit=1] Rotation"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=direction_1,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=direction_1,limit=1] Motion"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=direction_1,limit=1,nbt={DragonPhase:0}]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 40.0 160.0 0.0 {PersistenceRequired:1b,DragonPhase:0,Tags:[\"direction_2\"]}"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=direction_2,limit=1,nbt={Pos:[40.0d,160.0d,0.0d],Motion:[0.0d,0.0d,0.0d]}]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1"
+    },
+    {
+      "command": "say First circling step",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=direction_2,limit=1] Rotation"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=direction_2,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=direction_2,limit=1] Motion"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=direction_2,limit=1,nbt={DragonPhase:0}]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 40.0 160.0 0.0 {PersistenceRequired:1b,DragonPhase:10,Tags:[\"direction_3\"]}"
+    },
+    {
+      "command": "say Initialize flight nodes in hovering",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=direction_3,limit=1] 40.0 160.0 0.0 0 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=direction_3,limit=1] {Motion:[0.0d,0.0d,0.0d],DragonPhase:0}"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=direction_3,limit=1,nbt={Pos:[40.0d,160.0d,0.0d],Motion:[0.0d,0.0d,0.0d]}]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1"
+    },
+    {
+      "command": "say First circling step",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=direction_3,limit=1] Rotation"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=direction_3,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=direction_3,limit=1] Motion"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=direction_3,limit=1,nbt={DragonPhase:0}]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 40.0 160.0 0.0 {PersistenceRequired:1b,DragonPhase:0,Tags:[\"direction_4\"]}"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=direction_4,limit=1,nbt={Pos:[40.0d,160.0d,0.0d],Motion:[0.0d,0.0d,0.0d]}]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1"
+    },
+    {
+      "command": "say First circling step",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=direction_4,limit=1] Rotation"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=direction_4,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=direction_4,limit=1] Motion"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=direction_4,limit=1,nbt={DragonPhase:0}]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 40.0 160.0 0.0 {PersistenceRequired:1b,DragonPhase:10,Tags:[\"direction_5\"]}"
+    },
+    {
+      "command": "say Initialize flight nodes in hovering",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=direction_5,limit=1] 40.0 160.0 0.0 0 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=direction_5,limit=1] {Motion:[0.0d,0.0d,0.0d],DragonPhase:0}"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=direction_5,limit=1,nbt={Pos:[40.0d,160.0d,0.0d],Motion:[0.0d,0.0d,0.0d]}]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1"
+    },
+    {
+      "command": "say First circling step",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=direction_5,limit=1] Rotation"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=direction_5,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=direction_5,limit=1] Motion"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=direction_5,limit=1,nbt={DragonPhase:0}]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 40.0 160.0 0.0 {PersistenceRequired:1b,DragonPhase:0,Tags:[\"direction_6\"]}"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=direction_6,limit=1,nbt={Pos:[40.0d,160.0d,0.0d],Motion:[0.0d,0.0d,0.0d]}]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1"
+    },
+    {
+      "command": "say First circling step",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=direction_6,limit=1] Rotation"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=direction_6,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=direction_6,limit=1] Motion"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=direction_6,limit=1,nbt={DragonPhase:0}]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 40.0 160.0 0.0 {PersistenceRequired:1b,DragonPhase:10,Tags:[\"direction_7\"]}"
+    },
+    {
+      "command": "say Initialize flight nodes in hovering",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=direction_7,limit=1] 40.0 160.0 0.0 0 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=direction_7,limit=1] {Motion:[0.0d,0.0d,0.0d],DragonPhase:0}"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=direction_7,limit=1,nbt={Pos:[40.0d,160.0d,0.0d],Motion:[0.0d,0.0d,0.0d]}]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1"
+    },
+    {
+      "command": "say First circling step",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=direction_7,limit=1] Rotation"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=direction_7,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=direction_7,limit=1] Motion"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=direction_7,limit=1,nbt={DragonPhase:0}]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 40.0 160.0 0.0 {NoAI:1b,DragonPhase:0,Tags:[\"disabled\"]}"
+    },
+    {
+      "command": "say NoAI control",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=disabled,nbt={Pos:[40.0d,160.0d,0.0d],Motion:[0.0d,0.0d,0.0d],DragonPhase:0}]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1"
+    }
+  ],
+  "cleanup": [
+    "kill @e[type=minecraft:ender_dragon]",
+    "execute unless entity @e[type=minecraft:ender_dragon]"
+  ]
+}
