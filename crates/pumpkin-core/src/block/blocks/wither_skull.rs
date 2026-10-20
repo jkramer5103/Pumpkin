@@ -18,7 +18,7 @@ use crate::{
 };
 
 pub struct WitherPattern {
-    blocks: [BlockPos; 7],
+    blocks: [BlockPos; 9],
     base: BlockPos,
     yaw: f32,
 }
@@ -65,8 +65,24 @@ fn find_wither_pattern_inner(
                 && (!require_skulls
                     || (is_skull(&center) && is_skull(&skull1_pos) && is_skull(&skull2_pos)))
             {
+                // BlockPattern searches only positive offsets from the placed skull.
+                let (first_arm, last_arm) = if *skull_pos == skull1_pos {
+                    (arm1, arm2)
+                } else {
+                    (arm2, arm1)
+                };
                 return Some(WitherPattern {
-                    blocks: [center, skull1_pos, skull2_pos, top_middle, arm1, arm2, base],
+                    blocks: [
+                        first_arm.up(),
+                        first_arm,
+                        first_arm.down(),
+                        center,
+                        top_middle,
+                        base,
+                        last_arm.up(),
+                        last_arm,
+                        last_arm.down(),
+                    ],
                     base,
                     yaw: if dir == BlockDirection::West {
                         90.0
