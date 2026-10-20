@@ -1,0 +1,104 @@
+{
+  "description": "Dispenser construction awards Wither summoning to players intersecting the boss bounding box inflated by50; command summoning and failed construction do not.",
+  "trials": 2,
+  "setup": [
+    "gamemode creative @a",
+    "difficulty easy",
+    "gamerule mob_griefing false",
+    "gamerule spawn_mobs false",
+    "forceload add 0 0 95 79",
+    "fill 12 79 12 18 79 18 minecraft:bedrock"
+  ],
+  "cases": [
+    {
+      "id": "near",
+      "position": [
+        15.5,
+        81,
+        20.5
+      ],
+      "mode": "construction",
+      "award": true
+    },
+    {
+      "id": "diagonal-outside-sphere",
+      "position": [
+        60.5,
+        81,
+        60.5
+      ],
+      "mode": "construction",
+      "award": true
+    },
+    {
+      "id": "bounding-box-inside",
+      "position": [
+        66.2,
+        81,
+        15.5
+      ],
+      "mode": "construction",
+      "award": true
+    },
+    {
+      "id": "bounding-box-outside",
+      "position": [
+        66.3,
+        81,
+        15.5
+      ],
+      "mode": "construction",
+      "award": false
+    },
+    {
+      "id": "far",
+      "position": [
+        80.5,
+        81,
+        15.5
+      ],
+      "mode": "construction",
+      "award": false
+    },
+    {
+      "id": "command-summon",
+      "position": [
+        15.5,
+        81,
+        20.5
+      ],
+      "mode": "command",
+      "award": false
+    },
+    {
+      "id": "peaceful",
+      "position": [
+        15.5,
+        81,
+        20.5
+      ],
+      "mode": "peaceful",
+      "award": false
+    },
+    {
+      "id": "missing-arm",
+      "position": [
+        15.5,
+        81,
+        20.5
+      ],
+      "mode": "missing-arm",
+      "award": false
+    },
+    {
+      "id": "spectator",
+      "position": [
+        15.5,
+        81,
+        20.5
+      ],
+      "mode": "spectator",
+      "award": false
+    }
+  ]
+}

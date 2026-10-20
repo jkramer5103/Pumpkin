@@ -1,5 +1,6 @@
 use pumpkin_data::{
-    Block, BlockDirection, BlockId, BlockState, BlockStateId, entity::EntityType, world::WorldEvent,
+    Block, BlockDirection, BlockId, BlockState, BlockStateId, advancement::Advancement,
+    entity::EntityType, world::WorldEvent,
 };
 use pumpkin_macros::pumpkin_block;
 use pumpkin_util::{Difficulty, math::position::BlockPos};
@@ -12,7 +13,7 @@ use crate::{
         BlockBehaviour, OnPlaceArgs, PathComputationType, PlacedArgs,
         blocks::skull_block::SkullBlock,
     },
-    entity::{Entity, boss::wither::WitherEntity},
+    entity::{Entity, EntityBase, boss::wither::WitherEntity},
     world::World,
 };
 
@@ -97,6 +98,12 @@ fn spawn_wither(world: &Arc<World>, pattern: &WitherPattern) {
     entity.body_yaw.store(pattern.yaw);
     let wither = WitherEntity::new(entity);
     wither.make_invulnerable();
+    let advancement_box = wither.get_entity().bounding_box.load().expand_all(50.0);
+    for player in world.get_players_at_box(&advancement_box) {
+        if !player.is_spectator() {
+            player.trigger_advancement_criterion(Advancement::NETHER_SUMMON_WITHER, "summoned");
+        }
+    }
     world.spawn_entity(wither);
 }
 
