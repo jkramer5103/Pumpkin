@@ -905,9 +905,9 @@ impl EnderDragonEntity {
                 .ticks_sitting
                 .lock()
                 .unwrap_or_else(std::sync::PoisonError::into_inner) += 1;
-        } else {
-            self.handle_player_collisions();
         }
+        // Sitting suppresses wing damage, but not its outward push.
+        self.handle_player_collisions();
 
         phase.tick(self);
 

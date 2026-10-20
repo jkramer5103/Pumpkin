@@ -1,0 +1,59 @@
+{
+  "trials": 2,
+  "dragon_position": [
+    8.0,
+    80.0,
+    8.0
+  ],
+  "player_position": [
+    12.0,
+    80.0,
+    8.0
+  ],
+  "contact_ticks": 1,
+  "cases": [
+    {
+      "id": "perched_survival",
+      "phase": 7,
+      "mode": "survival",
+      "no_ai": false,
+      "push": true,
+      "health_after": 20.0
+    },
+    {
+      "id": "perched_adventure",
+      "phase": 7,
+      "mode": "adventure",
+      "no_ai": false,
+      "push": true,
+      "health_after": 20.0
+    },
+    {
+      "id": "perched_creative",
+      "phase": 7,
+      "mode": "creative",
+      "no_ai": false,
+      "push": false,
+      "health_after": 20.0
+    },
+    {
+      "id": "perched_noai",
+      "phase": 7,
+      "mode": "survival",
+      "no_ai": true,
+      "push": false,
+      "health_after": 20.0
+    },
+    {
+      "id": "perched_breathing",
+      "phase": 5,
+      "mode": "survival",
+      "no_ai": false,
+      "push": true,
+      "health_after": 20.0
+    }
+  ],
+  "settle_ticks": 20,
+  "warmup_ticks": 2,
+  "initial_chunk_ticks": 40
+}
