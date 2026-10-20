@@ -1,0 +1,196 @@
+{
+  "schema_version": 1,
+  "id": "wither-skull-body-rotation",
+  "title": "Wither retaliation skull origins use body rotation during a turn",
+  "category": "entities",
+  "description": "Prime six hurt attempts while frozen, then give the boss horizontal motion on its first AI tick. Sideways movement turns entity yaw before attacks; both skull origins must remain on the previous body X axis. Forward and stationary controls share the same expected origins. Packet capture additionally verifies exactly two skulls and their positions.",
+  "tags": [
+    "wither",
+    "entity",
+    "projectile",
+    "regression"
+  ],
+  "setup": [
+    "gamemode creative @a",
+    "difficulty normal",
+    "gamerule mob_griefing false",
+    "gamerule spawn_mobs false",
+    "forceload add 0 0 31 31",
+    "fill 0 79 0 31 79 31 minecraft:bedrock",
+    "fill 0 80 0 31 95 31 minecraft:air",
+    "tp @a 16 90 16"
+  ],
+  "steps": [
+    {
+      "command": "say PARITY_HEAD_YAW_CASE=east"
+    },
+    {
+      "command": "kill @e[type=!minecraft:player]",
+      "wait_ticks": 25
+    },
+    {
+      "command": "summon minecraft:wither 15.0 80.0 15.0 {Tags:[\"pp_boss\"],NoGravity:1b,Silent:1b,PersistenceRequired:1b,Rotation:[0.0f,0.0f]}"
+    },
+    {
+      "command": "damage @e[tag=pp_boss,limit=1] 1 minecraft:generic"
+    },
+    {
+      "command": "damage @e[tag=pp_boss,limit=1] 1 minecraft:generic"
+    },
+    {
+      "command": "damage @e[tag=pp_boss,limit=1] 1 minecraft:generic"
+    },
+    {
+      "command": "damage @e[tag=pp_boss,limit=1] 1 minecraft:generic"
+    },
+    {
+      "command": "damage @e[tag=pp_boss,limit=1] 1 minecraft:generic"
+    },
+    {
+      "command": "damage @e[tag=pp_boss,limit=1] 1 minecraft:generic"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.3d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:wither_skull,x=13.7,y=82.2,z=15,distance=..0.001]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:wither_skull,x=16.3,y=82.2,z=15,distance=..0.001]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "say PARITY_HEAD_YAW_CASE=west"
+    },
+    {
+      "command": "kill @e[type=!minecraft:player]",
+      "wait_ticks": 25
+    },
+    {
+      "command": "summon minecraft:wither 15.0 80.0 15.0 {Tags:[\"pp_boss\"],NoGravity:1b,Silent:1b,PersistenceRequired:1b,Rotation:[0.0f,0.0f]}"
+    },
+    {
+      "command": "damage @e[tag=pp_boss,limit=1] 1 minecraft:generic"
+    },
+    {
+      "command": "damage @e[tag=pp_boss,limit=1] 1 minecraft:generic"
+    },
+    {
+      "command": "damage @e[tag=pp_boss,limit=1] 1 minecraft:generic"
+    },
+    {
+      "command": "damage @e[tag=pp_boss,limit=1] 1 minecraft:generic"
+    },
+    {
+      "command": "damage @e[tag=pp_boss,limit=1] 1 minecraft:generic"
+    },
+    {
+      "command": "damage @e[tag=pp_boss,limit=1] 1 minecraft:generic"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[-0.3d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:wither_skull,x=13.7,y=82.2,z=15,distance=..0.001]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:wither_skull,x=16.3,y=82.2,z=15,distance=..0.001]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "say PARITY_HEAD_YAW_CASE=forward"
+    },
+    {
+      "command": "kill @e[type=!minecraft:player]",
+      "wait_ticks": 25
+    },
+    {
+      "command": "summon minecraft:wither 15.0 80.0 15.0 {Tags:[\"pp_boss\"],NoGravity:1b,Silent:1b,PersistenceRequired:1b,Rotation:[0.0f,0.0f]}"
+    },
+    {
+      "command": "damage @e[tag=pp_boss,limit=1] 1 minecraft:generic"
+    },
+    {
+      "command": "damage @e[tag=pp_boss,limit=1] 1 minecraft:generic"
+    },
+    {
+      "command": "damage @e[tag=pp_boss,limit=1] 1 minecraft:generic"
+    },
+    {
+      "command": "damage @e[tag=pp_boss,limit=1] 1 minecraft:generic"
+    },
+    {
+      "command": "damage @e[tag=pp_boss,limit=1] 1 minecraft:generic"
+    },
+    {
+      "command": "damage @e[tag=pp_boss,limit=1] 1 minecraft:generic"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.3d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:wither_skull,x=13.7,y=82.2,z=15,distance=..0.001]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:wither_skull,x=16.3,y=82.2,z=15,distance=..0.001]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "say PARITY_HEAD_YAW_CASE=stationary"
+    },
+    {
+      "command": "kill @e[type=!minecraft:player]",
+      "wait_ticks": 25
+    },
+    {
+      "command": "summon minecraft:wither 15.0 80.0 15.0 {Tags:[\"pp_boss\"],NoGravity:1b,Silent:1b,PersistenceRequired:1b,Rotation:[0.0f,0.0f]}"
+    },
+    {
+      "command": "damage @e[tag=pp_boss,limit=1] 1 minecraft:generic"
+    },
+    {
+      "command": "damage @e[tag=pp_boss,limit=1] 1 minecraft:generic"
+    },
+    {
+      "command": "damage @e[tag=pp_boss,limit=1] 1 minecraft:generic"
+    },
+    {
+      "command": "damage @e[tag=pp_boss,limit=1] 1 minecraft:generic"
+    },
+    {
+      "command": "damage @e[tag=pp_boss,limit=1] 1 minecraft:generic"
+    },
+    {
+      "command": "damage @e[tag=pp_boss,limit=1] 1 minecraft:generic"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:wither_skull,x=13.7,y=82.2,z=15,distance=..0.001]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:wither_skull,x=16.3,y=82.2,z=15,distance=..0.001]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    }
+  ],
+  "cleanup": [
+    "kill @e[type=!minecraft:player]"
+  ]
+}

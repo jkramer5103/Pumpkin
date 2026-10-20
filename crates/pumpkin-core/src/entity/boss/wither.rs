@@ -207,7 +207,7 @@ impl WitherEntity {
             .mob_entity
             .living_entity
             .get_attribute_value(&Attributes::SCALE) as f32;
-        let yaw = self.mob_entity.living_entity.entity.yaw.load();
+        let yaw = self.mob_entity.living_entity.entity.body_yaw.load();
         let angle = (yaw + 180.0 * (head as f32 - 1.0)).to_radians();
         self.mob_entity.living_entity.entity.pos.load().x
             + f64::from(angle.cos()) * 1.3 * f64::from(scale)
@@ -233,7 +233,7 @@ impl WitherEntity {
             .mob_entity
             .living_entity
             .get_attribute_value(&Attributes::SCALE) as f32;
-        let yaw = self.mob_entity.living_entity.entity.yaw.load();
+        let yaw = self.mob_entity.living_entity.entity.body_yaw.load();
         let angle = (yaw + 180.0 * (head as f32 - 1.0)).to_radians();
         self.mob_entity.living_entity.entity.pos.load().z
             + f64::from(angle.sin()) * 1.3 * f64::from(scale)
