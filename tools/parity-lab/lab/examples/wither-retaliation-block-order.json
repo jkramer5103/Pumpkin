@@ -1,0 +1,681 @@
+{
+  "schema_version": 1,
+  "id": "wither-retaliation-block-order",
+  "title": "Wither retaliation visits blocks in vanilla X then Y then Z order",
+  "category": "entities",
+  "description": "An isolated stationary boss breaks eight separated stone blocks; capture exact Java block destruction event positions at tick20 and preserve immune and mob-griefing controls.",
+  "tags": [
+    "entity",
+    "wither",
+    "block"
+  ],
+  "setup": [
+    "tick freeze",
+    "gamemode creative @a",
+    "difficulty easy",
+    "gamerule spawn_mobs false",
+    "gamerule mob_griefing true",
+    "gamerule block_drops false",
+    "tp @a 15.5 87 15.5"
+  ],
+  "steps": [
+    {
+      "command": "say PARITY_ORDER_CASE=1-stone"
+    },
+    {
+      "command": "kill @e[type=!minecraft:player]",
+      "wait_ticks": 25
+    },
+    {
+      "command": "fill 13 79 13 17 84 17 minecraft:bedrock"
+    },
+    {
+      "command": "fill 15 80 15 15 83 15 minecraft:air"
+    },
+    {
+      "command": "gamerule mob_griefing true"
+    },
+    {
+      "command": "setblock 14 80 14 minecraft:stone"
+    },
+    {
+      "command": "setblock 16 80 14 minecraft:stone"
+    },
+    {
+      "command": "setblock 14 82 14 minecraft:stone"
+    },
+    {
+      "command": "setblock 16 82 14 minecraft:stone"
+    },
+    {
+      "command": "setblock 14 80 16 minecraft:stone"
+    },
+    {
+      "command": "setblock 16 80 16 minecraft:stone"
+    },
+    {
+      "command": "setblock 14 82 16 minecraft:stone"
+    },
+    {
+      "command": "setblock 16 82 16 minecraft:stone"
+    },
+    {
+      "command": "summon minecraft:wither 15.5 80 15.5 {Tags:[\"pp_boss\"],NoGravity:1b,Silent:1b,Health:300.0f,Invul:0}"
+    },
+    {
+      "command": "say PARITY_ORDER_PULSE=1"
+    },
+    {
+      "command": "damage @e[tag=pp_boss,limit=1] 1 minecraft:generic",
+      "wait_ticks": 19
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss,x=15.5,y=80,z=15.5,distance=..0.001]",
+      "wait_ticks": 1,
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 14 80 14 minecraft:air",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 16 80 14 minecraft:air",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 14 82 14 minecraft:air",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 16 82 14 minecraft:air",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 14 80 16 minecraft:air",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 16 80 16 minecraft:air",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 14 82 16 minecraft:air",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 16 82 16 minecraft:air",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "say PARITY_ORDER_PULSE=2"
+    },
+    {
+      "command": "damage @e[tag=pp_boss,limit=1] 1 minecraft:generic",
+      "wait_ticks": 19
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss,x=15.5,y=80,z=15.5,distance=..0.001]",
+      "wait_ticks": 1,
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "say PARITY_ORDER_CASE=1-immune"
+    },
+    {
+      "command": "kill @e[type=!minecraft:player]",
+      "wait_ticks": 25
+    },
+    {
+      "command": "fill 13 79 13 17 84 17 minecraft:bedrock"
+    },
+    {
+      "command": "fill 15 80 15 15 83 15 minecraft:air"
+    },
+    {
+      "command": "gamerule mob_griefing true"
+    },
+    {
+      "command": "setblock 14 80 14 minecraft:bedrock"
+    },
+    {
+      "command": "setblock 16 80 14 minecraft:bedrock"
+    },
+    {
+      "command": "setblock 14 82 14 minecraft:bedrock"
+    },
+    {
+      "command": "setblock 16 82 14 minecraft:bedrock"
+    },
+    {
+      "command": "setblock 14 80 16 minecraft:bedrock"
+    },
+    {
+      "command": "setblock 16 80 16 minecraft:bedrock"
+    },
+    {
+      "command": "setblock 14 82 16 minecraft:bedrock"
+    },
+    {
+      "command": "setblock 16 82 16 minecraft:bedrock"
+    },
+    {
+      "command": "summon minecraft:wither 15.5 80 15.5 {Tags:[\"pp_boss\"],NoGravity:1b,Silent:1b,Health:300.0f,Invul:0}"
+    },
+    {
+      "command": "say PARITY_ORDER_PULSE=1"
+    },
+    {
+      "command": "damage @e[tag=pp_boss,limit=1] 1 minecraft:generic",
+      "wait_ticks": 19
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss,x=15.5,y=80,z=15.5,distance=..0.001]",
+      "wait_ticks": 1,
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 14 80 14 minecraft:bedrock",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 16 80 14 minecraft:bedrock",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 14 82 14 minecraft:bedrock",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 16 82 14 minecraft:bedrock",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 14 80 16 minecraft:bedrock",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 16 80 16 minecraft:bedrock",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 14 82 16 minecraft:bedrock",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 16 82 16 minecraft:bedrock",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "say PARITY_ORDER_PULSE=2"
+    },
+    {
+      "command": "damage @e[tag=pp_boss,limit=1] 1 minecraft:generic",
+      "wait_ticks": 19
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss,x=15.5,y=80,z=15.5,distance=..0.001]",
+      "wait_ticks": 1,
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "say PARITY_ORDER_CASE=1-griefing-off"
+    },
+    {
+      "command": "kill @e[type=!minecraft:player]",
+      "wait_ticks": 25
+    },
+    {
+      "command": "fill 13 79 13 17 84 17 minecraft:bedrock"
+    },
+    {
+      "command": "fill 15 80 15 15 83 15 minecraft:air"
+    },
+    {
+      "command": "gamerule mob_griefing false"
+    },
+    {
+      "command": "setblock 14 80 14 minecraft:stone"
+    },
+    {
+      "command": "setblock 16 80 14 minecraft:stone"
+    },
+    {
+      "command": "setblock 14 82 14 minecraft:stone"
+    },
+    {
+      "command": "setblock 16 82 14 minecraft:stone"
+    },
+    {
+      "command": "setblock 14 80 16 minecraft:stone"
+    },
+    {
+      "command": "setblock 16 80 16 minecraft:stone"
+    },
+    {
+      "command": "setblock 14 82 16 minecraft:stone"
+    },
+    {
+      "command": "setblock 16 82 16 minecraft:stone"
+    },
+    {
+      "command": "summon minecraft:wither 15.5 80 15.5 {Tags:[\"pp_boss\"],NoGravity:1b,Silent:1b,Health:300.0f,Invul:0}"
+    },
+    {
+      "command": "say PARITY_ORDER_PULSE=1"
+    },
+    {
+      "command": "damage @e[tag=pp_boss,limit=1] 1 minecraft:generic",
+      "wait_ticks": 19
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss,x=15.5,y=80,z=15.5,distance=..0.001]",
+      "wait_ticks": 1,
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 14 80 14 minecraft:stone",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 16 80 14 minecraft:stone",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 14 82 14 minecraft:stone",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 16 82 14 minecraft:stone",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 14 80 16 minecraft:stone",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 16 80 16 minecraft:stone",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 14 82 16 minecraft:stone",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 16 82 16 minecraft:stone",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "say PARITY_ORDER_PULSE=2"
+    },
+    {
+      "command": "damage @e[tag=pp_boss,limit=1] 1 minecraft:generic",
+      "wait_ticks": 19
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss,x=15.5,y=80,z=15.5,distance=..0.001]",
+      "wait_ticks": 1,
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "say PARITY_ORDER_CASE=2-stone"
+    },
+    {
+      "command": "kill @e[type=!minecraft:player]",
+      "wait_ticks": 25
+    },
+    {
+      "command": "fill 13 79 13 17 84 17 minecraft:bedrock"
+    },
+    {
+      "command": "fill 15 80 15 15 83 15 minecraft:air"
+    },
+    {
+      "command": "gamerule mob_griefing true"
+    },
+    {
+      "command": "setblock 14 80 14 minecraft:stone"
+    },
+    {
+      "command": "setblock 16 80 14 minecraft:stone"
+    },
+    {
+      "command": "setblock 14 82 14 minecraft:stone"
+    },
+    {
+      "command": "setblock 16 82 14 minecraft:stone"
+    },
+    {
+      "command": "setblock 14 80 16 minecraft:stone"
+    },
+    {
+      "command": "setblock 16 80 16 minecraft:stone"
+    },
+    {
+      "command": "setblock 14 82 16 minecraft:stone"
+    },
+    {
+      "command": "setblock 16 82 16 minecraft:stone"
+    },
+    {
+      "command": "summon minecraft:wither 15.5 80 15.5 {Tags:[\"pp_boss\"],NoGravity:1b,Silent:1b,Health:300.0f,Invul:0}"
+    },
+    {
+      "command": "say PARITY_ORDER_PULSE=1"
+    },
+    {
+      "command": "damage @e[tag=pp_boss,limit=1] 1 minecraft:generic",
+      "wait_ticks": 19
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss,x=15.5,y=80,z=15.5,distance=..0.001]",
+      "wait_ticks": 1,
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 14 80 14 minecraft:air",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 16 80 14 minecraft:air",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 14 82 14 minecraft:air",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 16 82 14 minecraft:air",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 14 80 16 minecraft:air",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 16 80 16 minecraft:air",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 14 82 16 minecraft:air",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 16 82 16 minecraft:air",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "say PARITY_ORDER_PULSE=2"
+    },
+    {
+      "command": "damage @e[tag=pp_boss,limit=1] 1 minecraft:generic",
+      "wait_ticks": 19
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss,x=15.5,y=80,z=15.5,distance=..0.001]",
+      "wait_ticks": 1,
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "say PARITY_ORDER_CASE=2-immune"
+    },
+    {
+      "command": "kill @e[type=!minecraft:player]",
+      "wait_ticks": 25
+    },
+    {
+      "command": "fill 13 79 13 17 84 17 minecraft:bedrock"
+    },
+    {
+      "command": "fill 15 80 15 15 83 15 minecraft:air"
+    },
+    {
+      "command": "gamerule mob_griefing true"
+    },
+    {
+      "command": "setblock 14 80 14 minecraft:bedrock"
+    },
+    {
+      "command": "setblock 16 80 14 minecraft:bedrock"
+    },
+    {
+      "command": "setblock 14 82 14 minecraft:bedrock"
+    },
+    {
+      "command": "setblock 16 82 14 minecraft:bedrock"
+    },
+    {
+      "command": "setblock 14 80 16 minecraft:bedrock"
+    },
+    {
+      "command": "setblock 16 80 16 minecraft:bedrock"
+    },
+    {
+      "command": "setblock 14 82 16 minecraft:bedrock"
+    },
+    {
+      "command": "setblock 16 82 16 minecraft:bedrock"
+    },
+    {
+      "command": "summon minecraft:wither 15.5 80 15.5 {Tags:[\"pp_boss\"],NoGravity:1b,Silent:1b,Health:300.0f,Invul:0}"
+    },
+    {
+      "command": "say PARITY_ORDER_PULSE=1"
+    },
+    {
+      "command": "damage @e[tag=pp_boss,limit=1] 1 minecraft:generic",
+      "wait_ticks": 19
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss,x=15.5,y=80,z=15.5,distance=..0.001]",
+      "wait_ticks": 1,
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 14 80 14 minecraft:bedrock",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 16 80 14 minecraft:bedrock",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 14 82 14 minecraft:bedrock",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 16 82 14 minecraft:bedrock",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 14 80 16 minecraft:bedrock",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 16 80 16 minecraft:bedrock",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 14 82 16 minecraft:bedrock",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 16 82 16 minecraft:bedrock",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "say PARITY_ORDER_PULSE=2"
+    },
+    {
+      "command": "damage @e[tag=pp_boss,limit=1] 1 minecraft:generic",
+      "wait_ticks": 19
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss,x=15.5,y=80,z=15.5,distance=..0.001]",
+      "wait_ticks": 1,
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "say PARITY_ORDER_CASE=2-griefing-off"
+    },
+    {
+      "command": "kill @e[type=!minecraft:player]",
+      "wait_ticks": 25
+    },
+    {
+      "command": "fill 13 79 13 17 84 17 minecraft:bedrock"
+    },
+    {
+      "command": "fill 15 80 15 15 83 15 minecraft:air"
+    },
+    {
+      "command": "gamerule mob_griefing false"
+    },
+    {
+      "command": "setblock 14 80 14 minecraft:stone"
+    },
+    {
+      "command": "setblock 16 80 14 minecraft:stone"
+    },
+    {
+      "command": "setblock 14 82 14 minecraft:stone"
+    },
+    {
+      "command": "setblock 16 82 14 minecraft:stone"
+    },
+    {
+      "command": "setblock 14 80 16 minecraft:stone"
+    },
+    {
+      "command": "setblock 16 80 16 minecraft:stone"
+    },
+    {
+      "command": "setblock 14 82 16 minecraft:stone"
+    },
+    {
+      "command": "setblock 16 82 16 minecraft:stone"
+    },
+    {
+      "command": "summon minecraft:wither 15.5 80 15.5 {Tags:[\"pp_boss\"],NoGravity:1b,Silent:1b,Health:300.0f,Invul:0}"
+    },
+    {
+      "command": "say PARITY_ORDER_PULSE=1"
+    },
+    {
+      "command": "damage @e[tag=pp_boss,limit=1] 1 minecraft:generic",
+      "wait_ticks": 19
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss,x=15.5,y=80,z=15.5,distance=..0.001]",
+      "wait_ticks": 1,
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 14 80 14 minecraft:stone",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 16 80 14 minecraft:stone",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 14 82 14 minecraft:stone",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 16 82 14 minecraft:stone",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 14 80 16 minecraft:stone",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 16 80 16 minecraft:stone",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 14 82 16 minecraft:stone",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 16 82 16 minecraft:stone",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "say PARITY_ORDER_PULSE=2"
+    },
+    {
+      "command": "damage @e[tag=pp_boss,limit=1] 1 minecraft:generic",
+      "wait_ticks": 19
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss,x=15.5,y=80,z=15.5,distance=..0.001]",
+      "wait_ticks": 1,
+      "observe": true,
+      "expect_contains": "Test passed"
+    }
+  ],
+  "cleanup": [
+    "kill @e[type=!minecraft:player]"
+  ],
+  "notes": "Protocol777 event sequence is headless evidence; no rendered client or natural fight proof."
+}

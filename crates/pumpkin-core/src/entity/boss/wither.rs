@@ -585,24 +585,22 @@ impl WitherEntity {
                     let min_pos = entity.block_pos.load();
                     let mut destroyed = false;
 
-                    for dx in -width..=width {
-                        for dy in 0..=height {
-                            for dz in -width..=width {
-                                let bpos = BlockPos::new(
-                                    min_pos.0.x + dx,
-                                    min_pos.0.y + dy,
-                                    min_pos.0.z + dz,
-                                );
-                                let block = world.get_block(&bpos);
-                                if Self::can_destroy(block) {
-                                    let mut flags = BlockFlags::NOTIFY_ALL;
-                                    if !world.level_info.load().game_rules.block_drops {
-                                        flags |= BlockFlags::SKIP_DROPS;
-                                    }
-                                    destroyed = world.break_block(&bpos, None, flags).is_some()
-                                        || destroyed;
-                                }
+                    for bpos in BlockPos::between_closed_coords(
+                        min_pos.0.x - width,
+                        min_pos.0.y,
+                        min_pos.0.z - width,
+                        min_pos.0.x + width,
+                        min_pos.0.y + height,
+                        min_pos.0.z + width,
+                    ) {
+                        let block = world.get_block(&bpos);
+                        if Self::can_destroy(block) {
+                            let mut flags = BlockFlags::NOTIFY_ALL;
+                            if !world.level_info.load().game_rules.block_drops {
+                                flags |= BlockFlags::SKIP_DROPS;
                             }
+                            destroyed =
+                                world.break_block(&bpos, None, flags).is_some() || destroyed;
                         }
                     }
 
