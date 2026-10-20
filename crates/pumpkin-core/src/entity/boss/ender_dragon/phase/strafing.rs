@@ -7,9 +7,23 @@ use crate::entity::{
 };
 use pumpkin_data::entity::EntityType;
 use pumpkin_util::math::vector3::Vector3;
-use std::sync::atomic::Ordering;
+use std::sync::atomic::{AtomicBool, Ordering};
 
-pub struct StrafingPhase;
+#[derive(Default)]
+pub struct StrafingPhase {
+    holding_pattern_clockwise: AtomicBool,
+}
+
+impl StrafingPhase {
+    const fn next_orbit_node(current_node: usize, clockwise: bool, crystals_alive: bool) -> usize {
+        let target_node = current_node as i32 + if clockwise { 1 } else { -1 };
+        if crystals_alive {
+            target_node.rem_euclid(12) as usize
+        } else {
+            (target_node - 12).rem_euclid(8) as usize + 12
+        }
+    }
+}
 
 impl super::Phase for StrafingPhase {
     fn get_type(&self) -> EnderDragonPhase {
@@ -84,7 +98,18 @@ impl super::Phase for StrafingPhase {
             if path.is_empty() {
                 drop(path);
                 let i = dragon.find_closest_node();
-                let j = dragon.find_closest_node_to(player_pos);
+                let mut j = i;
+                if rand::random_range(0..8) == 0 {
+                    self.holding_pattern_clockwise
+                        .fetch_xor(true, Ordering::Relaxed);
+                    j += 6;
+                }
+                let crystals_alive = dragon.has_alive_crystals();
+                let j = Self::next_orbit_node(
+                    j,
+                    self.holding_pattern_clockwise.load(Ordering::Relaxed),
+                    crystals_alive,
+                );
 
                 let mut path_lock = dragon
                     .path
@@ -94,8 +119,7 @@ impl super::Phase for StrafingPhase {
                     .nodes
                     .lock()
                     .unwrap_or_else(std::sync::PoisonError::into_inner);
-                *path_lock =
-                    find_path(&nodes, i, j, dragon.has_alive_crystals()).unwrap_or_default();
+                *path_lock = find_path(&nodes, i, j, crystals_alive).unwrap_or_default();
                 drop(nodes);
                 path = path_lock;
             }
@@ -200,5 +224,39 @@ impl super::Phase for StrafingPhase {
                 *charge -= 1;
             }
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::StrafingPhase;
+    use crate::entity::boss::ender_dragon::{DragonNode, NODE_COUNT, find_path};
+
+    #[test]
+    fn strafe_orbits_leave_the_player_node_and_wrap_the_active_ring() {
+        for (current, clockwise, crystals, target) in [
+            (20, false, false, 19),
+            (20, true, false, 13),
+            (12, false, false, 19),
+            (19, true, false, 12),
+            (0, false, true, 11),
+            (11, true, true, 0),
+            (20, false, true, 7),
+            (26, true, false, 19),
+        ] {
+            assert_eq!(
+                StrafingPhase::next_orbit_node(current, clockwise, crystals),
+                target,
+            );
+        }
+
+        // In the arena both dragon and player are nearest node 20. Retargeting
+        // the player returns no hops; vanilla instead flies toward node 19.
+        let mut nodes = [None; NODE_COUNT];
+        nodes[20] = Some(DragonNode::new(20.0, 73.0, 0.0));
+        nodes[19] = Some(DragonNode::new(28.0, 73.0, -29.0));
+        assert_eq!(find_path(&nodes, 20, 20, false), Some(vec![]));
+        let target = StrafingPhase::next_orbit_node(20, false, false);
+        assert_eq!(find_path(&nodes, 20, target, false), Some(vec![19]));
     }
 }

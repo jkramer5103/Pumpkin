@@ -135,7 +135,7 @@ impl PhaseManager {
         Self {
             phases: [
                 Arc::new(CirclingPhase),
-                Arc::new(StrafingPhase),
+                Arc::new(StrafingPhase::default()),
                 Arc::new(ChargingPhase),
                 Arc::new(FlyToPortalPhase),
                 Arc::new(LandingApproachPhase::default()),
