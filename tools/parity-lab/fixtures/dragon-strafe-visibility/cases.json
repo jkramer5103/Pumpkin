@@ -1,0 +1,61 @@
+{
+  "trials": 2,
+  "cases": [
+    {
+      "id": "covered",
+      "covered": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "first_attack": null
+    },
+    {
+      "id": "clear",
+      "covered": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "first_attack": 5
+    },
+    {
+      "id": "regain_sight",
+      "covered": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "first_attack": 11
+    },
+    {
+      "id": "interrupt_charge",
+      "covered": [
+        false,
+        false,
+        true,
+        true,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "first_attack": 9
+    }
+  ]
+}

@@ -118,7 +118,13 @@ impl super::Phase for StrafingPhase {
         drop(path);
         drop(target_location);
 
-        if player_pos.distance_squared(pos) < 4096.0 {
+        if player_pos.distance_squared(pos) < 4096.0
+            && dragon
+                .mob_entity
+                .living_entity
+                .entity
+                .has_line_of_sight(player.get_entity())
+        {
             let mut charge = dragon
                 .fireball_charge
                 .lock()
