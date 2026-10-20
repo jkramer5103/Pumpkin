@@ -5,6 +5,19 @@ use std::sync::atomic::Ordering;
 
 pub struct CirclingPhase;
 
+impl CirclingPhase {
+    fn should_choose_new_phase(
+        target_distance_squared: Option<f64>,
+        path_done: bool,
+        horizontal_collision: bool,
+    ) -> bool {
+        path_done
+            && target_distance_squared.is_some_and(|distance| {
+                !(100.0..=22500.0).contains(&distance) || horizontal_collision
+            })
+    }
+}
+
 impl super::Phase for CirclingPhase {
     fn get_type(&self) -> EnderDragonPhase {
         EnderDragonPhase::Circling
@@ -30,16 +43,24 @@ impl super::Phase for CirclingPhase {
             .unwrap_or_else(std::sync::PoisonError::into_inner);
 
         let d0 = target_location.map_or(0.0, |loc| pos.distance_squared(loc));
+        let horizontal_collision = dragon
+            .mob_entity
+            .living_entity
+            .entity
+            .horizontal_collision
+            .load(Ordering::Relaxed);
+        // Check the previous path before selecting or consuming another waypoint.
+        let choose_new_phase = Self::should_choose_new_phase(
+            target_location.map(|_| d0),
+            dragon
+                .path
+                .lock()
+                .unwrap_or_else(std::sync::PoisonError::into_inner)
+                .is_empty(),
+            horizontal_collision,
+        );
 
-        if target_location.is_none()
-            || !(100.0..=22500.0).contains(&d0)
-            || dragon
-                .mob_entity
-                .living_entity
-                .entity
-                .horizontal_collision
-                .load(Ordering::Relaxed)
-        {
+        if target_location.is_none() || !(100.0..=22500.0).contains(&d0) || horizontal_collision {
             let mut path = dragon
                 .path
                 .lock()
@@ -109,7 +130,7 @@ impl super::Phase for CirclingPhase {
         }
         drop(target_location);
 
-        if rand::random_range(0..64) == 0 {
+        if choose_new_phase && rand::random_range(0..64) == 0 {
             if rand::random_bool(0.5) {
                 dragon.set_phase(EnderDragonPhase::FlyToPortal);
             } else if let Some(player) = dragon.find_nearest_player() {
@@ -121,5 +142,55 @@ impl super::Phase for CirclingPhase {
                 dragon.set_phase(EnderDragonPhase::Strafing);
             }
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::CirclingPhase;
+
+    #[test]
+    fn circling_keeps_its_phase_while_flying_to_an_unreached_target() {
+        // The arena holds each dragon 87 to 107 blocks above its next waypoint.
+        for distance in [100.0, 87.0 * 87.0, 107.0 * 107.0, 22500.0] {
+            for path_done in [false, true] {
+                assert!(!CirclingPhase::should_choose_new_phase(
+                    Some(distance),
+                    path_done,
+                    false,
+                ));
+            }
+        }
+    }
+
+    #[test]
+    fn circling_reconsiders_only_a_completed_path_at_a_target_decision() {
+        for collision in [false, true] {
+            assert!(!CirclingPhase::should_choose_new_phase(
+                None, true, collision
+            ));
+            for distance in [0.0, 99.999, 22500.001] {
+                assert!(!CirclingPhase::should_choose_new_phase(
+                    Some(distance),
+                    false,
+                    collision,
+                ));
+                assert!(CirclingPhase::should_choose_new_phase(
+                    Some(distance),
+                    true,
+                    collision,
+                ));
+            }
+        }
+        assert!(CirclingPhase::should_choose_new_phase(
+            Some(200.0),
+            true,
+            true
+        ));
+        assert!(!CirclingPhase::should_choose_new_phase(
+            Some(200.0),
+            false,
+            true
+        ));
     }
 }

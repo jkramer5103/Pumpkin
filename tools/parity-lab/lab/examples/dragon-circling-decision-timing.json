@@ -1,0 +1,1500 @@
+{
+  "schema_version": 1,
+  "id": "dragon-circling-decision-timing",
+  "title": "Dragons retain circling while following a distant flight target",
+  "description": "Eight dragons spaced 28 blocks apart follow an unfinished orbit leg for 256 controlled ticks, with position/motion reset every eight ticks to keep their destinations distant. Hovering first initializes nodes so this does not test initial route seeding. The NoAI control remains still; the hovering control retains its phase and altitude. Random transition counts on baseline are not deterministic.",
+  "category": "entity",
+  "tags": [
+    "ender-dragon",
+    "ai"
+  ],
+  "setup": [
+    "tick freeze",
+    "difficulty normal",
+    "gamerule spawn_mobs false",
+    "gamerule mob_griefing false",
+    "forceload add -64 -64 63 63",
+    "gamemode creative ParitySmoke",
+    "tp ParitySmoke 0 200 0"
+  ],
+  "steps": [
+    {
+      "command": "say Wait for arena chunks",
+      "wait_ticks": 40
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "summon minecraft:ender_dragon -28.0 180.0 -28.0 {PersistenceRequired:1b,Silent:1b,DragonPhase:10,Tags:[\"orbit_timing\",\"orbit_0\"]}"
+    },
+    {
+      "command": "summon minecraft:ender_dragon -28.0 180.0 0.0 {PersistenceRequired:1b,Silent:1b,DragonPhase:10,Tags:[\"orbit_timing\",\"orbit_1\"]}"
+    },
+    {
+      "command": "summon minecraft:ender_dragon -28.0 180.0 28.0 {PersistenceRequired:1b,Silent:1b,DragonPhase:10,Tags:[\"orbit_timing\",\"orbit_2\"]}"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.0 180.0 -28.0 {PersistenceRequired:1b,Silent:1b,DragonPhase:10,Tags:[\"orbit_timing\",\"orbit_3\"]}"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.0 180.0 28.0 {PersistenceRequired:1b,Silent:1b,DragonPhase:10,Tags:[\"orbit_timing\",\"orbit_4\"]}"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 28.0 180.0 -28.0 {PersistenceRequired:1b,Silent:1b,DragonPhase:10,Tags:[\"orbit_timing\",\"orbit_5\"]}"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 28.0 180.0 0.0 {PersistenceRequired:1b,Silent:1b,DragonPhase:10,Tags:[\"orbit_timing\",\"orbit_6\"]}"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 28.0 180.0 28.0 {PersistenceRequired:1b,Silent:1b,DragonPhase:10,Tags:[\"orbit_timing\",\"orbit_7\"]}"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.0 230.0 0.0 {PersistenceRequired:1b,Silent:1b,NoAI:1b,DragonPhase:0,Tags:[\"orbit_noai\"]}"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0.0 260.0 0.0 {PersistenceRequired:1b,Silent:1b,DragonPhase:10,Tags:[\"orbit_hover\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute as @e[type=minecraft:ender_dragon,tag=orbit_timing] run data merge entity @s {DragonPhase:0,Motion:[0.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=orbit_timing,nbt={DragonPhase:0}]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 8"
+    },
+    {
+      "command": "say LEG_SAMPLE_0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_0] -28.0 180.0 -28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_1] -28.0 180.0 0.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_2] -28.0 180.0 28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_3] 0.0 180.0 -28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_4] 0.0 180.0 28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_5] 28.0 180.0 -28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_6] 28.0 180.0 0.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_7] 28.0 180.0 28.0 0 0"
+    },
+    {
+      "command": "execute as @e[type=minecraft:ender_dragon,tag=orbit_timing] run data merge entity @s {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 8
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=orbit_timing,nbt={DragonPhase:0}]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 8"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=orbit_timing]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 8"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=orbit_0,limit=1] Pos"
+    },
+    {
+      "command": "say LEG_SAMPLE_1"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_0] -28.0 180.0 -28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_1] -28.0 180.0 0.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_2] -28.0 180.0 28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_3] 0.0 180.0 -28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_4] 0.0 180.0 28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_5] 28.0 180.0 -28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_6] 28.0 180.0 0.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_7] 28.0 180.0 28.0 0 0"
+    },
+    {
+      "command": "execute as @e[type=minecraft:ender_dragon,tag=orbit_timing] run data merge entity @s {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 8
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=orbit_timing,nbt={DragonPhase:0}]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 8"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=orbit_timing]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 8"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=orbit_0,limit=1] Pos"
+    },
+    {
+      "command": "say LEG_SAMPLE_2"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_0] -28.0 180.0 -28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_1] -28.0 180.0 0.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_2] -28.0 180.0 28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_3] 0.0 180.0 -28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_4] 0.0 180.0 28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_5] 28.0 180.0 -28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_6] 28.0 180.0 0.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_7] 28.0 180.0 28.0 0 0"
+    },
+    {
+      "command": "execute as @e[type=minecraft:ender_dragon,tag=orbit_timing] run data merge entity @s {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 8
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=orbit_timing,nbt={DragonPhase:0}]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 8"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=orbit_timing]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 8"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=orbit_0,limit=1] Pos"
+    },
+    {
+      "command": "say LEG_SAMPLE_3"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_0] -28.0 180.0 -28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_1] -28.0 180.0 0.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_2] -28.0 180.0 28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_3] 0.0 180.0 -28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_4] 0.0 180.0 28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_5] 28.0 180.0 -28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_6] 28.0 180.0 0.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_7] 28.0 180.0 28.0 0 0"
+    },
+    {
+      "command": "execute as @e[type=minecraft:ender_dragon,tag=orbit_timing] run data merge entity @s {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 8
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=orbit_timing,nbt={DragonPhase:0}]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 8"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=orbit_timing]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 8"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=orbit_0,limit=1] Pos"
+    },
+    {
+      "command": "say LEG_SAMPLE_4"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_0] -28.0 180.0 -28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_1] -28.0 180.0 0.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_2] -28.0 180.0 28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_3] 0.0 180.0 -28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_4] 0.0 180.0 28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_5] 28.0 180.0 -28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_6] 28.0 180.0 0.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_7] 28.0 180.0 28.0 0 0"
+    },
+    {
+      "command": "execute as @e[type=minecraft:ender_dragon,tag=orbit_timing] run data merge entity @s {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 8
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=orbit_timing,nbt={DragonPhase:0}]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 8"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=orbit_timing]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 8"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=orbit_0,limit=1] Pos"
+    },
+    {
+      "command": "say LEG_SAMPLE_5"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_0] -28.0 180.0 -28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_1] -28.0 180.0 0.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_2] -28.0 180.0 28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_3] 0.0 180.0 -28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_4] 0.0 180.0 28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_5] 28.0 180.0 -28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_6] 28.0 180.0 0.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_7] 28.0 180.0 28.0 0 0"
+    },
+    {
+      "command": "execute as @e[type=minecraft:ender_dragon,tag=orbit_timing] run data merge entity @s {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 8
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=orbit_timing,nbt={DragonPhase:0}]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 8"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=orbit_timing]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 8"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=orbit_0,limit=1] Pos"
+    },
+    {
+      "command": "say LEG_SAMPLE_6"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_0] -28.0 180.0 -28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_1] -28.0 180.0 0.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_2] -28.0 180.0 28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_3] 0.0 180.0 -28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_4] 0.0 180.0 28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_5] 28.0 180.0 -28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_6] 28.0 180.0 0.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_7] 28.0 180.0 28.0 0 0"
+    },
+    {
+      "command": "execute as @e[type=minecraft:ender_dragon,tag=orbit_timing] run data merge entity @s {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 8
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=orbit_timing,nbt={DragonPhase:0}]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 8"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=orbit_timing]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 8"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=orbit_0,limit=1] Pos"
+    },
+    {
+      "command": "say LEG_SAMPLE_7"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_0] -28.0 180.0 -28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_1] -28.0 180.0 0.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_2] -28.0 180.0 28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_3] 0.0 180.0 -28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_4] 0.0 180.0 28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_5] 28.0 180.0 -28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_6] 28.0 180.0 0.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_7] 28.0 180.0 28.0 0 0"
+    },
+    {
+      "command": "execute as @e[type=minecraft:ender_dragon,tag=orbit_timing] run data merge entity @s {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 8
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=orbit_timing,nbt={DragonPhase:0}]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 8"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=orbit_timing]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 8"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=orbit_0,limit=1] Pos"
+    },
+    {
+      "command": "say LEG_SAMPLE_8"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_0] -28.0 180.0 -28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_1] -28.0 180.0 0.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_2] -28.0 180.0 28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_3] 0.0 180.0 -28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_4] 0.0 180.0 28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_5] 28.0 180.0 -28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_6] 28.0 180.0 0.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_7] 28.0 180.0 28.0 0 0"
+    },
+    {
+      "command": "execute as @e[type=minecraft:ender_dragon,tag=orbit_timing] run data merge entity @s {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 8
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=orbit_timing,nbt={DragonPhase:0}]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 8"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=orbit_timing]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 8"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=orbit_0,limit=1] Pos"
+    },
+    {
+      "command": "say LEG_SAMPLE_9"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_0] -28.0 180.0 -28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_1] -28.0 180.0 0.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_2] -28.0 180.0 28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_3] 0.0 180.0 -28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_4] 0.0 180.0 28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_5] 28.0 180.0 -28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_6] 28.0 180.0 0.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_7] 28.0 180.0 28.0 0 0"
+    },
+    {
+      "command": "execute as @e[type=minecraft:ender_dragon,tag=orbit_timing] run data merge entity @s {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 8
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=orbit_timing,nbt={DragonPhase:0}]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 8"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=orbit_timing]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 8"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=orbit_0,limit=1] Pos"
+    },
+    {
+      "command": "say LEG_SAMPLE_10"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_0] -28.0 180.0 -28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_1] -28.0 180.0 0.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_2] -28.0 180.0 28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_3] 0.0 180.0 -28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_4] 0.0 180.0 28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_5] 28.0 180.0 -28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_6] 28.0 180.0 0.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_7] 28.0 180.0 28.0 0 0"
+    },
+    {
+      "command": "execute as @e[type=minecraft:ender_dragon,tag=orbit_timing] run data merge entity @s {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 8
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=orbit_timing,nbt={DragonPhase:0}]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 8"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=orbit_timing]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 8"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=orbit_0,limit=1] Pos"
+    },
+    {
+      "command": "say LEG_SAMPLE_11"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_0] -28.0 180.0 -28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_1] -28.0 180.0 0.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_2] -28.0 180.0 28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_3] 0.0 180.0 -28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_4] 0.0 180.0 28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_5] 28.0 180.0 -28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_6] 28.0 180.0 0.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_7] 28.0 180.0 28.0 0 0"
+    },
+    {
+      "command": "execute as @e[type=minecraft:ender_dragon,tag=orbit_timing] run data merge entity @s {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 8
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=orbit_timing,nbt={DragonPhase:0}]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 8"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=orbit_timing]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 8"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=orbit_0,limit=1] Pos"
+    },
+    {
+      "command": "say LEG_SAMPLE_12"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_0] -28.0 180.0 -28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_1] -28.0 180.0 0.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_2] -28.0 180.0 28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_3] 0.0 180.0 -28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_4] 0.0 180.0 28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_5] 28.0 180.0 -28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_6] 28.0 180.0 0.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_7] 28.0 180.0 28.0 0 0"
+    },
+    {
+      "command": "execute as @e[type=minecraft:ender_dragon,tag=orbit_timing] run data merge entity @s {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 8
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=orbit_timing,nbt={DragonPhase:0}]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 8"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=orbit_timing]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 8"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=orbit_0,limit=1] Pos"
+    },
+    {
+      "command": "say LEG_SAMPLE_13"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_0] -28.0 180.0 -28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_1] -28.0 180.0 0.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_2] -28.0 180.0 28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_3] 0.0 180.0 -28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_4] 0.0 180.0 28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_5] 28.0 180.0 -28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_6] 28.0 180.0 0.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_7] 28.0 180.0 28.0 0 0"
+    },
+    {
+      "command": "execute as @e[type=minecraft:ender_dragon,tag=orbit_timing] run data merge entity @s {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 8
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=orbit_timing,nbt={DragonPhase:0}]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 8"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=orbit_timing]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 8"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=orbit_0,limit=1] Pos"
+    },
+    {
+      "command": "say LEG_SAMPLE_14"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_0] -28.0 180.0 -28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_1] -28.0 180.0 0.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_2] -28.0 180.0 28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_3] 0.0 180.0 -28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_4] 0.0 180.0 28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_5] 28.0 180.0 -28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_6] 28.0 180.0 0.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_7] 28.0 180.0 28.0 0 0"
+    },
+    {
+      "command": "execute as @e[type=minecraft:ender_dragon,tag=orbit_timing] run data merge entity @s {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 8
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=orbit_timing,nbt={DragonPhase:0}]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 8"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=orbit_timing]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 8"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=orbit_0,limit=1] Pos"
+    },
+    {
+      "command": "say LEG_SAMPLE_15"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_0] -28.0 180.0 -28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_1] -28.0 180.0 0.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_2] -28.0 180.0 28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_3] 0.0 180.0 -28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_4] 0.0 180.0 28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_5] 28.0 180.0 -28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_6] 28.0 180.0 0.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_7] 28.0 180.0 28.0 0 0"
+    },
+    {
+      "command": "execute as @e[type=minecraft:ender_dragon,tag=orbit_timing] run data merge entity @s {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 8
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=orbit_timing,nbt={DragonPhase:0}]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 8"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=orbit_timing]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 8"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=orbit_0,limit=1] Pos"
+    },
+    {
+      "command": "say LEG_SAMPLE_16"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_0] -28.0 180.0 -28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_1] -28.0 180.0 0.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_2] -28.0 180.0 28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_3] 0.0 180.0 -28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_4] 0.0 180.0 28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_5] 28.0 180.0 -28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_6] 28.0 180.0 0.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_7] 28.0 180.0 28.0 0 0"
+    },
+    {
+      "command": "execute as @e[type=minecraft:ender_dragon,tag=orbit_timing] run data merge entity @s {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 8
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=orbit_timing,nbt={DragonPhase:0}]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 8"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=orbit_timing]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 8"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=orbit_0,limit=1] Pos"
+    },
+    {
+      "command": "say LEG_SAMPLE_17"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_0] -28.0 180.0 -28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_1] -28.0 180.0 0.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_2] -28.0 180.0 28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_3] 0.0 180.0 -28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_4] 0.0 180.0 28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_5] 28.0 180.0 -28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_6] 28.0 180.0 0.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_7] 28.0 180.0 28.0 0 0"
+    },
+    {
+      "command": "execute as @e[type=minecraft:ender_dragon,tag=orbit_timing] run data merge entity @s {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 8
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=orbit_timing,nbt={DragonPhase:0}]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 8"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=orbit_timing]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 8"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=orbit_0,limit=1] Pos"
+    },
+    {
+      "command": "say LEG_SAMPLE_18"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_0] -28.0 180.0 -28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_1] -28.0 180.0 0.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_2] -28.0 180.0 28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_3] 0.0 180.0 -28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_4] 0.0 180.0 28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_5] 28.0 180.0 -28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_6] 28.0 180.0 0.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_7] 28.0 180.0 28.0 0 0"
+    },
+    {
+      "command": "execute as @e[type=minecraft:ender_dragon,tag=orbit_timing] run data merge entity @s {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 8
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=orbit_timing,nbt={DragonPhase:0}]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 8"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=orbit_timing]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 8"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=orbit_0,limit=1] Pos"
+    },
+    {
+      "command": "say LEG_SAMPLE_19"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_0] -28.0 180.0 -28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_1] -28.0 180.0 0.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_2] -28.0 180.0 28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_3] 0.0 180.0 -28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_4] 0.0 180.0 28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_5] 28.0 180.0 -28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_6] 28.0 180.0 0.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_7] 28.0 180.0 28.0 0 0"
+    },
+    {
+      "command": "execute as @e[type=minecraft:ender_dragon,tag=orbit_timing] run data merge entity @s {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 8
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=orbit_timing,nbt={DragonPhase:0}]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 8"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=orbit_timing]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 8"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=orbit_0,limit=1] Pos"
+    },
+    {
+      "command": "say LEG_SAMPLE_20"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_0] -28.0 180.0 -28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_1] -28.0 180.0 0.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_2] -28.0 180.0 28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_3] 0.0 180.0 -28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_4] 0.0 180.0 28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_5] 28.0 180.0 -28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_6] 28.0 180.0 0.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_7] 28.0 180.0 28.0 0 0"
+    },
+    {
+      "command": "execute as @e[type=minecraft:ender_dragon,tag=orbit_timing] run data merge entity @s {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 8
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=orbit_timing,nbt={DragonPhase:0}]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 8"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=orbit_timing]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 8"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=orbit_0,limit=1] Pos"
+    },
+    {
+      "command": "say LEG_SAMPLE_21"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_0] -28.0 180.0 -28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_1] -28.0 180.0 0.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_2] -28.0 180.0 28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_3] 0.0 180.0 -28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_4] 0.0 180.0 28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_5] 28.0 180.0 -28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_6] 28.0 180.0 0.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_7] 28.0 180.0 28.0 0 0"
+    },
+    {
+      "command": "execute as @e[type=minecraft:ender_dragon,tag=orbit_timing] run data merge entity @s {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 8
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=orbit_timing,nbt={DragonPhase:0}]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 8"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=orbit_timing]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 8"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=orbit_0,limit=1] Pos"
+    },
+    {
+      "command": "say LEG_SAMPLE_22"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_0] -28.0 180.0 -28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_1] -28.0 180.0 0.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_2] -28.0 180.0 28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_3] 0.0 180.0 -28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_4] 0.0 180.0 28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_5] 28.0 180.0 -28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_6] 28.0 180.0 0.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_7] 28.0 180.0 28.0 0 0"
+    },
+    {
+      "command": "execute as @e[type=minecraft:ender_dragon,tag=orbit_timing] run data merge entity @s {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 8
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=orbit_timing,nbt={DragonPhase:0}]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 8"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=orbit_timing]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 8"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=orbit_0,limit=1] Pos"
+    },
+    {
+      "command": "say LEG_SAMPLE_23"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_0] -28.0 180.0 -28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_1] -28.0 180.0 0.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_2] -28.0 180.0 28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_3] 0.0 180.0 -28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_4] 0.0 180.0 28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_5] 28.0 180.0 -28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_6] 28.0 180.0 0.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_7] 28.0 180.0 28.0 0 0"
+    },
+    {
+      "command": "execute as @e[type=minecraft:ender_dragon,tag=orbit_timing] run data merge entity @s {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 8
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=orbit_timing,nbt={DragonPhase:0}]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 8"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=orbit_timing]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 8"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=orbit_0,limit=1] Pos"
+    },
+    {
+      "command": "say LEG_SAMPLE_24"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_0] -28.0 180.0 -28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_1] -28.0 180.0 0.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_2] -28.0 180.0 28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_3] 0.0 180.0 -28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_4] 0.0 180.0 28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_5] 28.0 180.0 -28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_6] 28.0 180.0 0.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_7] 28.0 180.0 28.0 0 0"
+    },
+    {
+      "command": "execute as @e[type=minecraft:ender_dragon,tag=orbit_timing] run data merge entity @s {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 8
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=orbit_timing,nbt={DragonPhase:0}]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 8"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=orbit_timing]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 8"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=orbit_0,limit=1] Pos"
+    },
+    {
+      "command": "say LEG_SAMPLE_25"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_0] -28.0 180.0 -28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_1] -28.0 180.0 0.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_2] -28.0 180.0 28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_3] 0.0 180.0 -28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_4] 0.0 180.0 28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_5] 28.0 180.0 -28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_6] 28.0 180.0 0.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_7] 28.0 180.0 28.0 0 0"
+    },
+    {
+      "command": "execute as @e[type=minecraft:ender_dragon,tag=orbit_timing] run data merge entity @s {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 8
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=orbit_timing,nbt={DragonPhase:0}]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 8"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=orbit_timing]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 8"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=orbit_0,limit=1] Pos"
+    },
+    {
+      "command": "say LEG_SAMPLE_26"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_0] -28.0 180.0 -28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_1] -28.0 180.0 0.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_2] -28.0 180.0 28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_3] 0.0 180.0 -28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_4] 0.0 180.0 28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_5] 28.0 180.0 -28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_6] 28.0 180.0 0.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_7] 28.0 180.0 28.0 0 0"
+    },
+    {
+      "command": "execute as @e[type=minecraft:ender_dragon,tag=orbit_timing] run data merge entity @s {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 8
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=orbit_timing,nbt={DragonPhase:0}]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 8"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=orbit_timing]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 8"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=orbit_0,limit=1] Pos"
+    },
+    {
+      "command": "say LEG_SAMPLE_27"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_0] -28.0 180.0 -28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_1] -28.0 180.0 0.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_2] -28.0 180.0 28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_3] 0.0 180.0 -28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_4] 0.0 180.0 28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_5] 28.0 180.0 -28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_6] 28.0 180.0 0.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_7] 28.0 180.0 28.0 0 0"
+    },
+    {
+      "command": "execute as @e[type=minecraft:ender_dragon,tag=orbit_timing] run data merge entity @s {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 8
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=orbit_timing,nbt={DragonPhase:0}]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 8"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=orbit_timing]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 8"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=orbit_0,limit=1] Pos"
+    },
+    {
+      "command": "say LEG_SAMPLE_28"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_0] -28.0 180.0 -28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_1] -28.0 180.0 0.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_2] -28.0 180.0 28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_3] 0.0 180.0 -28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_4] 0.0 180.0 28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_5] 28.0 180.0 -28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_6] 28.0 180.0 0.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_7] 28.0 180.0 28.0 0 0"
+    },
+    {
+      "command": "execute as @e[type=minecraft:ender_dragon,tag=orbit_timing] run data merge entity @s {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 8
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=orbit_timing,nbt={DragonPhase:0}]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 8"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=orbit_timing]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 8"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=orbit_0,limit=1] Pos"
+    },
+    {
+      "command": "say LEG_SAMPLE_29"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_0] -28.0 180.0 -28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_1] -28.0 180.0 0.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_2] -28.0 180.0 28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_3] 0.0 180.0 -28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_4] 0.0 180.0 28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_5] 28.0 180.0 -28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_6] 28.0 180.0 0.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_7] 28.0 180.0 28.0 0 0"
+    },
+    {
+      "command": "execute as @e[type=minecraft:ender_dragon,tag=orbit_timing] run data merge entity @s {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 8
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=orbit_timing,nbt={DragonPhase:0}]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 8"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=orbit_timing]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 8"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=orbit_0,limit=1] Pos"
+    },
+    {
+      "command": "say LEG_SAMPLE_30"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_0] -28.0 180.0 -28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_1] -28.0 180.0 0.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_2] -28.0 180.0 28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_3] 0.0 180.0 -28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_4] 0.0 180.0 28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_5] 28.0 180.0 -28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_6] 28.0 180.0 0.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_7] 28.0 180.0 28.0 0 0"
+    },
+    {
+      "command": "execute as @e[type=minecraft:ender_dragon,tag=orbit_timing] run data merge entity @s {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 8
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=orbit_timing,nbt={DragonPhase:0}]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 8"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=orbit_timing]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 8"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=orbit_0,limit=1] Pos"
+    },
+    {
+      "command": "say LEG_SAMPLE_31"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_0] -28.0 180.0 -28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_1] -28.0 180.0 0.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_2] -28.0 180.0 28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_3] 0.0 180.0 -28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_4] 0.0 180.0 28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_5] 28.0 180.0 -28.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_6] 28.0 180.0 0.0 0 0"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit_7] 28.0 180.0 28.0 0 0"
+    },
+    {
+      "command": "execute as @e[type=minecraft:ender_dragon,tag=orbit_timing] run data merge entity @s {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 8
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=orbit_timing,nbt={DragonPhase:0}]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 8"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=orbit_timing]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 8"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=orbit_0,limit=1] Pos"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=orbit_noai,nbt={Pos:[0.0d,230.0d,0.0d]}]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=orbit_noai,limit=1] DragonPhase",
+      "observe": true,
+      "expect_contains": "0"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=orbit_hover,limit=1] Pos[1]",
+      "observe": true,
+      "expect_contains": "following entity data: 260"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=orbit_hover,limit=1] DragonPhase",
+      "observe": true,
+      "expect_contains": "10"
+    }
+  ],
+  "cleanup": [
+    "kill @e[type=minecraft:ender_dragon]",
+    "execute unless entity @e[type=minecraft:ender_dragon]"
+  ]
+}
