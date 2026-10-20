@@ -1,0 +1,55 @@
+{
+  "schema_version": 1,
+  "id": "wither-passenger-idle-flight",
+  "title": "Wither idle flight with non-controlling passengers",
+  "category": "entities",
+  "description": "A Wither carrying a creative player or armor stand still strolls. A controlling zombie passenger suppresses its own stroll goal.",
+  "tags": [
+    "entity",
+    "wither",
+    "ai"
+  ],
+  "setup": [
+    "tick freeze",
+    "gamemode creative @a",
+    "difficulty easy",
+    "gamerule mob_griefing false",
+    "gamerule spawn_mobs false",
+    "forceload add 0 0 31 31",
+    "fill 0 79 0 31 96 31 minecraft:bedrock",
+    "fill 1 80 1 30 95 30 minecraft:air",
+    "tp @a 15.5 91 15.5"
+  ],
+  "steps": [
+    {
+      "command": "execute unless entity @e[tag=pp_boss,nbt={NoAI:1b}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss,nbt={Invul:0}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss,x=1,y=80,z=1,dx=29,dy=15,dz=29]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute unless entity @e[type=!minecraft:player,tag=!pp_boss,tag=!pp_rider]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @a[gamemode=creative]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    }
+  ],
+  "cleanup": [
+    "ride @a[limit=1] dismount",
+    "kill @e[type=!minecraft:player]"
+  ],
+  "notes": "Specialized world-fixture regression. Twice, test player, armor_stand, zombie and empty cases. Summon one Health100,Silent1,NoGravity1,Invul0 Wither at15.5 84 15.5 and set movement_speed/flying_speed to0.5. Spawn armor stand or zombie with NoAI1,NoGravity1,Invulnerable1,Silent1 and tag pp_rider, then mount it with /ride; or mount the creative player. Verify riding through execute on vehicle; player passengers are omitted from saved Passengers NBT. Sample position every10 controlled ticks for at most1200 ticks, stopping once horizontal displacement exceeds1 block. Zombie control samples exactly120 ticks and must remain still. Validate presence, bounds, main-head target metadata, client lifecycle and logs. No rendered-client or whole-fight proof."
+}

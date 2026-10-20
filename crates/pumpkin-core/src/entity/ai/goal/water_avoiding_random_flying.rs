@@ -2,6 +2,7 @@ use super::{Controls, Goal, to_goal_ticks};
 use crate::entity::ai::pathfinder::NavigatorGoal;
 use crate::entity::ai::util::{air_and_water_random_pos, hover_random_pos};
 use crate::entity::mob::Mob;
+use pumpkin_data::tag::{self, Taggable};
 use pumpkin_util::math::vector3::Vector3;
 use rand::RngExt;
 
@@ -21,6 +22,26 @@ impl WaterAvoidingRandomFlyingGoal {
             target: None,
             chance: to_goal_ticks(120),
         }
+    }
+
+    fn has_controlling_passenger(mob: &dyn Mob) -> bool {
+        if mob.get_mob_entity().is_no_ai() {
+            return false;
+        }
+
+        // Vanilla Mob only accepts a controlling mob as its first passenger.
+        mob.get_entity()
+            .passengers
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner)
+            .first()
+            .is_some_and(|passenger| {
+                passenger.get_mob().is_some()
+                    && !passenger
+                        .get_entity()
+                        .entity_type
+                        .has_tag(&tag::EntityType::MINECRAFT_NON_CONTROLLING_RIDER)
+            })
     }
 
     /// Prefers a spot to hover over the ground, and falls back to open air or water.
@@ -53,7 +74,7 @@ impl WaterAvoidingRandomFlyingGoal {
 
 impl Goal for WaterAvoidingRandomFlyingGoal {
     fn can_start(&mut self, mob: &dyn Mob) -> bool {
-        if mob.get_entity().has_passengers() {
+        if Self::has_controlling_passenger(mob) {
             return false;
         }
 
@@ -67,7 +88,7 @@ impl Goal for WaterAvoidingRandomFlyingGoal {
 
     fn should_continue(&mut self, mob: &dyn Mob) -> bool {
         let is_idle = mob.is_navigator_idle();
-        !is_idle && !mob.get_entity().has_passengers()
+        !is_idle && !Self::has_controlling_passenger(mob)
     }
 
     fn start(&mut self, mob: &dyn Mob) {
