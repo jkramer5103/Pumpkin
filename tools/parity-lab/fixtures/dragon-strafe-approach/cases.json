@@ -1,0 +1,70 @@
+{
+  "reference": "Minecraft Java26.3 isolated headless arena; naturally acquired strafe target at245; preserved initial approach",
+  "trials": 2,
+  "repeats": 5,
+  "cases": [
+    {
+      "id": "initial_approach",
+      "z": 30.0,
+      "y": 139.99399999976157,
+      "dy": -0.005460000374317176
+    }
+  ],
+  "completed_approach": {
+    "y": 139.99992499999985,
+    "dy": -6.825000015894567e-05
+  },
+  "arena_player_y": 140.0,
+  "acquisition_y": 245.0,
+  "flight_node_columns": [
+    [
+      40,
+      0
+    ],
+    [
+      28,
+      28
+    ],
+    [
+      0,
+      40
+    ],
+    [
+      -29,
+      28
+    ],
+    [
+      -40,
+      0
+    ],
+    [
+      -29,
+      -29
+    ],
+    [
+      0,
+      -40
+    ],
+    [
+      28,
+      -29
+    ],
+    [
+      20,
+      0
+    ],
+    [
+      0,
+      20
+    ],
+    [
+      -20,
+      0
+    ],
+    [
+      0,
+      -20
+    ]
+  ],
+  "column_top_y": 0
+}

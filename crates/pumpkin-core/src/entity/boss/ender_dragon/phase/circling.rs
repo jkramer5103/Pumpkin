@@ -40,11 +40,10 @@ impl CirclingPhase {
                 || rand::random_range(0..crystals + 2) == 0
             {
                 dragon.set_phase(EnderDragonPhase::Strafing);
-                *dragon
-                    .target_player
-                    .lock()
-                    .unwrap_or_else(std::sync::PoisonError::into_inner) =
-                    Some(player.gameprofile.id);
+                dragon
+                    .phase_manager
+                    .get_strafing_phase()
+                    .set_target(dragon, &player);
                 return true;
             }
         }

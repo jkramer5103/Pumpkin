@@ -120,6 +120,7 @@ impl EnderDragonPhase {
 }
 
 pub struct PhaseManager {
+    strafing_phase: Arc<StrafingPhase>,
     phases: [Arc<dyn Phase>; 12],
 }
 
@@ -132,10 +133,11 @@ impl Default for PhaseManager {
 impl PhaseManager {
     #[must_use]
     pub fn new() -> Self {
+        let strafing_phase = Arc::new(StrafingPhase::default());
         Self {
             phases: [
                 Arc::new(CirclingPhase),
-                Arc::new(StrafingPhase::default()),
+                strafing_phase.clone(),
                 Arc::new(ChargingPhase),
                 Arc::new(FlyToPortalPhase),
                 Arc::new(LandingApproachPhase::default()),
@@ -147,7 +149,13 @@ impl PhaseManager {
                 Arc::new(DyingPhase),
                 Arc::new(SitScanningPhase),
             ],
+            strafing_phase,
         }
+    }
+
+    #[must_use]
+    pub fn get_strafing_phase(&self) -> &StrafingPhase {
+        &self.strafing_phase
     }
 
     #[must_use]

@@ -1,20 +1,88 @@
 use super::EnderDragonPhase;
 use crate::entity::EntityBase;
+use crate::entity::player::Player;
 use crate::entity::{
     Entity,
     area_effect_cloud::AreaEffectCloudEntity,
-    boss::ender_dragon::{EnderDragonEntity, Vector3Ext, find_path},
+    boss::ender_dragon::{DragonNode, EnderDragonEntity, NODE_COUNT, Vector3Ext, find_path},
 };
 use pumpkin_data::entity::EntityType;
 use pumpkin_util::math::vector3::Vector3;
-use std::sync::atomic::{AtomicBool, Ordering};
+use std::collections::VecDeque;
+use std::sync::{
+    Mutex,
+    atomic::{AtomicBool, Ordering},
+};
 
 #[derive(Default)]
 pub struct StrafingPhase {
     holding_pattern_clockwise: AtomicBool,
+    current_path: Mutex<Option<VecDeque<DragonNode>>>,
 }
 
 impl StrafingPhase {
+    pub fn set_target(&self, dragon: &EnderDragonEntity, target: &Player) {
+        *dragon
+            .target_player
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner) = Some(target.gameprofile.id);
+        let pos = dragon.mob_entity.living_entity.entity.pos.load();
+        let target_pos = target.get_entity().pos.load();
+        let current_node = dragon.find_closest_node();
+        let target_node = dragon.find_closest_node_to(target_pos);
+        let x = target_pos.x.floor();
+        let z = target_pos.z.floor();
+        let distance = (x - pos.x).hypot(z - pos.z);
+        let height_offset = (f64::from(0.4f32) + distance / 80.0 - 1.0).min(10.0);
+        let final_node = DragonNode::new(x, (target_pos.y + height_offset).floor(), z);
+        let nodes = dragon
+            .nodes
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner);
+        let route = Self::path_to_target(
+            &nodes,
+            current_node,
+            target_node,
+            final_node,
+            dragon.has_alive_crystals(),
+        );
+        drop(nodes);
+        let mut path = self
+            .current_path
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner);
+        *path = route;
+        Self::navigate_to_next_path_node(dragon, &mut path);
+    }
+
+    fn path_to_target(
+        nodes: &[Option<DragonNode>; NODE_COUNT],
+        from: usize,
+        to: usize,
+        final_node: DragonNode,
+        crystals_alive: bool,
+    ) -> Option<VecDeque<DragonNode>> {
+        let route = find_path(nodes, from, to, crystals_alive)?;
+        let mut path: VecDeque<_> = route.into_iter().filter_map(|index| nodes[index]).collect();
+        // find_path already skips the starting node. The player waypoint is off-graph.
+        path.push_back(final_node);
+        Some(path)
+    }
+
+    fn navigate_to_next_path_node(
+        dragon: &EnderDragonEntity,
+        path: &mut Option<VecDeque<DragonNode>>,
+    ) {
+        if let Some(node) = path.as_mut().and_then(VecDeque::pop_front) {
+            let y = f64::from(node.y as f32 + rand::random::<f32>() * 20.0);
+            *dragon
+                .target_location
+                .lock()
+                .unwrap_or_else(std::sync::PoisonError::into_inner) =
+                Some(Vector3::new(node.x, y, node.z));
+        }
+    }
+
     const fn next_orbit_node(current_node: usize, clockwise: bool, crystals_alive: bool) -> usize {
         let target_node = current_node as i32 + if clockwise { 1 } else { -1 };
         if crystals_alive {
@@ -37,6 +105,14 @@ impl super::Phase for StrafingPhase {
             .unwrap_or_else(std::sync::PoisonError::into_inner) = 0;
         *dragon
             .target_location
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner) = None;
+        *dragon
+            .target_player
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner) = None;
+        *self
+            .current_path
             .lock()
             .unwrap_or_else(std::sync::PoisonError::into_inner) = None;
     }
@@ -67,8 +143,8 @@ impl super::Phase for StrafingPhase {
         };
 
         let player_pos = player.get_entity().pos.load();
-        let mut path = dragon
-            .path
+        let mut path = self
+            .current_path
             .lock()
             .unwrap_or_else(std::sync::PoisonError::into_inner);
         let mut target_location = dragon
@@ -76,7 +152,7 @@ impl super::Phase for StrafingPhase {
             .lock()
             .unwrap_or_else(std::sync::PoisonError::into_inner);
 
-        if path.is_empty() {
+        if path.as_ref().is_some_and(VecDeque::is_empty) {
             let d2 = player_pos.x - pos.x;
             let d3 = player_pos.z - pos.z;
             let d4 = d2.hypot(d3);
@@ -87,6 +163,7 @@ impl super::Phase for StrafingPhase {
         let d11 = target_location
             .map(|loc| pos.distance_squared(loc))
             .unwrap_or(0.0);
+        drop(target_location);
         if !(100.0..=22500.0).contains(&d11)
             || dragon
                 .mob_entity
@@ -95,8 +172,7 @@ impl super::Phase for StrafingPhase {
                 .horizontal_collision
                 .load(Ordering::Relaxed)
         {
-            if path.is_empty() {
-                drop(path);
+            if path.as_ref().is_none_or(VecDeque::is_empty) {
                 let i = dragon.find_closest_node();
                 let mut j = i;
                 if rand::random_range(0..8) == 0 {
@@ -110,37 +186,16 @@ impl super::Phase for StrafingPhase {
                     self.holding_pattern_clockwise.load(Ordering::Relaxed),
                     crystals_alive,
                 );
-
-                let mut path_lock = dragon
-                    .path
-                    .lock()
-                    .unwrap_or_else(std::sync::PoisonError::into_inner);
                 let nodes = dragon
                     .nodes
                     .lock()
                     .unwrap_or_else(std::sync::PoisonError::into_inner);
-                *path_lock = find_path(&nodes, i, j, crystals_alive).unwrap_or_default();
-                drop(nodes);
-                path = path_lock;
+                *path = find_path(&nodes, i, j, crystals_alive)
+                    .map(|route| route.into_iter().filter_map(|index| nodes[index]).collect());
             }
-
-            if let Some(next_node_idx) = path.first().copied() {
-                path.remove(0);
-                let nodes = dragon
-                    .nodes
-                    .lock()
-                    .unwrap_or_else(std::sync::PoisonError::into_inner);
-                if let Some(node) = nodes[next_node_idx] {
-                    let mut y_target = node.y + rand::random_range(0.0..20.0);
-                    while y_target < node.y {
-                        y_target = node.y + rand::random_range(0.0..20.0);
-                    }
-                    *target_location = Some(Vector3::new(node.x, y_target, node.z));
-                }
-            }
+            Self::navigate_to_next_path_node(dragon, &mut path);
         }
         drop(path);
-        drop(target_location);
 
         if player_pos.distance_squared(pos) < 4096.0
             && dragon
@@ -208,11 +263,14 @@ impl super::Phase for StrafingPhase {
                 );
                 world.spawn_entity(cloud);
 
-                dragon
-                    .path
+                if let Some(path) = self
+                    .current_path
                     .lock()
                     .unwrap_or_else(std::sync::PoisonError::into_inner)
-                    .clear();
+                    .as_mut()
+                {
+                    path.clear();
+                }
                 dragon.set_phase(EnderDragonPhase::Circling);
             }
         } else {
@@ -231,6 +289,29 @@ impl super::Phase for StrafingPhase {
 mod tests {
     use super::StrafingPhase;
     use crate::entity::boss::ender_dragon::{DragonNode, NODE_COUNT, find_path};
+
+    #[test]
+    fn strafe_approach_keeps_graph_hops_before_the_off_graph_player_node() {
+        let mut nodes = [None; NODE_COUNT];
+        nodes[20] = Some(DragonNode::new(20.0, 73.0, 0.0));
+        nodes[19] = Some(DragonNode::new(28.0, 73.0, -29.0));
+        nodes[12] = Some(DragonNode::new(40.0, 73.0, 0.0));
+        nodes[0] = Some(DragonNode::new(60.0, 73.0, 0.0));
+        let player = DragonNode::new(8.0, 139.0, 0.0);
+        for (from, to, expected) in [
+            (20, 19, Some(vec![(28.0, 73.0, -29.0), (8.0, 139.0, 0.0)])),
+            (20, 20, Some(vec![(8.0, 139.0, 0.0)])),
+            (12, 0, None),
+        ] {
+            let path = StrafingPhase::path_to_target(&nodes, from, to, player, false);
+            let coordinates = path.map(|path| {
+                path.into_iter()
+                    .map(|node| (node.x, node.y, node.z))
+                    .collect::<Vec<_>>()
+            });
+            assert_eq!(coordinates, expected);
+        }
+    }
 
     #[test]
     fn strafe_orbits_leave_the_player_node_and_wrap_the_active_ring() {
