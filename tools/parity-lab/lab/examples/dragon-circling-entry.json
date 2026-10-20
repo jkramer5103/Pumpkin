@@ -1,0 +1,577 @@
+{
+  "schema_version": 1,
+  "id": "dragon-circling-entry",
+  "title": "Circling dragons discard their previous phase target and path",
+  "description": "Two trials compare the first circling tick after hovering above the flight ring, including repeated phase entry and NoAI controls. The node height remains below the dragon; random orbit direction is unconstrained.",
+  "category": "entity",
+  "tags": [
+    "ender-dragon",
+    "ai"
+  ],
+  "setup": [
+    "tick freeze",
+    "difficulty normal",
+    "gamerule spawn_mobs false",
+    "gamerule mob_griefing false",
+    "forceload add -64 -64 63 63",
+    "gamemode creative ParitySmoke",
+    "tp ParitySmoke 40 120 40"
+  ],
+  "steps": [
+    {
+      "command": "say Wait for arena chunks",
+      "wait_ticks": 5
+    },
+    {
+      "command": "fill -16 71 -16 16 100 16 minecraft:air"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "say TRIAL_1_above40"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0 160 0 {PersistenceRequired:1b,DragonPhase:10,Tags:[\"orbit\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit,limit=1] 0 160 0 0 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=orbit,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=orbit,limit=1,nbt={DragonPhase:10}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit,limit=1] 0 120 0 0 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=orbit,limit=1] {Motion:[0.0d,0.0d,0.0d],DragonPhase:0,NoAI:0b}"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=orbit,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=orbit,limit=1] Motion"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=orbit,limit=1] DragonPhase"
+    },
+    {
+      "command": "say first_circling_tick",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=orbit,limit=1] Pos",
+      "observe": true,
+      "expect_contains": "119.99399999976158d"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=orbit,limit=1] Motion"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=orbit,limit=1] DragonPhase"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "say TRIAL_1_above80"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0 200 0 {PersistenceRequired:1b,DragonPhase:10,Tags:[\"orbit\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit,limit=1] 0 200 0 0 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=orbit,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=orbit,limit=1,nbt={DragonPhase:10}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit,limit=1] 0 120 0 0 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=orbit,limit=1] {Motion:[0.0d,0.0d,0.0d],DragonPhase:0,NoAI:0b}"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=orbit,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=orbit,limit=1] Motion"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=orbit,limit=1] DragonPhase"
+    },
+    {
+      "command": "say first_circling_tick",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=orbit,limit=1] Pos",
+      "observe": true,
+      "expect_contains": "119.99399999976158d"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=orbit,limit=1] Motion"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=orbit,limit=1] DragonPhase"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "say TRIAL_1_below40"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0 80 0 {PersistenceRequired:1b,DragonPhase:10,Tags:[\"orbit\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit,limit=1] 0 80 0 0 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=orbit,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=orbit,limit=1,nbt={DragonPhase:10}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit,limit=1] 0 120 0 0 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=orbit,limit=1] {Motion:[0.0d,0.0d,0.0d],DragonPhase:0,NoAI:0b}"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=orbit,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=orbit,limit=1] Motion"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=orbit,limit=1] DragonPhase"
+    },
+    {
+      "command": "say first_circling_tick",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=orbit,limit=1] Pos",
+      "observe": true,
+      "expect_contains": "119.99399999976158d"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=orbit,limit=1] Motion"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=orbit,limit=1] DragonPhase"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "say TRIAL_1_noai"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0 160 0 {PersistenceRequired:1b,DragonPhase:10,Tags:[\"orbit\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit,limit=1] 0 160 0 0 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=orbit,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=orbit,limit=1,nbt={DragonPhase:10}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit,limit=1] 0 120 0 0 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=orbit,limit=1] {Motion:[0.0d,0.0d,0.0d],DragonPhase:0,NoAI:1b}"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=orbit,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=orbit,limit=1] Motion"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=orbit,limit=1] DragonPhase"
+    },
+    {
+      "command": "say first_circling_tick",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=orbit,limit=1] Pos",
+      "observe": true,
+      "expect_contains": "[0.5d, 120"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=orbit,limit=1] Motion"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=orbit,limit=1] DragonPhase"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=orbit,limit=1,nbt={Motion:[0.0d,0.0d,0.0d]}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "say TRIAL_1_reentry"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0 160 0 {PersistenceRequired:1b,DragonPhase:10,Tags:[\"orbit\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=orbit,limit=1] {DragonPhase:0}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=orbit,limit=1] {DragonPhase:10}"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit,limit=1] 0 160 0 0 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=orbit,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=orbit,limit=1,nbt={DragonPhase:10}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit,limit=1] 0 120 0 0 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=orbit,limit=1] {Motion:[0.0d,0.0d,0.0d],DragonPhase:0,NoAI:0b}"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=orbit,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=orbit,limit=1] Motion"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=orbit,limit=1] DragonPhase"
+    },
+    {
+      "command": "say first_circling_tick",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=orbit,limit=1] Pos",
+      "observe": true,
+      "expect_contains": "119.99399999976158d"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=orbit,limit=1] Motion"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=orbit,limit=1] DragonPhase"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "say TRIAL_2_above40"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0 160 0 {PersistenceRequired:1b,DragonPhase:10,Tags:[\"orbit\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit,limit=1] 0 160 0 0 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=orbit,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=orbit,limit=1,nbt={DragonPhase:10}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit,limit=1] 0 120 0 0 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=orbit,limit=1] {Motion:[0.0d,0.0d,0.0d],DragonPhase:0,NoAI:0b}"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=orbit,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=orbit,limit=1] Motion"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=orbit,limit=1] DragonPhase"
+    },
+    {
+      "command": "say first_circling_tick",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=orbit,limit=1] Pos",
+      "observe": true,
+      "expect_contains": "119.99399999976158d"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=orbit,limit=1] Motion"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=orbit,limit=1] DragonPhase"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "say TRIAL_2_above80"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0 200 0 {PersistenceRequired:1b,DragonPhase:10,Tags:[\"orbit\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit,limit=1] 0 200 0 0 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=orbit,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=orbit,limit=1,nbt={DragonPhase:10}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit,limit=1] 0 120 0 0 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=orbit,limit=1] {Motion:[0.0d,0.0d,0.0d],DragonPhase:0,NoAI:0b}"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=orbit,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=orbit,limit=1] Motion"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=orbit,limit=1] DragonPhase"
+    },
+    {
+      "command": "say first_circling_tick",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=orbit,limit=1] Pos",
+      "observe": true,
+      "expect_contains": "119.99399999976158d"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=orbit,limit=1] Motion"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=orbit,limit=1] DragonPhase"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "say TRIAL_2_below40"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0 80 0 {PersistenceRequired:1b,DragonPhase:10,Tags:[\"orbit\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit,limit=1] 0 80 0 0 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=orbit,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=orbit,limit=1,nbt={DragonPhase:10}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit,limit=1] 0 120 0 0 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=orbit,limit=1] {Motion:[0.0d,0.0d,0.0d],DragonPhase:0,NoAI:0b}"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=orbit,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=orbit,limit=1] Motion"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=orbit,limit=1] DragonPhase"
+    },
+    {
+      "command": "say first_circling_tick",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=orbit,limit=1] Pos",
+      "observe": true,
+      "expect_contains": "119.99399999976158d"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=orbit,limit=1] Motion"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=orbit,limit=1] DragonPhase"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "say TRIAL_2_noai"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0 160 0 {PersistenceRequired:1b,DragonPhase:10,Tags:[\"orbit\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit,limit=1] 0 160 0 0 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=orbit,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=orbit,limit=1,nbt={DragonPhase:10}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit,limit=1] 0 120 0 0 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=orbit,limit=1] {Motion:[0.0d,0.0d,0.0d],DragonPhase:0,NoAI:1b}"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=orbit,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=orbit,limit=1] Motion"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=orbit,limit=1] DragonPhase"
+    },
+    {
+      "command": "say first_circling_tick",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=orbit,limit=1] Pos",
+      "observe": true,
+      "expect_contains": "[0.5d, 120"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=orbit,limit=1] Motion"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=orbit,limit=1] DragonPhase"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=orbit,limit=1,nbt={Motion:[0.0d,0.0d,0.0d]}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "say TRIAL_2_reentry"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0 160 0 {PersistenceRequired:1b,DragonPhase:10,Tags:[\"orbit\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=orbit,limit=1] {DragonPhase:0}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=orbit,limit=1] {DragonPhase:10}"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit,limit=1] 0 160 0 0 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=orbit,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=orbit,limit=1,nbt={DragonPhase:10}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=orbit,limit=1] 0 120 0 0 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=orbit,limit=1] {Motion:[0.0d,0.0d,0.0d],DragonPhase:0,NoAI:0b}"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=orbit,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=orbit,limit=1] Motion"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=orbit,limit=1] DragonPhase"
+    },
+    {
+      "command": "say first_circling_tick",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=orbit,limit=1] Pos",
+      "observe": true,
+      "expect_contains": "119.99399999976158d"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=orbit,limit=1] Motion"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=orbit,limit=1] DragonPhase"
+    }
+  ],
+  "cleanup": [
+    "kill @e[type=minecraft:ender_dragon]",
+    "forceload remove all"
+  ]
+}

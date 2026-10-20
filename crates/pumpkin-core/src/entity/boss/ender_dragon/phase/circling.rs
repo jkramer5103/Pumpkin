@@ -10,6 +10,18 @@ impl super::Phase for CirclingPhase {
         EnderDragonPhase::Circling
     }
 
+    fn begin(&self, dragon: &EnderDragonEntity) {
+        *dragon
+            .target_location
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner) = None;
+        dragon
+            .path
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner)
+            .clear();
+    }
+
     fn tick(&self, dragon: &EnderDragonEntity) {
         let pos = dragon.mob_entity.living_entity.entity.pos.load();
         let mut target_location = dragon
