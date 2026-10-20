@@ -1,0 +1,556 @@
+{
+  "schema_version": 1,
+  "id": "dragon-initial-circling-route",
+  "title": "Fresh circling dragons use a phase-selected route",
+  "description": "Two trials compare cold circling startup with preinitialized hovering controls. Raised outer-ring columns expose unrelated initialization routes; no live End crystals.",
+  "category": "entity",
+  "tags": [
+    "ender-dragon",
+    "ai"
+  ],
+  "setup": [
+    "tick freeze",
+    "difficulty normal",
+    "gamerule spawn_mobs false",
+    "gamerule mob_griefing false",
+    "forceload add -96 -96 95 95",
+    "gamemode creative ParitySmoke",
+    "tp ParitySmoke 40 120 40"
+  ],
+  "steps": [
+    {
+      "command": "say Wait for arena chunks",
+      "wait_ticks": 5
+    },
+    {
+      "command": "fill 59 240 -1 61 240 1 minecraft:stone"
+    },
+    {
+      "command": "fill 50 240 29 52 240 31 minecraft:stone"
+    },
+    {
+      "command": "fill 28 240 50 30 240 52 minecraft:stone"
+    },
+    {
+      "command": "fill -1 240 59 1 240 61 minecraft:stone"
+    },
+    {
+      "command": "fill -31 240 50 -29 240 52 minecraft:stone"
+    },
+    {
+      "command": "fill -53 240 29 -51 240 31 minecraft:stone"
+    },
+    {
+      "command": "fill -61 240 -1 -59 240 1 minecraft:stone"
+    },
+    {
+      "command": "fill -53 240 -31 -51 240 -29 minecraft:stone"
+    },
+    {
+      "command": "fill -32 240 -53 -30 240 -51 minecraft:stone"
+    },
+    {
+      "command": "fill -1 240 -61 1 240 -59 minecraft:stone"
+    },
+    {
+      "command": "fill 28 240 -53 30 240 -51 minecraft:stone"
+    },
+    {
+      "command": "fill 50 240 -32 52 240 -30 minecraft:stone"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "say TRIAL_1"
+    },
+    {
+      "command": "summon minecraft:ender_dragon -41.5 200 70.5 {PersistenceRequired:1b,DragonPhase:10,Tags:[\"warm_route\",\"warm_0\"]}"
+    },
+    {
+      "command": "summon minecraft:ender_dragon -13.5 200 70.5 {PersistenceRequired:1b,DragonPhase:10,Tags:[\"warm_route\",\"warm_1\"]}"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 14.5 200 70.5 {PersistenceRequired:1b,DragonPhase:10,Tags:[\"warm_route\",\"warm_2\"]}"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 42.5 200 70.5 {PersistenceRequired:1b,DragonPhase:10,Tags:[\"warm_route\",\"warm_3\"]}"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 70.5 120 70.5 {PersistenceRequired:1b,DragonPhase:0,NoAI:1b,Tags:[\"noai_route\"]}"
+    },
+    {
+      "command": "say Initialize hovering controls",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute as @e[type=minecraft:ender_dragon,tag=warm_route] run data merge entity @s {Motion:[0.0d,0.0d,0.0d],DragonPhase:0}"
+    },
+    {
+      "command": "summon minecraft:ender_dragon -41.5 160 -41.5 {PersistenceRequired:1b,DragonPhase:0,Tags:[\"cold_route\",\"cold_0\"]}"
+    },
+    {
+      "command": "summon minecraft:ender_dragon -13.5 160 -41.5 {PersistenceRequired:1b,DragonPhase:0,Tags:[\"cold_route\",\"cold_1\"]}"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 14.5 160 -41.5 {PersistenceRequired:1b,DragonPhase:0,Tags:[\"cold_route\",\"cold_2\"]}"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 42.5 160 -41.5 {PersistenceRequired:1b,DragonPhase:0,Tags:[\"cold_route\",\"cold_3\"]}"
+    },
+    {
+      "command": "summon minecraft:ender_dragon -41.5 160 -13.5 {PersistenceRequired:1b,DragonPhase:0,Tags:[\"cold_route\",\"cold_4\"]}"
+    },
+    {
+      "command": "summon minecraft:ender_dragon -13.5 160 -13.5 {PersistenceRequired:1b,DragonPhase:0,Tags:[\"cold_route\",\"cold_5\"]}"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 14.5 160 -13.5 {PersistenceRequired:1b,DragonPhase:0,Tags:[\"cold_route\",\"cold_6\"]}"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 42.5 160 -13.5 {PersistenceRequired:1b,DragonPhase:0,Tags:[\"cold_route\",\"cold_7\"]}"
+    },
+    {
+      "command": "summon minecraft:ender_dragon -41.5 160 14.5 {PersistenceRequired:1b,DragonPhase:0,Tags:[\"cold_route\",\"cold_8\"]}"
+    },
+    {
+      "command": "summon minecraft:ender_dragon -13.5 160 14.5 {PersistenceRequired:1b,DragonPhase:0,Tags:[\"cold_route\",\"cold_9\"]}"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 14.5 160 14.5 {PersistenceRequired:1b,DragonPhase:0,Tags:[\"cold_route\",\"cold_10\"]}"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 42.5 160 14.5 {PersistenceRequired:1b,DragonPhase:0,Tags:[\"cold_route\",\"cold_11\"]}"
+    },
+    {
+      "command": "summon minecraft:ender_dragon -41.5 160 42.5 {PersistenceRequired:1b,DragonPhase:0,Tags:[\"cold_route\",\"cold_12\"]}"
+    },
+    {
+      "command": "summon minecraft:ender_dragon -13.5 160 42.5 {PersistenceRequired:1b,DragonPhase:0,Tags:[\"cold_route\",\"cold_13\"]}"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 14.5 160 42.5 {PersistenceRequired:1b,DragonPhase:0,Tags:[\"cold_route\",\"cold_14\"]}"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 42.5 160 42.5 {PersistenceRequired:1b,DragonPhase:0,Tags:[\"cold_route\",\"cold_15\"]}"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=cold_route]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 16"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=cold_0,limit=1] {Motion:[0.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=cold_1,limit=1] {Motion:[0.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=cold_2,limit=1] {Motion:[0.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=cold_3,limit=1] {Motion:[0.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=cold_4,limit=1] {Motion:[0.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=cold_5,limit=1] {Motion:[0.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=cold_6,limit=1] {Motion:[0.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=cold_7,limit=1] {Motion:[0.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=cold_8,limit=1] {Motion:[0.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=cold_9,limit=1] {Motion:[0.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=cold_10,limit=1] {Motion:[0.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=cold_11,limit=1] {Motion:[0.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=cold_12,limit=1] {Motion:[0.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=cold_13,limit=1] {Motion:[0.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=cold_14,limit=1] {Motion:[0.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=cold_15,limit=1] {Motion:[0.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "say First circling tick",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=cold_0,limit=1] Pos",
+      "observe": true,
+      "expect_contains": "159.99399999976157d"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=cold_1,limit=1] Pos",
+      "observe": true,
+      "expect_contains": "159.99399999976157d"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=cold_2,limit=1] Pos",
+      "observe": true,
+      "expect_contains": "159.99399999976157d"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=cold_3,limit=1] Pos",
+      "observe": true,
+      "expect_contains": "159.99399999976157d"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=cold_4,limit=1] Pos",
+      "observe": true,
+      "expect_contains": "159.99399999976157d"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=cold_5,limit=1] Pos",
+      "observe": true,
+      "expect_contains": "159.99399999976157d"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=cold_6,limit=1] Pos",
+      "observe": true,
+      "expect_contains": "159.99399999976157d"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=cold_7,limit=1] Pos",
+      "observe": true,
+      "expect_contains": "159.99399999976157d"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=cold_8,limit=1] Pos",
+      "observe": true,
+      "expect_contains": "159.99399999976157d"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=cold_9,limit=1] Pos",
+      "observe": true,
+      "expect_contains": "159.99399999976157d"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=cold_10,limit=1] Pos",
+      "observe": true,
+      "expect_contains": "159.99399999976157d"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=cold_11,limit=1] Pos",
+      "observe": true,
+      "expect_contains": "159.99399999976157d"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=cold_12,limit=1] Pos",
+      "observe": true,
+      "expect_contains": "159.99399999976157d"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=cold_13,limit=1] Pos",
+      "observe": true,
+      "expect_contains": "159.99399999976157d"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=cold_14,limit=1] Pos",
+      "observe": true,
+      "expect_contains": "159.99399999976157d"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=cold_15,limit=1] Pos",
+      "observe": true,
+      "expect_contains": "159.99399999976157d"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=cold_route,nbt={DragonPhase:0}]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 16"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=cold_route,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=cold_route,limit=1] Motion"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=warm_route,limit=1] Pos",
+      "observe": true,
+      "expect_contains": "199.99399999976157d"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=warm_route,nbt={DragonPhase:0}]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 4"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=warm_route,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=warm_route,limit=1] Motion"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=noai_route,nbt={Pos:[70.5d,120.0d,70.5d],Motion:[0.0d,0.0d,0.0d],DragonPhase:0}]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "say TRIAL_2"
+    },
+    {
+      "command": "summon minecraft:ender_dragon -41.5 200 70.5 {PersistenceRequired:1b,DragonPhase:10,Tags:[\"warm_route\",\"warm_0\"]}"
+    },
+    {
+      "command": "summon minecraft:ender_dragon -13.5 200 70.5 {PersistenceRequired:1b,DragonPhase:10,Tags:[\"warm_route\",\"warm_1\"]}"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 14.5 200 70.5 {PersistenceRequired:1b,DragonPhase:10,Tags:[\"warm_route\",\"warm_2\"]}"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 42.5 200 70.5 {PersistenceRequired:1b,DragonPhase:10,Tags:[\"warm_route\",\"warm_3\"]}"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 70.5 120 70.5 {PersistenceRequired:1b,DragonPhase:0,NoAI:1b,Tags:[\"noai_route\"]}"
+    },
+    {
+      "command": "say Initialize hovering controls",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute as @e[type=minecraft:ender_dragon,tag=warm_route] run data merge entity @s {Motion:[0.0d,0.0d,0.0d],DragonPhase:0}"
+    },
+    {
+      "command": "summon minecraft:ender_dragon -41.5 160 -41.5 {PersistenceRequired:1b,DragonPhase:0,Tags:[\"cold_route\",\"cold_0\"]}"
+    },
+    {
+      "command": "summon minecraft:ender_dragon -13.5 160 -41.5 {PersistenceRequired:1b,DragonPhase:0,Tags:[\"cold_route\",\"cold_1\"]}"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 14.5 160 -41.5 {PersistenceRequired:1b,DragonPhase:0,Tags:[\"cold_route\",\"cold_2\"]}"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 42.5 160 -41.5 {PersistenceRequired:1b,DragonPhase:0,Tags:[\"cold_route\",\"cold_3\"]}"
+    },
+    {
+      "command": "summon minecraft:ender_dragon -41.5 160 -13.5 {PersistenceRequired:1b,DragonPhase:0,Tags:[\"cold_route\",\"cold_4\"]}"
+    },
+    {
+      "command": "summon minecraft:ender_dragon -13.5 160 -13.5 {PersistenceRequired:1b,DragonPhase:0,Tags:[\"cold_route\",\"cold_5\"]}"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 14.5 160 -13.5 {PersistenceRequired:1b,DragonPhase:0,Tags:[\"cold_route\",\"cold_6\"]}"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 42.5 160 -13.5 {PersistenceRequired:1b,DragonPhase:0,Tags:[\"cold_route\",\"cold_7\"]}"
+    },
+    {
+      "command": "summon minecraft:ender_dragon -41.5 160 14.5 {PersistenceRequired:1b,DragonPhase:0,Tags:[\"cold_route\",\"cold_8\"]}"
+    },
+    {
+      "command": "summon minecraft:ender_dragon -13.5 160 14.5 {PersistenceRequired:1b,DragonPhase:0,Tags:[\"cold_route\",\"cold_9\"]}"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 14.5 160 14.5 {PersistenceRequired:1b,DragonPhase:0,Tags:[\"cold_route\",\"cold_10\"]}"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 42.5 160 14.5 {PersistenceRequired:1b,DragonPhase:0,Tags:[\"cold_route\",\"cold_11\"]}"
+    },
+    {
+      "command": "summon minecraft:ender_dragon -41.5 160 42.5 {PersistenceRequired:1b,DragonPhase:0,Tags:[\"cold_route\",\"cold_12\"]}"
+    },
+    {
+      "command": "summon minecraft:ender_dragon -13.5 160 42.5 {PersistenceRequired:1b,DragonPhase:0,Tags:[\"cold_route\",\"cold_13\"]}"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 14.5 160 42.5 {PersistenceRequired:1b,DragonPhase:0,Tags:[\"cold_route\",\"cold_14\"]}"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 42.5 160 42.5 {PersistenceRequired:1b,DragonPhase:0,Tags:[\"cold_route\",\"cold_15\"]}"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=cold_route]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 16"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=cold_0,limit=1] {Motion:[0.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=cold_1,limit=1] {Motion:[0.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=cold_2,limit=1] {Motion:[0.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=cold_3,limit=1] {Motion:[0.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=cold_4,limit=1] {Motion:[0.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=cold_5,limit=1] {Motion:[0.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=cold_6,limit=1] {Motion:[0.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=cold_7,limit=1] {Motion:[0.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=cold_8,limit=1] {Motion:[0.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=cold_9,limit=1] {Motion:[0.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=cold_10,limit=1] {Motion:[0.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=cold_11,limit=1] {Motion:[0.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=cold_12,limit=1] {Motion:[0.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=cold_13,limit=1] {Motion:[0.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=cold_14,limit=1] {Motion:[0.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=cold_15,limit=1] {Motion:[0.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "say First circling tick",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=cold_0,limit=1] Pos",
+      "observe": true,
+      "expect_contains": "159.99399999976157d"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=cold_1,limit=1] Pos",
+      "observe": true,
+      "expect_contains": "159.99399999976157d"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=cold_2,limit=1] Pos",
+      "observe": true,
+      "expect_contains": "159.99399999976157d"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=cold_3,limit=1] Pos",
+      "observe": true,
+      "expect_contains": "159.99399999976157d"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=cold_4,limit=1] Pos",
+      "observe": true,
+      "expect_contains": "159.99399999976157d"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=cold_5,limit=1] Pos",
+      "observe": true,
+      "expect_contains": "159.99399999976157d"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=cold_6,limit=1] Pos",
+      "observe": true,
+      "expect_contains": "159.99399999976157d"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=cold_7,limit=1] Pos",
+      "observe": true,
+      "expect_contains": "159.99399999976157d"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=cold_8,limit=1] Pos",
+      "observe": true,
+      "expect_contains": "159.99399999976157d"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=cold_9,limit=1] Pos",
+      "observe": true,
+      "expect_contains": "159.99399999976157d"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=cold_10,limit=1] Pos",
+      "observe": true,
+      "expect_contains": "159.99399999976157d"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=cold_11,limit=1] Pos",
+      "observe": true,
+      "expect_contains": "159.99399999976157d"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=cold_12,limit=1] Pos",
+      "observe": true,
+      "expect_contains": "159.99399999976157d"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=cold_13,limit=1] Pos",
+      "observe": true,
+      "expect_contains": "159.99399999976157d"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=cold_14,limit=1] Pos",
+      "observe": true,
+      "expect_contains": "159.99399999976157d"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=cold_15,limit=1] Pos",
+      "observe": true,
+      "expect_contains": "159.99399999976157d"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=cold_route,nbt={DragonPhase:0}]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 16"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=cold_route,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=cold_route,limit=1] Motion"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=warm_route,limit=1] Pos",
+      "observe": true,
+      "expect_contains": "199.99399999976157d"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=warm_route,nbt={DragonPhase:0}]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 4"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=warm_route,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=warm_route,limit=1] Motion"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=noai_route,nbt={Pos:[70.5d,120.0d,70.5d],Motion:[0.0d,0.0d,0.0d],DragonPhase:0}]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1"
+    }
+  ],
+  "cleanup": [
+    "kill @e[type=minecraft:ender_dragon]",
+    "execute unless entity @e[type=minecraft:ender_dragon]"
+  ]
+}

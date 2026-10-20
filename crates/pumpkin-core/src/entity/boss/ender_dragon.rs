@@ -230,7 +230,6 @@ pub struct EnderDragonEntity {
 
     pub nodes: Mutex<[Option<DragonNode>; NODE_COUNT]>,
     pub path: Mutex<Vec<usize>>,
-    pub target_node: Mutex<usize>,
 
     pub strafe_target: Mutex<Option<Vector3<f64>>>,
     pub target_player: Mutex<Option<uuid::Uuid>>,
@@ -295,7 +294,6 @@ impl EnderDragonEntity {
             time_since_charge: Mutex::new(0),
             nodes: Mutex::new([None; NODE_COUNT]),
             path: Mutex::new(Vec::new()),
-            target_node: Mutex::new(0),
             strafe_target: Mutex::new(None),
             target_player: Mutex::new(None),
             ticks_sitting: Mutex::new(0),
@@ -389,21 +387,6 @@ impl EnderDragonEntity {
             nodes[i] = Some(DragonNode::new(node_x as f64, node_y as f64, node_z as f64));
         }
 
-        let pos = self.mob_entity.living_entity.entity.pos.load();
-        let crystals_alive = self.has_alive_crystals();
-        let nearest = Self::nearest_node_in(&nodes, pos, crystals_alive);
-        let dest = Self::random_node_idx();
-        let new_path = find_path(&nodes, nearest, dest, None, crystals_alive);
-        drop(nodes);
-
-        *self
-            .target_node
-            .lock()
-            .unwrap_or_else(std::sync::PoisonError::into_inner) = dest;
-        *self
-            .path
-            .lock()
-            .unwrap_or_else(std::sync::PoisonError::into_inner) = new_path;
         *initialized = true;
     }
 
@@ -452,10 +435,6 @@ impl EnderDragonEntity {
             }
         }
         closest_index
-    }
-
-    fn random_node_idx() -> usize {
-        rand::random_range(0..NODE_COUNT)
     }
 
     #[inline]
