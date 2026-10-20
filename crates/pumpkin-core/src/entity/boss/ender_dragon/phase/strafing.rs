@@ -94,7 +94,7 @@ impl super::Phase for StrafingPhase {
                     .nodes
                     .lock()
                     .unwrap_or_else(std::sync::PoisonError::into_inner);
-                *path_lock = find_path(&nodes, i, j, None);
+                *path_lock = find_path(&nodes, i, j, None, dragon.has_alive_crystals());
                 drop(nodes);
                 path = path_lock;
             }

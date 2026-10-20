@@ -92,6 +92,7 @@ pub fn find_path(
     from: usize,
     to: usize,
     final_node: Option<DragonNode>,
+    crystals_alive: bool,
 ) -> Vec<usize> {
     if from == to && final_node.is_none() {
         return vec![];
@@ -118,6 +119,7 @@ pub fn find_path(
     g[from] = 0.0;
     open.push((ordered_float::OrderedFloat(-h(from)), from));
 
+    let start_index = if crystals_alive { 0 } else { 12 };
     'outer: while let Some((_, cur)) = open.pop() {
         if closed[cur] {
             continue;
@@ -128,7 +130,7 @@ pub fn find_path(
         closed[cur] = true;
 
         let adj = NODE_ADJACENCY[cur];
-        for nbr in 0..NODE_COUNT {
+        for nbr in start_index..NODE_COUNT {
             if (adj >> nbr) & 1 == 0 || closed[nbr] {
                 continue;
             }
@@ -388,9 +390,10 @@ impl EnderDragonEntity {
         }
 
         let pos = self.mob_entity.living_entity.entity.pos.load();
-        let nearest = Self::nearest_node_in(&nodes, pos, self.has_alive_crystals());
+        let crystals_alive = self.has_alive_crystals();
+        let nearest = Self::nearest_node_in(&nodes, pos, crystals_alive);
         let dest = Self::random_node_idx();
-        let new_path = find_path(&nodes, nearest, dest, None);
+        let new_path = find_path(&nodes, nearest, dest, None, crystals_alive);
         drop(nodes);
 
         *self
@@ -1070,10 +1073,32 @@ impl Vector3Ext for Vector3<f64> {
 
 #[cfg(test)]
 mod tests {
-    use super::{DragonNode, EnderDragonEntity, NODE_COUNT};
+    use super::{DragonNode, EnderDragonEntity, NODE_COUNT, find_path};
     use pumpkin_data::Block;
     use pumpkin_util::gamemode::GameMode;
     use pumpkin_util::math::vector3::Vector3;
+
+    #[test]
+    fn flight_paths_exclude_outer_detours_without_live_crystals() {
+        // Raised middle-ring columns in the takeoff arena force an outer detour
+        // only while crystals are alive. Vanilla climbs through node 13 otherwise.
+        let mut nodes = [None; NODE_COUNT];
+        for (index, x, y, z) in [
+            (0, 60.0, 73.0, 0.0),
+            (1, 51.0, 73.0, 30.0),
+            (2, 29.0, 73.0, 51.0),
+            (3, 0.0, 73.0, 60.0),
+            (12, 40.0, 73.0, 0.0),
+            (13, 28.0, 196.0, 28.0),
+            (14, 0.0, 73.0, 40.0),
+        ] {
+            nodes[index] = Some(DragonNode::new(x, y, z));
+        }
+        assert_eq!(find_path(&nodes, 12, 14, None, false), [13, 14]);
+        assert_eq!(find_path(&nodes, 14, 12, None, false), [13, 12]);
+        assert_eq!(find_path(&nodes, 12, 14, None, true), [0, 1, 2, 3, 14]);
+        assert_eq!(find_path(&nodes, 14, 12, None, true), [3, 2, 1, 0, 12]);
+    }
 
     #[test]
     fn flight_node_columns_match_vanilla_server_output() {

@@ -52,7 +52,7 @@ impl TakingOffPhase {
             .lock()
             .unwrap_or_else(std::sync::PoisonError::into_inner);
         // find_path already skips the starting node, unlike vanilla's Path.
-        let mut path = find_path(&nodes, current_node, target_node, None);
+        let mut path = find_path(&nodes, current_node, target_node, None, crystals_alive);
         let target = path.first().and_then(|&index| nodes[index]).map(|node| {
             Vector3::new(
                 node.x,

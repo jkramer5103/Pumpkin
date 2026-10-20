@@ -1,0 +1,672 @@
+{
+  "schema_version": 1,
+  "id": "dragon-flight-path-crystal-restriction",
+  "title": "Dragon flight paths avoid outer-ring detours without live crystals",
+  "description": "Two trials of first takeoff from each end of an elevated middle-ring route, plus flat-route and NoAI controls. No fight/crystals; compare vertical steering rather than random horizontal magnitudes.",
+  "category": "entity",
+  "tags": [
+    "ender-dragon",
+    "ai"
+  ],
+  "setup": [
+    "tick freeze",
+    "difficulty normal",
+    "gamerule spawn_mobs false",
+    "gamerule mob_griefing false",
+    "forceload add -64 -64 79 63",
+    "gamemode creative ParitySmoke",
+    "tp ParitySmoke 0 120 0"
+  ],
+  "steps": [
+    {
+      "command": "say Wait for arena chunks",
+      "wait_ticks": 40
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "say TRIAL_1_raised_east"
+    },
+    {
+      "command": "setblock 28 180 28 minecraft:stone"
+    },
+    {
+      "command": "setblock -29 180 28 minecraft:stone"
+    },
+    {
+      "command": "setblock -40 180 0 minecraft:stone"
+    },
+    {
+      "command": "setblock -29 180 -29 minecraft:stone"
+    },
+    {
+      "command": "setblock 0 180 -40 minecraft:stone"
+    },
+    {
+      "command": "setblock 28 180 -29 minecraft:stone"
+    },
+    {
+      "command": "setblock 20 180 0 minecraft:stone"
+    },
+    {
+      "command": "setblock 0 180 20 minecraft:stone"
+    },
+    {
+      "command": "setblock -20 180 0 minecraft:stone"
+    },
+    {
+      "command": "setblock 0 180 -20 minecraft:stone"
+    },
+    {
+      "command": "execute if block 28 180 28 minecraft:stone",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 60 120 0 {PersistenceRequired:1b,DragonPhase:10,Tags:[\"path_crystals_probe\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=path_crystals_probe,limit=1] 40.0 120.0 0.0 180 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=path_crystals_probe,limit=1] {Motion:[0.0d,0.0d,0.0d],DragonPhase:4,NoAI:0b}"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=path_crystals_probe,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=path_crystals_probe,limit=1] Motion"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=path_crystals_probe,limit=1] DragonPhase"
+    },
+    {
+      "command": "say first_takeoff_tick",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=path_crystals_probe,limit=1] Pos",
+      "observe": true,
+      "expect_contains": "120.00600000023842d"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=path_crystals_probe,limit=1] Motion"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=path_crystals_probe,limit=1,nbt={DragonPhase:4}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "say TRIAL_1_raised_south"
+    },
+    {
+      "command": "setblock 28 180 28 minecraft:stone"
+    },
+    {
+      "command": "setblock -29 180 28 minecraft:stone"
+    },
+    {
+      "command": "setblock -40 180 0 minecraft:stone"
+    },
+    {
+      "command": "setblock -29 180 -29 minecraft:stone"
+    },
+    {
+      "command": "setblock 0 180 -40 minecraft:stone"
+    },
+    {
+      "command": "setblock 28 180 -29 minecraft:stone"
+    },
+    {
+      "command": "setblock 20 180 0 minecraft:stone"
+    },
+    {
+      "command": "setblock 0 180 20 minecraft:stone"
+    },
+    {
+      "command": "setblock -20 180 0 minecraft:stone"
+    },
+    {
+      "command": "setblock 0 180 -20 minecraft:stone"
+    },
+    {
+      "command": "execute if block 28 180 28 minecraft:stone",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 60 120 0 {PersistenceRequired:1b,DragonPhase:10,Tags:[\"path_crystals_probe\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=path_crystals_probe,limit=1] 0.0 120.0 40.0 90 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=path_crystals_probe,limit=1] {Motion:[0.0d,0.0d,0.0d],DragonPhase:4,NoAI:0b}"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=path_crystals_probe,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=path_crystals_probe,limit=1] Motion"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=path_crystals_probe,limit=1] DragonPhase"
+    },
+    {
+      "command": "say first_takeoff_tick",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=path_crystals_probe,limit=1] Pos",
+      "observe": true,
+      "expect_contains": "120.00600000023842d"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=path_crystals_probe,limit=1] Motion"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=path_crystals_probe,limit=1,nbt={DragonPhase:4}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "say TRIAL_1_flat_east"
+    },
+    {
+      "command": "setblock 28 180 28 minecraft:air"
+    },
+    {
+      "command": "setblock -29 180 28 minecraft:air"
+    },
+    {
+      "command": "setblock -40 180 0 minecraft:air"
+    },
+    {
+      "command": "setblock -29 180 -29 minecraft:air"
+    },
+    {
+      "command": "setblock 0 180 -40 minecraft:air"
+    },
+    {
+      "command": "setblock 28 180 -29 minecraft:air"
+    },
+    {
+      "command": "setblock 20 180 0 minecraft:air"
+    },
+    {
+      "command": "setblock 0 180 20 minecraft:air"
+    },
+    {
+      "command": "setblock -20 180 0 minecraft:air"
+    },
+    {
+      "command": "setblock 0 180 -20 minecraft:air"
+    },
+    {
+      "command": "execute if block 28 180 28 minecraft:air",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 60 120 0 {PersistenceRequired:1b,DragonPhase:10,Tags:[\"path_crystals_probe\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=path_crystals_probe,limit=1] 40.0 120.0 0.0 180 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=path_crystals_probe,limit=1] {Motion:[0.0d,0.0d,0.0d],DragonPhase:4,NoAI:0b}"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=path_crystals_probe,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=path_crystals_probe,limit=1] Motion"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=path_crystals_probe,limit=1] DragonPhase"
+    },
+    {
+      "command": "say first_takeoff_tick",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=path_crystals_probe,limit=1] Pos",
+      "observe": true,
+      "expect_contains": "119.99399999976158d"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=path_crystals_probe,limit=1] Motion"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=path_crystals_probe,limit=1,nbt={DragonPhase:4}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "say TRIAL_1_raised_noai"
+    },
+    {
+      "command": "setblock 28 180 28 minecraft:stone"
+    },
+    {
+      "command": "setblock -29 180 28 minecraft:stone"
+    },
+    {
+      "command": "setblock -40 180 0 minecraft:stone"
+    },
+    {
+      "command": "setblock -29 180 -29 minecraft:stone"
+    },
+    {
+      "command": "setblock 0 180 -40 minecraft:stone"
+    },
+    {
+      "command": "setblock 28 180 -29 minecraft:stone"
+    },
+    {
+      "command": "setblock 20 180 0 minecraft:stone"
+    },
+    {
+      "command": "setblock 0 180 20 minecraft:stone"
+    },
+    {
+      "command": "setblock -20 180 0 minecraft:stone"
+    },
+    {
+      "command": "setblock 0 180 -20 minecraft:stone"
+    },
+    {
+      "command": "execute if block 28 180 28 minecraft:stone",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 60 120 0 {PersistenceRequired:1b,DragonPhase:10,Tags:[\"path_crystals_probe\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=path_crystals_probe,limit=1] 40.0 120.0 0.0 180 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=path_crystals_probe,limit=1] {Motion:[0.0d,0.0d,0.0d],DragonPhase:4,NoAI:1b}"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=path_crystals_probe,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=path_crystals_probe,limit=1] Motion"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=path_crystals_probe,limit=1] DragonPhase"
+    },
+    {
+      "command": "say first_takeoff_tick",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=path_crystals_probe,limit=1] Pos",
+      "observe": true,
+      "expect_contains": "120"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=path_crystals_probe,limit=1] Motion"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=path_crystals_probe,limit=1,nbt={DragonPhase:4}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "say TRIAL_2_raised_east"
+    },
+    {
+      "command": "setblock 28 180 28 minecraft:stone"
+    },
+    {
+      "command": "setblock -29 180 28 minecraft:stone"
+    },
+    {
+      "command": "setblock -40 180 0 minecraft:stone"
+    },
+    {
+      "command": "setblock -29 180 -29 minecraft:stone"
+    },
+    {
+      "command": "setblock 0 180 -40 minecraft:stone"
+    },
+    {
+      "command": "setblock 28 180 -29 minecraft:stone"
+    },
+    {
+      "command": "setblock 20 180 0 minecraft:stone"
+    },
+    {
+      "command": "setblock 0 180 20 minecraft:stone"
+    },
+    {
+      "command": "setblock -20 180 0 minecraft:stone"
+    },
+    {
+      "command": "setblock 0 180 -20 minecraft:stone"
+    },
+    {
+      "command": "execute if block 28 180 28 minecraft:stone",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 60 120 0 {PersistenceRequired:1b,DragonPhase:10,Tags:[\"path_crystals_probe\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=path_crystals_probe,limit=1] 40.0 120.0 0.0 180 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=path_crystals_probe,limit=1] {Motion:[0.0d,0.0d,0.0d],DragonPhase:4,NoAI:0b}"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=path_crystals_probe,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=path_crystals_probe,limit=1] Motion"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=path_crystals_probe,limit=1] DragonPhase"
+    },
+    {
+      "command": "say first_takeoff_tick",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=path_crystals_probe,limit=1] Pos",
+      "observe": true,
+      "expect_contains": "120.00600000023842d"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=path_crystals_probe,limit=1] Motion"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=path_crystals_probe,limit=1,nbt={DragonPhase:4}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "say TRIAL_2_raised_south"
+    },
+    {
+      "command": "setblock 28 180 28 minecraft:stone"
+    },
+    {
+      "command": "setblock -29 180 28 minecraft:stone"
+    },
+    {
+      "command": "setblock -40 180 0 minecraft:stone"
+    },
+    {
+      "command": "setblock -29 180 -29 minecraft:stone"
+    },
+    {
+      "command": "setblock 0 180 -40 minecraft:stone"
+    },
+    {
+      "command": "setblock 28 180 -29 minecraft:stone"
+    },
+    {
+      "command": "setblock 20 180 0 minecraft:stone"
+    },
+    {
+      "command": "setblock 0 180 20 minecraft:stone"
+    },
+    {
+      "command": "setblock -20 180 0 minecraft:stone"
+    },
+    {
+      "command": "setblock 0 180 -20 minecraft:stone"
+    },
+    {
+      "command": "execute if block 28 180 28 minecraft:stone",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 60 120 0 {PersistenceRequired:1b,DragonPhase:10,Tags:[\"path_crystals_probe\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=path_crystals_probe,limit=1] 0.0 120.0 40.0 90 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=path_crystals_probe,limit=1] {Motion:[0.0d,0.0d,0.0d],DragonPhase:4,NoAI:0b}"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=path_crystals_probe,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=path_crystals_probe,limit=1] Motion"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=path_crystals_probe,limit=1] DragonPhase"
+    },
+    {
+      "command": "say first_takeoff_tick",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=path_crystals_probe,limit=1] Pos",
+      "observe": true,
+      "expect_contains": "120.00600000023842d"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=path_crystals_probe,limit=1] Motion"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=path_crystals_probe,limit=1,nbt={DragonPhase:4}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "say TRIAL_2_flat_east"
+    },
+    {
+      "command": "setblock 28 180 28 minecraft:air"
+    },
+    {
+      "command": "setblock -29 180 28 minecraft:air"
+    },
+    {
+      "command": "setblock -40 180 0 minecraft:air"
+    },
+    {
+      "command": "setblock -29 180 -29 minecraft:air"
+    },
+    {
+      "command": "setblock 0 180 -40 minecraft:air"
+    },
+    {
+      "command": "setblock 28 180 -29 minecraft:air"
+    },
+    {
+      "command": "setblock 20 180 0 minecraft:air"
+    },
+    {
+      "command": "setblock 0 180 20 minecraft:air"
+    },
+    {
+      "command": "setblock -20 180 0 minecraft:air"
+    },
+    {
+      "command": "setblock 0 180 -20 minecraft:air"
+    },
+    {
+      "command": "execute if block 28 180 28 minecraft:air",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 60 120 0 {PersistenceRequired:1b,DragonPhase:10,Tags:[\"path_crystals_probe\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=path_crystals_probe,limit=1] 40.0 120.0 0.0 180 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=path_crystals_probe,limit=1] {Motion:[0.0d,0.0d,0.0d],DragonPhase:4,NoAI:0b}"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=path_crystals_probe,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=path_crystals_probe,limit=1] Motion"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=path_crystals_probe,limit=1] DragonPhase"
+    },
+    {
+      "command": "say first_takeoff_tick",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=path_crystals_probe,limit=1] Pos",
+      "observe": true,
+      "expect_contains": "119.99399999976158d"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=path_crystals_probe,limit=1] Motion"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=path_crystals_probe,limit=1,nbt={DragonPhase:4}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "say TRIAL_2_raised_noai"
+    },
+    {
+      "command": "setblock 28 180 28 minecraft:stone"
+    },
+    {
+      "command": "setblock -29 180 28 minecraft:stone"
+    },
+    {
+      "command": "setblock -40 180 0 minecraft:stone"
+    },
+    {
+      "command": "setblock -29 180 -29 minecraft:stone"
+    },
+    {
+      "command": "setblock 0 180 -40 minecraft:stone"
+    },
+    {
+      "command": "setblock 28 180 -29 minecraft:stone"
+    },
+    {
+      "command": "setblock 20 180 0 minecraft:stone"
+    },
+    {
+      "command": "setblock 0 180 20 minecraft:stone"
+    },
+    {
+      "command": "setblock -20 180 0 minecraft:stone"
+    },
+    {
+      "command": "setblock 0 180 -20 minecraft:stone"
+    },
+    {
+      "command": "execute if block 28 180 28 minecraft:stone",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 60 120 0 {PersistenceRequired:1b,DragonPhase:10,Tags:[\"path_crystals_probe\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=path_crystals_probe,limit=1] 40.0 120.0 0.0 180 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=path_crystals_probe,limit=1] {Motion:[0.0d,0.0d,0.0d],DragonPhase:4,NoAI:1b}"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=path_crystals_probe,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=path_crystals_probe,limit=1] Motion"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=path_crystals_probe,limit=1] DragonPhase"
+    },
+    {
+      "command": "say first_takeoff_tick",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=path_crystals_probe,limit=1] Pos",
+      "observe": true,
+      "expect_contains": "120"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=path_crystals_probe,limit=1] Motion"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=path_crystals_probe,limit=1,nbt={DragonPhase:4}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    }
+  ],
+  "cleanup": [
+    "kill @e[type=minecraft:ender_dragon]",
+    "kill @e[type=minecraft:ender_dragon]",
+    "forceload remove -64 -64 79 63",
+    "execute unless entity @e[type=minecraft:ender_dragon]"
+  ]
+}
