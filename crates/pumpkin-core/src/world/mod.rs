@@ -5345,7 +5345,7 @@ impl World {
             }
         }
 
-        Some(broken_state_id)
+        (broken_state_id != new_state_id).then_some(broken_state_id)
     }
 
     #[must_use]
