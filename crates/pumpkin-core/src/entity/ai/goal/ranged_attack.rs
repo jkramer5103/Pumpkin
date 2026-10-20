@@ -81,15 +81,10 @@ impl Goal for RangedAttackGoal {
                 .is_some_and(|target| target.get_entity().is_alive() && !mob.is_navigator_idle())
     }
 
-    fn stop(&mut self, mob: &dyn Mob) {
+    fn stop(&mut self, _mob: &dyn Mob) {
         self.target = None;
         self.see_time = 0;
         self.attack_time = -1;
-        mob.get_mob_entity()
-            .navigator
-            .lock()
-            .unwrap_or_else(std::sync::PoisonError::into_inner)
-            .stop();
     }
 
     fn should_run_every_tick(&self) -> bool {

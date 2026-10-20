@@ -1,0 +1,690 @@
+{
+  "schema_version": 1,
+  "id": "wither-interrupted-ranged-route",
+  "title": "Wither ranged route survives an invulnerability-goal interrupt",
+  "category": "entities",
+  "description": "Start a two-tick ranged route to a living nearby sheep, then force Invul200 to preempt the ranged goal before its five-tick visibility stop. Sample movement over24 ticks, with an eight-tick ordinary ranged and initially invulnerable controls. Forced midlife invulnerability isolates goal-stop semantics; it is not natural Wither construction.",
+  "tags": [
+    "entity",
+    "wither",
+    "ai"
+  ],
+  "setup": [
+    "tick freeze",
+    "gamemode creative @a",
+    "difficulty easy",
+    "gamerule spawn_mobs false",
+    "gamerule mob_griefing false",
+    "forceload add 0 0 31 31",
+    "fill 0 79 0 31 96 31 minecraft:bedrock",
+    "fill 1 80 1 30 95 30 minecraft:air",
+    "tp @a 8.5 91 8.5"
+  ],
+  "steps": [
+    {
+      "command": "say PARITY_ROUTE_CASE=1-interrupted"
+    },
+    {
+      "command": "kill @e[type=!minecraft:player]",
+      "wait_ticks": 25
+    },
+    {
+      "command": "kill @e[type=minecraft:item]"
+    },
+    {
+      "command": "kill @e[type=minecraft:experience_orb]"
+    },
+    {
+      "command": "summon minecraft:sheep 11 84 8.5 {Tags:[\"pp_target\"],NoAI:1b,NoGravity:1b,Silent:1b}"
+    },
+    {
+      "command": "attribute @e[tag=pp_target,limit=1] minecraft:max_health base set 1000"
+    },
+    {
+      "command": "attribute @e[tag=pp_target,limit=1] minecraft:knockback_resistance base set 1"
+    },
+    {
+      "command": "attribute @e[tag=pp_target,limit=1] minecraft:explosion_knockback_resistance base set 1"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_target,limit=1] {Health:1000.0f}"
+    },
+    {
+      "command": "summon minecraft:wither 8.5 84 8.5 {Tags:[\"pp_boss\"],Health:100.0f,Silent:1b,NoGravity:1b,Invul:0}"
+    },
+    {
+      "command": "attribute @e[tag=pp_boss,limit=1] minecraft:movement_speed base set 1"
+    },
+    {
+      "command": "attribute @e[tag=pp_boss,limit=1] minecraft:flying_speed base set 1"
+    },
+    {
+      "command": "execute unless entity @e[tag=pp_boss,nbt={NoAI:1b}]",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 2
+    },
+    {
+      "command": "data get entity @e[tag=pp_boss,limit=1] Pos"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Invul:200}"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_target]",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 4
+    },
+    {
+      "command": "data get entity @e[tag=pp_boss,limit=1] Pos"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_target]",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 4
+    },
+    {
+      "command": "data get entity @e[tag=pp_boss,limit=1] Pos"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_target]",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 4
+    },
+    {
+      "command": "data get entity @e[tag=pp_boss,limit=1] Pos"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_target]",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 4
+    },
+    {
+      "command": "data get entity @e[tag=pp_boss,limit=1] Pos"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_target]",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 4
+    },
+    {
+      "command": "data get entity @e[tag=pp_boss,limit=1] Pos"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_target]",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 4
+    },
+    {
+      "command": "data get entity @e[tag=pp_boss,limit=1] Pos"
+    },
+    {
+      "command": "execute unless entity @e[tag=pp_target,nbt={Health:0.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss,x=1,y=80,z=1,dx=29,dy=15,dz=29]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @a[gamemode=creative]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:wither_skull]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[tag=pp_boss,limit=1] Invul"
+    },
+    {
+      "command": "say PARITY_ROUTE_CASE=1-active"
+    },
+    {
+      "command": "kill @e[type=!minecraft:player]",
+      "wait_ticks": 25
+    },
+    {
+      "command": "kill @e[type=minecraft:item]"
+    },
+    {
+      "command": "kill @e[type=minecraft:experience_orb]"
+    },
+    {
+      "command": "summon minecraft:sheep 11 84 8.5 {Tags:[\"pp_target\"],NoAI:1b,NoGravity:1b,Silent:1b}"
+    },
+    {
+      "command": "attribute @e[tag=pp_target,limit=1] minecraft:max_health base set 1000"
+    },
+    {
+      "command": "attribute @e[tag=pp_target,limit=1] minecraft:knockback_resistance base set 1"
+    },
+    {
+      "command": "attribute @e[tag=pp_target,limit=1] minecraft:explosion_knockback_resistance base set 1"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_target,limit=1] {Health:1000.0f}"
+    },
+    {
+      "command": "summon minecraft:wither 8.5 84 8.5 {Tags:[\"pp_boss\"],Health:100.0f,Silent:1b,NoGravity:1b,Invul:0}"
+    },
+    {
+      "command": "attribute @e[tag=pp_boss,limit=1] minecraft:movement_speed base set 1"
+    },
+    {
+      "command": "attribute @e[tag=pp_boss,limit=1] minecraft:flying_speed base set 1"
+    },
+    {
+      "command": "execute unless entity @e[tag=pp_boss,nbt={NoAI:1b}]",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 2
+    },
+    {
+      "command": "data get entity @e[tag=pp_boss,limit=1] Pos"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_target]",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 4
+    },
+    {
+      "command": "data get entity @e[tag=pp_boss,limit=1] Pos"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_target]",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 4
+    },
+    {
+      "command": "data get entity @e[tag=pp_boss,limit=1] Pos"
+    },
+    {
+      "command": "execute unless entity @e[tag=pp_target,nbt={Health:0.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss,x=1,y=80,z=1,dx=29,dy=15,dz=29]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @a[gamemode=creative]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[tag=pp_boss,limit=1] Invul"
+    },
+    {
+      "command": "say PARITY_ROUTE_CASE=1-spawn"
+    },
+    {
+      "command": "kill @e[type=!minecraft:player]",
+      "wait_ticks": 25
+    },
+    {
+      "command": "kill @e[type=minecraft:item]"
+    },
+    {
+      "command": "kill @e[type=minecraft:experience_orb]"
+    },
+    {
+      "command": "summon minecraft:sheep 11 84 8.5 {Tags:[\"pp_target\"],NoAI:1b,NoGravity:1b,Silent:1b}"
+    },
+    {
+      "command": "attribute @e[tag=pp_target,limit=1] minecraft:max_health base set 1000"
+    },
+    {
+      "command": "attribute @e[tag=pp_target,limit=1] minecraft:knockback_resistance base set 1"
+    },
+    {
+      "command": "attribute @e[tag=pp_target,limit=1] minecraft:explosion_knockback_resistance base set 1"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_target,limit=1] {Health:1000.0f}"
+    },
+    {
+      "command": "summon minecraft:wither 8.5 84 8.5 {Tags:[\"pp_boss\"],Health:100.0f,Silent:1b,NoGravity:1b,Invul:200}"
+    },
+    {
+      "command": "attribute @e[tag=pp_boss,limit=1] minecraft:movement_speed base set 1"
+    },
+    {
+      "command": "attribute @e[tag=pp_boss,limit=1] minecraft:flying_speed base set 1"
+    },
+    {
+      "command": "execute unless entity @e[tag=pp_boss,nbt={NoAI:1b}]",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 2
+    },
+    {
+      "command": "data get entity @e[tag=pp_boss,limit=1] Pos"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_target]",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 4
+    },
+    {
+      "command": "data get entity @e[tag=pp_boss,limit=1] Pos"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_target]",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 4
+    },
+    {
+      "command": "data get entity @e[tag=pp_boss,limit=1] Pos"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_target]",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 4
+    },
+    {
+      "command": "data get entity @e[tag=pp_boss,limit=1] Pos"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_target]",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 4
+    },
+    {
+      "command": "data get entity @e[tag=pp_boss,limit=1] Pos"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_target]",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 4
+    },
+    {
+      "command": "data get entity @e[tag=pp_boss,limit=1] Pos"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_target]",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 4
+    },
+    {
+      "command": "data get entity @e[tag=pp_boss,limit=1] Pos"
+    },
+    {
+      "command": "execute unless entity @e[tag=pp_target,nbt={Health:0.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss,x=1,y=80,z=1,dx=29,dy=15,dz=29]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @a[gamemode=creative]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:wither_skull]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[tag=pp_boss,limit=1] Invul"
+    },
+    {
+      "command": "say PARITY_ROUTE_CASE=2-interrupted"
+    },
+    {
+      "command": "kill @e[type=!minecraft:player]",
+      "wait_ticks": 25
+    },
+    {
+      "command": "kill @e[type=minecraft:item]"
+    },
+    {
+      "command": "kill @e[type=minecraft:experience_orb]"
+    },
+    {
+      "command": "summon minecraft:sheep 11 84 8.5 {Tags:[\"pp_target\"],NoAI:1b,NoGravity:1b,Silent:1b}"
+    },
+    {
+      "command": "attribute @e[tag=pp_target,limit=1] minecraft:max_health base set 1000"
+    },
+    {
+      "command": "attribute @e[tag=pp_target,limit=1] minecraft:knockback_resistance base set 1"
+    },
+    {
+      "command": "attribute @e[tag=pp_target,limit=1] minecraft:explosion_knockback_resistance base set 1"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_target,limit=1] {Health:1000.0f}"
+    },
+    {
+      "command": "summon minecraft:wither 8.5 84 8.5 {Tags:[\"pp_boss\"],Health:100.0f,Silent:1b,NoGravity:1b,Invul:0}"
+    },
+    {
+      "command": "attribute @e[tag=pp_boss,limit=1] minecraft:movement_speed base set 1"
+    },
+    {
+      "command": "attribute @e[tag=pp_boss,limit=1] minecraft:flying_speed base set 1"
+    },
+    {
+      "command": "execute unless entity @e[tag=pp_boss,nbt={NoAI:1b}]",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 2
+    },
+    {
+      "command": "data get entity @e[tag=pp_boss,limit=1] Pos"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_boss,limit=1] {Invul:200}"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_target]",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 4
+    },
+    {
+      "command": "data get entity @e[tag=pp_boss,limit=1] Pos"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_target]",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 4
+    },
+    {
+      "command": "data get entity @e[tag=pp_boss,limit=1] Pos"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_target]",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 4
+    },
+    {
+      "command": "data get entity @e[tag=pp_boss,limit=1] Pos"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_target]",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 4
+    },
+    {
+      "command": "data get entity @e[tag=pp_boss,limit=1] Pos"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_target]",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 4
+    },
+    {
+      "command": "data get entity @e[tag=pp_boss,limit=1] Pos"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_target]",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 4
+    },
+    {
+      "command": "data get entity @e[tag=pp_boss,limit=1] Pos"
+    },
+    {
+      "command": "execute unless entity @e[tag=pp_target,nbt={Health:0.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss,x=1,y=80,z=1,dx=29,dy=15,dz=29]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @a[gamemode=creative]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:wither_skull]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[tag=pp_boss,limit=1] Invul"
+    },
+    {
+      "command": "say PARITY_ROUTE_CASE=2-active"
+    },
+    {
+      "command": "kill @e[type=!minecraft:player]",
+      "wait_ticks": 25
+    },
+    {
+      "command": "kill @e[type=minecraft:item]"
+    },
+    {
+      "command": "kill @e[type=minecraft:experience_orb]"
+    },
+    {
+      "command": "summon minecraft:sheep 11 84 8.5 {Tags:[\"pp_target\"],NoAI:1b,NoGravity:1b,Silent:1b}"
+    },
+    {
+      "command": "attribute @e[tag=pp_target,limit=1] minecraft:max_health base set 1000"
+    },
+    {
+      "command": "attribute @e[tag=pp_target,limit=1] minecraft:knockback_resistance base set 1"
+    },
+    {
+      "command": "attribute @e[tag=pp_target,limit=1] minecraft:explosion_knockback_resistance base set 1"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_target,limit=1] {Health:1000.0f}"
+    },
+    {
+      "command": "summon minecraft:wither 8.5 84 8.5 {Tags:[\"pp_boss\"],Health:100.0f,Silent:1b,NoGravity:1b,Invul:0}"
+    },
+    {
+      "command": "attribute @e[tag=pp_boss,limit=1] minecraft:movement_speed base set 1"
+    },
+    {
+      "command": "attribute @e[tag=pp_boss,limit=1] minecraft:flying_speed base set 1"
+    },
+    {
+      "command": "execute unless entity @e[tag=pp_boss,nbt={NoAI:1b}]",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 2
+    },
+    {
+      "command": "data get entity @e[tag=pp_boss,limit=1] Pos"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_target]",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 4
+    },
+    {
+      "command": "data get entity @e[tag=pp_boss,limit=1] Pos"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_target]",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 4
+    },
+    {
+      "command": "data get entity @e[tag=pp_boss,limit=1] Pos"
+    },
+    {
+      "command": "execute unless entity @e[tag=pp_target,nbt={Health:0.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss,x=1,y=80,z=1,dx=29,dy=15,dz=29]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @a[gamemode=creative]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[tag=pp_boss,limit=1] Invul"
+    },
+    {
+      "command": "say PARITY_ROUTE_CASE=2-spawn"
+    },
+    {
+      "command": "kill @e[type=!minecraft:player]",
+      "wait_ticks": 25
+    },
+    {
+      "command": "kill @e[type=minecraft:item]"
+    },
+    {
+      "command": "kill @e[type=minecraft:experience_orb]"
+    },
+    {
+      "command": "summon minecraft:sheep 11 84 8.5 {Tags:[\"pp_target\"],NoAI:1b,NoGravity:1b,Silent:1b}"
+    },
+    {
+      "command": "attribute @e[tag=pp_target,limit=1] minecraft:max_health base set 1000"
+    },
+    {
+      "command": "attribute @e[tag=pp_target,limit=1] minecraft:knockback_resistance base set 1"
+    },
+    {
+      "command": "attribute @e[tag=pp_target,limit=1] minecraft:explosion_knockback_resistance base set 1"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_target,limit=1] {Health:1000.0f}"
+    },
+    {
+      "command": "summon minecraft:wither 8.5 84 8.5 {Tags:[\"pp_boss\"],Health:100.0f,Silent:1b,NoGravity:1b,Invul:200}"
+    },
+    {
+      "command": "attribute @e[tag=pp_boss,limit=1] minecraft:movement_speed base set 1"
+    },
+    {
+      "command": "attribute @e[tag=pp_boss,limit=1] minecraft:flying_speed base set 1"
+    },
+    {
+      "command": "execute unless entity @e[tag=pp_boss,nbt={NoAI:1b}]",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 2
+    },
+    {
+      "command": "data get entity @e[tag=pp_boss,limit=1] Pos"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_target]",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 4
+    },
+    {
+      "command": "data get entity @e[tag=pp_boss,limit=1] Pos"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_target]",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 4
+    },
+    {
+      "command": "data get entity @e[tag=pp_boss,limit=1] Pos"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_target]",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 4
+    },
+    {
+      "command": "data get entity @e[tag=pp_boss,limit=1] Pos"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_target]",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 4
+    },
+    {
+      "command": "data get entity @e[tag=pp_boss,limit=1] Pos"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_target]",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 4
+    },
+    {
+      "command": "data get entity @e[tag=pp_boss,limit=1] Pos"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_target]",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 4
+    },
+    {
+      "command": "data get entity @e[tag=pp_boss,limit=1] Pos"
+    },
+    {
+      "command": "execute unless entity @e[tag=pp_target,nbt={Health:0.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss,x=1,y=80,z=1,dx=29,dy=15,dz=29]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @a[gamemode=creative]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:wither_skull]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[tag=pp_boss,limit=1] Invul"
+    }
+  ],
+  "cleanup": [
+    "kill @e[type=!minecraft:player]"
+  ]
+}
