@@ -15,6 +15,7 @@ use std::sync::{Arc, Mutex};
 
 use crate::entity::{
     Entity, EntityBase,
+    ai::target_predicate::TargetPredicate,
     living::LivingEntity,
     mob::{Mob, MobEntity},
     player::Player,
@@ -34,7 +35,6 @@ const GROWL_COOLDOWN_BASE: i32 = 200;
 const FLAP_SPEED: f32 = 0.2;
 pub const FLY_ACCEL: f64 = 0.1;
 pub const FLY_SPEED: f64 = 0.6;
-const ARENA_RADIUS: f64 = 192.0;
 const PART_DIMENSIONS: [(f32, f32); 8] = [
     (1.0, 1.0), // Head
     (3.0, 3.0), // Neck
@@ -613,17 +613,14 @@ impl EnderDragonEntity {
         }
     }
 
-    fn find_nearest_player(&self) -> Option<Arc<Player>> {
+    fn find_nearest_player(&self, pos: Vector3<f64>) -> Option<Arc<Player>> {
         let world = self.mob_entity.living_entity.entity.world.load();
-        let pos = self.mob_entity.living_entity.entity.pos.load();
+        let targeting = TargetPredicate::create_attackable().ignore_visibility();
         world
             .players
             .load()
             .iter()
-            .filter(|p| {
-                let p_pos = p.living_entity.entity.pos.load();
-                p_pos.distance_squared(pos) < ARENA_RADIUS * ARENA_RADIUS
-            })
+            .filter(|p| targeting.test(&world, Some(self), p.as_ref()))
             .min_by(|a, b| {
                 let a_pos = a.living_entity.entity.pos.load();
                 let b_pos = b.living_entity.entity.pos.load();

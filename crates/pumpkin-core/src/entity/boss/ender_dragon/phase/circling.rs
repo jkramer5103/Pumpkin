@@ -1,11 +1,56 @@
 use super::EnderDragonPhase;
 use crate::entity::boss::ender_dragon::{EnderDragonEntity, Vector3Ext, find_path};
+use pumpkin_util::math::position::BlockPos;
 use pumpkin_util::math::vector3::Vector3;
+use pumpkin_world::chunk::ChunkHeightmapType;
 use std::sync::atomic::Ordering;
 
 pub struct CirclingPhase;
 
 impl CirclingPhase {
+    fn choose_next_phase(dragon: &EnderDragonEntity) -> bool {
+        let world = dragon.mob_entity.living_entity.entity.world.load();
+        let origin = dragon
+            .fight_origin
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner)
+            .0;
+        let egg_y = world.get_heightmap_height(
+            ChunkHeightmapType::MotionBlockingNoLeaves,
+            origin.x,
+            origin.z,
+        ) + 1;
+        let egg = BlockPos::new(origin.x, egg_y, origin.z);
+        let crystals = world.dragon_fight.as_ref().map_or(0, |fight| {
+            fight
+                .lock()
+                .unwrap_or_else(std::sync::PoisonError::into_inner)
+                .alive_crystals()
+        });
+        if rand::random_range(0..crystals + 3) == 0 {
+            dragon.set_phase(EnderDragonPhase::LandingApproach);
+            return true;
+        }
+
+        let egg_pos = Vector3::new(f64::from(origin.x), f64::from(egg_y), f64::from(origin.z));
+        if let Some(player) = dragon.find_nearest_player(egg_pos) {
+            let pos = player.living_entity.entity.pos.load();
+            let distance_squared = egg.dist_to_center_sqr(pos.x, pos.y, pos.z) / 512.0;
+            if rand::random_range(0..(distance_squared + 2.0) as i32) == 0
+                || rand::random_range(0..crystals + 2) == 0
+            {
+                dragon.set_phase(EnderDragonPhase::Strafing);
+                *dragon
+                    .target_player
+                    .lock()
+                    .unwrap_or_else(std::sync::PoisonError::into_inner) =
+                    Some(player.gameprofile.id);
+                return true;
+            }
+        }
+        false
+    }
+
     fn should_choose_new_phase(
         target_distance_squared: Option<f64>,
         path_done: bool,
@@ -59,6 +104,17 @@ impl super::Phase for CirclingPhase {
                 .is_empty(),
             horizontal_collision,
         );
+
+        if choose_new_phase {
+            drop(target_location);
+            if Self::choose_next_phase(dragon) {
+                return;
+            }
+            target_location = dragon
+                .target_location
+                .lock()
+                .unwrap_or_else(std::sync::PoisonError::into_inner);
+        }
 
         if target_location.is_none() || !(100.0..=22500.0).contains(&d0) || horizontal_collision {
             let mut path = dragon
@@ -129,19 +185,6 @@ impl super::Phase for CirclingPhase {
             }
         }
         drop(target_location);
-
-        if choose_new_phase && rand::random_range(0..64) == 0 {
-            if rand::random_bool(0.5) {
-                dragon.set_phase(EnderDragonPhase::FlyToPortal);
-            } else if let Some(player) = dragon.find_nearest_player() {
-                *dragon
-                    .target_player
-                    .lock()
-                    .unwrap_or_else(std::sync::PoisonError::into_inner) =
-                    Some(player.gameprofile.id);
-                dragon.set_phase(EnderDragonPhase::Strafing);
-            }
-        }
     }
 }
 

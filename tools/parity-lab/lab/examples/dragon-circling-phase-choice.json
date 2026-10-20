@@ -1,0 +1,473 @@
+{
+  "schema_version": 1,
+  "id": "dragon-circling-phase-choice",
+  "title": "Circling dragons choose landing at completed routes",
+  "description": "Thirty-two separated dragons repeatedly finish orbit routes above their flight nodes. With no fight crystals, vanilla chooses landing with probability one third per eligible route decision. The creative observer must not become a strafe target. Aggregate threshold allows random route lengths and choices; it does not require identical random streams. Per-sample altitude/yaw resets run as one batch, preserving individual horizontal positions and keeping the fixture within the headless client lifetime.",
+  "category": "entity",
+  "tags": [
+    "ender-dragon",
+    "ai"
+  ],
+  "setup": [
+    "tick freeze",
+    "difficulty normal",
+    "gamerule spawn_mobs false",
+    "gamerule mob_griefing false",
+    "forceload add -96 -96 95 95",
+    "gamemode creative ParitySmoke",
+    "tp ParitySmoke 0 300 0"
+  ],
+  "steps": [
+    {
+      "command": "say Wait for arena chunks",
+      "wait_ticks": 40
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "summon minecraft:ender_dragon -56 300 -48 {PersistenceRequired:1b,Silent:1b,DragonPhase:10,Tags:[\"choice\",\"choice_0\"]}"
+    },
+    {
+      "command": "summon minecraft:ender_dragon -56 300 -16 {PersistenceRequired:1b,Silent:1b,DragonPhase:10,Tags:[\"choice\",\"choice_1\"]}"
+    },
+    {
+      "command": "summon minecraft:ender_dragon -56 300 16 {PersistenceRequired:1b,Silent:1b,DragonPhase:10,Tags:[\"choice\",\"choice_2\"]}"
+    },
+    {
+      "command": "summon minecraft:ender_dragon -56 300 48 {PersistenceRequired:1b,Silent:1b,DragonPhase:10,Tags:[\"choice\",\"choice_3\"]}"
+    },
+    {
+      "command": "summon minecraft:ender_dragon -40 300 -48 {PersistenceRequired:1b,Silent:1b,DragonPhase:10,Tags:[\"choice\",\"choice_4\"]}"
+    },
+    {
+      "command": "summon minecraft:ender_dragon -40 300 -16 {PersistenceRequired:1b,Silent:1b,DragonPhase:10,Tags:[\"choice\",\"choice_5\"]}"
+    },
+    {
+      "command": "summon minecraft:ender_dragon -40 300 16 {PersistenceRequired:1b,Silent:1b,DragonPhase:10,Tags:[\"choice\",\"choice_6\"]}"
+    },
+    {
+      "command": "summon minecraft:ender_dragon -40 300 48 {PersistenceRequired:1b,Silent:1b,DragonPhase:10,Tags:[\"choice\",\"choice_7\"]}"
+    },
+    {
+      "command": "summon minecraft:ender_dragon -24 300 -48 {PersistenceRequired:1b,Silent:1b,DragonPhase:10,Tags:[\"choice\",\"choice_8\"]}"
+    },
+    {
+      "command": "summon minecraft:ender_dragon -24 300 -16 {PersistenceRequired:1b,Silent:1b,DragonPhase:10,Tags:[\"choice\",\"choice_9\"]}"
+    },
+    {
+      "command": "summon minecraft:ender_dragon -24 300 16 {PersistenceRequired:1b,Silent:1b,DragonPhase:10,Tags:[\"choice\",\"choice_10\"]}"
+    },
+    {
+      "command": "summon minecraft:ender_dragon -24 300 48 {PersistenceRequired:1b,Silent:1b,DragonPhase:10,Tags:[\"choice\",\"choice_11\"]}"
+    },
+    {
+      "command": "summon minecraft:ender_dragon -8 300 -48 {PersistenceRequired:1b,Silent:1b,DragonPhase:10,Tags:[\"choice\",\"choice_12\"]}"
+    },
+    {
+      "command": "summon minecraft:ender_dragon -8 300 -16 {PersistenceRequired:1b,Silent:1b,DragonPhase:10,Tags:[\"choice\",\"choice_13\"]}"
+    },
+    {
+      "command": "summon minecraft:ender_dragon -8 300 16 {PersistenceRequired:1b,Silent:1b,DragonPhase:10,Tags:[\"choice\",\"choice_14\"]}"
+    },
+    {
+      "command": "summon minecraft:ender_dragon -8 300 48 {PersistenceRequired:1b,Silent:1b,DragonPhase:10,Tags:[\"choice\",\"choice_15\"]}"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 8 300 -48 {PersistenceRequired:1b,Silent:1b,DragonPhase:10,Tags:[\"choice\",\"choice_16\"]}"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 8 300 -16 {PersistenceRequired:1b,Silent:1b,DragonPhase:10,Tags:[\"choice\",\"choice_17\"]}"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 8 300 16 {PersistenceRequired:1b,Silent:1b,DragonPhase:10,Tags:[\"choice\",\"choice_18\"]}"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 8 300 48 {PersistenceRequired:1b,Silent:1b,DragonPhase:10,Tags:[\"choice\",\"choice_19\"]}"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 24 300 -48 {PersistenceRequired:1b,Silent:1b,DragonPhase:10,Tags:[\"choice\",\"choice_20\"]}"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 24 300 -16 {PersistenceRequired:1b,Silent:1b,DragonPhase:10,Tags:[\"choice\",\"choice_21\"]}"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 24 300 16 {PersistenceRequired:1b,Silent:1b,DragonPhase:10,Tags:[\"choice\",\"choice_22\"]}"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 24 300 48 {PersistenceRequired:1b,Silent:1b,DragonPhase:10,Tags:[\"choice\",\"choice_23\"]}"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 40 300 -48 {PersistenceRequired:1b,Silent:1b,DragonPhase:10,Tags:[\"choice\",\"choice_24\"]}"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 40 300 -16 {PersistenceRequired:1b,Silent:1b,DragonPhase:10,Tags:[\"choice\",\"choice_25\"]}"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 40 300 16 {PersistenceRequired:1b,Silent:1b,DragonPhase:10,Tags:[\"choice\",\"choice_26\"]}"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 40 300 48 {PersistenceRequired:1b,Silent:1b,DragonPhase:10,Tags:[\"choice\",\"choice_27\"]}"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 56 300 -48 {PersistenceRequired:1b,Silent:1b,DragonPhase:10,Tags:[\"choice\",\"choice_28\"]}"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 56 300 -16 {PersistenceRequired:1b,Silent:1b,DragonPhase:10,Tags:[\"choice\",\"choice_29\"]}"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 56 300 16 {PersistenceRequired:1b,Silent:1b,DragonPhase:10,Tags:[\"choice\",\"choice_30\"]}"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 56 300 48 {PersistenceRequired:1b,Silent:1b,DragonPhase:10,Tags:[\"choice\",\"choice_31\"]}"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0 340 0 {PersistenceRequired:1b,Silent:1b,NoAI:1b,DragonPhase:0,Tags:[\"choice_noai\"]}"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 0 360 0 {PersistenceRequired:1b,Silent:1b,DragonPhase:10,Tags:[\"choice_hover\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute as @e[type=minecraft:ender_dragon,tag=choice] run data merge entity @s {DragonPhase:0,Motion:[0.0d,0.0d,0.0d]}"
+    },
+    {
+      "command": "say PHASE_SAMPLE_0"
+    },
+    {
+      "command": "execute as @e[type=minecraft:ender_dragon,tag=choice] at @s run tp @s ~ 300 ~ 0 0"
+    },
+    {
+      "command": "execute as @e[type=minecraft:ender_dragon,tag=choice] run data merge entity @s {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 4
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=choice,nbt={DragonPhase:0}]"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=choice,nbt={DragonPhase:1}]"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=choice,nbt={DragonPhase:2}]"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=choice,nbt={DragonPhase:3}]"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=choice]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 32"
+    },
+    {
+      "command": "say PHASE_SAMPLE_1"
+    },
+    {
+      "command": "execute as @e[type=minecraft:ender_dragon,tag=choice] at @s run tp @s ~ 300 ~ 0 0"
+    },
+    {
+      "command": "execute as @e[type=minecraft:ender_dragon,tag=choice] run data merge entity @s {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 4
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=choice,nbt={DragonPhase:0}]"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=choice,nbt={DragonPhase:1}]"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=choice,nbt={DragonPhase:2}]"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=choice,nbt={DragonPhase:3}]"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=choice]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 32"
+    },
+    {
+      "command": "say PHASE_SAMPLE_2"
+    },
+    {
+      "command": "execute as @e[type=minecraft:ender_dragon,tag=choice] at @s run tp @s ~ 300 ~ 0 0"
+    },
+    {
+      "command": "execute as @e[type=minecraft:ender_dragon,tag=choice] run data merge entity @s {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 4
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=choice,nbt={DragonPhase:0}]"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=choice,nbt={DragonPhase:1}]"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=choice,nbt={DragonPhase:2}]"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=choice,nbt={DragonPhase:3}]"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=choice]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 32"
+    },
+    {
+      "command": "say PHASE_SAMPLE_3"
+    },
+    {
+      "command": "execute as @e[type=minecraft:ender_dragon,tag=choice] at @s run tp @s ~ 300 ~ 0 0"
+    },
+    {
+      "command": "execute as @e[type=minecraft:ender_dragon,tag=choice] run data merge entity @s {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 4
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=choice,nbt={DragonPhase:0}]"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=choice,nbt={DragonPhase:1}]"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=choice,nbt={DragonPhase:2}]"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=choice,nbt={DragonPhase:3}]"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=choice]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 32"
+    },
+    {
+      "command": "say PHASE_SAMPLE_4"
+    },
+    {
+      "command": "execute as @e[type=minecraft:ender_dragon,tag=choice] at @s run tp @s ~ 300 ~ 0 0"
+    },
+    {
+      "command": "execute as @e[type=minecraft:ender_dragon,tag=choice] run data merge entity @s {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 4
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=choice,nbt={DragonPhase:0}]"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=choice,nbt={DragonPhase:1}]"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=choice,nbt={DragonPhase:2}]"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=choice,nbt={DragonPhase:3}]"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=choice]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 32"
+    },
+    {
+      "command": "say PHASE_SAMPLE_5"
+    },
+    {
+      "command": "execute as @e[type=minecraft:ender_dragon,tag=choice] at @s run tp @s ~ 300 ~ 0 0"
+    },
+    {
+      "command": "execute as @e[type=minecraft:ender_dragon,tag=choice] run data merge entity @s {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 4
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=choice,nbt={DragonPhase:0}]"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=choice,nbt={DragonPhase:1}]"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=choice,nbt={DragonPhase:2}]"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=choice,nbt={DragonPhase:3}]"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=choice]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 32"
+    },
+    {
+      "command": "say PHASE_SAMPLE_6"
+    },
+    {
+      "command": "execute as @e[type=minecraft:ender_dragon,tag=choice] at @s run tp @s ~ 300 ~ 0 0"
+    },
+    {
+      "command": "execute as @e[type=minecraft:ender_dragon,tag=choice] run data merge entity @s {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 4
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=choice,nbt={DragonPhase:0}]"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=choice,nbt={DragonPhase:1}]"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=choice,nbt={DragonPhase:2}]"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=choice,nbt={DragonPhase:3}]"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=choice]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 32"
+    },
+    {
+      "command": "say PHASE_SAMPLE_7"
+    },
+    {
+      "command": "execute as @e[type=minecraft:ender_dragon,tag=choice] at @s run tp @s ~ 300 ~ 0 0"
+    },
+    {
+      "command": "execute as @e[type=minecraft:ender_dragon,tag=choice] run data merge entity @s {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 4
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=choice,nbt={DragonPhase:0}]"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=choice,nbt={DragonPhase:1}]"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=choice,nbt={DragonPhase:2}]"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=choice,nbt={DragonPhase:3}]"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=choice]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 32"
+    },
+    {
+      "command": "say PHASE_SAMPLE_8"
+    },
+    {
+      "command": "execute as @e[type=minecraft:ender_dragon,tag=choice] at @s run tp @s ~ 300 ~ 0 0"
+    },
+    {
+      "command": "execute as @e[type=minecraft:ender_dragon,tag=choice] run data merge entity @s {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 4
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=choice,nbt={DragonPhase:0}]"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=choice,nbt={DragonPhase:1}]"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=choice,nbt={DragonPhase:2}]"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=choice,nbt={DragonPhase:3}]"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=choice]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 32"
+    },
+    {
+      "command": "say PHASE_SAMPLE_9"
+    },
+    {
+      "command": "execute as @e[type=minecraft:ender_dragon,tag=choice] at @s run tp @s ~ 300 ~ 0 0"
+    },
+    {
+      "command": "execute as @e[type=minecraft:ender_dragon,tag=choice] run data merge entity @s {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 4
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=choice,nbt={DragonPhase:0}]"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=choice,nbt={DragonPhase:1}]"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=choice,nbt={DragonPhase:2}]"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=choice,nbt={DragonPhase:3}]"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=choice]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 32"
+    },
+    {
+      "command": "say PHASE_SAMPLE_10"
+    },
+    {
+      "command": "execute as @e[type=minecraft:ender_dragon,tag=choice] at @s run tp @s ~ 300 ~ 0 0"
+    },
+    {
+      "command": "execute as @e[type=minecraft:ender_dragon,tag=choice] run data merge entity @s {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 4
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=choice,nbt={DragonPhase:0}]"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=choice,nbt={DragonPhase:1}]"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=choice,nbt={DragonPhase:2}]"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=choice,nbt={DragonPhase:3}]"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=choice]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 32"
+    },
+    {
+      "command": "say PHASE_SAMPLE_11"
+    },
+    {
+      "command": "execute as @e[type=minecraft:ender_dragon,tag=choice] at @s run tp @s ~ 300 ~ 0 0"
+    },
+    {
+      "command": "execute as @e[type=minecraft:ender_dragon,tag=choice] run data merge entity @s {Motion:[0.0d,0.0d,0.0d]}",
+      "wait_ticks": 4
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=choice,nbt={DragonPhase:0}]"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=choice,nbt={DragonPhase:1}]"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=choice,nbt={DragonPhase:2}]"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=choice,nbt={DragonPhase:3}]"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=choice]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 32"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=choice_noai,nbt={NoAI:1b,DragonPhase:0}]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=choice_hover,nbt={DragonPhase:10}]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1"
+    }
+  ],
+  "cleanup": [
+    "kill @e[type=minecraft:ender_dragon]",
+    "execute unless entity @e[type=minecraft:ender_dragon]"
+  ]
+}
