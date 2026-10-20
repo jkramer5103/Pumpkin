@@ -47,6 +47,16 @@ use crate::{
 
 const INVULNERABLE_TICKS: i32 = 220;
 
+fn normalize_skull_direction(direction: Vector3<f64>) -> Vector3<f64> {
+    let length = direction.length();
+    // Vanilla Vec3.normalize compares against a float epsilon widened to double.
+    if length < f64::from(1.0e-5f32) {
+        Vector3::new(0.0, 0.0, 0.0)
+    } else {
+        direction / length
+    }
+}
+
 struct WitherDoNothingGoal {
     wither: Weak<WitherEntity>,
 }
@@ -269,11 +279,7 @@ impl WitherEntity {
         let head_pos = Vector3::new(hx, hy, hz);
 
         let dir = Vector3::new(target_x - hx, target_y - hy, target_z - hz);
-        let normalized_dir = if dir.length_squared() > 1e-6 {
-            dir.normalize()
-        } else {
-            Vector3::new(0.0, 0.0, 1.0)
-        };
+        let normalized_dir = normalize_skull_direction(dir);
 
         let skull_entity = Entity::from_uuid(
             Uuid::new_v4(),
@@ -783,6 +789,39 @@ impl Mob for WitherEntity {
     fn mob_read_nbt(&self, nbt: &NbtCompound) {
         if let Some(invul) = nbt.get_int("Invul") {
             self.set_invulnerable_ticks(invul);
+        }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::normalize_skull_direction;
+    use pumpkin_util::math::vector3::Vector3;
+
+    #[test]
+    fn close_skull_shots_preserve_the_target_direction() {
+        for (offset, expected_x) in [(0.0005, 1.0), (-0.0005, -1.0), (0.005, 1.0)] {
+            assert_eq!(
+                normalize_skull_direction(Vector3::new(offset, 0.0, 0.0)),
+                Vector3::new(expected_x, 0.0, 0.0)
+            );
+        }
+    }
+
+    #[test]
+    fn skull_shots_use_vanillas_normalization_cutoff() {
+        for offset in [0.0, 0.000005, -0.000005, 0.000009999999] {
+            assert_eq!(
+                normalize_skull_direction(Vector3::new(offset, 0.0, 0.0)),
+                Vector3::new(0.0, 0.0, 0.0)
+            );
+        }
+        // 1e-5f widened to double is just below the decimal 1e-5 boundary.
+        for offset in [0.0000099999998, 0.00001, 0.00002] {
+            assert_eq!(
+                normalize_skull_direction(Vector3::new(0.0, -offset, 0.0)),
+                Vector3::new(0.0, -1.0, 0.0)
+            );
         }
     }
 }

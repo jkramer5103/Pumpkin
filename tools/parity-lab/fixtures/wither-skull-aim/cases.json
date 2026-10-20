@@ -1,0 +1,23 @@
+{
+  "id": "wither-skull-close-aim",
+  "description": "Freeze time in a scratch arena; reset the Wither to (15,80,15) and zero velocity before each single tick. A NoAI villager with Resistance V stands at (15+dx,82.19,15), placing its half-eye target next to the main firing head (15,83,15). Kill old skulls before each tick. Inspect Motion and Pos of a newly launched main-head skull within 60 ticks. Repeat each case twice. Compare direction and the zero vector, since projectile speed/flight is a separate upstream change.",
+  "trials": 2,
+  "max_shot_ticks": 60,
+  "setup": [
+    "gamemode creative @a",
+    "difficulty easy",
+    "gamerule mob_griefing false",
+    "gamerule spawn_mobs false",
+    "fill 0 79 0 31 79 31 minecraft:bedrock",
+    "fill 0 80 0 31 95 31 minecraft:air",
+    "tp @a 16 90 16"
+  ],
+  "cases": [
+    {"id": "positive", "dx": 0.0005, "expected": "positive_x"},
+    {"id": "negative", "dx": -0.0005, "expected": "negative_x"},
+    {"id": "coincident", "dx": 0.0, "expected": "zero"},
+    {"id": "below_epsilon", "dx": 0.000005, "expected": "zero"},
+    {"id": "above_epsilon", "dx": 0.00002, "expected": "positive_x"},
+    {"id": "control", "dx": 0.005, "expected": "positive_x"}
+  ]
+}
