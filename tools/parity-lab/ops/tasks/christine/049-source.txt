@@ -1,0 +1,69 @@
+Fix Pumpkin Ender Dragon vanilla parity
+
+The user's ongoing goal is Pumpkin behavior indistinguishable from default
+Minecraft. This campaign is continuous. Complete one bounded source-fix task,
+push the result, and finish your turn; the supervisor assigns the next task.
+Do not declare full parity or campaign completion when a test suite passes.
+When known bugs are exhausted, investigate a new gameplay subsystem and reproduce
+behavior on vanilla and Pumpkin. Do not return to lab audits or catalog padding.
+
+Read AGENTS.md and ops/FORK.md; this priority supersedes old finite-queue and
+lab-only assignments in CONTRACT.md. Use exactly gpt-6.1-sol with Christine
+credentials only, YOLO. No Jaron subscription, Joon, paid overage, banked resets,
+new agents, upstream PRs/issues/comments or unrelated services.
+
+Inspect prior task completions, source commits, fork-status and worktree state
+before choosing a candidate. Don't re-fix or repeatedly validate completed bugs.
+Inspect runtime/campaign.json blocked_tasks and event evidence; never retry or
+rephrase a provider-rejected candidate. Choose a different defect instead.
+Read applicable Pumpkin AGENTS.md and relevant vanilla implementation. Check
+upstream for overlap; don't invent a source bug from failing lab infrastructure.
+Reproduce an observable difference, implement an actual Rust source correction,
+add focused regression coverage and run meaningful relevant Rust checks. Use
+existing comparison tooling for a bounded before/after vanilla check where feasible.
+Do not spend this task enhancing Python infrastructure or writing general audits.
+If the first candidate is already fixed or blocked, choose another candidate
+within your ownership. Persist toward a concrete source patch.
+
+Use the designated source worktree and branch; no force-push or master push.
+Preserve unrelated/uncommitted work and keep commits granular. Fetch fork master
+and integrate relevant existing campaign fixes without rewriting branch history.
+Serialize all Cargo operations with the shared build lock and resource limits
+in ops/FORK.md. If blocked by a build, checkpoint with ops/wait-for-build.py
+and end the turn; the supervisor resumes it without inference polling.
+Push validated Rust fixes to the authorized fork campaign branch. Update the
+accumulating artifacts/<lane>-fork-status.json patches and concise actual checks
+and limitations; record durable next-candidate notes there so the next task can
+continue. Unvalidated work must be labeled honestly; never fake live/client proof.
+Tests support source patches. Lab work alone is not a successful source task.
+
+Lane christine; Christine subscription ONLY. Source worktree
+/root/pumpkin-parity-worktrees/christine; branch parity-lab-christine.
+LATEST USER PRIORITY, effective AFTER the currently running task: entity parity,
+particularly Ender Dragon and Wither. Your primary boss is Ender Dragon.
+This overrides the old command/block-first ownership for these future assignments.
+Use https://pumpkinmc.org/tracker/ and maintainers' Mob AI tracking issue
+https://github.com/Pumpkin-MC/Pumpkin/issues/3468 as leads. Verify current source,
+vanilla behavior and upstream overlap: tracker entries are leads, not proof.
+
+Own Ender Dragon boss AI, fight phases, multipart hitboxes/damage/collisions,
+crystals/healing, death/respawn fight behavior and dragon-specific projectiles.
+Select one concrete missing or incorrect behavior at a time and implement it in
+Rust. Inspect the dragon collision/hitbox gates described in the tracking issue
+as a possible starting point; confirm it still applies before coding.
+
+Record claimed source files in runtime/source-ownership-christine.json before edits;
+read the other lane's record. Boss-specific files are separate ownership. For
+shared living/entity/combat code, reserve exact files and avoid simultaneous
+changes; choose a different boss-specific fix if the other lane owns them.
+Do not return to selector/scoreboard/lab work while reproducible boss defects
+remain. Prioritize actual boss gameplay over command-only NBT formatting.
+Use bounded isolated boss arenas and existing test/client tools where useful;
+never summon bosses into unrelated servers or worlds. Validate real behavior
+against vanilla as far as tooling allows. Unit tests alone do not prove a whole
+boss fight, and no client visual proof may be claimed without a real client.
+After each fix, continue with the next real defect for your boss. When that boss
+has no remaining reproducible candidates, help other entity parity work using
+the tracker and respecting ownership. Keep the campaign continuous.
+
+Source assignment sequence: 49.
