@@ -1,0 +1,31 @@
+{
+  "trials": 2,
+  "repeats": 2,
+  "reference": "Observed Minecraft Java26.3 one-tick Pos.y/Motion.y after acquired strafe approach completion, player(8,120,0), dragon(8,120,z), yaw180, zero initial Motion.",
+  "cases": [
+    {
+      "id": "close20",
+      "z": 20.0,
+      "y": 119.99982500000299,
+      "dy": -0.00015925000187754626
+    },
+    {
+      "id": "close30",
+      "z": 30.0,
+      "y": 119.99992500000198,
+      "dy": -6.825000015894567e-05
+    },
+    {
+      "id": "close40",
+      "z": 40.0,
+      "y": 119.99997500000148,
+      "dy": -2.2749999299645384e-05
+    },
+    {
+      "id": "far60",
+      "z": 60.0,
+      "y": 120.00002500000099,
+      "dy": 2.2750001559654896e-05
+    }
+  ]
+}

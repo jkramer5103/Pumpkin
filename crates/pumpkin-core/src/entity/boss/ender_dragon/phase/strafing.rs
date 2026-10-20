@@ -66,7 +66,7 @@ impl super::Phase for StrafingPhase {
             let d2 = player_pos.x - pos.x;
             let d3 = player_pos.z - pos.z;
             let d4 = d2.hypot(d3);
-            let d5 = (0.4 + d4 / 80.0 - 1.0).clamp(0.0, 10.0);
+            let d5 = (f64::from(0.4f32) + d4 / 80.0 - 1.0).min(10.0);
             *target_location = Some(Vector3::new(player_pos.x, player_pos.y + d5, player_pos.z));
         }
 
