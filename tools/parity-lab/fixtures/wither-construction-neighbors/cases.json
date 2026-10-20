@@ -1,0 +1,54 @@
+{
+  "trials": 2,
+  "setup": [
+    "gamemode creative @a",
+    "difficulty easy",
+    "gamerule mob_griefing false",
+    "gamerule spawn_mobs false",
+    "forceload add 0 0 31 31",
+    "fill 0 79 0 31 79 31 minecraft:bedrock",
+    "tp @a 15 85 20"
+  ],
+  "cases": [
+    {
+      "id": "x-positive",
+      "axis": "x",
+      "under": 16,
+      "last": 14,
+      "powered": true,
+      "complete": true
+    },
+    {
+      "id": "x-negative",
+      "axis": "x",
+      "under": 14,
+      "last": 16,
+      "powered": true,
+      "complete": true
+    },
+    {
+      "id": "z-negative",
+      "axis": "z",
+      "under": 14,
+      "last": 16,
+      "powered": true,
+      "complete": true
+    },
+    {
+      "id": "unpowered-control",
+      "axis": "x",
+      "under": 16,
+      "last": 14,
+      "powered": false,
+      "complete": true
+    },
+    {
+      "id": "incomplete-control",
+      "axis": "x",
+      "under": 16,
+      "last": 14,
+      "powered": true,
+      "complete": false
+    }
+  ]
+}

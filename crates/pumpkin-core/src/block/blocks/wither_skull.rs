@@ -103,7 +103,11 @@ fn spawn_wither(world: &Arc<World>, pattern: &WitherPattern) {
         .blocks
         .map(|pos| (pos, world.get_block_state_id(&pos)));
     for (pos, state_id) in blocks {
-        world.set_block_state(&pos, Block::AIR.default_state.id, BlockFlags::NOTIFY_ALL);
+        world.set_block_state(
+            &pos,
+            Block::AIR.default_state.id,
+            BlockFlags::NOTIFY_LISTENERS,
+        );
         world.sync_world_event(
             WorldEvent::ParticlesAndSoundDestroyBlock,
             pos,
@@ -125,6 +129,11 @@ fn spawn_wither(world: &Arc<World>, pattern: &WitherPattern) {
         }
     }
     world.spawn_entity(wither);
+
+    // Notify every pattern cell, including air under the arms, after the boss is spawned.
+    for pos in &pattern.blocks {
+        world.update_neighbors_at(pos, &Block::AIR, None);
+    }
 }
 
 #[pumpkin_block("wither_skeleton_skull")]
