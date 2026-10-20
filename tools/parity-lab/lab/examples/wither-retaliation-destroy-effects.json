@@ -1,0 +1,508 @@
+{
+  "schema_version": 1,
+  "id": "wither-retaliation-destroy-effects",
+  "title": "Wither retaliation sends destruction effects even for unchanged fluids",
+  "category": "entities",
+  "description": "Capture Java destruction event2001 at the scanned block on each fluid-only pulse; preserve solid breaks, immune/air controls and boss-event1022 mutation gating.",
+  "tags": [
+    "entity",
+    "wither",
+    "sound",
+    "particles"
+  ],
+  "setup": [
+    "tick freeze",
+    "gamemode creative @a",
+    "difficulty easy",
+    "gamerule spawn_mobs false",
+    "gamerule mob_griefing true",
+    "gamerule block_drops true",
+    "tp @a 15.5 87 15.5"
+  ],
+  "steps": [
+    {
+      "command": "say PARITY_EMPTY_BREAK_CASE=water"
+    },
+    {
+      "command": "kill @e[type=!minecraft:player]",
+      "wait_ticks": 25
+    },
+    {
+      "command": "fill 13 79 13 17 84 17 minecraft:bedrock"
+    },
+    {
+      "command": "fill 15 80 15 15 83 15 minecraft:air"
+    },
+    {
+      "command": "setblock 14 81 14 minecraft:water"
+    },
+    {
+      "command": "summon minecraft:wither 15.5 80 15.5 {Tags:[\"pp_boss\"],NoGravity:1b,Silent:1b,Health:300.0f,Invul:0}"
+    },
+    {
+      "command": "execute if block 14 81 14 minecraft:water",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "say PARITY_EMPTY_BREAK_PULSE=1"
+    },
+    {
+      "command": "damage @e[tag=pp_boss,limit=1] 1 minecraft:generic",
+      "wait_ticks": 19
+    },
+    {
+      "command": "execute if block 14 81 14 minecraft:water",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if block 14 81 14 minecraft:water[level=0]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 14 80 14 minecraft:bedrock",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss,x=15.5,y=80,z=15.5,distance=..0.001]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "say PARITY_EMPTY_BREAK_PULSE=2"
+    },
+    {
+      "command": "damage @e[tag=pp_boss,limit=1] 1 minecraft:generic",
+      "wait_ticks": 19
+    },
+    {
+      "command": "execute if block 14 81 14 minecraft:water[level=0]",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if block 14 81 14 minecraft:water[level=0]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 14 80 14 minecraft:bedrock",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss,x=15.5,y=80,z=15.5,distance=..0.001]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "say PARITY_EMPTY_BREAK_CASE=lava"
+    },
+    {
+      "command": "kill @e[type=!minecraft:player]",
+      "wait_ticks": 25
+    },
+    {
+      "command": "fill 13 79 13 17 84 17 minecraft:bedrock"
+    },
+    {
+      "command": "fill 15 80 15 15 83 15 minecraft:air"
+    },
+    {
+      "command": "setblock 14 81 14 minecraft:lava"
+    },
+    {
+      "command": "summon minecraft:wither 15.5 80 15.5 {Tags:[\"pp_boss\"],NoGravity:1b,Silent:1b,Health:300.0f,Invul:0}"
+    },
+    {
+      "command": "execute if block 14 81 14 minecraft:lava",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "say PARITY_EMPTY_BREAK_PULSE=1"
+    },
+    {
+      "command": "damage @e[tag=pp_boss,limit=1] 1 minecraft:generic",
+      "wait_ticks": 19
+    },
+    {
+      "command": "execute if block 14 81 14 minecraft:lava",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if block 14 81 14 minecraft:lava[level=0]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 14 80 14 minecraft:bedrock",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss,x=15.5,y=80,z=15.5,distance=..0.001]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "say PARITY_EMPTY_BREAK_PULSE=2"
+    },
+    {
+      "command": "damage @e[tag=pp_boss,limit=1] 1 minecraft:generic",
+      "wait_ticks": 19
+    },
+    {
+      "command": "execute if block 14 81 14 minecraft:lava[level=0]",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if block 14 81 14 minecraft:lava[level=0]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 14 80 14 minecraft:bedrock",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss,x=15.5,y=80,z=15.5,distance=..0.001]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "say PARITY_EMPTY_BREAK_CASE=air"
+    },
+    {
+      "command": "kill @e[type=!minecraft:player]",
+      "wait_ticks": 25
+    },
+    {
+      "command": "fill 13 79 13 17 84 17 minecraft:bedrock"
+    },
+    {
+      "command": "fill 15 80 15 15 83 15 minecraft:air"
+    },
+    {
+      "command": "setblock 14 81 14 minecraft:air"
+    },
+    {
+      "command": "summon minecraft:wither 15.5 80 15.5 {Tags:[\"pp_boss\"],NoGravity:1b,Silent:1b,Health:300.0f,Invul:0}"
+    },
+    {
+      "command": "execute if block 14 81 14 minecraft:air",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "say PARITY_EMPTY_BREAK_PULSE=1"
+    },
+    {
+      "command": "damage @e[tag=pp_boss,limit=1] 1 minecraft:generic",
+      "wait_ticks": 19
+    },
+    {
+      "command": "execute if block 14 81 14 minecraft:air",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if block 14 81 14 minecraft:air",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 14 80 14 minecraft:bedrock",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss,x=15.5,y=80,z=15.5,distance=..0.001]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "say PARITY_EMPTY_BREAK_PULSE=2"
+    },
+    {
+      "command": "damage @e[tag=pp_boss,limit=1] 1 minecraft:generic",
+      "wait_ticks": 19
+    },
+    {
+      "command": "execute if block 14 81 14 minecraft:air",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if block 14 81 14 minecraft:air",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 14 80 14 minecraft:bedrock",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss,x=15.5,y=80,z=15.5,distance=..0.001]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "say PARITY_EMPTY_BREAK_CASE=immune"
+    },
+    {
+      "command": "kill @e[type=!minecraft:player]",
+      "wait_ticks": 25
+    },
+    {
+      "command": "fill 13 79 13 17 84 17 minecraft:bedrock"
+    },
+    {
+      "command": "fill 15 80 15 15 83 15 minecraft:air"
+    },
+    {
+      "command": "setblock 14 81 14 minecraft:bedrock"
+    },
+    {
+      "command": "summon minecraft:wither 15.5 80 15.5 {Tags:[\"pp_boss\"],NoGravity:1b,Silent:1b,Health:300.0f,Invul:0}"
+    },
+    {
+      "command": "execute if block 14 81 14 minecraft:bedrock",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "say PARITY_EMPTY_BREAK_PULSE=1"
+    },
+    {
+      "command": "damage @e[tag=pp_boss,limit=1] 1 minecraft:generic",
+      "wait_ticks": 19
+    },
+    {
+      "command": "execute if block 14 81 14 minecraft:bedrock",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if block 14 81 14 minecraft:bedrock",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 14 80 14 minecraft:bedrock",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss,x=15.5,y=80,z=15.5,distance=..0.001]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "say PARITY_EMPTY_BREAK_PULSE=2"
+    },
+    {
+      "command": "damage @e[tag=pp_boss,limit=1] 1 minecraft:generic",
+      "wait_ticks": 19
+    },
+    {
+      "command": "execute if block 14 81 14 minecraft:bedrock",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if block 14 81 14 minecraft:bedrock",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 14 80 14 minecraft:bedrock",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss,x=15.5,y=80,z=15.5,distance=..0.001]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "say PARITY_EMPTY_BREAK_CASE=stone"
+    },
+    {
+      "command": "kill @e[type=!minecraft:player]",
+      "wait_ticks": 25
+    },
+    {
+      "command": "fill 13 79 13 17 84 17 minecraft:bedrock"
+    },
+    {
+      "command": "fill 15 80 15 15 83 15 minecraft:air"
+    },
+    {
+      "command": "setblock 14 81 14 minecraft:stone"
+    },
+    {
+      "command": "summon minecraft:wither 15.5 80 15.5 {Tags:[\"pp_boss\"],NoGravity:1b,Silent:1b,Health:300.0f,Invul:0}"
+    },
+    {
+      "command": "execute if block 14 81 14 minecraft:stone",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "say PARITY_EMPTY_BREAK_PULSE=1"
+    },
+    {
+      "command": "damage @e[tag=pp_boss,limit=1] 1 minecraft:generic",
+      "wait_ticks": 19
+    },
+    {
+      "command": "execute if block 14 81 14 minecraft:stone",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if block 14 81 14 minecraft:air",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 14 80 14 minecraft:bedrock",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss,x=15.5,y=80,z=15.5,distance=..0.001]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "say PARITY_EMPTY_BREAK_PULSE=2"
+    },
+    {
+      "command": "damage @e[tag=pp_boss,limit=1] 1 minecraft:generic",
+      "wait_ticks": 19
+    },
+    {
+      "command": "execute if block 14 81 14 minecraft:air",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if block 14 81 14 minecraft:air",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 14 80 14 minecraft:bedrock",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss,x=15.5,y=80,z=15.5,distance=..0.001]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "say PARITY_EMPTY_BREAK_CASE=seagrass"
+    },
+    {
+      "command": "kill @e[type=!minecraft:player]",
+      "wait_ticks": 25
+    },
+    {
+      "command": "fill 13 79 13 17 84 17 minecraft:bedrock"
+    },
+    {
+      "command": "fill 15 80 15 15 83 15 minecraft:air"
+    },
+    {
+      "command": "setblock 14 81 14 minecraft:seagrass"
+    },
+    {
+      "command": "summon minecraft:wither 15.5 80 15.5 {Tags:[\"pp_boss\"],NoGravity:1b,Silent:1b,Health:300.0f,Invul:0}"
+    },
+    {
+      "command": "execute if block 14 81 14 minecraft:seagrass",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "say PARITY_EMPTY_BREAK_PULSE=1"
+    },
+    {
+      "command": "damage @e[tag=pp_boss,limit=1] 1 minecraft:generic",
+      "wait_ticks": 19
+    },
+    {
+      "command": "execute if block 14 81 14 minecraft:seagrass",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if block 14 81 14 minecraft:water[level=0]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 14 80 14 minecraft:bedrock",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss,x=15.5,y=80,z=15.5,distance=..0.001]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "say PARITY_EMPTY_BREAK_PULSE=2"
+    },
+    {
+      "command": "damage @e[tag=pp_boss,limit=1] 1 minecraft:generic",
+      "wait_ticks": 19
+    },
+    {
+      "command": "execute if block 14 81 14 minecraft:water[level=0]",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 1
+    },
+    {
+      "command": "execute if block 14 81 14 minecraft:water[level=0]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 14 80 14 minecraft:bedrock",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss,x=15.5,y=80,z=15.5,distance=..0.001]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    }
+  ],
+  "cleanup": [
+    "kill @e[type=!minecraft:player]"
+  ],
+  "notes": "Headless protocol capture verifies event1022 at both pulse boundaries, not rendered audio. Seal each cell on six sides to exclude fluid flow."
+}
