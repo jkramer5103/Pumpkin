@@ -74,15 +74,11 @@ impl Goal for RangedAttackGoal {
     }
 
     fn should_continue(&mut self, mob: &dyn Mob) -> bool {
-        if let Some(target) = &self.target {
-            if !target.get_entity().is_alive() {
-                return false;
-            }
-            let current_target = mob.get_mob_entity().get_target().clone();
-            current_target.is_some()
-        } else {
-            false
-        }
+        self.can_start(mob)
+            || self
+                .target
+                .as_ref()
+                .is_some_and(|target| target.get_entity().is_alive() && !mob.is_navigator_idle())
     }
 
     fn stop(&mut self, mob: &dyn Mob) {

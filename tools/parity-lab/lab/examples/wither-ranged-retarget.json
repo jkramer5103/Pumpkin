@@ -1,0 +1,527 @@
+{
+  "schema_version": 1,
+  "id": "wither-ranged-retarget",
+  "title": "Wither main-head attacks follow retaliation target switches",
+  "category": "entities",
+  "description": "Acquire a sheep, then take damage attributed to a cow on the opposite side. Both victims stay alive. Check the main target metadata changes to the cow and the first central skull flies toward it. Repeat both directions, with an undamaged control.",
+  "tags": [
+    "entity",
+    "wither",
+    "ai",
+    "combat"
+  ],
+  "setup": [
+    "tick freeze",
+    "gamemode creative @a",
+    "difficulty easy",
+    "gamerule spawn_mobs false",
+    "gamerule mob_griefing false",
+    "forceload add 0 0 31 31",
+    "fill 0 79 0 31 96 31 minecraft:bedrock",
+    "fill 1 80 1 30 95 30 minecraft:air",
+    "tp @a 8.5 91 8.5"
+  ],
+  "steps": [
+    {
+      "command": "say PARITY_RETARGET_CASE=1-left-right"
+    },
+    {
+      "command": "kill @e[type=!minecraft:player]",
+      "wait_ticks": 25
+    },
+    {
+      "command": "summon minecraft:sheep 6 80 8.5 {Tags:[\"pp_old\"],NoAI:1b,NoGravity:1b,Silent:1b}"
+    },
+    {
+      "command": "attribute @e[tag=pp_old,limit=1] minecraft:max_health base set 1000"
+    },
+    {
+      "command": "attribute @e[tag=pp_old,limit=1] minecraft:knockback_resistance base set 1"
+    },
+    {
+      "command": "attribute @e[tag=pp_old,limit=1] minecraft:explosion_knockback_resistance base set 1"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_old,limit=1] {Health:1000.0f}"
+    },
+    {
+      "command": "summon minecraft:wither 8.5 80 8.5 {Tags:[\"pp_boss\"],NoGravity:1b,Health:100.0f,Silent:1b,Invul:0}"
+    },
+    {
+      "command": "attribute @e[tag=pp_boss,limit=1] minecraft:movement_speed base set 0"
+    },
+    {
+      "command": "attribute @e[tag=pp_boss,limit=1] minecraft:flying_speed base set 0"
+    },
+    {
+      "command": "attribute @e[tag=pp_boss,limit=1] minecraft:knockback_resistance base set 1"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_old,nbt={Health:1000.0f}]",
+      "wait_ticks": 10,
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[tag=pp_boss,limit=1] Pos"
+    },
+    {
+      "command": "summon minecraft:cow 11 80 8.5 {Tags:[\"pp_new\"],NoAI:1b,NoGravity:1b,Silent:1b}"
+    },
+    {
+      "command": "attribute @e[tag=pp_new,limit=1] minecraft:max_health base set 1000"
+    },
+    {
+      "command": "attribute @e[tag=pp_new,limit=1] minecraft:knockback_resistance base set 1"
+    },
+    {
+      "command": "attribute @e[tag=pp_new,limit=1] minecraft:explosion_knockback_resistance base set 1"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_new,limit=1] {Health:1000.0f}"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_new,nbt={Health:1000.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "damage @e[tag=pp_boss,limit=1] 1 minecraft:generic by @e[tag=pp_new,limit=1]"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss,nbt={Invul:0}] unless entity @e[tag=pp_boss,nbt={NoAI:1b}]",
+      "wait_ticks": 33,
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_old]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_new]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @a[gamemode=creative]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss,x=1,y=80,z=1,dx=29,dy=12,dz=29]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[tag=pp_boss,limit=1] Pos"
+    },
+    {
+      "command": "say PARITY_RETARGET_CASE=1-right-left"
+    },
+    {
+      "command": "kill @e[type=!minecraft:player]",
+      "wait_ticks": 25
+    },
+    {
+      "command": "summon minecraft:sheep 11 80 8.5 {Tags:[\"pp_old\"],NoAI:1b,NoGravity:1b,Silent:1b}"
+    },
+    {
+      "command": "attribute @e[tag=pp_old,limit=1] minecraft:max_health base set 1000"
+    },
+    {
+      "command": "attribute @e[tag=pp_old,limit=1] minecraft:knockback_resistance base set 1"
+    },
+    {
+      "command": "attribute @e[tag=pp_old,limit=1] minecraft:explosion_knockback_resistance base set 1"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_old,limit=1] {Health:1000.0f}"
+    },
+    {
+      "command": "summon minecraft:wither 8.5 80 8.5 {Tags:[\"pp_boss\"],NoGravity:1b,Health:100.0f,Silent:1b,Invul:0}"
+    },
+    {
+      "command": "attribute @e[tag=pp_boss,limit=1] minecraft:movement_speed base set 0"
+    },
+    {
+      "command": "attribute @e[tag=pp_boss,limit=1] minecraft:flying_speed base set 0"
+    },
+    {
+      "command": "attribute @e[tag=pp_boss,limit=1] minecraft:knockback_resistance base set 1"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_old,nbt={Health:1000.0f}]",
+      "wait_ticks": 10,
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[tag=pp_boss,limit=1] Pos"
+    },
+    {
+      "command": "summon minecraft:cow 6 80 8.5 {Tags:[\"pp_new\"],NoAI:1b,NoGravity:1b,Silent:1b}"
+    },
+    {
+      "command": "attribute @e[tag=pp_new,limit=1] minecraft:max_health base set 1000"
+    },
+    {
+      "command": "attribute @e[tag=pp_new,limit=1] minecraft:knockback_resistance base set 1"
+    },
+    {
+      "command": "attribute @e[tag=pp_new,limit=1] minecraft:explosion_knockback_resistance base set 1"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_new,limit=1] {Health:1000.0f}"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_new,nbt={Health:1000.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "damage @e[tag=pp_boss,limit=1] 1 minecraft:generic by @e[tag=pp_new,limit=1]"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss,nbt={Invul:0}] unless entity @e[tag=pp_boss,nbt={NoAI:1b}]",
+      "wait_ticks": 33,
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_old]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_new]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @a[gamemode=creative]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss,x=1,y=80,z=1,dx=29,dy=12,dz=29]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[tag=pp_boss,limit=1] Pos"
+    },
+    {
+      "command": "say PARITY_RETARGET_CASE=2-left-right"
+    },
+    {
+      "command": "kill @e[type=!minecraft:player]",
+      "wait_ticks": 25
+    },
+    {
+      "command": "summon minecraft:sheep 6 80 8.5 {Tags:[\"pp_old\"],NoAI:1b,NoGravity:1b,Silent:1b}"
+    },
+    {
+      "command": "attribute @e[tag=pp_old,limit=1] minecraft:max_health base set 1000"
+    },
+    {
+      "command": "attribute @e[tag=pp_old,limit=1] minecraft:knockback_resistance base set 1"
+    },
+    {
+      "command": "attribute @e[tag=pp_old,limit=1] minecraft:explosion_knockback_resistance base set 1"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_old,limit=1] {Health:1000.0f}"
+    },
+    {
+      "command": "summon minecraft:wither 8.5 80 8.5 {Tags:[\"pp_boss\"],NoGravity:1b,Health:100.0f,Silent:1b,Invul:0}"
+    },
+    {
+      "command": "attribute @e[tag=pp_boss,limit=1] minecraft:movement_speed base set 0"
+    },
+    {
+      "command": "attribute @e[tag=pp_boss,limit=1] minecraft:flying_speed base set 0"
+    },
+    {
+      "command": "attribute @e[tag=pp_boss,limit=1] minecraft:knockback_resistance base set 1"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_old,nbt={Health:1000.0f}]",
+      "wait_ticks": 10,
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[tag=pp_boss,limit=1] Pos"
+    },
+    {
+      "command": "summon minecraft:cow 11 80 8.5 {Tags:[\"pp_new\"],NoAI:1b,NoGravity:1b,Silent:1b}"
+    },
+    {
+      "command": "attribute @e[tag=pp_new,limit=1] minecraft:max_health base set 1000"
+    },
+    {
+      "command": "attribute @e[tag=pp_new,limit=1] minecraft:knockback_resistance base set 1"
+    },
+    {
+      "command": "attribute @e[tag=pp_new,limit=1] minecraft:explosion_knockback_resistance base set 1"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_new,limit=1] {Health:1000.0f}"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_new,nbt={Health:1000.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "damage @e[tag=pp_boss,limit=1] 1 minecraft:generic by @e[tag=pp_new,limit=1]"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss,nbt={Invul:0}] unless entity @e[tag=pp_boss,nbt={NoAI:1b}]",
+      "wait_ticks": 33,
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_old]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_new]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @a[gamemode=creative]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss,x=1,y=80,z=1,dx=29,dy=12,dz=29]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[tag=pp_boss,limit=1] Pos"
+    },
+    {
+      "command": "say PARITY_RETARGET_CASE=2-right-left"
+    },
+    {
+      "command": "kill @e[type=!minecraft:player]",
+      "wait_ticks": 25
+    },
+    {
+      "command": "summon minecraft:sheep 11 80 8.5 {Tags:[\"pp_old\"],NoAI:1b,NoGravity:1b,Silent:1b}"
+    },
+    {
+      "command": "attribute @e[tag=pp_old,limit=1] minecraft:max_health base set 1000"
+    },
+    {
+      "command": "attribute @e[tag=pp_old,limit=1] minecraft:knockback_resistance base set 1"
+    },
+    {
+      "command": "attribute @e[tag=pp_old,limit=1] minecraft:explosion_knockback_resistance base set 1"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_old,limit=1] {Health:1000.0f}"
+    },
+    {
+      "command": "summon minecraft:wither 8.5 80 8.5 {Tags:[\"pp_boss\"],NoGravity:1b,Health:100.0f,Silent:1b,Invul:0}"
+    },
+    {
+      "command": "attribute @e[tag=pp_boss,limit=1] minecraft:movement_speed base set 0"
+    },
+    {
+      "command": "attribute @e[tag=pp_boss,limit=1] minecraft:flying_speed base set 0"
+    },
+    {
+      "command": "attribute @e[tag=pp_boss,limit=1] minecraft:knockback_resistance base set 1"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_old,nbt={Health:1000.0f}]",
+      "wait_ticks": 10,
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[tag=pp_boss,limit=1] Pos"
+    },
+    {
+      "command": "summon minecraft:cow 6 80 8.5 {Tags:[\"pp_new\"],NoAI:1b,NoGravity:1b,Silent:1b}"
+    },
+    {
+      "command": "attribute @e[tag=pp_new,limit=1] minecraft:max_health base set 1000"
+    },
+    {
+      "command": "attribute @e[tag=pp_new,limit=1] minecraft:knockback_resistance base set 1"
+    },
+    {
+      "command": "attribute @e[tag=pp_new,limit=1] minecraft:explosion_knockback_resistance base set 1"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_new,limit=1] {Health:1000.0f}"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_new,nbt={Health:1000.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "damage @e[tag=pp_boss,limit=1] 1 minecraft:generic by @e[tag=pp_new,limit=1]"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss,nbt={Invul:0}] unless entity @e[tag=pp_boss,nbt={NoAI:1b}]",
+      "wait_ticks": 33,
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_old]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_new]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @a[gamemode=creative]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss,x=1,y=80,z=1,dx=29,dy=12,dz=29]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[tag=pp_boss,limit=1] Pos"
+    },
+    {
+      "command": "say PARITY_RETARGET_CASE=unchanged"
+    },
+    {
+      "command": "kill @e[type=!minecraft:player]",
+      "wait_ticks": 25
+    },
+    {
+      "command": "summon minecraft:sheep 6 80 8.5 {Tags:[\"pp_old\"],NoAI:1b,NoGravity:1b,Silent:1b}"
+    },
+    {
+      "command": "attribute @e[tag=pp_old,limit=1] minecraft:max_health base set 1000"
+    },
+    {
+      "command": "attribute @e[tag=pp_old,limit=1] minecraft:knockback_resistance base set 1"
+    },
+    {
+      "command": "attribute @e[tag=pp_old,limit=1] minecraft:explosion_knockback_resistance base set 1"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_old,limit=1] {Health:1000.0f}"
+    },
+    {
+      "command": "summon minecraft:wither 8.5 80 8.5 {Tags:[\"pp_boss\"],NoGravity:1b,Health:100.0f,Silent:1b,Invul:0}"
+    },
+    {
+      "command": "attribute @e[tag=pp_boss,limit=1] minecraft:movement_speed base set 0"
+    },
+    {
+      "command": "attribute @e[tag=pp_boss,limit=1] minecraft:flying_speed base set 0"
+    },
+    {
+      "command": "attribute @e[tag=pp_boss,limit=1] minecraft:knockback_resistance base set 1"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_old,nbt={Health:1000.0f}]",
+      "wait_ticks": 10,
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[tag=pp_boss,limit=1] Pos"
+    },
+    {
+      "command": "summon minecraft:cow 11 80 8.5 {Tags:[\"pp_new\"],NoAI:1b,NoGravity:1b,Silent:1b}"
+    },
+    {
+      "command": "attribute @e[tag=pp_new,limit=1] minecraft:max_health base set 1000"
+    },
+    {
+      "command": "attribute @e[tag=pp_new,limit=1] minecraft:knockback_resistance base set 1"
+    },
+    {
+      "command": "attribute @e[tag=pp_new,limit=1] minecraft:explosion_knockback_resistance base set 1"
+    },
+    {
+      "command": "data merge entity @e[tag=pp_new,limit=1] {Health:1000.0f}"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_new,nbt={Health:1000.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss,nbt={Invul:0}] unless entity @e[tag=pp_boss,nbt={NoAI:1b}]",
+      "wait_ticks": 33,
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_old]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_new]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @a[gamemode=creative]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss,x=1,y=80,z=1,dx=29,dy=12,dz=29]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[tag=pp_boss,limit=1] Pos"
+    }
+  ],
+  "cleanup": [
+    "kill @e[type=!minecraft:player]"
+  ],
+  "notes": "Sealed isolated arena, Java26.3. Speeds zero and NoGravity separate targeting from locomotion. Max health1000 preserves victims through side-head attacks. Main skull is identified by central launch height y83; check horizontal direction only, not projectile physics. Headless packet proof, no rendered-client or whole-fight proof."
+}
