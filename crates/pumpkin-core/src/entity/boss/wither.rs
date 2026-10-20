@@ -19,7 +19,7 @@ use pumpkin_nbt::compound::NbtCompound;
 use pumpkin_protocol::codec::var_int::VarInt;
 use pumpkin_util::{
     Difficulty,
-    math::{position::BlockPos, vector3::Vector3},
+    math::{cos, position::BlockPos, sin, vector3::Vector3},
     text::TextComponent,
 };
 use pumpkin_world::world::BlockFlags;
@@ -229,7 +229,7 @@ impl WitherEntity {
         let yaw = self.mob_entity.living_entity.entity.body_yaw.load();
         let angle = (yaw + 180.0 * (head as f32 - 1.0)).to_radians();
         self.mob_entity.living_entity.entity.pos.load().x
-            + f64::from(angle.cos()) * 1.3 * f64::from(scale)
+            + f64::from(cos(angle)) * 1.3 * f64::from(scale)
     }
 
     #[must_use]
@@ -255,7 +255,7 @@ impl WitherEntity {
         let yaw = self.mob_entity.living_entity.entity.body_yaw.load();
         let angle = (yaw + 180.0 * (head as f32 - 1.0)).to_radians();
         self.mob_entity.living_entity.entity.pos.load().z
-            + f64::from(angle.sin()) * 1.3 * f64::from(scale)
+            + f64::from(sin(angle)) * 1.3 * f64::from(scale)
     }
 
     pub fn perform_ranged_attack(

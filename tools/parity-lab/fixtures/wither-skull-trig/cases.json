@@ -1,0 +1,134 @@
+{
+  "schema_version": 1,
+  "description": "First-tick Wither retaliation launches at body yaw zero, using real vanilla26.3 origins. Six frozen-tick hurt attempts prime both side heads. Normal difficulty, creative observer, no mob griefing.",
+  "trials": 2,
+  "tolerance": 1e-09,
+  "setup": [
+    "gamemode creative @a",
+    "difficulty normal",
+    "gamerule mob_griefing false",
+    "gamerule spawn_mobs false",
+    "tp @a 15 120 15"
+  ],
+  "cases": [
+    {
+      "id": "scale-1",
+      "scale": 1,
+      "expected_positions": [
+        [
+          13.7,
+          102.20000004768372,
+          15.0
+        ],
+        [
+          16.3,
+          102.20000004768372,
+          15.0
+        ]
+      ],
+      "commands": [
+        "kill @e[type=!minecraft:player]",
+        "tick step 25",
+        "kill @e[type=minecraft:item]",
+        "kill @e[type=minecraft:experience_orb]",
+        "summon minecraft:wither 15.0 100.0 15.0 {Tags:[\"pp_boss\"],NoGravity:1b,Silent:1b,PersistenceRequired:1b,Rotation:[0.0f,0.0f]}",
+        "attribute @e[tag=pp_boss,limit=1] minecraft:scale base set 1",
+        "damage @e[tag=pp_boss,limit=1] 1 minecraft:generic",
+        "damage @e[tag=pp_boss,limit=1] 1 minecraft:generic",
+        "damage @e[tag=pp_boss,limit=1] 1 minecraft:generic",
+        "damage @e[tag=pp_boss,limit=1] 1 minecraft:generic",
+        "damage @e[tag=pp_boss,limit=1] 1 minecraft:generic",
+        "damage @e[tag=pp_boss,limit=1] 1 minecraft:generic",
+        "data get entity @e[tag=pp_boss,limit=1] Pos",
+        "tick step 1",
+        "execute as @e[type=minecraft:wither_skull] run data get entity @s Pos",
+        "execute if entity @e[tag=pp_boss,x=15,y=100,z=15,distance=..0.001]",
+        "execute if entity @e[tag=pp_boss,nbt={Rotation:[0.0f,0.0f],Invul:0}]",
+        "execute if entity @e[tag=pp_boss]",
+        "execute if entity @a[gamemode=creative]"
+      ]
+    },
+    {
+      "id": "scale-4",
+      "scale": 4,
+      "expected_positions": [
+        [
+          9.8,
+          108.80000019073486,
+          15.0
+        ],
+        [
+          20.2,
+          108.80000019073486,
+          15.0
+        ]
+      ],
+      "commands": [
+        "kill @e[type=!minecraft:player]",
+        "tick step 25",
+        "kill @e[type=minecraft:item]",
+        "kill @e[type=minecraft:experience_orb]",
+        "summon minecraft:wither 15.0 100.0 15.0 {Tags:[\"pp_boss\"],NoGravity:1b,Silent:1b,PersistenceRequired:1b,Rotation:[0.0f,0.0f]}",
+        "attribute @e[tag=pp_boss,limit=1] minecraft:scale base set 4",
+        "damage @e[tag=pp_boss,limit=1] 1 minecraft:generic",
+        "damage @e[tag=pp_boss,limit=1] 1 minecraft:generic",
+        "damage @e[tag=pp_boss,limit=1] 1 minecraft:generic",
+        "damage @e[tag=pp_boss,limit=1] 1 minecraft:generic",
+        "damage @e[tag=pp_boss,limit=1] 1 minecraft:generic",
+        "damage @e[tag=pp_boss,limit=1] 1 minecraft:generic",
+        "data get entity @e[tag=pp_boss,limit=1] Pos",
+        "tick step 1",
+        "execute as @e[type=minecraft:wither_skull] run data get entity @s Pos",
+        "execute if entity @e[tag=pp_boss,x=15,y=100,z=15,distance=..0.001]",
+        "execute if entity @e[tag=pp_boss,nbt={Rotation:[0.0f,0.0f],Invul:0}]",
+        "execute if entity @e[tag=pp_boss]",
+        "execute if entity @a[gamemode=creative]"
+      ]
+    },
+    {
+      "id": "scale-16",
+      "scale": 16,
+      "expected_positions": [
+        [
+          -5.800000000000001,
+          135.20000076293945,
+          15.000000000000002
+        ],
+        [
+          35.8,
+          135.20000076293945,
+          15.0
+        ]
+      ],
+      "commands": [
+        "kill @e[type=!minecraft:player]",
+        "tick step 25",
+        "kill @e[type=minecraft:item]",
+        "kill @e[type=minecraft:experience_orb]",
+        "summon minecraft:wither 15.0 100.0 15.0 {Tags:[\"pp_boss\"],NoGravity:1b,Silent:1b,PersistenceRequired:1b,Rotation:[0.0f,0.0f]}",
+        "attribute @e[tag=pp_boss,limit=1] minecraft:scale base set 16",
+        "damage @e[tag=pp_boss,limit=1] 1 minecraft:generic",
+        "damage @e[tag=pp_boss,limit=1] 1 minecraft:generic",
+        "damage @e[tag=pp_boss,limit=1] 1 minecraft:generic",
+        "damage @e[tag=pp_boss,limit=1] 1 minecraft:generic",
+        "damage @e[tag=pp_boss,limit=1] 1 minecraft:generic",
+        "damage @e[tag=pp_boss,limit=1] 1 minecraft:generic",
+        "data get entity @e[tag=pp_boss,limit=1] Pos",
+        "tick step 1",
+        "execute as @e[type=minecraft:wither_skull] run data get entity @s Pos",
+        "execute if entity @e[tag=pp_boss,x=15,y=100,z=15,distance=..0.001]",
+        "execute if entity @e[tag=pp_boss,nbt={Rotation:[0.0f,0.0f],Invul:0}]",
+        "execute if entity @e[tag=pp_boss]",
+        "execute if entity @a[gamemode=creative]"
+      ]
+    }
+  ],
+  "final_cleanup": [
+    "kill @e[type=!minecraft:player]",
+    "tick step 25",
+    "kill @e[type=minecraft:item]",
+    "kill @e[type=minecraft:experience_orb]",
+    "tick step 1",
+    "execute unless entity @e[type=!minecraft:player]"
+  ]
+}
