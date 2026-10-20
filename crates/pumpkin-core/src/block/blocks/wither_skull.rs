@@ -24,6 +24,14 @@ pub struct WitherPattern {
 
 #[must_use]
 pub fn find_wither_pattern(world: &Arc<World>, skull_pos: &BlockPos) -> Option<WitherPattern> {
+    find_wither_pattern_inner(world, skull_pos, true)
+}
+
+fn find_wither_pattern_inner(
+    world: &Arc<World>,
+    skull_pos: &BlockPos,
+    require_skulls: bool,
+) -> Option<WitherPattern> {
     let is_soul_block = |block: &Block| block == &Block::SOUL_SAND || block == &Block::SOUL_SOIL;
     let is_skull = |pos: &BlockPos| {
         pos == skull_pos
@@ -53,9 +61,8 @@ pub fn find_wither_pattern(world: &Arc<World>, skull_pos: &BlockPos) -> Option<W
                 && is_soul_block(world.get_block(&arm2))
                 && world.get_block_state(&arm1.down()).is_air()
                 && world.get_block_state(&arm2.down()).is_air()
-                && is_skull(&center)
-                && is_skull(&skull1_pos)
-                && is_skull(&skull2_pos)
+                && (!require_skulls
+                    || (is_skull(&center) && is_skull(&skull1_pos) && is_skull(&skull2_pos)))
             {
                 return Some(WitherPattern {
                     blocks: [center, skull1_pos, skull2_pos, top_middle, arm1, arm2, base],
@@ -95,6 +102,15 @@ fn spawn_wither(world: &Arc<World>, pattern: &WitherPattern) {
 
 #[pumpkin_block("wither_skeleton_skull")]
 pub struct WitherSkeletonSkullBlock;
+
+impl WitherSkeletonSkullBlock {
+    /// Checks whether a dispenser can place a skull on a Wither summon base.
+    pub fn can_spawn_mob(world: &Arc<World>, skull_pos: &BlockPos) -> bool {
+        skull_pos.0.y >= world.get_bottom_y() + 2
+            && world.level_info.load().difficulty != Difficulty::Peaceful
+            && find_wither_pattern_inner(world, skull_pos, false).is_some()
+    }
+}
 
 impl BlockBehaviour for WitherSkeletonSkullBlock {
     fn on_place(&self, args: OnPlaceArgs<'_>) -> BlockStateId {

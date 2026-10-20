@@ -1,0 +1,983 @@
+{
+  "schema_version": 1,
+  "id": "wither-dispenser-base-pattern",
+  "title": "Dispensers build the Wither skull row from an unfinished base",
+  "category": "entities",
+  "description": "A loaded creative observer watches three north-facing dispensers place Wither skulls on a soul-block T. Each case begins with an unpowered dispenser row; power each dispenser separately and verify first, second and final placement, item consumption and summoning. Peaceful, missing-arm, occupied-target and wrong-skull controls retain the expected blocks and items.",
+  "tags": [
+    "entity",
+    "wither",
+    "construction",
+    "dispenser"
+  ],
+  "setup": [
+    "tick freeze",
+    "gamemode creative @a",
+    "op ParitySmoke",
+    "difficulty easy",
+    "gamerule mob_griefing false",
+    "gamerule spawn_mobs false",
+    "forceload add 0 0 31 31",
+    "fill 0 79 0 31 79 31 minecraft:bedrock",
+    "tp @a 15.5 81 20.5"
+  ],
+  "steps": [
+    {
+      "command": "say PARITY_DISPENSER_CASE=left-first"
+    },
+    {
+      "command": "kill @e[type=!minecraft:player]",
+      "wait_ticks": 25
+    },
+    {
+      "command": "fill 12 80 12 18 85 18 minecraft:air"
+    },
+    {
+      "command": "difficulty easy"
+    },
+    {
+      "command": "setblock 15 81 15 minecraft:soul_sand"
+    },
+    {
+      "command": "setblock 14 82 15 minecraft:soul_sand"
+    },
+    {
+      "command": "setblock 15 82 15 minecraft:soul_sand"
+    },
+    {
+      "command": "setblock 16 82 15 minecraft:soul_sand"
+    },
+    {
+      "command": "setblock 14 83 16 minecraft:dispenser"
+    },
+    {
+      "command": "item replace block 14 83 16 container.0 with minecraft:wither_skeleton_skull"
+    },
+    {
+      "command": "execute if block 14 83 16 minecraft:dispenser[facing=north,triggered=false]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "setblock 15 83 16 minecraft:dispenser"
+    },
+    {
+      "command": "item replace block 15 83 16 container.0 with minecraft:wither_skeleton_skull"
+    },
+    {
+      "command": "execute if block 15 83 16 minecraft:dispenser[facing=north,triggered=false]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "setblock 16 83 16 minecraft:dispenser"
+    },
+    {
+      "command": "item replace block 16 83 16 container.0 with minecraft:wither_skeleton_skull"
+    },
+    {
+      "command": "execute if block 16 83 16 minecraft:dispenser[facing=north,triggered=false]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:wither]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "setblock 14 83 17 minecraft:redstone_block",
+      "wait_ticks": 6
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:wither]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 14 83 15 minecraft:wither_skeleton_skull",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get block 14 83 16 Items",
+      "observe": true,
+      "expect_contains": "block data: []"
+    },
+    {
+      "command": "setblock 15 83 17 minecraft:redstone_block",
+      "wait_ticks": 6
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:wither]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 15 83 15 minecraft:wither_skeleton_skull",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get block 15 83 16 Items",
+      "observe": true,
+      "expect_contains": "block data: []"
+    },
+    {
+      "command": "setblock 16 83 17 minecraft:redstone_block",
+      "wait_ticks": 6
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:wither]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 15 81 15 minecraft:air",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 14 82 15 minecraft:air",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 15 82 15 minecraft:air",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 16 82 15 minecraft:air",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 14 83 15 minecraft:air",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 15 83 15 minecraft:air",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 16 83 15 minecraft:air",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:wither,nbt={Invul:217}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get block 16 83 16 Items",
+      "observe": true,
+      "expect_contains": "block data: []"
+    },
+    {
+      "command": "data get block 15 83 16 Items"
+    },
+    {
+      "command": "say PARITY_DISPENSER_CASE=center-first"
+    },
+    {
+      "command": "kill @e[type=!minecraft:player]",
+      "wait_ticks": 25
+    },
+    {
+      "command": "fill 12 80 12 18 85 18 minecraft:air"
+    },
+    {
+      "command": "difficulty easy"
+    },
+    {
+      "command": "setblock 15 81 15 minecraft:soul_sand"
+    },
+    {
+      "command": "setblock 14 82 15 minecraft:soul_sand"
+    },
+    {
+      "command": "setblock 15 82 15 minecraft:soul_sand"
+    },
+    {
+      "command": "setblock 16 82 15 minecraft:soul_sand"
+    },
+    {
+      "command": "setblock 14 83 16 minecraft:dispenser"
+    },
+    {
+      "command": "item replace block 14 83 16 container.0 with minecraft:wither_skeleton_skull"
+    },
+    {
+      "command": "execute if block 14 83 16 minecraft:dispenser[facing=north,triggered=false]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "setblock 15 83 16 minecraft:dispenser"
+    },
+    {
+      "command": "item replace block 15 83 16 container.0 with minecraft:wither_skeleton_skull"
+    },
+    {
+      "command": "execute if block 15 83 16 minecraft:dispenser[facing=north,triggered=false]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "setblock 16 83 16 minecraft:dispenser"
+    },
+    {
+      "command": "item replace block 16 83 16 container.0 with minecraft:wither_skeleton_skull"
+    },
+    {
+      "command": "execute if block 16 83 16 minecraft:dispenser[facing=north,triggered=false]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:wither]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "setblock 15 83 17 minecraft:redstone_block",
+      "wait_ticks": 6
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:wither]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 15 83 15 minecraft:wither_skeleton_skull",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get block 15 83 16 Items",
+      "observe": true,
+      "expect_contains": "block data: []"
+    },
+    {
+      "command": "setblock 16 83 17 minecraft:redstone_block",
+      "wait_ticks": 6
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:wither]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 16 83 15 minecraft:wither_skeleton_skull",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get block 16 83 16 Items",
+      "observe": true,
+      "expect_contains": "block data: []"
+    },
+    {
+      "command": "setblock 14 83 17 minecraft:redstone_block",
+      "wait_ticks": 6
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:wither]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 15 81 15 minecraft:air",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 14 82 15 minecraft:air",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 15 82 15 minecraft:air",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 16 82 15 minecraft:air",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 14 83 15 minecraft:air",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 15 83 15 minecraft:air",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 16 83 15 minecraft:air",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:wither,nbt={Invul:217}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get block 14 83 16 Items",
+      "observe": true,
+      "expect_contains": "block data: []"
+    },
+    {
+      "command": "data get block 15 83 16 Items"
+    },
+    {
+      "command": "say PARITY_DISPENSER_CASE=right-first"
+    },
+    {
+      "command": "kill @e[type=!minecraft:player]",
+      "wait_ticks": 25
+    },
+    {
+      "command": "fill 12 80 12 18 85 18 minecraft:air"
+    },
+    {
+      "command": "difficulty easy"
+    },
+    {
+      "command": "setblock 15 81 15 minecraft:soul_sand"
+    },
+    {
+      "command": "setblock 14 82 15 minecraft:soul_sand"
+    },
+    {
+      "command": "setblock 15 82 15 minecraft:soul_sand"
+    },
+    {
+      "command": "setblock 16 82 15 minecraft:soul_sand"
+    },
+    {
+      "command": "setblock 14 83 16 minecraft:dispenser"
+    },
+    {
+      "command": "item replace block 14 83 16 container.0 with minecraft:wither_skeleton_skull"
+    },
+    {
+      "command": "execute if block 14 83 16 minecraft:dispenser[facing=north,triggered=false]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "setblock 15 83 16 minecraft:dispenser"
+    },
+    {
+      "command": "item replace block 15 83 16 container.0 with minecraft:wither_skeleton_skull"
+    },
+    {
+      "command": "execute if block 15 83 16 minecraft:dispenser[facing=north,triggered=false]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "setblock 16 83 16 minecraft:dispenser"
+    },
+    {
+      "command": "item replace block 16 83 16 container.0 with minecraft:wither_skeleton_skull"
+    },
+    {
+      "command": "execute if block 16 83 16 minecraft:dispenser[facing=north,triggered=false]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:wither]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "setblock 16 83 17 minecraft:redstone_block",
+      "wait_ticks": 6
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:wither]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 16 83 15 minecraft:wither_skeleton_skull",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get block 16 83 16 Items",
+      "observe": true,
+      "expect_contains": "block data: []"
+    },
+    {
+      "command": "setblock 14 83 17 minecraft:redstone_block",
+      "wait_ticks": 6
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:wither]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 14 83 15 minecraft:wither_skeleton_skull",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get block 14 83 16 Items",
+      "observe": true,
+      "expect_contains": "block data: []"
+    },
+    {
+      "command": "setblock 15 83 17 minecraft:redstone_block",
+      "wait_ticks": 6
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:wither]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 15 81 15 minecraft:air",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 14 82 15 minecraft:air",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 15 82 15 minecraft:air",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 16 82 15 minecraft:air",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 14 83 15 minecraft:air",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 15 83 15 minecraft:air",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 16 83 15 minecraft:air",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:wither,nbt={Invul:217}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get block 15 83 16 Items",
+      "observe": true,
+      "expect_contains": "block data: []"
+    },
+    {
+      "command": "data get block 15 83 16 Items"
+    },
+    {
+      "command": "say PARITY_DISPENSER_CASE=final-only"
+    },
+    {
+      "command": "kill @e[type=!minecraft:player]",
+      "wait_ticks": 25
+    },
+    {
+      "command": "fill 12 80 12 18 85 18 minecraft:air"
+    },
+    {
+      "command": "difficulty easy"
+    },
+    {
+      "command": "setblock 15 81 15 minecraft:soul_sand"
+    },
+    {
+      "command": "setblock 14 82 15 minecraft:soul_sand"
+    },
+    {
+      "command": "setblock 15 82 15 minecraft:soul_sand"
+    },
+    {
+      "command": "setblock 16 82 15 minecraft:soul_sand"
+    },
+    {
+      "command": "setblock 14 83 15 minecraft:wither_skeleton_skull"
+    },
+    {
+      "command": "setblock 16 83 15 minecraft:wither_skeleton_skull"
+    },
+    {
+      "command": "setblock 14 83 16 minecraft:dispenser"
+    },
+    {
+      "command": "item replace block 14 83 16 container.0 with minecraft:wither_skeleton_skull"
+    },
+    {
+      "command": "execute if block 14 83 16 minecraft:dispenser[facing=north,triggered=false]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "setblock 15 83 16 minecraft:dispenser"
+    },
+    {
+      "command": "item replace block 15 83 16 container.0 with minecraft:wither_skeleton_skull"
+    },
+    {
+      "command": "execute if block 15 83 16 minecraft:dispenser[facing=north,triggered=false]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "setblock 16 83 16 minecraft:dispenser"
+    },
+    {
+      "command": "item replace block 16 83 16 container.0 with minecraft:wither_skeleton_skull"
+    },
+    {
+      "command": "execute if block 16 83 16 minecraft:dispenser[facing=north,triggered=false]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:wither]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "setblock 15 83 17 minecraft:redstone_block",
+      "wait_ticks": 6
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:wither]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 15 81 15 minecraft:air",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 14 82 15 minecraft:air",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 15 82 15 minecraft:air",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 16 82 15 minecraft:air",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 14 83 15 minecraft:air",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 15 83 15 minecraft:air",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 16 83 15 minecraft:air",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:wither,nbt={Invul:217}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get block 15 83 16 Items",
+      "observe": true,
+      "expect_contains": "block data: []"
+    },
+    {
+      "command": "data get block 15 83 16 Items"
+    },
+    {
+      "command": "say PARITY_DISPENSER_CASE=peaceful"
+    },
+    {
+      "command": "kill @e[type=!minecraft:player]",
+      "wait_ticks": 25
+    },
+    {
+      "command": "fill 12 80 12 18 85 18 minecraft:air"
+    },
+    {
+      "command": "difficulty peaceful"
+    },
+    {
+      "command": "setblock 15 81 15 minecraft:soul_sand"
+    },
+    {
+      "command": "setblock 14 82 15 minecraft:soul_sand"
+    },
+    {
+      "command": "setblock 15 82 15 minecraft:soul_sand"
+    },
+    {
+      "command": "setblock 16 82 15 minecraft:soul_sand"
+    },
+    {
+      "command": "setblock 14 83 15 minecraft:wither_skeleton_skull"
+    },
+    {
+      "command": "setblock 16 83 15 minecraft:wither_skeleton_skull"
+    },
+    {
+      "command": "setblock 14 83 16 minecraft:dispenser"
+    },
+    {
+      "command": "item replace block 14 83 16 container.0 with minecraft:wither_skeleton_skull"
+    },
+    {
+      "command": "execute if block 14 83 16 minecraft:dispenser[facing=north,triggered=false]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "setblock 15 83 16 minecraft:dispenser"
+    },
+    {
+      "command": "item replace block 15 83 16 container.0 with minecraft:wither_skeleton_skull"
+    },
+    {
+      "command": "execute if block 15 83 16 minecraft:dispenser[facing=north,triggered=false]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "setblock 16 83 16 minecraft:dispenser"
+    },
+    {
+      "command": "item replace block 16 83 16 container.0 with minecraft:wither_skeleton_skull"
+    },
+    {
+      "command": "execute if block 16 83 16 minecraft:dispenser[facing=north,triggered=false]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:wither]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "setblock 15 83 17 minecraft:redstone_block",
+      "wait_ticks": 6
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:wither]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 15 83 15 minecraft:air",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get block 15 83 16 Items",
+      "observe": true,
+      "expect_contains": "count: 1"
+    },
+    {
+      "command": "data get block 15 83 16 Items"
+    },
+    {
+      "command": "say PARITY_DISPENSER_CASE=missing-arm"
+    },
+    {
+      "command": "kill @e[type=!minecraft:player]",
+      "wait_ticks": 25
+    },
+    {
+      "command": "fill 12 80 12 18 85 18 minecraft:air"
+    },
+    {
+      "command": "difficulty easy"
+    },
+    {
+      "command": "setblock 15 81 15 minecraft:soul_sand"
+    },
+    {
+      "command": "setblock 15 82 15 minecraft:soul_sand"
+    },
+    {
+      "command": "setblock 16 82 15 minecraft:soul_sand"
+    },
+    {
+      "command": "setblock 14 83 16 minecraft:dispenser"
+    },
+    {
+      "command": "item replace block 14 83 16 container.0 with minecraft:wither_skeleton_skull"
+    },
+    {
+      "command": "execute if block 14 83 16 minecraft:dispenser[facing=north,triggered=false]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "setblock 15 83 16 minecraft:dispenser"
+    },
+    {
+      "command": "item replace block 15 83 16 container.0 with minecraft:wither_skeleton_skull"
+    },
+    {
+      "command": "execute if block 15 83 16 minecraft:dispenser[facing=north,triggered=false]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "setblock 16 83 16 minecraft:dispenser"
+    },
+    {
+      "command": "item replace block 16 83 16 container.0 with minecraft:wither_skeleton_skull"
+    },
+    {
+      "command": "execute if block 16 83 16 minecraft:dispenser[facing=north,triggered=false]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:wither]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "setblock 15 83 17 minecraft:redstone_block",
+      "wait_ticks": 6
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:wither]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 15 83 15 minecraft:air",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get block 15 83 16 Items",
+      "observe": true,
+      "expect_contains": "count: 1"
+    },
+    {
+      "command": "data get block 15 83 16 Items"
+    },
+    {
+      "command": "say PARITY_DISPENSER_CASE=occupied"
+    },
+    {
+      "command": "kill @e[type=!minecraft:player]",
+      "wait_ticks": 25
+    },
+    {
+      "command": "fill 12 80 12 18 85 18 minecraft:air"
+    },
+    {
+      "command": "difficulty easy"
+    },
+    {
+      "command": "setblock 15 81 15 minecraft:soul_sand"
+    },
+    {
+      "command": "setblock 14 82 15 minecraft:soul_sand"
+    },
+    {
+      "command": "setblock 15 82 15 minecraft:soul_sand"
+    },
+    {
+      "command": "setblock 16 82 15 minecraft:soul_sand"
+    },
+    {
+      "command": "setblock 15 83 15 minecraft:stone"
+    },
+    {
+      "command": "setblock 14 83 16 minecraft:dispenser"
+    },
+    {
+      "command": "item replace block 14 83 16 container.0 with minecraft:wither_skeleton_skull"
+    },
+    {
+      "command": "execute if block 14 83 16 minecraft:dispenser[facing=north,triggered=false]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "setblock 15 83 16 minecraft:dispenser"
+    },
+    {
+      "command": "item replace block 15 83 16 container.0 with minecraft:wither_skeleton_skull"
+    },
+    {
+      "command": "execute if block 15 83 16 minecraft:dispenser[facing=north,triggered=false]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "setblock 16 83 16 minecraft:dispenser"
+    },
+    {
+      "command": "item replace block 16 83 16 container.0 with minecraft:wither_skeleton_skull"
+    },
+    {
+      "command": "execute if block 16 83 16 minecraft:dispenser[facing=north,triggered=false]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:wither]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "setblock 15 83 17 minecraft:redstone_block",
+      "wait_ticks": 6
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:wither]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 15 83 15 minecraft:stone",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get block 15 83 16 Items",
+      "observe": true,
+      "expect_contains": "count: 1"
+    },
+    {
+      "command": "data get block 15 83 16 Items"
+    },
+    {
+      "command": "say PARITY_DISPENSER_CASE=wrong-skull"
+    },
+    {
+      "command": "kill @e[type=!minecraft:player]",
+      "wait_ticks": 25
+    },
+    {
+      "command": "fill 12 80 12 18 85 18 minecraft:air"
+    },
+    {
+      "command": "difficulty easy"
+    },
+    {
+      "command": "setblock 15 81 15 minecraft:soul_sand"
+    },
+    {
+      "command": "setblock 14 82 15 minecraft:soul_sand"
+    },
+    {
+      "command": "setblock 15 82 15 minecraft:soul_sand"
+    },
+    {
+      "command": "setblock 16 82 15 minecraft:soul_sand"
+    },
+    {
+      "command": "setblock 14 83 15 minecraft:skeleton_skull"
+    },
+    {
+      "command": "setblock 16 83 15 minecraft:skeleton_skull"
+    },
+    {
+      "command": "setblock 14 83 16 minecraft:dispenser"
+    },
+    {
+      "command": "item replace block 14 83 16 container.0 with minecraft:wither_skeleton_skull"
+    },
+    {
+      "command": "execute if block 14 83 16 minecraft:dispenser[facing=north,triggered=false]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "setblock 15 83 16 minecraft:dispenser"
+    },
+    {
+      "command": "item replace block 15 83 16 container.0 with minecraft:wither_skeleton_skull"
+    },
+    {
+      "command": "execute if block 15 83 16 minecraft:dispenser[facing=north,triggered=false]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "setblock 16 83 16 minecraft:dispenser"
+    },
+    {
+      "command": "item replace block 16 83 16 container.0 with minecraft:wither_skeleton_skull"
+    },
+    {
+      "command": "execute if block 16 83 16 minecraft:dispenser[facing=north,triggered=false]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:wither]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "setblock 15 83 17 minecraft:redstone_block",
+      "wait_ticks": 6
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:wither]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 15 83 15 minecraft:wither_skeleton_skull",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get block 15 83 16 Items",
+      "observe": true,
+      "expect_contains": "block data: []"
+    },
+    {
+      "command": "data get block 15 83 16 Items"
+    }
+  ],
+  "cleanup": [
+    "kill @e[type=!minecraft:player]",
+    "fill 12 80 12 18 85 18 minecraft:air",
+    "forceload remove all"
+  ]
+}
