@@ -385,7 +385,7 @@ impl EnderDragonEntity {
         }
 
         let pos = self.mob_entity.living_entity.entity.pos.load();
-        let nearest = Self::nearest_node_in(&nodes, pos);
+        let nearest = Self::nearest_node_in(&nodes, pos, self.has_alive_crystals());
         let dest = Self::random_node_idx();
         let new_path = find_path(&nodes, nearest, dest, None);
         drop(nodes);
@@ -412,16 +412,40 @@ impl EnderDragonEntity {
             .nodes
             .lock()
             .unwrap_or_else(std::sync::PoisonError::into_inner);
-        Self::nearest_node_in(&nodes, pos)
+        Self::nearest_node_in(&nodes, pos, self.has_alive_crystals())
     }
 
-    fn nearest_node_in(nodes: &[Option<DragonNode>; NODE_COUNT], pos: Vector3<f64>) -> usize {
-        nodes
-            .iter()
-            .enumerate()
-            .filter_map(|(i, n)| n.map(|n| (i, n.dist_sq_vec(pos))))
-            .min_by(|a, b| a.1.total_cmp(&b.1))
-            .map_or(0, |(i, _)| i)
+    fn has_alive_crystals(&self) -> bool {
+        let world = self.mob_entity.living_entity.entity.world.load();
+        world.dragon_fight.as_ref().is_some_and(|fight| {
+            fight
+                .lock()
+                .unwrap_or_else(std::sync::PoisonError::into_inner)
+                .alive_crystals()
+                > 0
+        })
+    }
+
+    fn nearest_node_in(
+        nodes: &[Option<DragonNode>; NODE_COUNT],
+        pos: Vector3<f64>,
+        crystals_alive: bool,
+    ) -> usize {
+        // Vanilla compares pathfinder Nodes, whose coordinates are floored integers.
+        let pos = Vector3::new(pos.x.floor(), pos.y.floor(), pos.z.floor());
+        let start_index = if crystals_alive { 0 } else { 12 };
+        let mut closest_dist = 10000.0f32;
+        let mut closest_index = 0;
+        for (index, node) in nodes.iter().enumerate().skip(start_index) {
+            if let Some(node) = node {
+                let dist = node.dist_sq_vec(pos) as f32;
+                if dist < closest_dist {
+                    closest_dist = dist;
+                    closest_index = index;
+                }
+            }
+        }
+        closest_index
     }
 
     fn random_node_idx() -> usize {
@@ -1043,10 +1067,50 @@ impl Vector3Ext for Vector3<f64> {
 
 #[cfg(test)]
 mod tests {
-    use super::EnderDragonEntity;
+    use super::{DragonNode, EnderDragonEntity, NODE_COUNT};
     use pumpkin_data::Block;
     use pumpkin_util::gamemode::GameMode;
     use pumpkin_util::math::vector3::Vector3;
+
+    #[test]
+    fn nearest_flight_node_excludes_the_outer_ring_without_live_crystals() {
+        let mut nodes = [None; NODE_COUNT];
+        nodes[0] = Some(DragonNode::new(60.0, 73.0, 0.0));
+        nodes[12] = Some(DragonNode::new(40.0, 175.0, 0.0));
+        nodes[20] = Some(DragonNode::new(20.0, 165.0, 0.0));
+        let pos = Vector3::new(60.5, 120.0, 0.5);
+        assert_eq!(EnderDragonEntity::nearest_node_in(&nodes, pos, false), 12);
+        assert_eq!(EnderDragonEntity::nearest_node_in(&nodes, pos, true), 0);
+    }
+
+    #[test]
+    fn nearest_flight_node_floors_the_query_and_keeps_the_first_tie() {
+        let mut nodes = [None; NODE_COUNT];
+        nodes[12] = Some(DragonNode::new(-2.0, 73.0, 0.0));
+        nodes[13] = Some(DragonNode::new(-1.0, 73.0, 0.0));
+        assert_eq!(
+            EnderDragonEntity::nearest_node_in(&nodes, Vector3::new(-1.1, 73.9, 0.9), false),
+            12,
+        );
+        nodes[12] = Some(DragonNode::new(0.0, 73.0, 0.0));
+        nodes[13] = Some(DragonNode::new(2.0, 73.0, 0.0));
+        assert_eq!(
+            EnderDragonEntity::nearest_node_in(&nodes, Vector3::new(1.9, 73.0, 0.0), false),
+            12,
+        );
+    }
+
+    #[test]
+    fn nearest_flight_node_keeps_vanillas_strict_search_distance_limit() {
+        let mut nodes = [None; NODE_COUNT];
+        nodes[12] = Some(DragonNode::new(0.0, 73.0, 0.0));
+        for (x, expected) in [(99.99, 12), (100.0, 0), (100.99, 0), (101.0, 0)] {
+            assert_eq!(
+                EnderDragonEntity::nearest_node_in(&nodes, Vector3::new(x, 73.0, 0.0), false),
+                expected,
+            );
+        }
+    }
 
     #[test]
     fn flight_reversals_take_the_negative_half_turn() {
