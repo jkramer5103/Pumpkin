@@ -378,8 +378,12 @@ impl EnderDragonEntity {
                     + (20.0 * ((multiplier as f32) * std::f32::consts::TAU / 4.0).sin()) as i32;
             }
 
-            let height =
-                world.get_heightmap_height(ChunkHeightmapType::MotionBlocking, node_x, node_z);
+            // Pumpkin's heightmap returns the top block, not the space above it.
+            let height = world.get_heightmap_height(
+                ChunkHeightmapType::MotionBlockingNoLeaves,
+                node_x,
+                node_z,
+            ) + 1;
             let node_y = 73.max(height + y_adjustment);
             nodes[i] = Some(DragonNode::new(node_x as f64, node_y as f64, node_z as f64));
         }

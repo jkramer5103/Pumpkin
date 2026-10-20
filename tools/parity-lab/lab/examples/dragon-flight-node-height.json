@@ -1,0 +1,1000 @@
+{
+  "schema_version": 1,
+  "id": "dragon-flight-node-height",
+  "title": "Dragon flight nodes use the first space above terrain and ignore leaves",
+  "description": "Two controlled trials distinguish the flight-node one-block height offset and leaf exclusion through first-takeoff position and motion. No fight/crystals; random horizontal routing is not asserted.",
+  "category": "entity",
+  "tags": [
+    "ender-dragon",
+    "ai"
+  ],
+  "setup": [
+    "tick freeze",
+    "difficulty normal",
+    "gamerule spawn_mobs false",
+    "gamerule mob_griefing false",
+    "gamerule random_tick_speed 0",
+    "forceload add -64 -64 79 63",
+    "gamemode creative ParitySmoke",
+    "tp ParitySmoke 0 120 0"
+  ],
+  "steps": [
+    {
+      "command": "say Wait for arena chunks",
+      "wait_ticks": 40
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "fill -42 160 -42 42 160 42 minecraft:bedrock",
+      "observe": true,
+      "expect_contains": "7225"
+    },
+    {
+      "command": "execute if block 40 160 0 minecraft:bedrock",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 20 160 0 minecraft:bedrock",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block -40 160 0 minecraft:bedrock",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 0 160 40 minecraft:bedrock",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 0 160 -40 minecraft:bedrock",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "say TRIAL_1_bedrock_x55_yaw90_active"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 60 120 0 {PersistenceRequired:1b,DragonPhase:10,Tags:[\"node_height_probe\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] 55 120 0 90 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] {Motion:[0.0d,0.0d,0.0d],DragonPhase:4,NoAI:0b}"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] Motion"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] DragonPhase"
+    },
+    {
+      "command": "say first_takeoff_tick",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] Pos",
+      "observe": true,
+      "expect_contains": "120.00600000023842d"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] Motion"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1,nbt={DragonPhase:4}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "say TRIAL_1_bedrock_x50_yaw90_active"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 60 120 0 {PersistenceRequired:1b,DragonPhase:10,Tags:[\"node_height_probe\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] 50 120 0 90 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] {Motion:[0.0d,0.0d,0.0d],DragonPhase:4,NoAI:0b}"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] Motion"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] DragonPhase"
+    },
+    {
+      "command": "say first_takeoff_tick",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] Pos",
+      "observe": true,
+      "expect_contains": "120.00600000023842d"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] Motion"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1,nbt={DragonPhase:4}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "say TRIAL_1_bedrock_x60_yaw90_active"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 60 120 0 {PersistenceRequired:1b,DragonPhase:10,Tags:[\"node_height_probe\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] 60 120 0 90 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] {Motion:[0.0d,0.0d,0.0d],DragonPhase:4,NoAI:0b}"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] Motion"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] DragonPhase"
+    },
+    {
+      "command": "say first_takeoff_tick",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] Pos"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1,nbt={Pos:[60.5d,120.0d,0.5d],Motion:[0.0d,0.0d,0.0d]}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] Motion"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1,nbt={DragonPhase:4}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "say TRIAL_1_bedrock_x50_yaw0_active"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 60 120 0 {PersistenceRequired:1b,DragonPhase:10,Tags:[\"node_height_probe\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] 50 120 0 0 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] {Motion:[0.0d,0.0d,0.0d],DragonPhase:4,NoAI:0b}"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] Motion"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] DragonPhase"
+    },
+    {
+      "command": "say first_takeoff_tick",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] Pos",
+      "observe": true,
+      "expect_contains": "120.00600000023842d"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] Motion"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1,nbt={DragonPhase:4}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "say TRIAL_1_bedrock_x55_yaw90_noai"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 60 120 0 {PersistenceRequired:1b,DragonPhase:10,Tags:[\"node_height_probe\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] 55 120 0 90 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] {Motion:[0.0d,0.0d,0.0d],DragonPhase:4,NoAI:1b}"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] Motion"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] DragonPhase"
+    },
+    {
+      "command": "say first_takeoff_tick",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] Pos"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1,nbt={Pos:[55.5d,120.0d,0.5d],Motion:[0.0d,0.0d,0.0d]}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] Motion"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1,nbt={DragonPhase:4}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "say TRIAL_2_bedrock_x55_yaw90_active"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 60 120 0 {PersistenceRequired:1b,DragonPhase:10,Tags:[\"node_height_probe\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] 55 120 0 90 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] {Motion:[0.0d,0.0d,0.0d],DragonPhase:4,NoAI:0b}"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] Motion"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] DragonPhase"
+    },
+    {
+      "command": "say first_takeoff_tick",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] Pos",
+      "observe": true,
+      "expect_contains": "120.00600000023842d"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] Motion"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1,nbt={DragonPhase:4}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "say TRIAL_2_bedrock_x50_yaw90_active"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 60 120 0 {PersistenceRequired:1b,DragonPhase:10,Tags:[\"node_height_probe\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] 50 120 0 90 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] {Motion:[0.0d,0.0d,0.0d],DragonPhase:4,NoAI:0b}"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] Motion"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] DragonPhase"
+    },
+    {
+      "command": "say first_takeoff_tick",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] Pos",
+      "observe": true,
+      "expect_contains": "120.00600000023842d"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] Motion"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1,nbt={DragonPhase:4}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "say TRIAL_2_bedrock_x60_yaw90_active"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 60 120 0 {PersistenceRequired:1b,DragonPhase:10,Tags:[\"node_height_probe\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] 60 120 0 90 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] {Motion:[0.0d,0.0d,0.0d],DragonPhase:4,NoAI:0b}"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] Motion"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] DragonPhase"
+    },
+    {
+      "command": "say first_takeoff_tick",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] Pos"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1,nbt={Pos:[60.5d,120.0d,0.5d],Motion:[0.0d,0.0d,0.0d]}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] Motion"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1,nbt={DragonPhase:4}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "say TRIAL_2_bedrock_x50_yaw0_active"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 60 120 0 {PersistenceRequired:1b,DragonPhase:10,Tags:[\"node_height_probe\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] 50 120 0 0 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] {Motion:[0.0d,0.0d,0.0d],DragonPhase:4,NoAI:0b}"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] Motion"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] DragonPhase"
+    },
+    {
+      "command": "say first_takeoff_tick",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] Pos",
+      "observe": true,
+      "expect_contains": "120.00600000023842d"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] Motion"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1,nbt={DragonPhase:4}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "say TRIAL_2_bedrock_x55_yaw90_noai"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 60 120 0 {PersistenceRequired:1b,DragonPhase:10,Tags:[\"node_height_probe\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] 55 120 0 90 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] {Motion:[0.0d,0.0d,0.0d],DragonPhase:4,NoAI:1b}"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] Motion"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] DragonPhase"
+    },
+    {
+      "command": "say first_takeoff_tick",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] Pos"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1,nbt={Pos:[55.5d,120.0d,0.5d],Motion:[0.0d,0.0d,0.0d]}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] Motion"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1,nbt={DragonPhase:4}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "fill -42 160 -42 42 160 42 minecraft:oak_leaves",
+      "observe": true,
+      "expect_contains": "7225"
+    },
+    {
+      "command": "execute if block 40 160 0 minecraft:oak_leaves",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 20 160 0 minecraft:oak_leaves",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block -40 160 0 minecraft:oak_leaves",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 0 160 40 minecraft:oak_leaves",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 0 160 -40 minecraft:oak_leaves",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "say TRIAL_1_oak_leaves_x55_yaw90_active"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 60 120 0 {PersistenceRequired:1b,DragonPhase:10,Tags:[\"node_height_probe\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] 55 120 0 90 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] {Motion:[0.0d,0.0d,0.0d],DragonPhase:4,NoAI:0b}"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] Motion"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] DragonPhase"
+    },
+    {
+      "command": "say first_takeoff_tick",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] Pos"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1,nbt={Pos:[55.5d,120.0d,0.5d],Motion:[0.0d,0.0d,0.0d]}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] Motion"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1,nbt={DragonPhase:4}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "say TRIAL_1_oak_leaves_x50_yaw90_active"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 60 120 0 {PersistenceRequired:1b,DragonPhase:10,Tags:[\"node_height_probe\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] 50 120 0 90 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] {Motion:[0.0d,0.0d,0.0d],DragonPhase:4,NoAI:0b}"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] Motion"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] DragonPhase"
+    },
+    {
+      "command": "say first_takeoff_tick",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] Pos"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1,nbt={Pos:[50.5d,120.0d,0.5d],Motion:[0.0d,0.0d,0.0d]}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] Motion"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1,nbt={DragonPhase:4}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "say TRIAL_1_oak_leaves_x60_yaw90_active"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 60 120 0 {PersistenceRequired:1b,DragonPhase:10,Tags:[\"node_height_probe\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] 60 120 0 90 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] {Motion:[0.0d,0.0d,0.0d],DragonPhase:4,NoAI:0b}"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] Motion"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] DragonPhase"
+    },
+    {
+      "command": "say first_takeoff_tick",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] Pos"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1,nbt={Pos:[60.5d,120.0d,0.5d],Motion:[0.0d,0.0d,0.0d]}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] Motion"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1,nbt={DragonPhase:4}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "say TRIAL_1_oak_leaves_x50_yaw0_active"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 60 120 0 {PersistenceRequired:1b,DragonPhase:10,Tags:[\"node_height_probe\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] 50 120 0 0 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] {Motion:[0.0d,0.0d,0.0d],DragonPhase:4,NoAI:0b}"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] Motion"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] DragonPhase"
+    },
+    {
+      "command": "say first_takeoff_tick",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] Pos",
+      "observe": true,
+      "expect_contains": "119.99399999976158d"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] Motion"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1,nbt={DragonPhase:4}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "say TRIAL_1_oak_leaves_x55_yaw90_noai"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 60 120 0 {PersistenceRequired:1b,DragonPhase:10,Tags:[\"node_height_probe\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] 55 120 0 90 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] {Motion:[0.0d,0.0d,0.0d],DragonPhase:4,NoAI:1b}"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] Motion"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] DragonPhase"
+    },
+    {
+      "command": "say first_takeoff_tick",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] Pos"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1,nbt={Pos:[55.5d,120.0d,0.5d],Motion:[0.0d,0.0d,0.0d]}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] Motion"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1,nbt={DragonPhase:4}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "say TRIAL_2_oak_leaves_x55_yaw90_active"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 60 120 0 {PersistenceRequired:1b,DragonPhase:10,Tags:[\"node_height_probe\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] 55 120 0 90 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] {Motion:[0.0d,0.0d,0.0d],DragonPhase:4,NoAI:0b}"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] Motion"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] DragonPhase"
+    },
+    {
+      "command": "say first_takeoff_tick",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] Pos"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1,nbt={Pos:[55.5d,120.0d,0.5d],Motion:[0.0d,0.0d,0.0d]}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] Motion"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1,nbt={DragonPhase:4}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "say TRIAL_2_oak_leaves_x50_yaw90_active"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 60 120 0 {PersistenceRequired:1b,DragonPhase:10,Tags:[\"node_height_probe\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] 50 120 0 90 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] {Motion:[0.0d,0.0d,0.0d],DragonPhase:4,NoAI:0b}"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] Motion"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] DragonPhase"
+    },
+    {
+      "command": "say first_takeoff_tick",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] Pos"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1,nbt={Pos:[50.5d,120.0d,0.5d],Motion:[0.0d,0.0d,0.0d]}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] Motion"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1,nbt={DragonPhase:4}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "say TRIAL_2_oak_leaves_x60_yaw90_active"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 60 120 0 {PersistenceRequired:1b,DragonPhase:10,Tags:[\"node_height_probe\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] 60 120 0 90 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] {Motion:[0.0d,0.0d,0.0d],DragonPhase:4,NoAI:0b}"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] Motion"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] DragonPhase"
+    },
+    {
+      "command": "say first_takeoff_tick",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] Pos"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1,nbt={Pos:[60.5d,120.0d,0.5d],Motion:[0.0d,0.0d,0.0d]}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] Motion"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1,nbt={DragonPhase:4}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "say TRIAL_2_oak_leaves_x50_yaw0_active"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 60 120 0 {PersistenceRequired:1b,DragonPhase:10,Tags:[\"node_height_probe\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] 50 120 0 0 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] {Motion:[0.0d,0.0d,0.0d],DragonPhase:4,NoAI:0b}"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] Motion"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] DragonPhase"
+    },
+    {
+      "command": "say first_takeoff_tick",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] Pos",
+      "observe": true,
+      "expect_contains": "119.99399999976158d"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] Motion"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1,nbt={DragonPhase:4}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "say TRIAL_2_oak_leaves_x55_yaw90_noai"
+    },
+    {
+      "command": "summon minecraft:ender_dragon 60 120 0 {PersistenceRequired:1b,DragonPhase:10,Tags:[\"node_height_probe\"]}",
+      "wait_ticks": 1
+    },
+    {
+      "command": "tp @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] 55 120 0 90 0"
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] {Motion:[0.0d,0.0d,0.0d],DragonPhase:4,NoAI:1b}"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] Pos"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] Motion"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] DragonPhase"
+    },
+    {
+      "command": "say first_takeoff_tick",
+      "wait_ticks": 1
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] Pos"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1,nbt={Pos:[55.5d,120.0d,0.5d],Motion:[0.0d,0.0d,0.0d]}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1] Motion"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:ender_dragon,tag=node_height_probe,limit=1,nbt={DragonPhase:4}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 40 160 0 minecraft:oak_leaves",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 20 160 0 minecraft:oak_leaves",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block -40 160 0 minecraft:oak_leaves",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 0 160 40 minecraft:oak_leaves",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 0 160 -40 minecraft:oak_leaves",
+      "observe": true,
+      "expect_contains": "Test passed"
+    }
+  ],
+  "cleanup": [
+    "kill @e[type=minecraft:ender_dragon]",
+    "fill -42 160 -42 42 160 42 minecraft:air",
+    "forceload remove -64 -64 79 63",
+    "tick unfreeze"
+  ]
+}
