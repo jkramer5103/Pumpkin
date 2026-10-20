@@ -1,0 +1,57 @@
+{
+  "trials": 2,
+  "cases": [
+    {
+      "id": "level",
+      "dragon_y": 80,
+      "yaw": 0,
+      "covered": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "first_attack": 5
+    },
+    {
+      "id": "above",
+      "dragon_y": 100,
+      "yaw": 0,
+      "covered": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "first_attack": 5
+    },
+    {
+      "id": "far_above",
+      "dragon_y": 120,
+      "yaw": 0,
+      "covered": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "first_attack": 5
+    },
+    {
+      "id": "off_axis",
+      "dragon_y": 100,
+      "yaw": 30,
+      "covered": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "first_attack": null
+    }
+  ]
+}

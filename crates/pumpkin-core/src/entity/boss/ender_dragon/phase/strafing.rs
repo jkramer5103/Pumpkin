@@ -130,7 +130,7 @@ impl super::Phase for StrafingPhase {
                 .lock()
                 .unwrap_or_else(std::sync::PoisonError::into_inner);
 
-            let aim_diff = player_pos - pos;
+            let aim_diff = Vector3::new(player_pos.x - pos.x, 0.0, player_pos.z - pos.z);
             let aim = if aim_diff.length_squared() > 1e-6 {
                 aim_diff.normalize()
             } else {
