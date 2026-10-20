@@ -1,0 +1,60 @@
+{
+  "trials": 2,
+  "setup": [
+    "gamemode creative @a",
+    "difficulty easy",
+    "gamerule mob_griefing false",
+    "gamerule spawn_mobs false",
+    "forceload add 0 0 31 31",
+    "fill 0 79 0 31 79 31 minecraft:bedrock",
+    "tp @a 15 85 20"
+  ],
+  "cases": [
+    {
+      "id": "sand-x",
+      "axis": "x",
+      "base": [
+        "soul_sand",
+        "soul_sand",
+        "soul_sand",
+        "soul_sand"
+      ]
+    },
+    {
+      "id": "soil-x",
+      "axis": "x",
+      "base": [
+        "soul_soil",
+        "soul_soil",
+        "soul_soil",
+        "soul_soil"
+      ]
+    },
+    {
+      "id": "mixed-x",
+      "axis": "x",
+      "base": [
+        "soul_sand",
+        "soul_soil",
+        "soul_sand",
+        "soul_soil"
+      ]
+    },
+    {
+      "id": "mixed-z",
+      "axis": "z",
+      "base": [
+        "soul_soil",
+        "soul_sand",
+        "soul_soil",
+        "soul_sand"
+      ]
+    }
+  ],
+  "vanilla_state_ids": {
+    "soul_sand": 8668,
+    "soul_soil": 8669,
+    "wither_skeleton_skull": 12738,
+    "wither_skeleton_skull[rotation=8]": 12746
+  }
+}
