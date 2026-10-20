@@ -1,0 +1,514 @@
+{
+  "schema_version": 1,
+  "id": "wither-idle-flight",
+  "title": "Target-free Withers fly around while active",
+  "category": "entities",
+  "description": "A sealed bedrock arena compares active idle horizontal flight with NoAI and spawn-invulnerability controls. Repeat each case twice, sample positions and require active horizontal excursion above one block.",
+  "tags": [
+    "entity",
+    "wither",
+    "ai"
+  ],
+  "setup": [
+    "tick freeze",
+    "gamemode creative @a",
+    "difficulty easy",
+    "gamerule spawn_mobs false",
+    "gamerule mob_griefing false",
+    "forceload add 0 0 31 31",
+    "fill 0 79 0 31 96 31 minecraft:bedrock",
+    "fill 1 80 1 30 95 30 minecraft:air",
+    "tp @a 15.5 91 15.5"
+  ],
+  "steps": [
+    {
+      "command": "say PARITY_FLIGHT_CASE=1-active"
+    },
+    {
+      "command": "kill @e[type=!minecraft:player]",
+      "wait_ticks": 25
+    },
+    {
+      "command": "summon minecraft:wither 15.5 80 15.5 {Tags:[\"pp_boss\"],Silent:1b,Health:300.0f,NoAI:0b,Invul:0}"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss]",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 40
+    },
+    {
+      "command": "data get entity @e[tag=pp_boss,limit=1] Pos"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss]",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 40
+    },
+    {
+      "command": "data get entity @e[tag=pp_boss,limit=1] Pos"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss]",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 40
+    },
+    {
+      "command": "data get entity @e[tag=pp_boss,limit=1] Pos"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss]",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 40
+    },
+    {
+      "command": "data get entity @e[tag=pp_boss,limit=1] Pos"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss]",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 40
+    },
+    {
+      "command": "data get entity @e[tag=pp_boss,limit=1] Pos"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss]",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 40
+    },
+    {
+      "command": "data get entity @e[tag=pp_boss,limit=1] Pos"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss]",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 40
+    },
+    {
+      "command": "data get entity @e[tag=pp_boss,limit=1] Pos"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss]",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 40
+    },
+    {
+      "command": "data get entity @e[tag=pp_boss,limit=1] Pos"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss]",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 40
+    },
+    {
+      "command": "data get entity @e[tag=pp_boss,limit=1] Pos"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss]",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 40
+    },
+    {
+      "command": "data get entity @e[tag=pp_boss,limit=1] Pos"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss]",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 40
+    },
+    {
+      "command": "data get entity @e[tag=pp_boss,limit=1] Pos"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss]",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 40
+    },
+    {
+      "command": "data get entity @e[tag=pp_boss,limit=1] Pos"
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:wither_skull]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss,x=1,y=80,z=1,dx=29,dy=15,dz=29,nbt={Health:300.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 0 79 0 minecraft:bedrock",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @a[gamemode=creative]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[tag=pp_boss,limit=1] Invul"
+    },
+    {
+      "command": "say PARITY_FLIGHT_CASE=1-noai"
+    },
+    {
+      "command": "kill @e[type=!minecraft:player]",
+      "wait_ticks": 25
+    },
+    {
+      "command": "summon minecraft:wither 15.5 80 15.5 {Tags:[\"pp_boss\"],Silent:1b,Health:300.0f,NoAI:1b,Invul:0}"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss]",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 40
+    },
+    {
+      "command": "data get entity @e[tag=pp_boss,limit=1] Pos"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss]",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 40
+    },
+    {
+      "command": "data get entity @e[tag=pp_boss,limit=1] Pos"
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:wither_skull]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss,x=1,y=80,z=1,dx=29,dy=15,dz=29,nbt={Health:300.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 0 79 0 minecraft:bedrock",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @a[gamemode=creative]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[tag=pp_boss,limit=1] Invul"
+    },
+    {
+      "command": "say PARITY_FLIGHT_CASE=1-spawn"
+    },
+    {
+      "command": "kill @e[type=!minecraft:player]",
+      "wait_ticks": 25
+    },
+    {
+      "command": "summon minecraft:wither 15.5 80 15.5 {Tags:[\"pp_boss\"],Silent:1b,Health:300.0f,NoAI:0b,Invul:220}"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss]",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 40
+    },
+    {
+      "command": "data get entity @e[tag=pp_boss,limit=1] Pos"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss]",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 40
+    },
+    {
+      "command": "data get entity @e[tag=pp_boss,limit=1] Pos"
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:wither_skull]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss,x=1,y=80,z=1,dx=29,dy=15,dz=29,nbt={Health:300.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 0 79 0 minecraft:bedrock",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @a[gamemode=creative]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[tag=pp_boss,limit=1] Invul"
+    },
+    {
+      "command": "say PARITY_FLIGHT_CASE=2-active"
+    },
+    {
+      "command": "kill @e[type=!minecraft:player]",
+      "wait_ticks": 25
+    },
+    {
+      "command": "summon minecraft:wither 15.5 80 15.5 {Tags:[\"pp_boss\"],Silent:1b,Health:300.0f,NoAI:0b,Invul:0}"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss]",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 40
+    },
+    {
+      "command": "data get entity @e[tag=pp_boss,limit=1] Pos"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss]",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 40
+    },
+    {
+      "command": "data get entity @e[tag=pp_boss,limit=1] Pos"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss]",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 40
+    },
+    {
+      "command": "data get entity @e[tag=pp_boss,limit=1] Pos"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss]",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 40
+    },
+    {
+      "command": "data get entity @e[tag=pp_boss,limit=1] Pos"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss]",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 40
+    },
+    {
+      "command": "data get entity @e[tag=pp_boss,limit=1] Pos"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss]",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 40
+    },
+    {
+      "command": "data get entity @e[tag=pp_boss,limit=1] Pos"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss]",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 40
+    },
+    {
+      "command": "data get entity @e[tag=pp_boss,limit=1] Pos"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss]",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 40
+    },
+    {
+      "command": "data get entity @e[tag=pp_boss,limit=1] Pos"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss]",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 40
+    },
+    {
+      "command": "data get entity @e[tag=pp_boss,limit=1] Pos"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss]",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 40
+    },
+    {
+      "command": "data get entity @e[tag=pp_boss,limit=1] Pos"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss]",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 40
+    },
+    {
+      "command": "data get entity @e[tag=pp_boss,limit=1] Pos"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss]",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 40
+    },
+    {
+      "command": "data get entity @e[tag=pp_boss,limit=1] Pos"
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:wither_skull]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss,x=1,y=80,z=1,dx=29,dy=15,dz=29,nbt={Health:300.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 0 79 0 minecraft:bedrock",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @a[gamemode=creative]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[tag=pp_boss,limit=1] Invul"
+    },
+    {
+      "command": "say PARITY_FLIGHT_CASE=2-noai"
+    },
+    {
+      "command": "kill @e[type=!minecraft:player]",
+      "wait_ticks": 25
+    },
+    {
+      "command": "summon minecraft:wither 15.5 80 15.5 {Tags:[\"pp_boss\"],Silent:1b,Health:300.0f,NoAI:1b,Invul:0}"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss]",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 40
+    },
+    {
+      "command": "data get entity @e[tag=pp_boss,limit=1] Pos"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss]",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 40
+    },
+    {
+      "command": "data get entity @e[tag=pp_boss,limit=1] Pos"
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:wither_skull]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss,x=1,y=80,z=1,dx=29,dy=15,dz=29,nbt={Health:300.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 0 79 0 minecraft:bedrock",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @a[gamemode=creative]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[tag=pp_boss,limit=1] Invul"
+    },
+    {
+      "command": "say PARITY_FLIGHT_CASE=2-spawn"
+    },
+    {
+      "command": "kill @e[type=!minecraft:player]",
+      "wait_ticks": 25
+    },
+    {
+      "command": "summon minecraft:wither 15.5 80 15.5 {Tags:[\"pp_boss\"],Silent:1b,Health:300.0f,NoAI:0b,Invul:220}"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss]",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 40
+    },
+    {
+      "command": "data get entity @e[tag=pp_boss,limit=1] Pos"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss]",
+      "observe": true,
+      "expect_contains": "Test passed",
+      "wait_ticks": 40
+    },
+    {
+      "command": "data get entity @e[tag=pp_boss,limit=1] Pos"
+    },
+    {
+      "command": "execute unless entity @e[type=minecraft:wither_skull]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @e[tag=pp_boss,x=1,y=80,z=1,dx=29,dy=15,dz=29,nbt={Health:300.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if block 0 79 0 minecraft:bedrock",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "execute if entity @a[gamemode=creative]",
+      "observe": true,
+      "expect_contains": "Test passed"
+    },
+    {
+      "command": "data get entity @e[tag=pp_boss,limit=1] Invul"
+    }
+  ],
+  "cleanup": [
+    "kill @e[type=!minecraft:player]"
+  ]
+}

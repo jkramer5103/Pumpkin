@@ -31,8 +31,9 @@ use crate::{
             goal::{
                 Controls, Goal, active_target::ActiveTargetGoal, look_around::RandomLookAroundGoal,
                 look_at_entity::LookAtEntityGoal, ranged_attack::RangedAttackGoal,
-                revenge::RevengeGoal,
+                revenge::RevengeGoal, water_avoiding_random_flying::WaterAvoidingRandomFlyingGoal,
             },
+            pathfinder::Navigator,
             target_predicate::TargetPredicate,
         },
         mob::{Mob, MobEntity, RangedAttackMob},
@@ -76,7 +77,14 @@ pub struct WitherEntity {
 
 impl WitherEntity {
     pub fn new(entity: Entity) -> Arc<Self> {
-        let mob_entity = MobEntity::new(entity);
+        let mut mob_entity = MobEntity::new(entity);
+        let navigator = mob_entity
+            .navigator
+            .get_mut()
+            .unwrap_or_else(std::sync::PoisonError::into_inner);
+        *navigator = Navigator::flying();
+        navigator.set_can_open_doors(false);
+        navigator.set_can_float(true);
         let wither = Self {
             mob_entity,
             invulnerable_ticks: AtomicI32::new(0),
@@ -120,6 +128,7 @@ impl WitherEntity {
                 2,
                 Box::new(RangedAttackGoal::new(ranged_weak, 1.0, 40, 20.0)),
             );
+            goal_selector.add_goal(5, Box::new(WaterAvoidingRandomFlyingGoal::new(1.0)));
             goal_selector.add_goal(
                 6,
                 LookAtEntityGoal::with_default(mob_weak, &EntityType::PLAYER, 8.0),
