@@ -5306,11 +5306,9 @@ impl World {
             crate::block::drop_loot(self, broken_block, position, true, &params);
         }
 
-        let new_state_id = if broken_block.is_waterlogged(broken_block_state.id) {
-            Block::WATER.default_state.id
-        } else {
-            Block::AIR.default_state.id
-        };
+        let new_state_id = Self::fluid_state_from_block_state(broken_block_state.id)
+            .1
+            .block_state_id;
 
         let broken_state_id = self.set_block_state(position, new_state_id, flags);
         let broken_block = Block::from_state_id(broken_state_id);
