@@ -1,0 +1,35 @@
+{
+  "version": "26.3",
+  "dimension": "minecraft:the_end",
+  "observation_ticks": 185,
+  "pillar_columns": [
+    [
+      42,
+      0
+    ],
+    [
+      33,
+      24
+    ]
+  ],
+  "regeneration_ticks": [
+    142,
+    182
+  ],
+  "beam_target": [
+    0,
+    128,
+    0
+  ],
+  "description": "Use an end crystal on the killed-fight podium to start a real respawn ritual. Observe the first two regenerated pillar crystals' spawn metadata, an ordinary crystal control, and beam removal when a portal crystal is broken to abort.",
+  "pillar_observer": [
+    38,
+    100,
+    12
+  ],
+  "ordinary_crystal": [
+    38.5,
+    115,
+    15.5
+  ]
+}

@@ -758,7 +758,7 @@ impl DragonFight {
                                 crate::world::ExplosionInteraction::Block,
                             );
 
-                            Self::regenerate_spike(world, spike);
+                            Self::regenerate_spike(world, spike, origin_target);
                         }
                     } else if flag {
                         self.set_respawn_stage(world, DragonRespawnStage::SummoningDragon);
@@ -789,7 +789,7 @@ impl DragonFight {
         }
     }
 
-    fn regenerate_spike(world: &Arc<World>, spike: &EndSpike) {
+    fn regenerate_spike(world: &Arc<World>, spike: &EndSpike, beam_target: BlockPos) {
         let bedrock_pos = BlockPos::new(spike.center_x, spike.height, spike.center_z);
         world.set_block_state(
             &bedrock_pos,
@@ -851,6 +851,7 @@ impl DragonFight {
             &EntityType::END_CRYSTAL,
         );
         let crystal = Arc::new(EndCrystalEntity::new(entity));
+        crystal.set_beam_target(Some(beam_target));
         crystal.set_show_bottom(true);
         crystal.set_invulnerable(true);
         world.spawn_entity_non_save(crystal);
