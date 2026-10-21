@@ -1,0 +1,61 @@
+{
+  "trials": 2,
+  "cases": [
+    {
+      "id": "body-stone",
+      "block": "stone",
+      "grief": true,
+      "noai": false,
+      "head": false,
+      "count": 1
+    },
+    {
+      "id": "head-and-body",
+      "block": "stone",
+      "grief": true,
+      "noai": false,
+      "head": true,
+      "count": 2
+    },
+    {
+      "id": "grief-disabled",
+      "block": "stone",
+      "grief": false,
+      "noai": false,
+      "head": false,
+      "count": 0
+    },
+    {
+      "id": "immune",
+      "block": "end_stone",
+      "grief": true,
+      "noai": false,
+      "head": false,
+      "count": 0
+    },
+    {
+      "id": "transparent",
+      "block": "light",
+      "grief": true,
+      "noai": false,
+      "head": false,
+      "count": 0
+    },
+    {
+      "id": "air",
+      "block": "air",
+      "grief": true,
+      "noai": false,
+      "head": false,
+      "count": 0
+    },
+    {
+      "id": "no-ai",
+      "block": "stone",
+      "grief": true,
+      "noai": true,
+      "head": false,
+      "count": 0
+    }
+  ]
+}

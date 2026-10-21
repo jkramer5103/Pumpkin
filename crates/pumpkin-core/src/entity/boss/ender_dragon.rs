@@ -2,6 +2,7 @@ use pumpkin_data::damage::DamageType;
 use pumpkin_data::entity::EntityType;
 use pumpkin_data::game_event::GameEvent;
 use pumpkin_data::tag::{self, Taggable};
+use pumpkin_data::world::WorldEvent;
 use pumpkin_data::{Block, BlockStateId};
 use pumpkin_nbt::compound::NbtCompound;
 use pumpkin_util::gamemode::GameMode;
@@ -745,16 +746,27 @@ impl EnderDragonEntity {
         let max = BlockPos::floored_v(bbox.max);
 
         let mut hit_wall = false;
+        let mut destroyed_block = false;
         let mob_griefing = world.level_info.load().game_rules.mob_griefing;
         for pos in BlockPos::iterate(min, max) {
             let block = world.get_block(&pos);
             if !block.is_air() && !block.has_tag(&tag::Block::MINECRAFT_DRAGON_TRANSPARENT) {
                 if Self::can_destroy_block(block, mob_griefing) {
-                    world.set_block_state(&pos, BlockStateId::AIR, BlockFlags::NOTIFY_ALL);
+                    destroyed_block |=
+                        world.set_block_state(&pos, BlockStateId::AIR, BlockFlags::NOTIFY_ALL)
+                            != BlockStateId::AIR;
                 } else {
                     hit_wall = true;
                 }
             }
+        }
+        if destroyed_block {
+            let pos = BlockPos::new(
+                rand::random_range(min.0.x..=max.0.x),
+                rand::random_range(min.0.y..=max.0.y),
+                rand::random_range(min.0.z..=max.0.z),
+            );
+            world.sync_world_event(WorldEvent::ParticlesDragonBlockBreak, pos, 0);
         }
         hit_wall
     }
