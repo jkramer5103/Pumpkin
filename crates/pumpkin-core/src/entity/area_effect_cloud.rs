@@ -35,6 +35,7 @@ pub struct AreaEffectCloudEntity {
     pub entity: Entity,
     /// Stored potion item stack (may be empty) to read effects from.
     pub item_stack: Mutex<ItemStack>,
+    custom_particle: Mutex<Option<ParticleMeta>>,
     /// Active potion effects as tuples: (`StatusEffect`, `duration_ticks`, `amplifier`, `ambient`, `show_particles`, `show_icon`)
     pub effects: Mutex<Vec<EffectEntry>>,
     pub radius: Mutex<f32>,
@@ -83,6 +84,7 @@ impl AreaEffectCloudEntity {
         let cloud = Self {
             entity,
             item_stack: Mutex::new(ItemStack::new(0, &pumpkin_data::item::Item::GLASS_BOTTLE)),
+            custom_particle: Mutex::new(None),
             effects: Mutex::new(Vec::new()),
             radius: Mutex::new(3.0),
             duration: Mutex::new(600), // default for lingering potions
@@ -116,6 +118,7 @@ impl AreaEffectCloudEntity {
         let cloud = Self {
             entity,
             item_stack: Mutex::new(item_stack),
+            custom_particle: Mutex::new(None),
             effects: Mutex::new(effects_in),
             radius: Mutex::new(radius_in),
             duration: Mutex::new(duration_in),
@@ -129,6 +132,21 @@ impl AreaEffectCloudEntity {
         };
 
         Arc::new(cloud)
+    }
+
+    pub fn set_custom_particle(&self, particle: pumpkin_data::particle::Particle, data: Box<[u8]>) {
+        let meta = ParticleMeta {
+            particle_id: pumpkin_protocol::codec::var_int::VarInt(particle as i32),
+            data,
+        };
+        *self
+            .custom_particle
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner) = Some(meta.clone());
+        self.entity.set_synced_data(
+            pumpkin_data::tracked_data::area_effect_cloud::PARTICLE,
+            meta,
+        );
     }
 }
 
@@ -196,12 +214,17 @@ impl EntityBase for AreaEffectCloudEntity {
         // Build raw particle option bytes for ENTITY_EFFECT
         let data_bytes = color.to_be_bytes();
 
-        let meta = ParticleMeta {
-            particle_id: pumpkin_protocol::codec::var_int::VarInt(
-                pumpkin_data::particle::Particle::EntityEffect as i32,
-            ),
-            data: Box::new(data_bytes),
-        };
+        let meta = self
+            .custom_particle
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner)
+            .clone()
+            .unwrap_or_else(|| ParticleMeta {
+                particle_id: pumpkin_protocol::codec::var_int::VarInt(
+                    pumpkin_data::particle::Particle::EntityEffect as i32,
+                ),
+                data: Box::new(data_bytes),
+            });
 
         self.entity.set_synced_data(
             pumpkin_data::tracked_data::area_effect_cloud::PARTICLE,
