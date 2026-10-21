@@ -778,25 +778,8 @@ impl DragonFight {
                 } else if time >= 80 {
                     world.sync_world_event(WorldEvent::AnimationDragonSummonRoar, origin_target, 0);
                 } else if time == 0 {
-                    let spikes = Self::get_spikes();
-                    for spike in &spikes {
-                        let (min_x, min_y, min_z, max_x, max_y, max_z) = spike.top_bounding_box();
-                        for entity in entities.iter() {
-                            if entity.get_entity().entity_type == &EntityType::END_CRYSTAL {
-                                let p = entity.get_entity().pos.load();
-                                if p.x >= min_x
-                                    && p.x <= max_x
-                                    && p.y >= min_y
-                                    && p.y <= max_y
-                                    && p.z >= min_z
-                                    && p.z <= max_z
-                                    && let Some(crystal) =
-                                        entity.cast_any().downcast_ref::<EndCrystalEntity>()
-                                {
-                                    crystal.set_beam_target(Some(origin_target));
-                                }
-                            }
-                        }
+                    for crystal in &live_crystals {
+                        crystal.set_beam_target(Some(origin_target));
                     }
                 } else if time < 5 {
                     world.sync_world_event(WorldEvent::AnimationDragonSummonRoar, origin_target, 0);

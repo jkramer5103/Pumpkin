@@ -1,0 +1,11 @@
+{
+  "version": "26.3",
+  "dimension": "minecraft:the_end",
+  "observation_ticks": 507,
+  "respawn_crystals": 4,
+  "center_beam": [0, 128, 0],
+  "last_pillar_xz": [33, -25],
+  "final_phase_entry_tick": 504,
+  "metadata_flush_allowance": 1,
+  "description": "Kill the initial fight dragon in a fresh isolated End, place four portal crystals (the fourth through real item use), and step through pillar summoning into the final respawn phase. Only the four portal crystals must retarget to the center at final phase entry. Stop before the dragon spawns."
+}
