@@ -1,0 +1,9 @@
+{
+  "version": "26.3",
+  "dimension": "minecraft:the_end",
+  "observation_ticks": 185,
+  "pillar_columns": [[42, 0], [33, 24]],
+  "damage_type": "minecraft:generic",
+  "damage_amount": 1,
+  "description": "Regenerate two pillars through actual dragon respawn, damage the first crystal during the ritual, verify an ordinary crystal can be destroyed, then abort by breaking a portal crystal and verify the second pillar crystal can be destroyed."
+}

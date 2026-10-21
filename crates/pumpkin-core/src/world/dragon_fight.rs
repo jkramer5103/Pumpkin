@@ -852,7 +852,7 @@ impl DragonFight {
         );
         let crystal = Arc::new(EndCrystalEntity::new(entity));
         crystal.set_show_bottom(true);
-        crystal.set_invulnerable(false);
+        crystal.set_invulnerable(true);
         world.spawn_entity_non_save(crystal);
     }
 
