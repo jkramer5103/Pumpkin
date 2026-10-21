@@ -3186,11 +3186,18 @@ impl LivingEntity {
         let damage_amount = damage_amount.max(0.0);
 
         // Vanilla keeps XP eligibility for 100 entity ticks, independently of combat credit.
-        if cause
-            .or(source)
-            .is_some_and(|attacker| attacker.get_player().is_some())
-        {
-            self.last_hurt_by_player_memory_time.store(100, Relaxed);
+        if let Some(attacker) = cause.or(source) {
+            if attacker.get_player().is_some() {
+                self.last_hurt_by_player_memory_time.store(100, Relaxed);
+            } else if attacker.get_entity().entity_type == &EntityType::WOLF
+                && let Some(wolf) = attacker.get_mob().and_then(|mob| mob.as_tamable())
+                && wolf.is_tame()
+            {
+                // Vanilla credits owned wolves even when their owner is offline.
+                // A tame wolf without an owner clears the previous player memory.
+                self.last_hurt_by_player_memory_time
+                    .store(if wolf.get_owner().is_some() { 100 } else { 0 }, Relaxed);
+            }
         }
 
         // Record the source once the hit is confirmed.
