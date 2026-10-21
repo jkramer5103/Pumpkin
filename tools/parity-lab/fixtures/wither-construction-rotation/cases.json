@@ -1,0 +1,418 @@
+{
+  "id": "wither-construction-rotation",
+  "trials": 2,
+  "setup": [
+    "gamemode creative @a",
+    "difficulty easy",
+    "gamerule mob_griefing false",
+    "gamerule spawn_mobs false",
+    "forceload add 0 0 31 31",
+    "fill 0 79 0 31 79 31 minecraft:bedrock",
+    "tp @a 15 85 20"
+  ],
+  "cases": [
+    {
+      "id": "upright",
+      "skulls": [
+        [
+          13,
+          84,
+          13
+        ],
+        [
+          14,
+          84,
+          13
+        ],
+        [
+          15,
+          84,
+          13
+        ]
+      ],
+      "arms": [
+        [
+          13,
+          83,
+          13
+        ],
+        [
+          14,
+          83,
+          13
+        ],
+        [
+          15,
+          83,
+          13
+        ]
+      ],
+      "base": [
+        14,
+        82,
+        13
+      ],
+      "gap": [
+        13,
+        82,
+        13
+      ],
+      "spawn": true,
+      "skull_placed": true,
+      "yaw": 90
+    },
+    {
+      "id": "inverted",
+      "skulls": [
+        [
+          13,
+          84,
+          13
+        ],
+        [
+          14,
+          84,
+          13
+        ],
+        [
+          15,
+          84,
+          13
+        ]
+      ],
+      "arms": [
+        [
+          13,
+          85,
+          13
+        ],
+        [
+          14,
+          85,
+          13
+        ],
+        [
+          15,
+          85,
+          13
+        ]
+      ],
+      "base": [
+        14,
+        86,
+        13
+      ],
+      "gap": [
+        13,
+        86,
+        13
+      ],
+      "spawn": true,
+      "skull_placed": true,
+      "yaw": 90
+    },
+    {
+      "id": "flat",
+      "skulls": [
+        [
+          13,
+          84,
+          13
+        ],
+        [
+          14,
+          84,
+          13
+        ],
+        [
+          15,
+          84,
+          13
+        ]
+      ],
+      "arms": [
+        [
+          13,
+          84,
+          12
+        ],
+        [
+          14,
+          84,
+          12
+        ],
+        [
+          15,
+          84,
+          12
+        ]
+      ],
+      "base": [
+        14,
+        84,
+        11
+      ],
+      "gap": [
+        13,
+        84,
+        11
+      ],
+      "spawn": true,
+      "skull_placed": true,
+      "yaw": 90
+    },
+    {
+      "id": "sideways-east",
+      "skulls": [
+        [
+          13,
+          84,
+          13
+        ],
+        [
+          13,
+          85,
+          13
+        ],
+        [
+          13,
+          86,
+          13
+        ]
+      ],
+      "arms": [
+        [
+          12,
+          84,
+          13
+        ],
+        [
+          12,
+          85,
+          13
+        ],
+        [
+          12,
+          86,
+          13
+        ]
+      ],
+      "base": [
+        11,
+        85,
+        13
+      ],
+      "gap": [
+        11,
+        84,
+        13
+      ],
+      "spawn": true,
+      "skull_placed": true,
+      "yaw": 90
+    },
+    {
+      "id": "sideways-west",
+      "skulls": [
+        [
+          13,
+          84,
+          13
+        ],
+        [
+          13,
+          85,
+          13
+        ],
+        [
+          13,
+          86,
+          13
+        ]
+      ],
+      "arms": [
+        [
+          14,
+          84,
+          13
+        ],
+        [
+          14,
+          85,
+          13
+        ],
+        [
+          14,
+          86,
+          13
+        ]
+      ],
+      "base": [
+        15,
+        85,
+        13
+      ],
+      "gap": [
+        15,
+        84,
+        13
+      ],
+      "spawn": true,
+      "skull_placed": true,
+      "yaw": 90
+    },
+    {
+      "id": "obstructed",
+      "skulls": [
+        [
+          13,
+          84,
+          13
+        ],
+        [
+          14,
+          84,
+          13
+        ],
+        [
+          15,
+          84,
+          13
+        ]
+      ],
+      "arms": [
+        [
+          13,
+          84,
+          12
+        ],
+        [
+          14,
+          84,
+          12
+        ],
+        [
+          15,
+          84,
+          12
+        ]
+      ],
+      "base": [
+        14,
+        84,
+        11
+      ],
+      "gap": [
+        13,
+        84,
+        11
+      ],
+      "spawn": false,
+      "skull_placed": false,
+      "yaw": 90,
+      "obstructed": true
+    },
+    {
+      "id": "incomplete-base",
+      "skulls": [
+        [
+          13,
+          84,
+          13
+        ],
+        [
+          14,
+          84,
+          13
+        ],
+        [
+          15,
+          84,
+          13
+        ]
+      ],
+      "arms": [
+        [
+          13,
+          84,
+          12
+        ],
+        [
+          14,
+          84,
+          12
+        ],
+        [
+          15,
+          84,
+          12
+        ]
+      ],
+      "base": [
+        14,
+        84,
+        11
+      ],
+      "gap": [
+        13,
+        84,
+        11
+      ],
+      "spawn": false,
+      "skull_placed": false,
+      "yaw": 90,
+      "incomplete_base": true
+    },
+    {
+      "id": "incomplete-skulls",
+      "skulls": [
+        [
+          13,
+          84,
+          13
+        ],
+        [
+          14,
+          84,
+          13
+        ],
+        [
+          15,
+          84,
+          13
+        ]
+      ],
+      "arms": [
+        [
+          13,
+          84,
+          12
+        ],
+        [
+          14,
+          84,
+          12
+        ],
+        [
+          15,
+          84,
+          12
+        ]
+      ],
+      "base": [
+        14,
+        84,
+        11
+      ],
+      "gap": [
+        13,
+        84,
+        11
+      ],
+      "spawn": false,
+      "skull_placed": true,
+      "yaw": 90,
+      "incomplete_skulls": true
+    }
+  ]
+}

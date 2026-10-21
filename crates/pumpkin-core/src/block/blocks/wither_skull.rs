@@ -1,11 +1,14 @@
 use pumpkin_data::{
-    Block, BlockDirection, BlockId, BlockState, BlockStateId, advancement::Advancement,
-    entity::EntityType, world::WorldEvent,
+    Block, BlockDirection, BlockId, BlockState, BlockStateId,
+    advancement::Advancement,
+    entity::EntityType,
+    tag::{self, Taggable},
+    world::WorldEvent,
 };
 use pumpkin_macros::pumpkin_block;
 use pumpkin_util::{Difficulty, math::position::BlockPos};
 use pumpkin_world::world::BlockFlags;
-use std::sync::Arc;
+use std::{collections::HashMap, sync::Arc};
 
 use crate::block::entities::skull::SkullBlockEntity;
 use crate::{
@@ -33,67 +36,63 @@ fn find_wither_pattern_inner(
     skull_pos: &BlockPos,
     require_skulls: bool,
 ) -> Option<WitherPattern> {
-    let is_soul_block = |block: &Block| block == &Block::SOUL_SAND || block == &Block::SOUL_SOIL;
-    let is_skull = |pos: &BlockPos| {
-        pos == skull_pos
-            || matches!(
-                world.get_block(pos).id,
-                BlockId::WITHER_SKELETON_SKULL | BlockId::WITHER_SKELETON_WALL_SKULL
-            )
-    };
+    find_wither_pattern_in(skull_pos, require_skulls, |pos| {
+        world.get_block_state_id(pos)
+    })
+}
 
-    for dir in [BlockDirection::North, BlockDirection::West] {
-        let opposite = dir.opposite();
-        for center in [
-            *skull_pos,
-            skull_pos.offset(opposite.to_offset()),
-            skull_pos.offset(dir.to_offset()),
-        ] {
-            let top_middle = center.down();
-            let base = top_middle.down();
-            let arm1 = top_middle.offset(dir.to_offset());
-            let arm2 = top_middle.offset(opposite.to_offset());
-            let skull1_pos = arm1.up();
-            let skull2_pos = arm2.up();
-
-            if is_soul_block(world.get_block(&top_middle))
-                && is_soul_block(world.get_block(&base))
-                && is_soul_block(world.get_block(&arm1))
-                && is_soul_block(world.get_block(&arm2))
-                && world.get_block_state(&arm1.down()).is_air()
-                && world.get_block_state(&arm2.down()).is_air()
-                && (!require_skulls
-                    || (is_skull(&center) && is_skull(&skull1_pos) && is_skull(&skull2_pos)))
-            {
-                // BlockPattern searches only positive offsets from the placed skull.
-                let (first_arm, last_arm) = if *skull_pos == skull1_pos {
-                    (arm1, arm2)
-                } else {
-                    (arm2, arm1)
-                };
-                return Some(WitherPattern {
-                    blocks: [
-                        first_arm.up(),
-                        first_arm,
-                        first_arm.down(),
-                        center,
-                        top_middle,
-                        base,
-                        last_arm.up(),
-                        last_arm,
-                        last_arm.down(),
-                    ],
-                    base,
-                    yaw: if dir == BlockDirection::West {
-                        90.0
-                    } else {
-                        0.0
-                    },
+fn find_wither_pattern_in(
+    skull_pos: &BlockPos,
+    require_skulls: bool,
+    mut get_state: impl FnMut(&BlockPos) -> BlockStateId,
+) -> Option<WitherPattern> {
+    let mut cache = HashMap::new();
+    // BlockPattern.find visits positive candidate offsets, X first, then every
+    // perpendicular forwards/up pair in Direction declaration order.
+    for origin in BlockPos::iterate(*skull_pos, skull_pos.offset((2, 2, 2).into())) {
+        for forwards in BlockDirection::all() {
+            for up in BlockDirection::all() {
+                if up == forwards || up == forwards.opposite() {
+                    continue;
+                }
+                let up_offset = up.to_offset();
+                let across = forwards.to_offset().cross(&up_offset);
+                let blocks = std::array::from_fn(|index| {
+                    origin.offset(across * (index / 3) as i32 - up_offset * (index % 3) as i32)
                 });
+                if blocks.iter().enumerate().all(|(index, pos)| {
+                    let row = index % 3;
+                    if row == 0 && !require_skulls {
+                        return true;
+                    }
+                    let (block, state) = *cache
+                        .entry(*pos)
+                        .or_insert_with(|| BlockState::from_id_with_block(get_state(pos)));
+                    match row {
+                        0 => matches!(
+                            block.id,
+                            BlockId::WITHER_SKELETON_SKULL | BlockId::WITHER_SKELETON_WALL_SKULL
+                        ),
+                        1 => block.has_tag(&tag::Block::MINECRAFT_WITHER_SUMMON_BASE_BLOCKS),
+                        _ if index / 3 == 1 => {
+                            block.has_tag(&tag::Block::MINECRAFT_WITHER_SUMMON_BASE_BLOCKS)
+                        }
+                        _ => state.is_air(),
+                    }
+                }) {
+                    return Some(WitherPattern {
+                        base: blocks[5],
+                        blocks,
+                        yaw: if matches!(forwards, BlockDirection::West | BlockDirection::East) {
+                            0.0
+                        } else {
+                            90.0
+                        },
+                    });
+                }
             }
         }
     }
-
     None
 }
 
@@ -168,5 +167,114 @@ impl BlockBehaviour for WitherSkeletonSkullBlock {
 
     fn is_pathfindable(&self, _state: &BlockState, _computation_type: PathComputationType) -> bool {
         false
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn matches_rotated_wither_structures_and_rejects_obstructed_arms() {
+        // Explicit world coordinates: upright, inverted, flat and sideways T shapes.
+        let layouts = [
+            (
+                [(0, 2, 0), (1, 2, 0), (2, 2, 0)],
+                [(0, 1, 0), (1, 1, 0), (2, 1, 0)],
+                (1, 0, 0),
+                (0, 0, 0),
+                90.0,
+            ),
+            (
+                [(0, 0, 0), (1, 0, 0), (2, 0, 0)],
+                [(0, 1, 0), (1, 1, 0), (2, 1, 0)],
+                (1, 2, 0),
+                (0, 2, 0),
+                90.0,
+            ),
+            (
+                [(0, 0, 0), (1, 0, 0), (2, 0, 0)],
+                [(0, 0, 1), (1, 0, 1), (2, 0, 1)],
+                (1, 0, 2),
+                (0, 0, 2),
+                90.0,
+            ),
+            (
+                [(0, 0, 2), (1, 0, 2), (2, 0, 2)],
+                [(0, 0, 1), (1, 0, 1), (2, 0, 1)],
+                (1, 0, 0),
+                (0, 0, 0),
+                90.0,
+            ),
+            (
+                [(0, 0, 0), (0, 1, 0), (0, 2, 0)],
+                [(1, 0, 0), (1, 1, 0), (1, 2, 0)],
+                (2, 1, 0),
+                (2, 0, 0),
+                90.0,
+            ),
+            (
+                [(2, 0, 0), (2, 1, 0), (2, 2, 0)],
+                [(1, 0, 0), (1, 1, 0), (1, 2, 0)],
+                (0, 1, 0),
+                (0, 0, 0),
+                90.0,
+            ),
+            (
+                [(0, 2, 0), (0, 2, 1), (0, 2, 2)],
+                [(0, 1, 0), (0, 1, 1), (0, 1, 2)],
+                (0, 0, 1),
+                (0, 0, 0),
+                0.0,
+            ),
+        ];
+        for (skulls, arms, base, air, yaw) in layouts {
+            let pos = |(x, y, z)| BlockPos::new(x, y, z);
+            let mut states = HashMap::new();
+            for (index, skull) in skulls.into_iter().enumerate() {
+                states.insert(
+                    pos(skull),
+                    if index == 1 {
+                        Block::WITHER_SKELETON_WALL_SKULL.default_state.id
+                    } else {
+                        Block::WITHER_SKELETON_SKULL.default_state.id
+                    },
+                );
+            }
+            for arm in arms {
+                states.insert(pos(arm), Block::SOUL_SOIL.default_state.id);
+            }
+            states.insert(pos(base), Block::SOUL_SAND.default_state.id);
+            for skull in skulls {
+                let find = |states: &HashMap<BlockPos, BlockStateId>, require_skulls| {
+                    find_wither_pattern_in(&pos(skull), require_skulls, |p| {
+                        states
+                            .get(p)
+                            .copied()
+                            .unwrap_or(Block::AIR.default_state.id)
+                    })
+                };
+                let pattern = find(&states, true).expect("rotated Wither structure");
+                assert_eq!(pattern.base, pos(base));
+                assert_eq!(pattern.yaw, yaw);
+                assert!(states.keys().all(|p| pattern.blocks.contains(p)));
+                let mut incomplete = states.clone();
+                incomplete.remove(&pos(skull));
+                assert!(find(&incomplete, true).is_none());
+                assert!(
+                    find(&incomplete, false).is_some(),
+                    "dispenser base ignores skull row"
+                );
+                incomplete.remove(&pos(arms[1]));
+                assert!(
+                    find(&incomplete, false).is_none(),
+                    "base still requires every soul block"
+                );
+                let mut obstructed = states.clone();
+                obstructed.insert(pos(air), Block::STONE.default_state.id);
+                assert!(find(&obstructed, true).is_none());
+                assert!(find(&obstructed, false).is_none());
+            }
+        }
     }
 }
