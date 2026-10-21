@@ -469,8 +469,8 @@ impl EnderDragonEntity {
         } else {
             relative_movement
         } * (speed as f64);
-        let sin = (yaw * (std::f32::consts::PI / 180.0)).sin() as f64;
-        let cos = (yaw * (std::f32::consts::PI / 180.0)).cos() as f64;
+        let sin = f64::from(sin(yaw * (std::f32::consts::PI / 180.0)));
+        let cos = f64::from(cos(yaw * (std::f32::consts::PI / 180.0)));
         Vector3::new(vec.x * cos - vec.z * sin, vec.y, vec.z * cos + vec.x * sin)
     }
 
@@ -510,9 +510,9 @@ impl EnderDragonEntity {
         };
 
         let dir_vec = Vector3::new(
-            (yaw * (std::f32::consts::PI / 180.0)).sin() as f64,
+            f64::from(sin(yaw * (std::f32::consts::PI / 180.0))),
             vel.y,
-            -(yaw * (std::f32::consts::PI / 180.0)).cos() as f64,
+            -f64::from(cos(yaw * (std::f32::consts::PI / 180.0))),
         );
         let dir = if dir_vec.length_squared() > 1e-6 {
             dir_vec.normalize()
@@ -1188,6 +1188,24 @@ mod tests {
                 EnderDragonEntity::nearest_node_in(&nodes, Vector3::new(x, 73.0, 0.0), false),
                 expected,
             );
+        }
+    }
+
+    #[test]
+    fn flight_acceleration_matches_vanilla_lookup_table_rotation() {
+        // Vanilla 26.3 Entity.getInputVector, with forward input and speed 0.06.
+        for (yaw, x, z) in [
+            (37.3, 0.036358122012955185, -0.04772930753836091),
+            (-123.4, -0.05009177215192229, 0.03302747652618265),
+            (0.0, 0.0, -0.05999999865889549),
+            (90.0, 0.05999999865889549, -7.347880951273066e-18),
+            (179.9, 0.00010929606843450507, 0.05999989852309451),
+        ] {
+            let movement =
+                EnderDragonEntity::get_relative_movement(Vector3::new(0.0, 0.0, -1.0), 0.06, yaw);
+            assert!((movement.x - x).abs() < 1e-14, "yaw {yaw}: {movement:?}");
+            assert_eq!(movement.y, 0.0);
+            assert!((movement.z - z).abs() < 1e-14, "yaw {yaw}: {movement:?}");
         }
     }
 
