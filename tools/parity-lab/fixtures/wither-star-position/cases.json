@@ -1,0 +1,43 @@
+{
+  "version": "26.3",
+  "trials": 2,
+  "description": "Read an unmoved Age:-6000s Wither nether-star drop after a lethal hit. Its exact Pos must equal the dead boss Pos. Nonlethal damage must produce no item. Read immediately and after one verified tick, allowing that tick to finish before reading; no item motion is subtracted or inferred.",
+  "cases": [
+    {
+      "id": "fractional",
+      "pos": [
+        24.125,
+        80.75,
+        24.875
+      ],
+      "lethal": true
+    },
+    {
+      "id": "negative",
+      "pos": [
+        -8.125,
+        80.25,
+        -8.875
+      ],
+      "lethal": true
+    },
+    {
+      "id": "center",
+      "pos": [
+        20.5,
+        80.0,
+        20.5
+      ],
+      "lethal": true
+    },
+    {
+      "id": "nonlethal",
+      "pos": [
+        24.125,
+        80.75,
+        24.875
+      ],
+      "lethal": false
+    }
+  ]
+}

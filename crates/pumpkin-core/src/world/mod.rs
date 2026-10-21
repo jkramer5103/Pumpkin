@@ -5599,6 +5599,19 @@ impl World {
             )
         };
 
+        self.create_item_drop_at(spawn_pos, stack)
+    }
+
+    /// Prepares a drop at an exact entity position, including its cancellable spawn event.
+    pub fn create_item_drop_at(
+        self: &Arc<Self>,
+        spawn_pos: Vector3<f64>,
+        stack: ItemStack,
+    ) -> Option<ItemEntity> {
+        if stack.is_empty() {
+            return None;
+        }
+
         let entity = Entity::new(self.clone(), spawn_pos, &EntityType::ITEM);
         let mut item_event = crate::plugin::api::events::entity::item_spawn::ItemSpawnEvent::new(
             entity.entity_id,

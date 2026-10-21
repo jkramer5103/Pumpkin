@@ -377,10 +377,9 @@ impl WitherEntity {
     fn drop_nether_star(&self) {
         let entity = &self.mob_entity.living_entity.entity;
         let world = entity.world.load();
-        if let Some(item) = world.create_item_drop(
-            &entity.block_pos.load(),
-            ItemStack::new(1, &Item::NETHER_STAR),
-        ) {
+        if let Some(item) =
+            world.create_item_drop_at(entity.pos.load(), ItemStack::new(1, &Item::NETHER_STAR))
+        {
             item.set_extended_lifetime();
             world.spawn_entity(Arc::new(item));
         }
