@@ -129,6 +129,7 @@ pub struct LivingEntity {
     pub last_hurt_by_player_id: AtomicI32,
     /// The tick at which this entity was last hurt by a player.
     pub last_hurt_by_player_time: AtomicI64,
+    last_hurt_by_player: AtomicCell<Option<uuid::Uuid>>,
     last_hurt_by_player_memory_time: AtomicI32,
     /// The ID of the mob/entity that last hurt this entity.
     pub last_hurt_by_mob_id: AtomicI32,
@@ -312,6 +313,7 @@ impl LivingEntity {
             combat_tracker: std::sync::Mutex::new(CombatTracker::new()),
             last_hurt_by_player_id: AtomicI32::new(0),
             last_hurt_by_player_time: AtomicI64::new(0),
+            last_hurt_by_player: AtomicCell::new(None),
             last_hurt_by_player_memory_time: AtomicI32::new(0),
             last_hurt_by_mob_id: AtomicI32::new(0),
             last_hurt_by_mob_time: AtomicI64::new(0),
@@ -2727,6 +2729,13 @@ impl LivingEntity {
         nbt.put_short("HurtTime", self.hurt_cooldown.load(Relaxed).max(0) as i16);
         nbt.put_short("DeathTime", i16::from(self.death_time.load(Relaxed)));
         nbt.put_bool("FallFlying", self.entity.is_fall_flying());
+        if let Some(player) = self.last_hurt_by_player.load() {
+            nbt.put_uuid("last_hurt_by_player", player);
+            nbt.put_int(
+                "last_hurt_by_player_memory_time",
+                self.last_hurt_by_player_memory_time.load(Relaxed),
+            );
+        }
         {
             let effects_vec: Vec<pumpkin_data::potion::Effect> = {
                 let effects = self
@@ -2767,6 +2776,12 @@ impl LivingEntity {
     }
 
     pub fn read_living_nbt_non_mut(&self, nbt: &NbtCompound) {
+        self.last_hurt_by_player
+            .store(nbt.get_uuid("last_hurt_by_player"));
+        self.last_hurt_by_player_memory_time.store(
+            nbt.get_int("last_hurt_by_player_memory_time").unwrap_or(0),
+            Relaxed,
+        );
         // Vanilla LivingEntity.readAdditionalSaveData defaults to the mob's own max health,
         // not a flat 20; a hoglin (40 max) or iron golem (100 max) with no saved Health would
         // otherwise be silently reset to 20 here.
@@ -3188,6 +3203,8 @@ impl LivingEntity {
         // Vanilla keeps XP eligibility for 100 entity ticks, independently of combat credit.
         if let Some(attacker) = cause.or(source) {
             if attacker.get_player().is_some() {
+                self.last_hurt_by_player
+                    .store(Some(attacker.get_entity().entity_uuid));
                 self.last_hurt_by_player_memory_time.store(100, Relaxed);
             } else if attacker.get_entity().entity_type == &EntityType::WOLF
                 && let Some(wolf) = attacker.get_mob().and_then(|mob| mob.as_tamable())
@@ -3195,8 +3212,10 @@ impl LivingEntity {
             {
                 // Vanilla credits owned wolves even when their owner is offline.
                 // A tame wolf without an owner clears the previous player memory.
+                let owner = wolf.get_owner();
+                self.last_hurt_by_player.store(owner);
                 self.last_hurt_by_player_memory_time
-                    .store(if wolf.get_owner().is_some() { 100 } else { 0 }, Relaxed);
+                    .store(if owner.is_some() { 100 } else { 0 }, Relaxed);
             }
         }
 
@@ -3415,6 +3434,8 @@ impl EntityBase for LivingEntity {
 
         if self.last_hurt_by_player_memory_time.load(Relaxed) > 0 {
             self.last_hurt_by_player_memory_time.fetch_sub(1, Relaxed);
+        } else {
+            self.last_hurt_by_player.store(None);
         }
 
         // Only tick movement if the entity is alive. This prevents a dead "corpse"

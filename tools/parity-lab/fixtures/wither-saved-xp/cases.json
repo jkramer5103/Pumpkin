@@ -1,0 +1,131 @@
+{
+  "trials": 2,
+  "cases": [
+    {
+      "id": "wither-fresh",
+      "entity": "wither",
+      "health": 300,
+      "attacker": "",
+      "before": 0,
+      "after": 0,
+      "expected_xp": false
+    },
+    {
+      "id": "wither-player",
+      "entity": "wither",
+      "health": 300,
+      "attacker": "player",
+      "before": 0,
+      "after": 0,
+      "expected_xp": true
+    },
+    {
+      "id": "wither-player99",
+      "entity": "wither",
+      "health": 300,
+      "attacker": "player",
+      "before": 40,
+      "after": 59,
+      "expected_xp": true
+    },
+    {
+      "id": "wither-player100",
+      "entity": "wither",
+      "health": 300,
+      "attacker": "player",
+      "before": 40,
+      "after": 60,
+      "expected_xp": false
+    },
+    {
+      "id": "wither-expired",
+      "entity": "wither",
+      "health": 300,
+      "attacker": "player",
+      "before": 101,
+      "after": 0,
+      "expected_xp": false
+    },
+    {
+      "id": "wither-wolf",
+      "entity": "wither",
+      "health": 300,
+      "attacker": "wolf",
+      "before": 0,
+      "after": 0,
+      "expected_xp": true
+    },
+    {
+      "id": "wither-wolf100",
+      "entity": "wither",
+      "health": 300,
+      "attacker": "wolf",
+      "before": 40,
+      "after": 60,
+      "expected_xp": false
+    },
+    {
+      "id": "sheep-fresh",
+      "entity": "sheep",
+      "health": 8,
+      "attacker": "",
+      "before": 0,
+      "after": 0,
+      "expected_xp": false
+    },
+    {
+      "id": "sheep-player",
+      "entity": "sheep",
+      "health": 8,
+      "attacker": "player",
+      "before": 0,
+      "after": 0,
+      "expected_xp": true
+    },
+    {
+      "id": "sheep-player99",
+      "entity": "sheep",
+      "health": 8,
+      "attacker": "player",
+      "before": 40,
+      "after": 59,
+      "expected_xp": true
+    },
+    {
+      "id": "sheep-player100",
+      "entity": "sheep",
+      "health": 8,
+      "attacker": "player",
+      "before": 40,
+      "after": 60,
+      "expected_xp": false
+    },
+    {
+      "id": "sheep-expired",
+      "entity": "sheep",
+      "health": 8,
+      "attacker": "player",
+      "before": 101,
+      "after": 0,
+      "expected_xp": false
+    },
+    {
+      "id": "sheep-wolf",
+      "entity": "sheep",
+      "health": 8,
+      "attacker": "wolf",
+      "before": 0,
+      "after": 0,
+      "expected_xp": true
+    },
+    {
+      "id": "sheep-wolf100",
+      "entity": "sheep",
+      "health": 8,
+      "attacker": "wolf",
+      "before": 40,
+      "after": 60,
+      "expected_xp": false
+    }
+  ]
+}
