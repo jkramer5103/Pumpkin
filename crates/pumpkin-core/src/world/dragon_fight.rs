@@ -180,8 +180,10 @@ impl DragonFight {
 
         // 3. Respawn sequence
         if let Some(stage) = fight.respawn_stage {
-            fight.tick_respawn_stage(world, stage);
+            // Match vanilla's post-increment argument: stage transitions may reset the timer.
+            let time = fight.respawn_time;
             fight.respawn_time += 1;
+            fight.tick_respawn_stage(world, stage, time);
             return;
         }
 
@@ -668,8 +670,7 @@ impl DragonFight {
     }
 
     #[expect(clippy::too_many_lines)]
-    fn tick_respawn_stage(&mut self, world: &Arc<World>, stage: DragonRespawnStage) {
-        let time = self.respawn_time;
+    fn tick_respawn_stage(&mut self, world: &Arc<World>, stage: DragonRespawnStage, time: i32) {
         let origin_y = self.origin.0.y + DRAGON_SPAWN_Y;
         let origin_target = BlockPos::new(self.origin.0.x, origin_y, self.origin.0.z);
 

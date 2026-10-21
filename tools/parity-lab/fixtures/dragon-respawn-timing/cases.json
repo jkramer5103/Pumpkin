@@ -1,0 +1,30 @@
+{
+  "version": "26.3",
+  "dimension": "minecraft:the_end",
+  "observation_ticks": 105,
+  "expected_preparing_roar_ticks": [
+    2,
+    52,
+    53,
+    54,
+    97,
+    98,
+    99,
+    100,
+    101
+  ],
+  "baseline_preparing_roar_ticks": [
+    51,
+    52,
+    53,
+    96,
+    97,
+    98,
+    99,
+    100
+  ],
+  "expected_first_pillar_beam_tick": 103,
+  "first_pillar_beam_x": 42,
+  "first_pillar_beam_z": 0,
+  "description": "Kill the initial End dragon in a private fresh world, wait for its exit portal, place three summoned crystals and a fourth with an actual item-use packet, then step 105 ticks. Verify time-zero preparation roar and first-pillar beam before any pillar explosion."
+}
