@@ -1,0 +1,95 @@
+{
+  "trials": 2,
+  "cases": [
+    {
+      "id": "uncredited",
+      "entity": "wither",
+      "health": 300,
+      "wait": 1,
+      "credited": false,
+      "advance_time": true,
+      "time_jump": false,
+      "expected_xp": false
+    },
+    {
+      "id": "recent",
+      "entity": "wither",
+      "health": 300,
+      "wait": 20,
+      "credited": true,
+      "advance_time": true,
+      "time_jump": false,
+      "expected_xp": true
+    },
+    {
+      "id": "boundary99",
+      "entity": "wither",
+      "health": 300,
+      "wait": 99,
+      "credited": true,
+      "advance_time": true,
+      "time_jump": false,
+      "expected_xp": true
+    },
+    {
+      "id": "boundary100",
+      "entity": "wither",
+      "health": 300,
+      "wait": 100,
+      "credited": true,
+      "advance_time": true,
+      "time_jump": false,
+      "expected_xp": false
+    },
+    {
+      "id": "expired101",
+      "entity": "wither",
+      "health": 300,
+      "wait": 101,
+      "credited": true,
+      "advance_time": true,
+      "time_jump": false,
+      "expected_xp": false
+    },
+    {
+      "id": "paused-expired",
+      "entity": "wither",
+      "health": 300,
+      "wait": 101,
+      "credited": true,
+      "advance_time": false,
+      "time_jump": false,
+      "expected_xp": false
+    },
+    {
+      "id": "jump-recent",
+      "entity": "wither",
+      "health": 300,
+      "wait": 20,
+      "credited": true,
+      "advance_time": true,
+      "time_jump": true,
+      "expected_xp": true
+    },
+    {
+      "id": "shared-sheep-recent",
+      "entity": "sheep",
+      "health": 8,
+      "wait": 20,
+      "credited": true,
+      "advance_time": false,
+      "time_jump": false,
+      "expected_xp": true
+    },
+    {
+      "id": "shared-sheep-expired",
+      "entity": "sheep",
+      "health": 8,
+      "wait": 100,
+      "credited": true,
+      "advance_time": false,
+      "time_jump": false,
+      "expected_xp": false
+    }
+  ]
+}

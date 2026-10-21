@@ -129,6 +129,7 @@ pub struct LivingEntity {
     pub last_hurt_by_player_id: AtomicI32,
     /// The tick at which this entity was last hurt by a player.
     pub last_hurt_by_player_time: AtomicI64,
+    last_hurt_by_player_memory_time: AtomicI32,
     /// The ID of the mob/entity that last hurt this entity.
     pub last_hurt_by_mob_id: AtomicI32,
     /// The tick at which this entity was last hurt by a mob/entity.
@@ -311,6 +312,7 @@ impl LivingEntity {
             combat_tracker: std::sync::Mutex::new(CombatTracker::new()),
             last_hurt_by_player_id: AtomicI32::new(0),
             last_hurt_by_player_time: AtomicI64::new(0),
+            last_hurt_by_player_memory_time: AtomicI32::new(0),
             last_hurt_by_mob_id: AtomicI32::new(0),
             last_hurt_by_mob_time: AtomicI64::new(0),
             movement_input: AtomicCell::new(Vector3::default()),
@@ -2095,9 +2097,12 @@ impl LivingEntity {
             self.drop_loot(&params);
 
             // Award experience
-            if params.killed_by_player.unwrap_or(false)
-                && world.level_info.load().game_rules.mob_drops
-            {
+            let has_experience_credit = if dyn_self.get_mob().is_some() {
+                self.last_hurt_by_player_memory_time.load(Relaxed) > 0
+            } else {
+                params.killed_by_player.unwrap_or(false)
+            };
+            if has_experience_credit && world.level_info.load().game_rules.mob_drops {
                 let amount = dyn_self.get_experience_reward(killer);
                 if amount > 0 {
                     ExperienceOrbEntity::spawn(&world, self.entity.pos.load(), amount);
@@ -3180,6 +3185,14 @@ impl LivingEntity {
         self.last_damage_taken.store(amount);
         let damage_amount = damage_amount.max(0.0);
 
+        // Vanilla keeps XP eligibility for 100 entity ticks, independently of combat credit.
+        if cause
+            .or(source)
+            .is_some_and(|attacker| attacker.get_player().is_some())
+        {
+            self.last_hurt_by_player_memory_time.store(100, Relaxed);
+        }
+
         // Record the source once the hit is confirmed.
         *self
             .last_damage_type
@@ -3392,6 +3405,10 @@ impl EntityBase for LivingEntity {
     #[allow(clippy::too_many_lines)]
     fn tick(&self, caller: &dyn EntityBase, server: &Server) {
         self.entity.tick(caller, server);
+
+        if self.last_hurt_by_player_memory_time.load(Relaxed) > 0 {
+            self.last_hurt_by_player_memory_time.fetch_sub(1, Relaxed);
+        }
 
         // Only tick movement if the entity is alive. This prevents a dead "corpse"
         // from continuing to be simulated (accumulating fall_distance/velocity).
