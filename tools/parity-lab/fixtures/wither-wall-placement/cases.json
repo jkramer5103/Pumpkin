@@ -1,0 +1,132 @@
+{
+  "trials": 2,
+  "cases": [
+    {
+      "id": "north",
+      "face": 2,
+      "support": [
+        15,
+        83,
+        16
+      ],
+      "observer": [
+        15,
+        82,
+        12
+      ],
+      "yaw": 0,
+      "wall": true,
+      "spawn": false,
+      "peaceful": false
+    },
+    {
+      "id": "south",
+      "face": 3,
+      "support": [
+        15,
+        83,
+        14
+      ],
+      "observer": [
+        15,
+        82,
+        18
+      ],
+      "yaw": 180,
+      "wall": true,
+      "spawn": false,
+      "peaceful": false
+    },
+    {
+      "id": "west",
+      "face": 4,
+      "support": [
+        16,
+        83,
+        15
+      ],
+      "observer": [
+        12,
+        82,
+        15
+      ],
+      "yaw": -90,
+      "wall": true,
+      "spawn": false,
+      "peaceful": false
+    },
+    {
+      "id": "east",
+      "face": 5,
+      "support": [
+        14,
+        83,
+        15
+      ],
+      "observer": [
+        18,
+        82,
+        15
+      ],
+      "yaw": 90,
+      "wall": true,
+      "spawn": false,
+      "peaceful": false
+    },
+    {
+      "id": "floor",
+      "face": 1,
+      "support": [
+        15,
+        82,
+        15
+      ],
+      "observer": [
+        15,
+        82,
+        18
+      ],
+      "yaw": 180,
+      "wall": false,
+      "spawn": false,
+      "peaceful": false
+    },
+    {
+      "id": "final-wall",
+      "face": 3,
+      "support": [
+        15,
+        83,
+        14
+      ],
+      "observer": [
+        15,
+        82,
+        18
+      ],
+      "yaw": 180,
+      "wall": true,
+      "spawn": true,
+      "peaceful": false
+    },
+    {
+      "id": "peaceful-wall",
+      "face": 3,
+      "support": [
+        15,
+        83,
+        14
+      ],
+      "observer": [
+        15,
+        82,
+        18
+      ],
+      "yaw": 180,
+      "wall": true,
+      "spawn": false,
+      "peaceful": true,
+      "structure": true
+    }
+  ]
+}

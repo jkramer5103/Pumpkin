@@ -1,6 +1,7 @@
 use pumpkin_data::{
-    Block, BlockDirection, BlockId, BlockState, BlockStateId,
+    Block, BlockDirection, BlockId, BlockState, BlockStateId, FacingExt,
     advancement::Advancement,
+    block_properties::{Facing, SkeletonWallSkullLikeProperties},
     entity::EntityType,
     tag::{self, Taggable},
     world::WorldEvent,
@@ -14,7 +15,8 @@ use crate::block::entities::skull::SkullBlockEntity;
 use crate::{
     block::{
         BlockBehaviour, OnPlaceArgs, PathComputationType, PlacedArgs,
-        blocks::skull_block::SkullBlock,
+        blocks::{redstone::block_receives_redstone_power, skull_block::SkullBlock},
+        registry::can_replace_with_other_block,
     },
     entity::{Entity, EntityBase, boss::wither::WitherEntity},
     world::World,
@@ -135,10 +137,42 @@ fn spawn_wither(world: &Arc<World>, pattern: &WitherPattern) {
     }
 }
 
-#[pumpkin_block("wither_skeleton_skull")]
+#[pumpkin_block("wither_skeleton_skull", "wither_skeleton_wall_skull")]
 pub struct WitherSkeletonSkullBlock;
 
 impl WitherSkeletonSkullBlock {
+    fn get_placement_state(
+        directions: [Facing; 6],
+        floor_state: BlockStateId,
+        powered: bool,
+        mut can_replace: impl FnMut(Facing) -> bool,
+    ) -> BlockStateId {
+        // StandingAndWallBlockItem computes the wall candidate before choosing floor or wall.
+        let wall_state = directions.iter().find_map(|&direction| {
+            let facing = direction.opposite().to_horizontal_facing()?;
+            if can_replace(direction) {
+                return None;
+            }
+            let mut props =
+                SkeletonWallSkullLikeProperties::default(&Block::WITHER_SKELETON_WALL_SKULL);
+            props.facing = facing;
+            props.powered = powered;
+            Some(props.to_state_id(&Block::WITHER_SKELETON_WALL_SKULL))
+        });
+        for direction in directions {
+            match direction {
+                Facing::Down => return floor_state,
+                Facing::Up => {}
+                _ => {
+                    if let Some(state) = wall_state {
+                        return state;
+                    }
+                }
+            }
+        }
+        floor_state
+    }
+
     /// Checks whether a dispenser can place a skull on a Wither summon base.
     pub fn can_spawn_mob(world: &Arc<World>, skull_pos: &BlockPos) -> bool {
         skull_pos.0.y >= world.get_bottom_y() + 2
@@ -149,7 +183,24 @@ impl WitherSkeletonSkullBlock {
 
 impl BlockBehaviour for WitherSkeletonSkullBlock {
     fn on_place(&self, args: OnPlaceArgs<'_>) -> BlockStateId {
-        SkullBlock::on_place(&SkullBlock, args)
+        let mut directions = args.player.get_entity().get_entity_facing_order();
+        if *args.position != args.use_item_on.position
+            && let Some(index) = directions
+                .iter()
+                .position(|&d| d == args.direction.to_facing())
+        {
+            directions.copy_within(0..index, 1);
+            directions[0] = args.direction.to_facing();
+        }
+        let powered = block_receives_redstone_power(args.world, args.position);
+        let world = args.world;
+        let position = args.position;
+        let floor_state = SkullBlock::on_place(&SkullBlock, args);
+        Self::get_placement_state(directions, floor_state, powered, |direction| {
+            let (block, state) = world
+                .get_block_and_state(&position.offset(direction.to_block_direction().to_offset()));
+            can_replace_with_other_block(block, state)
+        })
     }
 
     fn placed(&self, args: PlacedArgs<'_>) {
@@ -173,6 +224,91 @@ impl BlockBehaviour for WitherSkeletonSkullBlock {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn wall_skull_placement_faces_away_from_the_first_support() {
+        let directions = [
+            Facing::South,
+            Facing::North,
+            Facing::East,
+            Facing::West,
+            Facing::Down,
+            Facing::Up,
+        ];
+        let state = WitherSkeletonSkullBlock::get_placement_state(
+            directions,
+            Block::WITHER_SKELETON_SKULL.default_state.id,
+            true,
+            |direction| direction != Facing::South,
+        );
+        assert_eq!(
+            Block::from_state_id(state),
+            &Block::WITHER_SKELETON_WALL_SKULL
+        );
+        let props = SkeletonWallSkullLikeProperties::from_state_id(state);
+        assert_eq!(
+            props.facing,
+            pumpkin_data::block_properties::HorizontalFacing::North
+        );
+        assert!(props.powered);
+    }
+
+    #[test]
+    fn wall_candidate_is_computed_before_the_floor_preference() {
+        let directions = [
+            Facing::North,
+            Facing::Down,
+            Facing::South,
+            Facing::East,
+            Facing::West,
+            Facing::Up,
+        ];
+        let state = WitherSkeletonSkullBlock::get_placement_state(
+            directions,
+            Block::WITHER_SKELETON_SKULL.default_state.id,
+            false,
+            |direction| direction != Facing::South,
+        );
+        assert_eq!(
+            Block::from_state_id(state),
+            &Block::WITHER_SKELETON_WALL_SKULL
+        );
+        let props = SkeletonWallSkullLikeProperties::from_state_id(state);
+        assert_eq!(
+            props.facing,
+            pumpkin_data::block_properties::HorizontalFacing::North
+        );
+        assert!(!props.powered);
+    }
+
+    #[test]
+    fn skull_placement_skips_ceilings_and_keeps_floor_fallback() {
+        let floor = Block::WITHER_SKELETON_SKULL.default_state.id;
+        let directions = [
+            Facing::Up,
+            Facing::Down,
+            Facing::South,
+            Facing::East,
+            Facing::West,
+            Facing::North,
+        ];
+        assert_eq!(
+            WitherSkeletonSkullBlock::get_placement_state(directions, floor, false, |_| false),
+            floor
+        );
+        let directions = [
+            Facing::South,
+            Facing::East,
+            Facing::West,
+            Facing::North,
+            Facing::Up,
+            Facing::Down,
+        ];
+        assert_eq!(
+            WitherSkeletonSkullBlock::get_placement_state(directions, floor, false, |_| true),
+            floor
+        );
+    }
 
     #[test]
     fn matches_rotated_wither_structures_and_rejects_obstructed_arms() {
