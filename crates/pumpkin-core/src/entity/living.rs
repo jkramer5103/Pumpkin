@@ -2022,14 +2022,15 @@ impl LivingEntity {
 
             self.update_death_stats(&*dyn_self, killer);
 
-            // Plays the death sound
-            world.play_sound_fine(
-                self.death_sound(&*dyn_self),
-                SoundCategory::Players,
-                &self.entity.pos.load(),
-                1.0,
-                self.get_pitch(),
-            );
+            if !self.entity.silent.load(Relaxed) {
+                world.play_sound_fine(
+                    self.death_sound(&*dyn_self),
+                    SoundCategory::Players,
+                    &self.entity.pos.load(),
+                    1.0,
+                    self.get_pitch(),
+                );
+            }
             world.send_entity_status(&self.entity, EntityStatus::Death, Some(ActorEventID::Death));
             let looting_level;
             let tool = if let Some(cause_ent) = cause {
@@ -3221,13 +3222,15 @@ impl LivingEntity {
         );
 
         if play_sound {
-            world.play_sound_fine(
-                self.hurt_sound(caller),
-                SoundCategory::Players,
-                &self.entity.pos.load(),
-                1.0,
-                self.get_pitch(),
-            );
+            if !self.entity.silent.load(Relaxed) {
+                world.play_sound_fine(
+                    self.hurt_sound(caller),
+                    SoundCategory::Players,
+                    &self.entity.pos.load(),
+                    1.0,
+                    self.get_pitch(),
+                );
+            }
 
             if let Some(source) = source {
                 let source_pos = source.get_entity().pos.load();

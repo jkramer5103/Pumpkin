@@ -1,0 +1,110 @@
+{
+  "trials": 2,
+  "setup": [
+    "gamemode creative @a",
+    "difficulty easy",
+    "gamerule mob_griefing false",
+    "gamerule spawn_mobs false",
+    "forceload add 0 0 31 31",
+    "fill 0 79 0 31 79 31 minecraft:bedrock",
+    "tp @a 15 84 18"
+  ],
+  "cases": [
+    {
+      "id": "hurt-audible",
+      "silent": 0,
+      "effective_silent": false,
+      "prepare": [],
+      "sound": "hurt",
+      "actions": [
+        "damage @e[tag=pp_boss,limit=1] 4 minecraft:mob_attack by @e[tag=pp_attacker,limit=1]"
+      ],
+      "lethal": false
+    },
+    {
+      "id": "hurt-silent",
+      "silent": 1,
+      "effective_silent": true,
+      "prepare": [],
+      "sound": null,
+      "actions": [
+        "damage @e[tag=pp_boss,limit=1] 4 minecraft:mob_attack by @e[tag=pp_attacker,limit=1]"
+      ],
+      "lethal": false
+    },
+    {
+      "id": "hurt-toggled",
+      "silent": 0,
+      "effective_silent": true,
+      "prepare": [
+        "data merge entity @e[tag=pp_boss,limit=1] {Silent:1b}"
+      ],
+      "sound": null,
+      "actions": [
+        "damage @e[tag=pp_boss,limit=1] 4 minecraft:mob_attack by @e[tag=pp_attacker,limit=1]"
+      ],
+      "lethal": false
+    },
+    {
+      "id": "hurt-removed",
+      "silent": 1,
+      "effective_silent": false,
+      "prepare": [
+        "data remove entity @e[tag=pp_boss,limit=1] Silent"
+      ],
+      "sound": "hurt",
+      "actions": [
+        "damage @e[tag=pp_boss,limit=1] 4 minecraft:mob_attack by @e[tag=pp_attacker,limit=1]"
+      ],
+      "lethal": false
+    },
+    {
+      "id": "death-audible",
+      "silent": 0,
+      "effective_silent": false,
+      "prepare": [],
+      "sound": "death",
+      "actions": [
+        "damage @e[tag=pp_boss,limit=1] 1000 minecraft:mob_attack by @e[tag=pp_attacker,limit=1]"
+      ],
+      "lethal": true
+    },
+    {
+      "id": "death-silent",
+      "silent": 1,
+      "effective_silent": true,
+      "prepare": [],
+      "sound": null,
+      "actions": [
+        "damage @e[tag=pp_boss,limit=1] 1000 minecraft:mob_attack by @e[tag=pp_attacker,limit=1]"
+      ],
+      "lethal": true
+    },
+    {
+      "id": "death-toggled",
+      "silent": 0,
+      "effective_silent": true,
+      "prepare": [
+        "data merge entity @e[tag=pp_boss,limit=1] {Silent:1b}"
+      ],
+      "sound": null,
+      "actions": [
+        "damage @e[tag=pp_boss,limit=1] 1000 minecraft:mob_attack by @e[tag=pp_attacker,limit=1]"
+      ],
+      "lethal": true
+    },
+    {
+      "id": "death-removed",
+      "silent": 1,
+      "effective_silent": false,
+      "prepare": [
+        "data remove entity @e[tag=pp_boss,limit=1] Silent"
+      ],
+      "sound": "death",
+      "actions": [
+        "damage @e[tag=pp_boss,limit=1] 1000 minecraft:mob_attack by @e[tag=pp_attacker,limit=1]"
+      ],
+      "lethal": true
+    }
+  ]
+}
