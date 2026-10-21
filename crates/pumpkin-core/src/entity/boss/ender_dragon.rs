@@ -1,9 +1,9 @@
+use pumpkin_data::Block;
 use pumpkin_data::damage::DamageType;
 use pumpkin_data::entity::EntityType;
 use pumpkin_data::game_event::GameEvent;
 use pumpkin_data::tag::{self, Taggable};
 use pumpkin_data::world::WorldEvent;
-use pumpkin_data::{Block, BlockStateId};
 use pumpkin_nbt::compound::NbtCompound;
 use pumpkin_util::gamemode::GameMode;
 use pumpkin_util::math::boundingbox::{BoundingBox, EntityDimensions};
@@ -752,9 +752,11 @@ impl EnderDragonEntity {
             let block = world.get_block(&pos);
             if !block.is_air() && !block.has_tag(&tag::Block::MINECRAFT_DRAGON_TRANSPARENT) {
                 if Self::can_destroy_block(block, mob_griefing) {
+                    // Vanilla removeBlock preserves the block's contained fluid.
+                    let replacement = world.get_fluid_and_fluid_state(&pos).1.block_state_id;
                     destroyed_block |=
-                        world.set_block_state(&pos, BlockStateId::AIR, BlockFlags::NOTIFY_ALL)
-                            != BlockStateId::AIR;
+                        world.set_block_state(&pos, replacement, BlockFlags::NOTIFY_ALL)
+                            != replacement;
                 } else {
                     hit_wall = true;
                 }

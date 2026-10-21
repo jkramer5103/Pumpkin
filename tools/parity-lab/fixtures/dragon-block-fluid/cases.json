@@ -1,0 +1,86 @@
+{
+  "trials": 2,
+  "cases": [
+    {
+      "id": "water",
+      "block": "water",
+      "after": "water",
+      "count": 0,
+      "grief": true,
+      "noai": false,
+      "head": false
+    },
+    {
+      "id": "lava",
+      "block": "lava",
+      "after": "lava",
+      "count": 0,
+      "grief": true,
+      "noai": false,
+      "head": false
+    },
+    {
+      "id": "dry-slab",
+      "block": "oak_slab",
+      "after": "air",
+      "count": 1,
+      "grief": true,
+      "noai": false,
+      "head": false
+    },
+    {
+      "id": "stone",
+      "block": "stone",
+      "after": "air",
+      "count": 1,
+      "grief": true,
+      "noai": false,
+      "head": false
+    },
+    {
+      "id": "grief-disabled",
+      "block": "water",
+      "after": "water",
+      "count": 0,
+      "grief": false,
+      "noai": false,
+      "head": false
+    },
+    {
+      "id": "no-ai",
+      "block": "water",
+      "after": "water",
+      "count": 0,
+      "grief": true,
+      "noai": true,
+      "head": false
+    },
+    {
+      "id": "immune",
+      "block": "end_stone",
+      "after": "end_stone",
+      "count": 0,
+      "grief": true,
+      "noai": false,
+      "head": false
+    },
+    {
+      "id": "transparent",
+      "block": "light",
+      "after": "light",
+      "count": 0,
+      "grief": true,
+      "noai": false,
+      "head": false
+    },
+    {
+      "id": "air",
+      "block": "air",
+      "after": "air",
+      "count": 0,
+      "grief": true,
+      "noai": false,
+      "head": false
+    }
+  ]
+}
