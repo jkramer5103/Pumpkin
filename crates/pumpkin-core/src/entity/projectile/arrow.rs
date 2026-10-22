@@ -963,7 +963,7 @@ impl EntityBase for ArrowEntity {
                             .get_data_component::<PotionDurationScaleImpl>()
                             .map_or(1.0, |component| component.scale);
                         crate::item::potion::PotionContents::apply_effects_to(
-                            living,
+                            target.as_ref(),
                             crate::item::potion::PotionContents::read_potion_effects(&item_stack),
                             scale,
                             crate::item::potion::PotionApplicationSource::Arrow,

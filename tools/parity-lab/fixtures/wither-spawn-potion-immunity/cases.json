@@ -1,0 +1,102 @@
+{
+  "trials": 2,
+  "impact_ticks": 1,
+  "cases": [
+    {
+      "id": "wither-inv220-healing",
+      "entity": "wither",
+      "health": 100,
+      "invul": 220,
+      "potion": "healing",
+      "expected_health": 100
+    },
+    {
+      "id": "wither-inv220-strong_healing",
+      "entity": "wither",
+      "health": 100,
+      "invul": 220,
+      "potion": "strong_healing",
+      "expected_health": 100
+    },
+    {
+      "id": "wither-inv220-harming",
+      "entity": "wither",
+      "health": 100,
+      "invul": 220,
+      "potion": "harming",
+      "expected_health": 104
+    },
+    {
+      "id": "wither-inv1-healing",
+      "entity": "wither",
+      "health": 100,
+      "invul": 1,
+      "potion": "healing",
+      "expected_health": 100
+    },
+    {
+      "id": "wither-inv1-strong_healing",
+      "entity": "wither",
+      "health": 100,
+      "invul": 1,
+      "potion": "strong_healing",
+      "expected_health": 100
+    },
+    {
+      "id": "wither-inv1-harming",
+      "entity": "wither",
+      "health": 100,
+      "invul": 1,
+      "potion": "harming",
+      "expected_health": 104
+    },
+    {
+      "id": "wither-inv0-healing",
+      "entity": "wither",
+      "health": 100,
+      "invul": 0,
+      "potion": "healing",
+      "expected_health": 94
+    },
+    {
+      "id": "wither-inv0-strong_healing",
+      "entity": "wither",
+      "health": 100,
+      "invul": 0,
+      "potion": "strong_healing",
+      "expected_health": 88
+    },
+    {
+      "id": "wither-inv0-harming",
+      "entity": "wither",
+      "health": 100,
+      "invul": 0,
+      "potion": "harming",
+      "expected_health": 104
+    },
+    {
+      "id": "wither-charging-water",
+      "entity": "wither",
+      "health": 100,
+      "invul": 220,
+      "potion": "water",
+      "expected_health": 100
+    },
+    {
+      "id": "sheep-harming",
+      "entity": "sheep",
+      "health": 8,
+      "invul": 0,
+      "potion": "harming",
+      "expected_health": 2
+    },
+    {
+      "id": "zombie-healing",
+      "entity": "zombie",
+      "health": 20,
+      "invul": 0,
+      "potion": "healing",
+      "expected_health": 14
+    }
+  ]
+}

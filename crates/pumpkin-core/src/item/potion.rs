@@ -1,5 +1,4 @@
 use crate::entity::EntityBase;
-use crate::entity::living::LivingEntity;
 use pumpkin_data::effect::StatusEffect;
 use pumpkin_data::entity::EntityType;
 use pumpkin_data::item_stack::ItemStack;
@@ -135,11 +134,15 @@ impl PotionContents {
 
     /// Apply instant or duration effects to a target living entity.
     pub fn apply_effects_to(
-        target: &LivingEntity,
+        caller: &dyn EntityBase,
         effects: Vec<(&'static StatusEffect, i32, u8, bool, bool, bool)>,
         scale: f32,
         source: PotionApplicationSource,
     ) {
+        let Some(target) = caller.get_living_entity() else {
+            return;
+        };
+
         // Arrow.doPostHurtEffects uses addEffect even for instant effects, so
         // WitherBoss rejects them. Splash potions and clouds apply them directly.
         if source == PotionApplicationSource::Arrow
@@ -171,8 +174,9 @@ impl PotionContents {
                 } else {
                     let amount = (6.0 * (1 << amplifier) as f32 * instant_scale + 0.5) as i32;
 
-                    let _ = target.damage(
-                        target.get_entity(),
+                    // Keep mob damage overrides, including Wither spawn immunity.
+                    let _ = caller.damage(
+                        caller,
                         amount as f32,
                         pumpkin_data::damage::DamageType::MAGIC,
                     );

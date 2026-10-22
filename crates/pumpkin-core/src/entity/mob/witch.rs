@@ -256,7 +256,7 @@ impl Mob for WitchEntity {
 
                     let effects = crate::item::potion::PotionContents::read_potion_effects(&stack);
                     crate::item::potion::PotionContents::apply_effects_to(
-                        living,
+                        caller,
                         effects,
                         1.0,
                         crate::item::potion::PotionApplicationSource::Normal,

@@ -3561,7 +3561,7 @@ impl EntityBase for LivingEntity {
                 {
                     let effects = crate::item::potion::PotionContents::read_potion_effects(item);
                     crate::item::potion::PotionContents::apply_effects_to(
-                        self,
+                        caller,
                         effects,
                         1.0,
                         crate::item::potion::PotionApplicationSource::Normal,

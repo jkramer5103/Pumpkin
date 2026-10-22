@@ -264,14 +264,12 @@ impl EntityBase for SplashPotionEntity {
         }
 
         for (cand, scale) in affected {
-            if let Some(living) = cand.get_living_entity() {
-                crate::item::potion::PotionContents::apply_effects_to(
-                    living,
-                    effects.clone(),
-                    scale,
-                    crate::item::potion::PotionApplicationSource::Normal,
-                );
-            }
+            crate::item::potion::PotionContents::apply_effects_to(
+                cand.as_ref(),
+                effects.clone(),
+                scale,
+                crate::item::potion::PotionApplicationSource::Normal,
+            );
         }
     }
 }

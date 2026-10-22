@@ -378,15 +378,12 @@ impl EntityBase for AreaEffectCloudEntity {
                 continue;
             }
 
-            // Apply scaled effects inside a spawned task
-            if let Some(living) = cand_clone.get_living_entity() {
-                crate::item::potion::PotionContents::apply_effects_to(
-                    living,
-                    effs_clone,
-                    scale,
-                    crate::item::potion::PotionApplicationSource::AreaEffectCloud,
-                );
-            }
+            crate::item::potion::PotionContents::apply_effects_to(
+                cand_clone.as_ref(),
+                effs_clone,
+                scale,
+                crate::item::potion::PotionApplicationSource::AreaEffectCloud,
+            );
 
             // Set reapplication delay for this entity
             let delay = *self
