@@ -8,7 +8,7 @@ use crate::{
     entity::{
         Entity, EntityBase,
         boss::wither::WitherEntity,
-        projectile::{ProjectileHit, ThrownItemEntity},
+        projectile::{ProjectileHit, ThrownItemEntity, fireball::INITIAL_ACCELERATION_POWER},
     },
     server::Server,
     world::ExplosionInteraction,
@@ -46,7 +46,7 @@ impl WitherSkullEntity {
         direction: Vector3<f64>,
     ) -> Self {
         let thrown = ThrownItemEntity::new(entity, shooter, GRAVITY);
-        let speed = 0.95;
+        let speed = INITIAL_ACCELERATION_POWER;
         let vel = direction.normalize().multiply(speed, speed, speed);
         thrown.entity.velocity.store(vel);
 

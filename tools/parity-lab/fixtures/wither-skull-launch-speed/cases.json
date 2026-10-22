@@ -1,0 +1,82 @@
+{
+  "id": "wither-skull-launch-speed",
+  "description": "Natural main-head launch in a scratch arena. Reset boss position/motion and remove old skulls before each frozen tick. Read Motion while the newly spawned skull is still exactly at its main-head origin. Compare initial speed, direction and zero-vector control; do not advance projectile flight.",
+  "trials": 2,
+  "max_shot_ticks": 60,
+  "setup": [
+    "gamemode creative @a",
+    "difficulty easy",
+    "gamerule mob_griefing false",
+    "gamerule spawn_mobs false",
+    "fill 0 79 0 31 79 31 minecraft:bedrock",
+    "fill 0 80 0 31 95 31 minecraft:air",
+    "tp @a 16 90 16"
+  ],
+  "cases": [
+    {
+      "id": "positive-x",
+      "offset": [
+        6,
+        0,
+        0
+      ],
+      "expected_motion": [
+        0.1,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "negative-x",
+      "offset": [
+        -6,
+        0,
+        0
+      ],
+      "expected_motion": [
+        -0.1,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "positive-z",
+      "offset": [
+        0,
+        0,
+        6
+      ],
+      "expected_motion": [
+        0,
+        0,
+        0.1
+      ]
+    },
+    {
+      "id": "diagonal-up",
+      "offset": [
+        3,
+        4,
+        0
+      ],
+      "expected_motion": [
+        0.06,
+        0.08,
+        0
+      ]
+    },
+    {
+      "id": "coincident",
+      "offset": [
+        0,
+        0,
+        0
+      ],
+      "expected_motion": [
+        0,
+        0,
+        0
+      ]
+    }
+  ]
+}
