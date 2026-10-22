@@ -1,0 +1,83 @@
+{
+  "observation_ticks": 5,
+  "beam_target": [
+    0,
+    128,
+    0
+  ],
+  "vertical_cases": [
+    {
+      "offset": -2.001,
+      "participates": false,
+      "baseline_participates": false
+    },
+    {
+      "offset": -2,
+      "participates": false,
+      "baseline_participates": false
+    },
+    {
+      "offset": -1.999,
+      "participates": true,
+      "baseline_participates": false
+    },
+    {
+      "offset": -1.5,
+      "participates": true,
+      "baseline_participates": false
+    },
+    {
+      "offset": -1.499,
+      "participates": true,
+      "baseline_participates": true
+    },
+    {
+      "offset": 0,
+      "participates": true,
+      "baseline_participates": true
+    },
+    {
+      "offset": 0.999,
+      "participates": true,
+      "baseline_participates": true
+    },
+    {
+      "offset": 1,
+      "participates": false,
+      "baseline_participates": true
+    },
+    {
+      "offset": 1.499,
+      "participates": false,
+      "baseline_participates": true
+    },
+    {
+      "offset": 1.5,
+      "participates": false,
+      "baseline_participates": false
+    },
+    {
+      "offset": 1.501,
+      "participates": false,
+      "baseline_participates": false
+    }
+  ],
+  "ordinary_xz": [
+    [
+      0.5,
+      3.5
+    ],
+    [
+      -2.5,
+      0.5
+    ],
+    [
+      3.5,
+      0.5
+    ]
+  ],
+  "control_xz": [
+    0.5,
+    -5.5
+  ]
+}

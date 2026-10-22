@@ -10,7 +10,7 @@ use uuid::Uuid;
 
 use pumpkin_data::{Block, entity::EntityType, world::WorldEvent};
 use pumpkin_util::{
-    math::{position::BlockPos, vector2::Vector2, vector3::Vector3},
+    math::{boundingbox::BoundingBox, position::BlockPos, vector2::Vector2, vector3::Vector3},
     text::TextComponent,
 };
 use pumpkin_world::world::BlockFlags;
@@ -598,22 +598,14 @@ impl DragonFight {
             (3, 0),  // East
         ];
 
-        let entities = world.entities.load();
         let mut crystals = Vec::new();
 
         for (dx, dz) in offsets {
             let target_pos = BlockPos::new(center.0.x + dx, center.0.y, center.0.z + dz);
-            let found: Vec<_> = entities
-                .iter()
-                .filter(|e| {
-                    if e.get_entity().entity_type != &EntityType::END_CRYSTAL {
-                        return false;
-                    }
-                    let pos = e.get_entity().pos.load();
-                    (pos.x - (target_pos.0.x as f64 + 0.5)).abs() < 1.5
-                        && (pos.y - target_pos.0.y as f64).abs() < 1.5
-                        && (pos.z - (target_pos.0.z as f64 + 0.5)).abs() < 1.5
-                })
+            let found: Vec<_> = world
+                .get_entities_at_box(&BoundingBox::from_block(&target_pos))
+                .into_iter()
+                .filter(|e| e.get_entity().entity_type == &EntityType::END_CRYSTAL)
                 .map(|crystal| crystal.get_entity().entity_uuid)
                 .collect();
 
