@@ -1,0 +1,82 @@
+{
+  "id": "wither-skull-spawn-rotation",
+  "description": "Reset boss yaw37/pitch-17, position and velocity before every frozen tick; capture newly fired skull NBT and spawn packet before projectile flight. Offsets stay within three horizontal blocks to avoid Wither movement yaw changes.",
+  "trials": 2,
+  "max_shot_ticks": 60,
+  "setup": [
+    "gamemode creative @a",
+    "difficulty easy",
+    "gamerule mob_griefing false",
+    "gamerule spawn_mobs false",
+    "fill 0 79 0 31 79 31 minecraft:bedrock",
+    "fill 0 80 0 31 95 31 minecraft:air",
+    "tp @a 16 90 16"
+  ],
+  "cases": [
+    {
+      "id": "positive-x",
+      "offset": [
+        2,
+        0,
+        0
+      ],
+      "expected_motion": [
+        0.1,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "negative-x",
+      "offset": [
+        -2,
+        0,
+        0
+      ],
+      "expected_motion": [
+        -0.1,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "positive-z",
+      "offset": [
+        0,
+        0,
+        2
+      ],
+      "expected_motion": [
+        0,
+        0,
+        0.1
+      ]
+    },
+    {
+      "id": "diagonal-up",
+      "offset": [
+        0,
+        4,
+        3
+      ],
+      "expected_motion": [
+        0,
+        0.08,
+        0.06
+      ]
+    },
+    {
+      "id": "coincident",
+      "offset": [
+        0,
+        0,
+        0
+      ],
+      "expected_motion": [
+        0,
+        0,
+        0
+      ]
+    }
+  ]
+}

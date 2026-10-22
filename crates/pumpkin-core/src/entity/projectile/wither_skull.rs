@@ -50,11 +50,9 @@ impl WitherSkullEntity {
         let vel = direction.normalize().multiply(speed, speed, speed);
         thrown.entity.velocity.store(vel);
 
-        let len = vel.horizontal_length();
-        thrown.entity.set_rotation(
-            vel.x.atan2(vel.z) as f32 * 57.295_776,
-            vel.y.atan2(len) as f32 * 57.295_776,
-        );
+        // Vanilla inherits shooter rotation without assigning a separate head yaw.
+        thrown.entity.yaw.store(shooter.yaw.load() % 360.0);
+        thrown.entity.set_pitch(shooter.pitch.load());
 
         Self {
             thrown,
