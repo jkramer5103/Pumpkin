@@ -1,0 +1,46 @@
+{
+  "trials": 2,
+  "settle_ticks": 4,
+  "death_ticks": [
+    0,
+    1,
+    4,
+    7,
+    19,
+    20,
+    21
+  ],
+  "cases": [
+    {
+      "id": "active",
+      "invul": 0,
+      "no_ai": false,
+      "move": false
+    },
+    {
+      "id": "charging",
+      "invul": 200,
+      "no_ai": false,
+      "move": false
+    },
+    {
+      "id": "no_ai_after_tracking",
+      "invul": 0,
+      "no_ai": true,
+      "move": false
+    },
+    {
+      "id": "death_tracking",
+      "invul": 0,
+      "no_ai": false,
+      "move": true
+    },
+    {
+      "id": "charging_death_tracking",
+      "invul": 200,
+      "no_ai": false,
+      "move": true
+    }
+  ],
+  "outside_x": -18.0
+}

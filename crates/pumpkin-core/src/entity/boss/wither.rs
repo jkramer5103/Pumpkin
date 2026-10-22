@@ -1,3 +1,4 @@
+use crossbeam::atomic::AtomicCell;
 use std::sync::{
     Arc, Mutex, Weak,
     atomic::{AtomicBool, AtomicI32, Ordering},
@@ -82,6 +83,7 @@ pub struct WitherEntity {
     pub alternative_targets: [AtomicI32; 3],
     pub bossbar_uuid: Uuid,
     pub bossbar_players: Mutex<Vec<Uuid>>,
+    bossbar_progress: AtomicCell<f32>,
     pub dropped_loot: AtomicBool,
 }
 
@@ -104,6 +106,7 @@ impl WitherEntity {
             alternative_targets: [AtomicI32::new(0), AtomicI32::new(0), AtomicI32::new(0)],
             bossbar_uuid: Uuid::new_v4(),
             bossbar_players: Mutex::new(Vec::new()),
+            bossbar_progress: AtomicCell::new(1.0),
             dropped_loot: AtomicBool::new(false),
         };
         let mob_arc = Arc::new(wither);
@@ -322,7 +325,7 @@ impl WitherEntity {
         }
     }
 
-    fn update_bossbar(&self, world: &Arc<crate::world::World>, progress: f32) {
+    fn update_bossbar_players(&self, world: &Arc<crate::world::World>, progress: f32) {
         let entity_id = self.mob_entity.living_entity.entity.entity_id;
         let tracked = world.entity_tracker.get_tracked_entity(entity_id);
         let players = world.players.load();
@@ -366,7 +369,16 @@ impl WitherEntity {
             }
             bossbar_players.retain(|u| u != uid);
         }
+    }
 
+    fn update_bossbar(&self, world: &Arc<crate::world::World>, progress: f32) {
+        self.bossbar_progress.store(progress);
+        self.update_bossbar_players(world, progress);
+        let players = world.players.load();
+        let bossbar_players = self
+            .bossbar_players
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner);
         for player in players.iter() {
             if bossbar_players.contains(&player.gameprofile.id) {
                 player.update_bossbar_health(&self.bossbar_uuid, progress);
@@ -445,7 +457,6 @@ impl WitherEntity {
         let world = entity.world.load();
 
         if !entity.is_alive() || self.mob_entity.living_entity.health.load() <= 0.0 {
-            self.remove_all_bossbar(&world);
             if !self.dropped_loot.swap(true, Ordering::SeqCst) {
                 self.drop_nether_star();
             }
@@ -774,7 +785,13 @@ impl Mob for WitherEntity {
         let entity = &self.mob_entity.living_entity.entity;
         if !entity.is_alive() || self.mob_entity.living_entity.health.load() <= 0.0 {
             let world = entity.world.load_full();
-            self.remove_all_bossbar(&world);
+            if entity.is_removed() {
+                self.remove_all_bossbar(&world);
+            } else {
+                // Vanilla retains the last progress until tickDeath removes the
+                // corpse. Viewer membership still follows entity tracking.
+                self.update_bossbar_players(&world, self.bossbar_progress.load());
+            }
             if !self.dropped_loot.swap(true, Ordering::SeqCst) {
                 self.drop_nether_star();
             }
