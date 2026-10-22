@@ -1,0 +1,11 @@
+{
+  "observation_ticks": 5,
+  "beam_target": [0, 128, 0],
+  "groups": [
+    {"xz": [0.5, -2.5], "count": 3},
+    {"xz": [0.5, 3.5], "count": 2},
+    {"xz": [-2.5, 0.5], "count": 1},
+    {"xz": [3.5, 0.5], "count": 1}
+  ],
+  "control_xz": [0.5, -5.5]
+}

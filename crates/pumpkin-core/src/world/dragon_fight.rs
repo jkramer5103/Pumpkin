@@ -603,21 +603,24 @@ impl DragonFight {
 
         for (dx, dz) in offsets {
             let target_pos = BlockPos::new(center.0.x + dx, center.0.y, center.0.z + dz);
-            let found = entities.iter().find(|e| {
-                if e.get_entity().entity_type != &EntityType::END_CRYSTAL {
-                    return false;
-                }
-                let pos = e.get_entity().pos.load();
-                (pos.x - (target_pos.0.x as f64 + 0.5)).abs() < 1.5
-                    && (pos.y - target_pos.0.y as f64).abs() < 1.5
-                    && (pos.z - (target_pos.0.z as f64 + 0.5)).abs() < 1.5
-            });
+            let found: Vec<_> = entities
+                .iter()
+                .filter(|e| {
+                    if e.get_entity().entity_type != &EntityType::END_CRYSTAL {
+                        return false;
+                    }
+                    let pos = e.get_entity().pos.load();
+                    (pos.x - (target_pos.0.x as f64 + 0.5)).abs() < 1.5
+                        && (pos.y - target_pos.0.y as f64).abs() < 1.5
+                        && (pos.z - (target_pos.0.z as f64 + 0.5)).abs() < 1.5
+                })
+                .map(|crystal| crystal.get_entity().entity_uuid)
+                .collect();
 
-            if let Some(crystal) = found {
-                crystals.push(crystal.get_entity().entity_uuid);
-            } else {
+            if found.is_empty() {
                 return;
             }
+            crystals.extend(found);
         }
 
         debug!("Found all crystals, respawning dragon.");
