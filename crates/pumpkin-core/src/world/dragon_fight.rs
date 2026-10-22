@@ -790,6 +790,35 @@ impl DragonFight {
     }
 
     fn regenerate_spike(world: &Arc<World>, spike: &EndSpike, beam_target: BlockPos) {
+        // EndSpikeFeature.placeSpike rebuilds the body before placing the cap and crystal.
+        let radius = spike.radius;
+        for pos in BlockPos::iterate(
+            BlockPos::new(
+                spike.center_x - radius,
+                world.get_bottom_y(),
+                spike.center_z - radius,
+            ),
+            BlockPos::new(
+                spike.center_x + radius,
+                spike.height + 10,
+                spike.center_z + radius,
+            ),
+        ) {
+            let state = if pos
+                .0
+                .squared_distance_to(spike.center_x, pos.0.y, spike.center_z)
+                <= radius * radius + 1
+                && pos.0.y < spike.height
+            {
+                Block::OBSIDIAN.default_state.id
+            } else if pos.0.y > 65 {
+                Block::AIR.default_state.id
+            } else {
+                continue;
+            };
+            world.set_block_state(&pos, state, BlockFlags::NOTIFY_ALL);
+        }
+
         let bedrock_pos = BlockPos::new(spike.center_x, spike.height, spike.center_z);
         world.set_block_state(
             &bedrock_pos,

@@ -1,0 +1,123 @@
+{
+  "version": "26.3",
+  "observation_ticks": 185,
+  "columns": [
+    [
+      42,
+      0
+    ],
+    [
+      33,
+      24
+    ]
+  ],
+  "sample_cases": [
+    {
+      "name": "bottom_hole",
+      "dx": 0,
+      "dy": 0,
+      "dz": 0,
+      "before": "air",
+      "after": "obsidian"
+    },
+    {
+      "name": "low_hole",
+      "dx": 0,
+      "dy": 20,
+      "dz": 0,
+      "before": "air",
+      "after": "obsidian"
+    },
+    {
+      "name": "replaced_interior",
+      "dx": 0,
+      "dy": 40,
+      "dz": 0,
+      "before": "stone",
+      "after": "obsidian"
+    },
+    {
+      "name": "below_clear_boundary",
+      "dx": 0,
+      "dy": 64,
+      "dz": 0,
+      "before": "air",
+      "after": "obsidian"
+    },
+    {
+      "name": "above_clear_boundary",
+      "dx": 0,
+      "dy": 66,
+      "dz": 0,
+      "before": "air",
+      "after": "obsidian"
+    },
+    {
+      "name": "top_hole",
+      "dx": 0,
+      "dy": "height-1",
+      "dz": 0,
+      "before": "air",
+      "after": "obsidian"
+    },
+    {
+      "name": "inclusive_round_edge",
+      "dx": "radius",
+      "dy": 20,
+      "dz": 1,
+      "before": "air",
+      "after": "obsidian"
+    },
+    {
+      "name": "corner_kept_at_65",
+      "dx": "radius",
+      "dy": 65,
+      "dz": "radius",
+      "before": "obsidian",
+      "after": "obsidian"
+    },
+    {
+      "name": "corner_cleared_above_65",
+      "dx": "radius",
+      "dy": 66,
+      "dz": "radius",
+      "before": "obsidian",
+      "after": "air"
+    },
+    {
+      "name": "clear_top_inclusive",
+      "dx": 0,
+      "dy": "height+10",
+      "dz": 0,
+      "before": "obsidian",
+      "after": "air"
+    },
+    {
+      "name": "above_top_untouched",
+      "dx": 0,
+      "dy": "height+11",
+      "dz": 0,
+      "before": "obsidian",
+      "after": "obsidian"
+    },
+    {
+      "name": "outside_square_untouched",
+      "dx": "radius+1",
+      "dy": 20,
+      "dz": 0,
+      "before": "obsidian",
+      "after": "obsidian"
+    }
+  ],
+  "controls": [
+    "initial real fight spawned and killed",
+    "actual item use starts respawn",
+    "all modifications verified before ritual",
+    "third-pillar hole remains before its turn",
+    "cap and crystal reappear",
+    "exact185 observation ticks",
+    "abort ritual and cleanup",
+    "client and player remain connected",
+    "scratch servers stopped"
+  ]
+}
