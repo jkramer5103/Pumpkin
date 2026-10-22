@@ -786,9 +786,7 @@ impl Mob for WitherEntity {
     }
 
     fn mob_read_nbt(&self, nbt: &NbtCompound) {
-        if let Some(invul) = nbt.get_int("Invul") {
-            self.set_invulnerable_ticks(invul);
-        }
+        self.set_invulnerable_ticks(nbt.get_int("Invul").unwrap_or(0));
     }
 }
 

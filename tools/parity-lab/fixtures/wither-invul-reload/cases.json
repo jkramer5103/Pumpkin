@@ -1,0 +1,59 @@
+{
+  "trials": 2,
+  "settle_ticks": 2,
+  "setup": [
+    "gamemode creative @a",
+    "difficulty easy",
+    "gamerule mob_griefing false",
+    "gamerule spawn_mobs false",
+    "tp @a 15 84 15"
+  ],
+  "cases": [
+    {
+      "id": "remove-active-invul",
+      "initial": 200,
+      "operation": "remove",
+      "payload": "Invul",
+      "expected": 0,
+      "metadata": [
+        0
+      ]
+    },
+    {
+      "id": "explicit-zero",
+      "initial": 200,
+      "operation": "merge",
+      "payload": "{Invul:0}",
+      "expected": 0,
+      "metadata": [
+        0
+      ]
+    },
+    {
+      "id": "preserve-active-invul",
+      "initial": 200,
+      "operation": "merge",
+      "payload": "{Silent:1b}",
+      "expected": 200,
+      "metadata": []
+    },
+    {
+      "id": "replace-active-invul",
+      "initial": 200,
+      "operation": "merge",
+      "payload": "{Invul:100}",
+      "expected": 100,
+      "metadata": [
+        100
+      ]
+    },
+    {
+      "id": "remove-inactive-invul",
+      "initial": 0,
+      "operation": "remove",
+      "payload": "Invul",
+      "expected": 0,
+      "metadata": []
+    }
+  ]
+}
