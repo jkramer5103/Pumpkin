@@ -1,0 +1,45 @@
+{
+  "columns": [
+    [
+      42,
+      0
+    ],
+    [
+      33,
+      24
+    ]
+  ],
+  "observation_ticks": 185,
+  "cases": [
+    {
+      "offset": 0.5,
+      "reset": true,
+      "baseline_reset": true
+    },
+    {
+      "offset": 0.999,
+      "reset": true,
+      "baseline_reset": true
+    },
+    {
+      "offset": 1,
+      "reset": false,
+      "baseline_reset": true
+    },
+    {
+      "offset": 1.001,
+      "reset": false,
+      "baseline_reset": true
+    },
+    {
+      "offset": 1.999,
+      "reset": false,
+      "baseline_reset": true
+    },
+    {
+      "offset": 2,
+      "reset": false,
+      "baseline_reset": false
+    }
+  ]
+}

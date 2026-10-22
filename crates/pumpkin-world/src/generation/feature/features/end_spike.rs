@@ -40,9 +40,9 @@ impl Spike {
             (self.center_x - self.radius) as f64,
             0.0,
             (self.center_z - self.radius) as f64,
-            (self.center_x + self.radius) as f64 + 1.0,
+            (self.center_x + self.radius) as f64,
             256.0,
-            (self.center_z + self.radius) as f64 + 1.0,
+            (self.center_z + self.radius) as f64,
         )
     }
 }
@@ -231,6 +231,60 @@ impl EndSpikeFeature {
                     }
                 }
             }
+        }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::Spike;
+    use pumpkin_data::entity::EntityType;
+    use pumpkin_util::math::{
+        boundingbox::{BoundingBox, EntityDimensions},
+        vector3::Vector3,
+    };
+
+    #[test]
+    fn pillar_query_excludes_crystals_touching_positive_edges() {
+        let spike = Spike {
+            center_x: 42,
+            center_z: -25,
+            radius: 3,
+            height: 85,
+            guarded: false,
+        };
+        let (min_x, min_y, min_z, max_x, max_y, max_z) = spike.top_bounding_box();
+        let bounds = BoundingBox::new(
+            Vector3::new(min_x, min_y, min_z),
+            Vector3::new(max_x, max_y, max_z),
+        );
+        let crystal = &EntityType::END_CRYSTAL;
+        let dimensions = EntityDimensions::new(
+            crystal.dimension[0],
+            crystal.dimension[1],
+            crystal.eye_height,
+        );
+        // Vanilla respawn-abort observations: overlap resets the crystal, touch does not.
+        for (x, z, reset) in [
+            (45.5, -24.5, true),
+            (45.999, -24.5, true),
+            (46.0, -24.5, false),
+            (46.001, -24.5, false),
+            (46.999, -24.5, false),
+            (47.0, -24.5, false),
+            (42.5, -21.5, true),
+            (42.5, -21.001, true),
+            (42.5, -21.0, false),
+            (42.5, -20.999, false),
+            (42.5, -20.001, false),
+            (42.5, -20.0, false),
+        ] {
+            let crystal_box = BoundingBox::new_from_pos(x, 120.0, z, &dimensions);
+            assert_eq!(
+                bounds.intersects(&crystal_box),
+                reset,
+                "crystal at {x}, {z}"
+            );
         }
     }
 }
