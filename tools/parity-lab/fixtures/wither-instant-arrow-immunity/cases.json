@@ -1,0 +1,63 @@
+{
+  "trials": 2,
+  "impact_ticks": 8,
+  "cases": [
+    {
+      "id": "wither-instant_health-0",
+      "entity": "wither",
+      "health": 200,
+      "effect": "instant_health",
+      "amplifier": 0
+    },
+    {
+      "id": "wither-instant_health-1",
+      "entity": "wither",
+      "health": 200,
+      "effect": "instant_health",
+      "amplifier": 1
+    },
+    {
+      "id": "wither-instant_damage-0",
+      "entity": "wither",
+      "health": 200,
+      "effect": "instant_damage",
+      "amplifier": 0
+    },
+    {
+      "id": "wither-instant_damage-1",
+      "entity": "wither",
+      "health": 200,
+      "effect": "instant_damage",
+      "amplifier": 1
+    },
+    {
+      "id": "wither-plain-control",
+      "entity": "wither",
+      "health": 200,
+      "effect": null,
+      "amplifier": 0
+    },
+    {
+      "id": "sheep-instant_health-0",
+      "entity": "sheep",
+      "health": 8,
+      "effect": "instant_health",
+      "amplifier": 0
+    },
+    {
+      "id": "sheep-instant_damage-0",
+      "entity": "sheep",
+      "health": 8,
+      "effect": "instant_damage",
+      "amplifier": 0
+    },
+    {
+      "id": "charging-wither",
+      "entity": "wither",
+      "health": 200,
+      "effect": "instant_health",
+      "amplifier": 1,
+      "invul": 100
+    }
+  ]
+}

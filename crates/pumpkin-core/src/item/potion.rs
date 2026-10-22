@@ -1,6 +1,7 @@
 use crate::entity::EntityBase;
 use crate::entity::living::LivingEntity;
 use pumpkin_data::effect::StatusEffect;
+use pumpkin_data::entity::EntityType;
 use pumpkin_data::item_stack::ItemStack;
 
 /// Utilities for reading potion contents from an `ItemStack` and applying effects.
@@ -138,6 +139,14 @@ impl PotionContents {
         scale: f32,
         source: PotionApplicationSource,
     ) {
+        // Arrow.doPostHurtEffects uses addEffect even for instant effects, so
+        // WitherBoss rejects them. Splash potions and clouds apply them directly.
+        if source == PotionApplicationSource::Arrow
+            && target.entity.entity_type == &EntityType::WITHER
+        {
+            return;
+        }
+
         for (effect_type, duration, amplifier, ambient, show_particles, show_icon) in effects {
             // Instant effects should apply immediately
             let is_instant = effect_type.id
