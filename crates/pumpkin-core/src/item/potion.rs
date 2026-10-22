@@ -3,6 +3,7 @@ use crate::entity::living::LivingEntity;
 use pumpkin_data::effect::StatusEffect;
 use pumpkin_data::entity::EntityType;
 use pumpkin_data::item_stack::ItemStack;
+use pumpkin_data::tag::{self, Taggable};
 
 /// Utilities for reading potion contents from an `ItemStack` and applying effects.
 pub struct PotionContents;
@@ -157,16 +158,22 @@ impl PotionContents {
                 // Instant potency scaling
                 let instant_scale = source.instant_scale(scale);
 
-                // Apply instant effects logic directly as they don't tick
-                if effect_type.id == pumpkin_data::effect::StatusEffect::INSTANT_HEALTH.id {
-                    let amount = 4.0 * (1 << amplifier) as f32 * instant_scale;
-                    target.heal(amount);
-                } else if effect_type.id == pumpkin_data::effect::StatusEffect::INSTANT_DAMAGE.id {
-                    let amount = 6.0 * (1 << amplifier) as f32 * instant_scale;
+                let is_harm = effect_type.id == StatusEffect::INSTANT_DAMAGE.id;
+                let inverted = target
+                    .entity
+                    .entity_type
+                    .has_tag(&tag::EntityType::MINECRAFT_INVERTED_HEALING_AND_HARM);
+
+                // HealOrHarmMobEffect rounds the scaled potency to a whole point.
+                if is_harm == inverted {
+                    let amount = (4.0 * (1 << amplifier) as f32 * instant_scale + 0.5) as i32;
+                    target.heal(amount as f32);
+                } else {
+                    let amount = (6.0 * (1 << amplifier) as f32 * instant_scale + 0.5) as i32;
 
                     let _ = target.damage(
                         target.get_entity(),
-                        amount,
+                        amount as f32,
                         pumpkin_data::damage::DamageType::MAGIC,
                     );
                 }

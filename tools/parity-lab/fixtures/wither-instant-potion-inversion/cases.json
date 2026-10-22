@@ -1,0 +1,90 @@
+{
+  "trials": 2,
+  "impact_ticks": 1,
+  "cases": [
+    {
+      "id": "wither-healing",
+      "entity": "wither",
+      "health": 200,
+      "potion": "healing",
+      "expected_health": 194
+    },
+    {
+      "id": "wither-strong_healing",
+      "entity": "wither",
+      "health": 200,
+      "potion": "strong_healing",
+      "expected_health": 188
+    },
+    {
+      "id": "wither-harming",
+      "entity": "wither",
+      "health": 200,
+      "potion": "harming",
+      "expected_health": 204
+    },
+    {
+      "id": "wither-strong_harming",
+      "entity": "wither",
+      "health": 200,
+      "potion": "strong_harming",
+      "expected_health": 208
+    },
+    {
+      "id": "powered-wither-healing",
+      "entity": "wither",
+      "health": 100,
+      "potion": "healing",
+      "expected_health": 94
+    },
+    {
+      "id": "powered-wither-harming",
+      "entity": "wither",
+      "health": 100,
+      "potion": "harming",
+      "expected_health": 104
+    },
+    {
+      "id": "wither-heal-cap",
+      "entity": "wither",
+      "health": 299,
+      "potion": "harming",
+      "expected_health": 300
+    },
+    {
+      "id": "wither-water-control",
+      "entity": "wither",
+      "health": 200,
+      "potion": "water",
+      "expected_health": 200
+    },
+    {
+      "id": "sheep-healing",
+      "entity": "sheep",
+      "health": 4,
+      "potion": "healing",
+      "expected_health": 8
+    },
+    {
+      "id": "sheep-harming",
+      "entity": "sheep",
+      "health": 8,
+      "potion": "harming",
+      "expected_health": 2
+    },
+    {
+      "id": "zombie-healing",
+      "entity": "zombie",
+      "health": 10,
+      "potion": "healing",
+      "expected_health": 4
+    },
+    {
+      "id": "zombie-harming",
+      "entity": "zombie",
+      "health": 10,
+      "potion": "harming",
+      "expected_health": 14
+    }
+  ]
+}
