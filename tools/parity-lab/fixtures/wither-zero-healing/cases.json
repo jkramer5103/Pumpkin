@@ -1,0 +1,87 @@
+{
+  "trials": 2,
+  "impact_ticks": 1,
+  "cases": [
+    {
+      "id": "wither-edge-harming",
+      "entity": "wither",
+      "health": 300,
+      "invul": 0,
+      "potion": "harming",
+      "offset": 3.8,
+      "expected_health": 300
+    },
+    {
+      "id": "wither-edge-strong-harming",
+      "entity": "wither",
+      "health": 300,
+      "invul": 0,
+      "potion": "strong_harming",
+      "offset": 3.9,
+      "expected_health": 300
+    },
+    {
+      "id": "wither-charging-edge-harming",
+      "entity": "wither",
+      "health": 300,
+      "invul": 220,
+      "potion": "harming",
+      "offset": 3.8,
+      "expected_health": 300
+    },
+    {
+      "id": "wither-center-harming",
+      "entity": "wither",
+      "health": 100,
+      "invul": 0,
+      "potion": "harming",
+      "offset": 0,
+      "expected_health": 104
+    },
+    {
+      "id": "wither-center-strong-harming",
+      "entity": "wither",
+      "health": 100,
+      "invul": 0,
+      "potion": "strong_harming",
+      "offset": 0,
+      "expected_health": 108
+    },
+    {
+      "id": "sheep-edge-healing",
+      "entity": "sheep",
+      "health": 8,
+      "invul": 0,
+      "potion": "healing",
+      "offset": 3.8,
+      "expected_health": 8
+    },
+    {
+      "id": "zombie-edge-harming",
+      "entity": "zombie",
+      "health": 20,
+      "invul": 0,
+      "potion": "harming",
+      "offset": 3.8,
+      "expected_health": 20
+    },
+    {
+      "id": "sheep-center-healing",
+      "entity": "sheep",
+      "health": 4,
+      "invul": 0,
+      "potion": "healing",
+      "offset": 0,
+      "expected_health": 8
+    },
+    {
+      "id": "wither-edge-water",
+      "entity": "wither",
+      "health": 300,
+      "invul": 0,
+      "potion": "water",
+      "offset": 3.8,
+      "expected_health": 300
+    }
+  ]
+}

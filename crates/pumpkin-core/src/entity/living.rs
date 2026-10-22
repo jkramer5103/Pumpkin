@@ -777,7 +777,6 @@ impl LivingEntity {
     }
 
     pub fn heal(&self, additional_health: f32) {
-        assert!(additional_health > 0.0);
         let mut event =
             crate::plugin::api::events::entity::entity_regain_health::EntityRegainHealthEvent::new(
                 self.entity.entity_id,
