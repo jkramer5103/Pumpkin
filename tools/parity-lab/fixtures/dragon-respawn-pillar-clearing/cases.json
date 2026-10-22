@@ -1,0 +1,131 @@
+{
+  "version": "26.3",
+  "observation_ticks": 185,
+  "columns": [
+    [
+      42,
+      0
+    ],
+    [
+      33,
+      24
+    ]
+  ],
+  "sample_cases": [
+    {
+      "name": "obsidian_above_column",
+      "dx": "radius+1",
+      "dy": "height+8",
+      "dz": 0,
+      "before": "obsidian",
+      "after": "air"
+    },
+    {
+      "name": "bedrock_above_column",
+      "dx": "radius+1",
+      "dy": "height+8",
+      "dz": 1,
+      "before": "bedrock",
+      "after": "air"
+    },
+    {
+      "name": "ordinary_stone_control",
+      "dx": "radius+1",
+      "dy": "height+8",
+      "dz": 2,
+      "before": "stone",
+      "after": "air"
+    },
+    {
+      "name": "inclusive_cube_corner_0",
+      "dx": -10,
+      "dy": "height-10",
+      "dz": -10,
+      "before": "obsidian",
+      "after": "air"
+    },
+    {
+      "name": "inclusive_cube_corner_1",
+      "dx": 10,
+      "dy": "height+10",
+      "dz": 10,
+      "before": "bedrock",
+      "after": "air"
+    },
+    {
+      "name": "inclusive_cube_corner_2",
+      "dx": -10,
+      "dy": "height+10",
+      "dz": 10,
+      "before": "obsidian",
+      "after": "air"
+    },
+    {
+      "name": "inclusive_cube_corner_3",
+      "dx": 10,
+      "dy": "height-10",
+      "dz": -10,
+      "before": "bedrock",
+      "after": "air"
+    },
+    {
+      "name": "outside_west",
+      "dx": -11,
+      "dy": "height+8",
+      "dz": 0,
+      "before": "obsidian",
+      "after": "obsidian"
+    },
+    {
+      "name": "outside_east",
+      "dx": 11,
+      "dy": "height+8",
+      "dz": 0,
+      "before": "bedrock",
+      "after": "bedrock"
+    },
+    {
+      "name": "outside_north",
+      "dx": 0,
+      "dy": "height+8",
+      "dz": -11,
+      "before": "obsidian",
+      "after": "obsidian"
+    },
+    {
+      "name": "outside_south",
+      "dx": 0,
+      "dy": "height+8",
+      "dz": 11,
+      "before": "bedrock",
+      "after": "bedrock"
+    },
+    {
+      "name": "outside_below",
+      "dx": 9,
+      "dy": "height-11",
+      "dz": 9,
+      "before": "bedrock",
+      "after": "bedrock"
+    },
+    {
+      "name": "outside_above",
+      "dx": 9,
+      "dy": "height+11",
+      "dz": 9,
+      "before": "obsidian",
+      "after": "obsidian"
+    }
+  ],
+  "controls": [
+    "initial actual fight and kill",
+    "real item use starts ritual",
+    "all markers verified before ritual",
+    "caps and crystals regenerated",
+    "third pillar untouched",
+    "185 exact observation ticks",
+    "ritual aborted and arena cleaned",
+    "player/client connected",
+    "scratch processes stopped"
+  ]
+}

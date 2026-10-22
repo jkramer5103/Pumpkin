@@ -726,27 +726,23 @@ impl DragonFight {
                                 crystal.set_beam_target(Some(spike_target));
                             }
                         } else {
-                            for dx in -10i32..=10 {
-                                for dy in -10i32..=10 {
-                                    for dz in -10i32..=10 {
-                                        let pos = BlockPos::new(
-                                            spike.center_x + dx,
-                                            spike.height + dy,
-                                            spike.center_z + dz,
-                                        );
-                                        let block = world.get_block(&pos);
-                                        if block != &Block::BEDROCK
-                                            && block != &Block::OBSIDIAN
-                                            && block != &Block::AIR
-                                        {
-                                            world.set_block_state(
-                                                &pos,
-                                                Block::AIR.default_state.id,
-                                                BlockFlags::NOTIFY_ALL,
-                                            );
-                                        }
-                                    }
-                                }
+                            let radius = 10;
+                            for pos in BlockPos::iterate(
+                                BlockPos::new(
+                                    spike.center_x - radius,
+                                    spike.height - radius,
+                                    spike.center_z - radius,
+                                ),
+                                BlockPos::new(
+                                    spike.center_x + radius,
+                                    spike.height + radius,
+                                    spike.center_z + radius,
+                                ),
+                            ) {
+                                // Vanilla removeBlock has no block exemptions and retains fluid.
+                                let replacement =
+                                    world.get_fluid_and_fluid_state(&pos).1.block_state_id;
+                                world.set_block_state(&pos, replacement, BlockFlags::NOTIFY_ALL);
                             }
                             world.explode(
                                 Vector3::new(
