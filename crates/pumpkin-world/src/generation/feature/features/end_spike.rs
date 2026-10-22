@@ -1,7 +1,10 @@
 use pumpkin_data::{Block, BlockState, block_properties::OakFenceLikeProperties};
 use pumpkin_util::{math::position::BlockPos, random::RandomGenerator};
 
-use crate::generation::proto_chunk::GenerationCache;
+use crate::generation::{
+    positions::{MAX_COLUMN_HEIGHT, MIN_HEIGHT},
+    proto_chunk::GenerationCache,
+};
 use crate::{generation::section_coords, world::WorldPortalExt};
 
 pub struct EndSpikeFeature {
@@ -38,10 +41,10 @@ impl Spike {
     pub const fn top_bounding_box(&self) -> (f64, f64, f64, f64, f64, f64) {
         (
             (self.center_x - self.radius) as f64,
-            0.0,
+            MIN_HEIGHT as f64,
             (self.center_z - self.radius) as f64,
             (self.center_x + self.radius) as f64,
-            256.0,
+            MAX_COLUMN_HEIGHT as f64,
             (self.center_z + self.radius) as f64,
         )
     }
@@ -285,6 +288,47 @@ mod tests {
                 reset,
                 "crystal at {x}, {z}"
             );
+        }
+    }
+
+    #[test]
+    fn pillar_query_resets_crystals_across_global_height_limits() {
+        let spike = Spike {
+            center_x: 42,
+            center_z: 0,
+            radius: 2,
+            height: 79,
+            guarded: false,
+        };
+        let (min_x, min_y, min_z, max_x, max_y, max_z) = spike.top_bounding_box();
+        let bounds = BoundingBox::new(
+            Vector3::new(min_x, min_y, min_z),
+            Vector3::new(max_x, max_y, max_z),
+        );
+        let crystal = &EntityType::END_CRYSTAL;
+        let dimensions = EntityDimensions::new(
+            crystal.dimension[0],
+            crystal.dimension[1],
+            crystal.eye_height,
+        );
+        // End crystals can remain outside the dimension's block placement range.
+        for (y, reset) in [
+            (-2034.0, false),
+            (-2033.999, true),
+            (-4.0, true),
+            (-2.0, true),
+            (-1.999, true),
+            (0.0, true),
+            (255.999, true),
+            (256.0, true),
+            (300.0, true),
+            (2030.999, true),
+            (2031.0, false),
+            (2031.001, false),
+            (2032.0, false),
+        ] {
+            let crystal_box = BoundingBox::new_from_pos(42.5, y, 0.5, &dimensions);
+            assert_eq!(bounds.intersects(&crystal_box), reset, "crystal at Y={y}");
         }
     }
 }

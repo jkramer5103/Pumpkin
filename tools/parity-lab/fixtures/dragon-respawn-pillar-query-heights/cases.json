@@ -1,0 +1,86 @@
+{
+  "version": "26.3",
+  "columns": [
+    [
+      42,
+      0
+    ],
+    [
+      33,
+      24
+    ]
+  ],
+  "observation_ticks": 185,
+  "cases": [
+    {
+      "heights": [
+        -4,
+        300
+      ],
+      "reset": [
+        true,
+        true
+      ],
+      "baseline_reset": [
+        false,
+        false
+      ]
+    },
+    {
+      "heights": [
+        -2,
+        256
+      ],
+      "reset": [
+        true,
+        true
+      ],
+      "baseline_reset": [
+        false,
+        false
+      ]
+    },
+    {
+      "heights": [
+        -1.999,
+        255.999
+      ],
+      "reset": [
+        true,
+        true
+      ],
+      "baseline_reset": [
+        true,
+        true
+      ]
+    },
+    {
+      "heights": [
+        2030.999,
+        2031
+      ],
+      "reset": [
+        true,
+        false
+      ],
+      "baseline_reset": [
+        false,
+        false
+      ]
+    },
+    {
+      "heights": [
+        2031.001,
+        2032
+      ],
+      "reset": [
+        false,
+        false
+      ],
+      "baseline_reset": [
+        false,
+        false
+      ]
+    }
+  ]
+}
