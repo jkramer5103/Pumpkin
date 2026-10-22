@@ -1,0 +1,19 @@
+{
+  "trials": 2,
+  "settle_ticks": 2,
+  "setup": [
+    "gamemode creative @a",
+    "difficulty easy",
+    "gamerule mob_griefing false",
+    "gamerule spawn_mobs false",
+    "tp @a 15 84 15"
+  ],
+  "cases": [
+    {"id": "black-to-blue", "initial": false, "operation": "merge", "payload": "{dangerous:1b}", "expected": true, "metadata": [true]},
+    {"id": "blue-to-black", "initial": true, "operation": "merge", "payload": "{dangerous:0b}", "expected": false, "metadata": [false]},
+    {"id": "remove-blue-flag", "initial": true, "operation": "remove", "payload": "dangerous", "expected": false, "metadata": [false]},
+    {"id": "preserve-blue-flag", "initial": true, "operation": "merge", "payload": "{Silent:1b}", "expected": true, "metadata": []},
+    {"id": "unchanged-blue-flag", "initial": true, "operation": "merge", "payload": "{dangerous:1b}", "expected": true, "metadata": []},
+    {"id": "unchanged-black-flag", "initial": false, "operation": "merge", "payload": "{dangerous:0b}", "expected": false, "metadata": []}
+  ]
+}

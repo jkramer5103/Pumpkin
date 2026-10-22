@@ -91,9 +91,7 @@ impl EntityBase for WitherSkullEntity {
     }
 
     fn read_custom_nbt(&self, nbt: &NbtCompound) {
-        if let Some(dangerous) = nbt.get_bool("dangerous") {
-            self.dangerous.store(dangerous, Ordering::Relaxed);
-        }
+        self.set_dangerous(nbt.get_bool("dangerous").unwrap_or(false));
     }
 
     fn init_data_tracker(&self) {
