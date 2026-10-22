@@ -878,25 +878,16 @@ impl DragonFight {
     }
 
     pub fn reset_spike_crystals(&self, world: &Arc<World>) {
-        let spikes = Self::get_spikes();
-        let entities = world.entities.load();
-
-        for spike in &spikes {
+        for spike in &Self::get_spikes() {
             let (min_x, min_y, min_z, max_x, max_y, max_z) = spike.top_bounding_box();
-            for entity in entities.iter() {
-                if entity.get_entity().entity_type == &EntityType::END_CRYSTAL {
-                    let p = entity.get_entity().pos.load();
-                    if p.x >= min_x
-                        && p.x <= max_x
-                        && p.y >= min_y
-                        && p.y <= max_y
-                        && p.z >= min_z
-                        && p.z <= max_z
-                        && let Some(crystal) = entity.cast_any().downcast_ref::<EndCrystalEntity>()
-                    {
-                        crystal.set_invulnerable(false);
-                        crystal.set_beam_target(None);
-                    }
+            let bounds = BoundingBox::new(
+                Vector3::new(min_x, min_y, min_z),
+                Vector3::new(max_x, max_y, max_z),
+            );
+            for entity in world.get_entities_at_box(&bounds) {
+                if let Some(crystal) = entity.cast_any().downcast_ref::<EndCrystalEntity>() {
+                    crystal.set_invulnerable(false);
+                    crystal.set_beam_target(None);
                 }
             }
         }
