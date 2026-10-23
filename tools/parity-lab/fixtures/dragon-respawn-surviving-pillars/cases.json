@@ -1,0 +1,11 @@
+{
+  "description": "Kill the natural dragon while retaining all ten original pillar crystals. Start a real item-triggered respawn, observe each original crystal being replaced, and verify completion and continued ticking.",
+  "steps": 31,
+  "ticks_per_step": 20,
+  "portal_crystals": 4,
+  "pillar_crystals": 10,
+  "first_rebuild_tick": 142,
+  "rebuild_interval": 40,
+  "dragon_health": 200,
+  "continuation_ticks": 40
+}

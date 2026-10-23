@@ -51,6 +51,11 @@ pub enum DragonRespawnStage {
     End,
 }
 
+enum RespawnStageAction {
+    RegenerateSpike(EndSpike, BlockPos),
+    ConsumeCrystals(Vec<Arc<dyn EntityBase>>),
+}
+
 // ── DragonFight ───────────────────────────────────────────────────────────────
 
 pub struct DragonFight {
@@ -183,16 +188,25 @@ impl DragonFight {
             // Match vanilla's post-increment argument: stage transitions may reset the timer.
             let time = fight.respawn_time;
             fight.respawn_time += 1;
-            let crystals = fight.tick_respawn_stage(world, stage, time);
+            let action = fight.tick_respawn_stage(world, stage, time);
             // Crystal explosion damage calls back into the fight manager.
             drop(fight);
-            for entity in crystals {
-                if let Some(crystal) = entity.cast_any().downcast_ref::<EndCrystalEntity>() {
-                    crystal.set_beam_target(None);
-                    let pos = crystal.get_entity().pos.load();
-                    world.explode(pos, 6.0, crate::world::ExplosionInteraction::None);
-                    crystal.get_entity().remove();
+            match action {
+                Some(RespawnStageAction::RegenerateSpike(spike, beam_target)) => {
+                    Self::respawn_spike(world, &spike, beam_target);
                 }
+                Some(RespawnStageAction::ConsumeCrystals(crystals)) => {
+                    for entity in crystals {
+                        if let Some(crystal) = entity.cast_any().downcast_ref::<EndCrystalEntity>()
+                        {
+                            crystal.set_beam_target(None);
+                            let pos = crystal.get_entity().pos.load();
+                            world.explode(pos, 6.0, crate::world::ExplosionInteraction::None);
+                            crystal.get_entity().remove();
+                        }
+                    }
+                }
+                None => {}
             }
             return;
         }
@@ -667,13 +681,12 @@ impl DragonFight {
         }
     }
 
-    #[expect(clippy::too_many_lines)]
     fn tick_respawn_stage(
         &mut self,
         world: &Arc<World>,
         stage: DragonRespawnStage,
         time: i32,
-    ) -> Vec<Arc<dyn EntityBase>> {
+    ) -> Option<RespawnStageAction> {
         let origin_y = self.origin.0.y + DRAGON_SPAWN_Y;
         let origin_target = BlockPos::new(self.origin.0.x, origin_y, self.origin.0.z);
 
@@ -691,7 +704,7 @@ impl DragonFight {
 
         if live_crystals.is_empty() {
             self.abort_respawn_sequence(world);
-            return Vec::new();
+            return None;
         }
 
         match stage {
@@ -729,35 +742,10 @@ impl DragonFight {
                                 crystal.set_beam_target(Some(spike_target));
                             }
                         } else {
-                            let radius = 10;
-                            for pos in BlockPos::iterate(
-                                BlockPos::new(
-                                    spike.center_x - radius,
-                                    spike.height - radius,
-                                    spike.center_z - radius,
-                                ),
-                                BlockPos::new(
-                                    spike.center_x + radius,
-                                    spike.height + radius,
-                                    spike.center_z + radius,
-                                ),
-                            ) {
-                                // Vanilla removeBlock has no block exemptions and retains fluid.
-                                let replacement =
-                                    world.get_fluid_and_fluid_state(&pos).1.block_state_id;
-                                world.set_block_state(&pos, replacement, BlockFlags::NOTIFY_ALL);
-                            }
-                            world.explode(
-                                Vector3::new(
-                                    spike.center_x as f64 + 0.5,
-                                    spike.height as f64,
-                                    spike.center_z as f64 + 0.5,
-                                ),
-                                5.0,
-                                crate::world::ExplosionInteraction::Block,
-                            );
-
-                            Self::regenerate_spike(world, spike, origin_target);
+                            return Some(RespawnStageAction::RegenerateSpike(
+                                *spike,
+                                origin_target,
+                            ));
                         }
                     } else if flag {
                         self.set_respawn_stage(world, DragonRespawnStage::SummoningDragon);
@@ -768,16 +756,17 @@ impl DragonFight {
                 if time >= 100 {
                     self.set_respawn_stage(world, DragonRespawnStage::End);
                     self.reset_spike_crystals(world);
-                    return self
-                        .respawn_crystals
-                        .iter()
-                        .filter_map(|uuid| {
-                            entities
-                                .iter()
-                                .find(|entity| entity.get_entity().entity_uuid == *uuid)
-                                .cloned()
-                        })
-                        .collect();
+                    return Some(RespawnStageAction::ConsumeCrystals(
+                        self.respawn_crystals
+                            .iter()
+                            .filter_map(|uuid| {
+                                entities
+                                    .iter()
+                                    .find(|entity| entity.get_entity().entity_uuid == *uuid)
+                                    .cloned()
+                            })
+                            .collect(),
+                    ));
                 } else if time >= 80 {
                     world.sync_world_event(WorldEvent::AnimationDragonSummonRoar, origin_target, 0);
                 } else if time == 0 {
@@ -790,7 +779,38 @@ impl DragonFight {
             }
             DragonRespawnStage::End => {}
         }
-        Vec::new()
+        None
+    }
+
+    fn respawn_spike(world: &Arc<World>, spike: &EndSpike, beam_target: BlockPos) {
+        let radius = 10;
+        for pos in BlockPos::iterate(
+            BlockPos::new(
+                spike.center_x - radius,
+                spike.height - radius,
+                spike.center_z - radius,
+            ),
+            BlockPos::new(
+                spike.center_x + radius,
+                spike.height + radius,
+                spike.center_z + radius,
+            ),
+        ) {
+            // Vanilla removeBlock has no block exemptions and retains fluid.
+            let replacement = world.get_fluid_and_fluid_state(&pos).1.block_state_id;
+            world.set_block_state(&pos, replacement, BlockFlags::NOTIFY_ALL);
+        }
+        world.explode(
+            Vector3::new(
+                spike.center_x as f64 + 0.5,
+                spike.height as f64,
+                spike.center_z as f64 + 0.5,
+            ),
+            5.0,
+            crate::world::ExplosionInteraction::Block,
+        );
+
+        Self::regenerate_spike(world, spike, beam_target);
     }
 
     fn regenerate_spike(world: &Arc<World>, spike: &EndSpike, beam_target: BlockPos) {
