@@ -1,0 +1,40 @@
+{
+  "trials": 2,
+  "pre_ticks": 10,
+  "post_ticks": 8,
+  "setup": [
+    "gamemode creative @a",
+    "difficulty easy",
+    "gamerule mob_griefing false",
+    "gamerule spawn_mobs false",
+    "fill 0 79 0 31 79 31 minecraft:bedrock",
+    "tp @a 15 104 15"
+  ],
+  "spawn": [
+    "summon minecraft:wither 5.5 100.5 15.5 {Health:100.0f,Tags:[\"pp_boss\"],Silent:1b,Invul:0}",
+    "summon minecraft:villager 30.5 90.5 15.5 {Tags:[\"pp_target\"],NoAI:1b,NoGravity:1b,Silent:1b}",
+    "effect give @e[tag=pp_target] minecraft:resistance infinite 4 true"
+  ],
+  "cases": [
+    {
+      "id": "ranged-stop",
+      "transition": [
+        "tp @e[tag=pp_boss] 5.5 100.5 15.5",
+        "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+        "tp @e[tag=pp_target] 10.5 90.5 15.5"
+      ]
+    },
+    {
+      "id": "noai-control",
+      "transition": [
+        "tp @e[tag=pp_boss] 5.5 100.5 15.5",
+        "data merge entity @e[tag=pp_boss,limit=1] {Motion:[0.0d,0.0d,0.0d]}",
+        "data merge entity @e[tag=pp_boss,limit=1] {NoAI:1b}"
+      ]
+    },
+    {
+      "id": "flying-control",
+      "transition": []
+    }
+  ]
+}

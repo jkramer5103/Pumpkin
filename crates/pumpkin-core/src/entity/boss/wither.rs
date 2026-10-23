@@ -741,6 +741,20 @@ impl Mob for WitherEntity {
     }
 
     fn custom_server_ai_step(&self, _caller: &dyn EntityBase) {
+        // Navigation currently supplies flight input directly. Mirror the idle
+        // gravity reset of vanilla's non-hovering FlyingMoveControl here.
+        if self
+            .mob_entity
+            .navigator
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner)
+            .is_done()
+        {
+            self.mob_entity
+                .living_entity
+                .entity
+                .set_has_no_gravity(false);
+        }
         self.tick_wither();
     }
 
