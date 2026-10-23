@@ -506,8 +506,13 @@ impl PathNavigation {
         self.last_stuck_check = self.tick_count;
         self.last_stuck_check_pos = goal.current_progress;
         self.current_goal = Some(goal);
-        self.path = None;
-        self.reset_stuck_timeout();
+        // Vanilla createPath reuses an unfinished route to the same target block.
+        if self.path.as_ref().is_none_or(|path| {
+            path.is_done() || path.get_target() != BlockPos::floored_v(goal.destination)
+        }) {
+            self.path = None;
+            self.reset_stuck_timeout();
+        }
     }
 
     pub const fn set_speed(&mut self, speed: f64) {
@@ -2585,8 +2590,67 @@ impl DerefMut for Navigator {
 
 #[cfg(test)]
 mod tests {
-    use super::{FlyingPathNavigation, Node, Path};
+    use super::{FlyingPathNavigation, NavigatorGoal, Node, Path, PathNavigationTrait};
     use pumpkin_util::math::{position::BlockPos, vector3::Vector3};
+
+    #[test]
+    fn flying_pursuit_retains_progress_for_the_same_target_block() {
+        let mut navigation = FlyingPathNavigation::new();
+        let mut path = Path::new(
+            vec![
+                Node::new(BlockPos::new(5, 100, 15)),
+                Node::new(BlockPos::new(6, 100, 15)),
+            ],
+            BlockPos::new(30, 100, 15),
+            false,
+        );
+        path.advance();
+        navigation.inner.path = Some(path);
+        navigation.inner.timeout_timer = 7;
+
+        for destination in [
+            Vector3::new(30.5, 100.0, 15.5),
+            Vector3::new(30.9, 100.9, 15.9),
+        ] {
+            let goal = NavigatorGoal::new(Vector3::new(5.5, 100.6, 15.5), destination, 2.0);
+            navigation.set_progress(goal);
+            assert_eq!(
+                navigation.get_path().map(Path::get_next_node_index),
+                Some(1)
+            );
+            assert_eq!(navigation.inner.timeout_timer, 7);
+            assert!(!navigation.inner.needs_new_path(&goal));
+        }
+    }
+
+    #[test]
+    fn flying_pursuit_replaces_completed_or_retargeted_paths() {
+        for (target, completed) in [
+            (BlockPos::new(30, 100, 15), true),
+            (BlockPos::new(31, 100, 15), false),
+            (BlockPos::new(30, 101, 15), false),
+            (BlockPos::new(30, 100, 16), false),
+        ] {
+            let mut navigation = FlyingPathNavigation::new();
+            let mut path = Path::new(vec![Node::new(BlockPos::new(6, 100, 15))], target, true);
+            if completed {
+                path.advance();
+            }
+            navigation.inner.path = Some(path);
+            navigation.inner.timeout_timer = 7;
+            // A previous search's cooldown must not delay a new target.
+            navigation.inner.repath_cooldown = 15;
+            let goal = NavigatorGoal::new(
+                Vector3::new(5.5, 100.6, 15.5),
+                Vector3::new(30.5, 100.0, 15.5),
+                1.0,
+            );
+            navigation.set_progress(goal);
+            assert!(navigation.get_path().is_none());
+            assert_eq!(navigation.inner.timeout_timer, 0);
+            assert!(navigation.inner.needs_new_path(&goal));
+        }
+    }
 
     #[test]
     fn flying_navigation_leaves_the_start_node_when_descending() {
