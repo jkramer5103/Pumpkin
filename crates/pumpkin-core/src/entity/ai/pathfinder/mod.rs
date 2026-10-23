@@ -1550,10 +1550,10 @@ impl PathNavigationTrait for FlyingPathNavigation {
                     entity.get_attribute_value(&Attributes::MOVEMENT_SPEED)
                 };
                 let speed = self.inner.speed_modifier * base_speed;
-                let y_input = if dy.abs() > 0.1 {
+                let y_input = if dy.abs() > f64::from(1.0e-5f32) || sd > f64::from(1.0e-5f32) {
                     if dy > 0.0 { speed } else { -speed }
                 } else {
-                    0.0
+                    entity.movement_input.load().y
                 };
                 entity
                     .movement_input
