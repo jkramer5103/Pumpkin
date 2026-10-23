@@ -1,0 +1,106 @@
+{
+  "trials": 2,
+  "impact_ticks": 1,
+  "cases": [
+    {
+      "id": "wither-dead-harming",
+      "entity": "wither",
+      "potion": "harming",
+      "health": 100,
+      "invul": 0,
+      "kill": true,
+      "delay": 0,
+      "expected_health": 0
+    },
+    {
+      "id": "wither-dead-strong-harming",
+      "entity": "wither",
+      "potion": "strong_harming",
+      "health": 100,
+      "invul": 0,
+      "kill": true,
+      "delay": 0,
+      "expected_health": 0
+    },
+    {
+      "id": "wither-late-dead-harming",
+      "entity": "wither",
+      "potion": "harming",
+      "health": 100,
+      "invul": 0,
+      "kill": true,
+      "delay": 10,
+      "expected_health": 0
+    },
+    {
+      "id": "wither-charging-dead-harming",
+      "entity": "wither",
+      "potion": "harming",
+      "health": 100,
+      "invul": 220,
+      "kill": true,
+      "delay": 0,
+      "expected_health": 0
+    },
+    {
+      "id": "wither-dead-water",
+      "entity": "wither",
+      "potion": "water",
+      "health": 100,
+      "invul": 0,
+      "kill": true,
+      "delay": 0,
+      "expected_health": 0
+    },
+    {
+      "id": "zombie-dead-harming",
+      "entity": "zombie",
+      "potion": "harming",
+      "health": 10,
+      "invul": 0,
+      "kill": true,
+      "delay": 0,
+      "expected_health": 0
+    },
+    {
+      "id": "sheep-dead-healing",
+      "entity": "sheep",
+      "potion": "healing",
+      "health": 4,
+      "invul": 0,
+      "kill": true,
+      "delay": 0,
+      "expected_health": 0
+    },
+    {
+      "id": "wither-alive-harming",
+      "entity": "wither",
+      "potion": "harming",
+      "health": 100,
+      "invul": 0,
+      "kill": false,
+      "delay": 0,
+      "expected_health": 104
+    },
+    {
+      "id": "wither-one-health-harming",
+      "entity": "wither",
+      "potion": "harming",
+      "health": 1,
+      "invul": 0,
+      "kill": false,
+      "delay": 0,
+      "expected_health": 5
+    },
+    {
+      "id": "sheep-alive-healing",
+      "entity": "sheep",
+      "potion": "healing",
+      "health": 4,
+      "invul": 0,
+      "kill": false,
+      "delay": 0,
+      "expected_health": 8
+    }
+  ]
+}

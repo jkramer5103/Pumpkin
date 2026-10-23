@@ -777,6 +777,10 @@ impl LivingEntity {
     }
 
     pub fn heal(&self, additional_health: f32) {
+        if self.health.load() <= 0.0 {
+            return;
+        }
+
         let mut event =
             crate::plugin::api::events::entity::entity_regain_health::EntityRegainHealthEvent::new(
                 self.entity.entity_id,
