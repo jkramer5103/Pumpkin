@@ -657,6 +657,20 @@ impl RangedAttackMob for WitherEntity {
 }
 
 impl Mob for WitherEntity {
+    fn stop_seen_by_player(&self, player: &crate::entity::player::Player) {
+        let mut bossbar_players = self
+            .bossbar_players
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner);
+        if let Some(index) = bossbar_players
+            .iter()
+            .position(|uuid| *uuid == player.gameprofile.id)
+        {
+            bossbar_players.remove(index);
+            player.remove_bossbar(self.bossbar_uuid);
+        }
+    }
+
     fn on_custom_name_changed(&self) {
         let title = self.get_display_name();
         let players = self

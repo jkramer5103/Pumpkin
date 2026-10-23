@@ -928,6 +928,8 @@ pub trait Mob: EntityBase + Send + Sync {
 
     fn post_tick(&self) {}
 
+    fn stop_seen_by_player(&self, _player: &Player) {}
+
     fn get_preferred_weapon_type(&self) -> Option<&'static pumpkin_data::tag::Tag> {
         None
     }

@@ -1,0 +1,8 @@
+{
+  "trials": 2,
+  "cases": [
+    {"id": "active-dimension", "invul": 0, "dimension": true},
+    {"id": "charging-dimension", "invul": 200, "dimension": true},
+    {"id": "active-distance-control", "invul": 0, "dimension": false}
+  ]
+}

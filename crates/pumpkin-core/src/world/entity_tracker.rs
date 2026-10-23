@@ -605,6 +605,9 @@ impl TrackedEntity {
                 }
             }
         }
+        if let Some(mob) = self.entity.get_mob() {
+            mob.stop_seen_by_player(player);
+        }
     }
 
     pub fn broadcast_removed(&self, world: &World) {
@@ -633,6 +636,14 @@ impl TrackedEntity {
         World::broadcast_java_grouped(&je_packet, recipients_by_version);
         World::broadcast_bedrock_grouped(&be_packet, bedrock_recipients.into_iter());
 
+        if let Some(mob) = self.entity.get_mob() {
+            for player in players
+                .iter()
+                .filter(|player| self.seen_by.contains(&player.gameprofile.id))
+            {
+                mob.stop_seen_by_player(player);
+            }
+        }
         self.seen_by.clear();
         self.bedrock_watchers.store(0, Relaxed);
     }
@@ -649,10 +660,13 @@ impl TrackedEntity {
 
     /// Forgets the player as a viewer without a removal packet; the client already dropped it.
     pub fn forget_player(&self, player: &Player) {
-        if self.seen_by.remove(&player.gameprofile.id).is_some()
-            && matches!(player.client.as_ref(), ClientPlatform::Bedrock(_))
-        {
-            self.bedrock_watchers.fetch_sub(1, Relaxed);
+        if self.seen_by.remove(&player.gameprofile.id).is_some() {
+            if matches!(player.client.as_ref(), ClientPlatform::Bedrock(_)) {
+                self.bedrock_watchers.fetch_sub(1, Relaxed);
+            }
+            if let Some(mob) = self.entity.get_mob() {
+                mob.stop_seen_by_player(player);
+            }
         }
     }
 
