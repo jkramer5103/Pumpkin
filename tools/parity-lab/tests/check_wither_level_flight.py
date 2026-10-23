@@ -17,6 +17,7 @@ def vector(raw, key):
 def check(report):
     spec = json.loads(FIXTURE.read_text())
     reference = json.loads((FIXTURE.parent / 'vertical-motion.json').read_text())
+    horizontal = json.loads((FIXTURE.parent / 'horizontal-motion.json').read_text())
     cases = {f"{trial}-{case['id']}": case for trial in range(1, spec['trials'] + 1) for case in spec['cases']}
     checks = {
         'complete and stopped': report['complete'] and report['stopped'],
@@ -60,6 +61,8 @@ def check(report):
                 record(prefix + 'finite motion in arena', len(pos) == len(motion) == 3 and all(math.isfinite(value) for value in pos + motion) and 0 < pos[0] < 32 and 79 < pos[1] < 120 and 0 < pos[2] < 32)
                 expected = reference['cases'][case['id']][phase][sample['tick'] - 1]
                 record(prefix + 'vertical motion matches vanilla', len(pos) == len(motion) == 3 and abs(pos[1] - expected['y']) < reference['tolerance'] and abs(motion[1] - expected['velocity_y']) < reference['tolerance'])
+                expected_horizontal = horizontal['cases'][case['id']][phase][sample['tick'] - 1]
+                record(prefix + 'horizontal motion matches vanilla', len(pos) == len(motion) == 3 and all(abs(actual - expected_horizontal[key]) < horizontal['tolerance'] for actual, key in [(pos[0], 'x'), (pos[2], 'z'), (motion[0], 'velocity_x'), (motion[2], 'velocity_z')]))
                 record(prefix + 'health and phase', bool(re.search(r'\bHealth: 100(?:\.0)?f\b', raw)) and bool(re.search(r'\bInvul: ' + str(40 - sample['tick'] if case['id'] == 'charging-control' else 0) + r'\b', raw)))
         commands.extend(actions)
     commands.extend(event['command'] for event in report['cleanup_events'] if event['command'] != 'time query gametime')

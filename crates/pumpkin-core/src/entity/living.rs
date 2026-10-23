@@ -1378,7 +1378,12 @@ impl LivingEntity {
 
         self.movement_input.store(movement_input);
 
-        // TODO: Tick AI
+        // Prepare previous inputs before AI produces this tick's movement.
+        if let Some(mob) = caller.get_mob()
+            && !mob.get_mob_entity().is_no_ai()
+        {
+            mob.get_mob_entity().server_ai_step(mob, caller);
+        }
 
         if self.jumping.load(SeqCst) && should_swim_in_fluids {
             let in_lava = self.entity.touching_lava.load(SeqCst);
