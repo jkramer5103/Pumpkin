@@ -5,10 +5,23 @@ use pumpkin_data::particle::Particle;
 use pumpkin_data::world::WorldEvent;
 use pumpkin_util::math::vector3::Vector3;
 use pumpkin_world::chunk::ChunkHeightmapType;
+use uuid::Uuid;
+
+use crate::world::dragon_fight::DragonFight;
 
 pub struct DyingPhase;
 
 impl DyingPhase {
+    fn death_experience(fight: Option<&DragonFight>, dragon_uuid: Uuid) -> u32 {
+        if fight.is_some_and(|fight| {
+            fight.dragon_uuid() == Some(dragon_uuid) && !fight.has_previously_killed_dragon()
+        }) {
+            12000
+        } else {
+            500
+        }
+    }
+
     fn death_sound(death_time: i32, silent: bool) -> Option<WorldEvent> {
         (death_time == 1 && !silent).then_some(WorldEvent::SoundDragonDeath)
     }
@@ -129,15 +142,13 @@ impl DyingPhase {
         }
 
         // Spawn experience orbs.
-        let xp_count = if let Some(ref fight_mutex) = world.dragon_fight
-            && !fight_mutex
-                .lock()
-                .unwrap_or_else(std::sync::PoisonError::into_inner)
-                .has_previously_killed_dragon()
-        {
-            12000
-        } else {
-            500
+        let xp_count = {
+            let fight = world.dragon_fight.as_ref().map(|fight| {
+                fight
+                    .lock()
+                    .unwrap_or_else(std::sync::PoisonError::into_inner)
+            });
+            Self::death_experience(fight.as_deref(), entity.entity_uuid)
         };
 
         let mob_drops = world.level_info.load().game_rules.mob_drops;
@@ -180,6 +191,26 @@ impl DyingPhase {
 mod tests {
     use super::DyingPhase;
     use pumpkin_data::world::WorldEvent;
+    use uuid::Uuid;
+
+    use crate::world::dragon_fight::DragonFight;
+
+    #[test]
+    fn first_fight_death_experience_requires_the_tracked_dragon() {
+        let tracked = Uuid::from_u128(1);
+        let unrelated = Uuid::from_u128(2);
+        let mut fight = DragonFight::new();
+        fight.dragon_uuid = Some(tracked);
+
+        assert_eq!(DyingPhase::death_experience(Some(&fight), unrelated), 500);
+        assert_eq!(DyingPhase::death_experience(Some(&fight), tracked), 12000);
+        fight.previously_killed = true;
+        assert_eq!(DyingPhase::death_experience(Some(&fight), tracked), 500);
+        fight.previously_killed = false;
+        fight.dragon_uuid = None;
+        assert_eq!(DyingPhase::death_experience(Some(&fight), unrelated), 500);
+        assert_eq!(DyingPhase::death_experience(None, unrelated), 500);
+    }
 
     #[test]
     fn death_sound_only_plays_on_first_tick_for_audible_dragons() {
