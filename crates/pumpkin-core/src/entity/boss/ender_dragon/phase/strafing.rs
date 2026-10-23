@@ -3,8 +3,8 @@ use crate::entity::EntityBase;
 use crate::entity::player::Player;
 use crate::entity::{
     Entity,
-    area_effect_cloud::AreaEffectCloudEntity,
     boss::ender_dragon::{DragonNode, EnderDragonEntity, NODE_COUNT, Vector3Ext, find_path},
+    projectile::dragon_fireball::DragonFireballEntity,
 };
 use pumpkin_data::entity::EntityType;
 use pumpkin_util::math::vector3::Vector3;
@@ -238,30 +238,39 @@ impl super::Phase for StrafingPhase {
                 *charge = 0;
                 drop(charge);
 
-                let cloud_entity =
-                    Entity::new(world.clone(), player_pos, &EntityType::AREA_EFFECT_CLOUD);
-                let cloud = AreaEffectCloudEntity::create(
-                    cloud_entity,
-                    pumpkin_data::item_stack::ItemStack::new(
-                        0,
-                        &pumpkin_data::item::Item::DRAGON_BREATH,
-                    ),
-                    vec![(
-                        &pumpkin_data::effect::StatusEffect::INSTANT_DAMAGE,
-                        1,
-                        0,
-                        false,
-                        true,
-                        true,
-                    )],
-                    600,
-                    3.0,
-                    20,
-                    20,
-                    0.5,
-                    -100,
+                let entity = &dragon.mob_entity.living_entity.entity;
+                let head = &dragon.parts[0].entity;
+                let head_pos = head.pos.load();
+                let yaw = -entity.yaw.load() * (std::f32::consts::PI / 180.0);
+                let pitch = entity.pitch.load() * (std::f32::consts::PI / 180.0);
+                let view = Vector3::new(
+                    f64::from(pumpkin_util::math::sin(yaw) * pumpkin_util::math::cos(pitch)),
+                    f64::from(-pumpkin_util::math::sin(pitch)),
+                    f64::from(pumpkin_util::math::cos(yaw) * pumpkin_util::math::cos(pitch)),
                 );
-                world.spawn_entity(cloud);
+                let start = Vector3::new(
+                    head_pos.x - view.x,
+                    head_pos.y + f64::from(head.entity_dimension.load().height) * 0.5 + 0.5,
+                    head_pos.z - view.z,
+                );
+                let target = player_pos.add_raw(
+                    0.0,
+                    f64::from(player.get_entity().entity_dimension.load().height) * 0.5,
+                    0.0,
+                );
+                if !entity.is_silent() {
+                    world.sync_world_event(
+                        pumpkin_data::world::WorldEvent::SoundDragonFireball,
+                        entity.block_pos.load(),
+                        0,
+                    );
+                }
+                let fireball = DragonFireballEntity::new_shot(
+                    Entity::new(world.clone(), start, &EntityType::DRAGON_FIREBALL),
+                    entity,
+                    target - start,
+                );
+                world.spawn_entity(std::sync::Arc::new(fireball));
 
                 if let Some(path) = self
                     .current_path

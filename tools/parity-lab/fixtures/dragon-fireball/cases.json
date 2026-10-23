@@ -1,0 +1,112 @@
+{
+  "description": "Dragon strafe launches a traveling projectile; dragon fireballs accelerate and create breath only on collision. Official Minecraft 26.3 is the oracle.",
+  "trials": 2,
+  "natural_strafe": {
+    "shots": 2,
+    "charge_ticks": 5,
+    "fireballs_at_shot": 1,
+    "clouds_at_shot": 0
+  },
+  "projectile_cases": [
+    {
+      "id": "air",
+      "motion": [
+        0.1,
+        0,
+        0
+      ],
+      "acceleration_power": 0.1,
+      "target": null
+    },
+    {
+      "id": "diagonal",
+      "motion": [
+        0.06,
+        0.08,
+        0
+      ],
+      "acceleration_power": 0.1,
+      "target": null
+    },
+    {
+      "id": "stationary",
+      "motion": [
+        0,
+        0,
+        0
+      ],
+      "acceleration_power": 0.1,
+      "target": null
+    },
+    {
+      "id": "no_acceleration",
+      "motion": [
+        0.1,
+        0,
+        0
+      ],
+      "acceleration_power": 0,
+      "target": null
+    },
+    {
+      "id": "wall",
+      "motion": [
+        1,
+        0,
+        0
+      ],
+      "acceleration_power": 0.1,
+      "target": "wall"
+    },
+    {
+      "id": "sheep",
+      "motion": [
+        1,
+        0,
+        0
+      ],
+      "acceleration_power": 0.1,
+      "target": "sheep"
+    },
+    {
+      "id": "player",
+      "motion": [
+        1,
+        0,
+        0
+      ],
+      "acceleration_power": 0.1,
+      "target": "player"
+    }
+  ],
+  "projectile_spawn": [
+    8,
+    120,
+    8
+  ],
+  "collision_target": [
+    14,
+    120,
+    8
+  ],
+  "samples": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10
+  ],
+  "cloud_radius": 3,
+  "cloud_radius_per_tick": 0.006666666666666667,
+  "cloud_duration": 600,
+  "wait_time": 20,
+  "limitations": [
+    "Headless server-state/protocol checks; no rendered-client or whole-fight proof.",
+    "Shared cloud owner attribution, projectile deflection, water, world-border and root-vehicle behavior require separate coverage."
+  ]
+}
