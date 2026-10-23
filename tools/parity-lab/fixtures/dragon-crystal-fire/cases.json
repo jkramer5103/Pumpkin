@@ -1,0 +1,14 @@
+{
+  "cases": {
+    "end_bedrock": "fire",
+    "end_soul_sand": "soul_fire",
+    "end_soul_soil": "soul_fire",
+    "end_occupied_stone": "stone",
+    "end_occupied_water": "water",
+    "end_existing_fire": "fire",
+    "overworld_air": "air"
+  },
+  "repetitions": 2,
+  "ticks_per_repetition": 1,
+  "vanilla": "26.3"
+}

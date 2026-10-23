@@ -1,12 +1,19 @@
 use std::sync::Mutex;
 use std::sync::atomic::{AtomicBool, Ordering};
 
-use crate::entity::{Entity, EntityBase, living::LivingEntity};
+use crate::{
+    block::blocks::fire::{FireBlockBase, fire::FireBlock},
+    entity::{Entity, EntityBase, living::LivingEntity},
+    plugin::api::events::block::BlockIgniteEvent,
+    server::Server,
+};
 use pumpkin_data::{
+    Block,
     damage::DamageType,
     tag::{self, Taggable},
 };
 use pumpkin_util::math::{position::BlockPos, vector3::Vector3};
+use pumpkin_world::world::BlockFlags;
 
 pub struct EndCrystalEntity {
     entity: Entity,
@@ -66,6 +73,28 @@ impl EndCrystalEntity {
 }
 
 impl EntityBase for EndCrystalEntity {
+    fn tick(&self, caller: &dyn EntityBase, server: &Server) {
+        self.entity.tick(caller, server);
+
+        let world = self.entity.world.load();
+        let pos = self.entity.block_pos.load();
+        if world.dragon_fight.is_some() && world.get_block_state(&pos).is_air() {
+            let fire = FireBlockBase::get_fire_type(&world, &pos);
+            let state = if fire == Block::FIRE {
+                FireBlock.get_state_for_position(&world, &fire, &pos)
+            } else {
+                fire.default_state.id
+            };
+            let mut event = BlockIgniteEvent::new(pos, state.to_block(), None);
+            if let Some(server) = world.server.upgrade() {
+                server.plugin_manager.fire_blocking(&server, &mut event);
+            }
+            if !event.cancelled {
+                world.set_block_state(&pos, state, BlockFlags::NOTIFY_ALL);
+            }
+        }
+    }
+
     fn get_entity(&self) -> &Entity {
         &self.entity
     }
