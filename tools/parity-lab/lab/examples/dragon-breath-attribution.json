@@ -1,0 +1,123 @@
+{
+  "schema_version": 1,
+  "id": "dragon-breath-attribution",
+  "title": "Dragon breath retains its damage owner",
+  "description": "A sitting dragon and an owned dragon fireball emit real breath clouds. Each cloud retains the dragon UUID, damages a sheep, and makes the dragon available as the victim attacker. Requires the existing isolated ParitySmoke arena and loaded chunks. Packet source ordering is checked separately by the Rust regression and headless comparison.",
+  "category": "entity",
+  "tags": [
+    "ender-dragon",
+    "area-effect-cloud",
+    "damage"
+  ],
+  "setup": [
+    "tick freeze",
+    "difficulty normal",
+    "gamerule spawn_mobs false",
+    "gamerule mob_griefing false",
+    "forceload add -16 -16 31 31",
+    "gamemode creative ParitySmoke",
+    "tp ParitySmoke 20 122 20",
+    "fill 2 119 2 26 150 26 minecraft:air",
+    "fill 2 119 2 26 119 26 minecraft:bedrock"
+  ],
+  "steps": [
+    {
+      "command": "execute as @e[type=minecraft:sheep] run data merge entity @s {NoAI:0b}"
+    },
+    {
+      "command": "kill @e[type=minecraft:sheep]"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "kill @e[type=minecraft:area_effect_cloud]"
+    },
+    {
+      "command": "kill @e[type=minecraft:dragon_fireball]",
+      "wait_ticks": 21
+    },
+    {
+      "command": "summon minecraft:ender_dragon 8 120 8 {UUID:[I;1,2,3,4],Silent:1b,PersistenceRequired:1b,DragonPhase:5}",
+      "wait_ticks": 10
+    },
+    {
+      "command": "data merge entity @e[type=minecraft:ender_dragon,limit=1] {NoAI:1b}"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:area_effect_cloud,nbt={Owner:[I;1,2,3,4]}]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1"
+    },
+    {
+      "command": "execute at @e[type=minecraft:area_effect_cloud,limit=1] run summon minecraft:sheep ~ ~ ~ {NoAI:1b,NoGravity:1b,PersistenceRequired:1b}",
+      "wait_ticks": 20
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:sheep,nbt={Health:5.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1"
+    },
+    {
+      "command": "execute as @e[type=minecraft:sheep,limit=1] on attacker if entity @s[type=minecraft:ender_dragon]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1"
+    },
+    {
+      "command": "execute as @e[type=minecraft:sheep] run data merge entity @s {NoAI:0b}"
+    },
+    {
+      "command": "kill @e[type=minecraft:sheep]"
+    },
+    {
+      "command": "kill @e[type=minecraft:ender_dragon]"
+    },
+    {
+      "command": "kill @e[type=minecraft:area_effect_cloud]"
+    },
+    {
+      "command": "kill @e[type=minecraft:dragon_fireball]",
+      "wait_ticks": 21
+    },
+    {
+      "command": "summon minecraft:ender_dragon 24 140 24 {UUID:[I;1,2,3,4],Silent:1b,NoAI:1b,PersistenceRequired:1b}"
+    },
+    {
+      "command": "fill 14 120 6 14 124 10 minecraft:bedrock"
+    },
+    {
+      "command": "summon minecraft:dragon_fireball 8 120 8 {Motion:[1.0d,0.0d,0.0d],acceleration_power:0.1d,Silent:1b,Owner:[I;1,2,3,4]}",
+      "wait_ticks": 10
+    },
+    {
+      "command": "fill 14 120 6 14 124 10 minecraft:air"
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:area_effect_cloud,nbt={Owner:[I;1,2,3,4]}]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1"
+    },
+    {
+      "command": "execute at @e[type=minecraft:area_effect_cloud,limit=1] run summon minecraft:sheep ~ ~ ~ {NoAI:1b,NoGravity:1b,PersistenceRequired:1b}",
+      "wait_ticks": 20
+    },
+    {
+      "command": "execute if entity @e[type=minecraft:sheep,nbt={Health:2.0f}]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1"
+    },
+    {
+      "command": "execute as @e[type=minecraft:sheep,limit=1] on attacker if entity @s[type=minecraft:ender_dragon]",
+      "observe": true,
+      "expect_contains": "Test passed. Count: 1"
+    }
+  ],
+  "cleanup": [
+    "execute as @e[type=minecraft:sheep] run data merge entity @s {NoAI:0b}",
+    "kill @e[type=minecraft:sheep]",
+    "kill @e[type=minecraft:ender_dragon]",
+    "kill @e[type=minecraft:area_effect_cloud]",
+    "kill @e[type=minecraft:dragon_fireball]"
+  ],
+  "notes": "Health and attacker assertions exercise real cloud ticks, not just command NBT formatting. Does not prove whole-fight, visual, Bedrock, reload, undead or player-death behavior."
+}

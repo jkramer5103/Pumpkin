@@ -5,9 +5,12 @@ use crate::{
     entity::{Entity, EntityBase},
     server::Server,
 };
+use crossbeam::atomic::AtomicCell;
 use pumpkin_data::effect::StatusEffect;
+use pumpkin_nbt::compound::NbtCompound;
 use pumpkin_util::math::boundingbox::BoundingBox;
 use pumpkin_util::math::vector3::Vector3;
+use uuid::Uuid;
 
 type EffectEntry = (&'static StatusEffect, i32, u8, bool, bool, bool);
 use pumpkin_data::item_stack::ItemStack;
@@ -33,6 +36,7 @@ impl pumpkin_protocol::java::client::play::MetadataSerializer for ParticleMeta {
 /// The effect cloud entity that is spawned where a lingering potion lands.
 pub struct AreaEffectCloudEntity {
     pub entity: Entity,
+    owner: AtomicCell<Option<Uuid>>,
     /// Stored potion item stack (may be empty) to read effects from.
     pub item_stack: Mutex<ItemStack>,
     custom_particle: Mutex<Option<ParticleMeta>>,
@@ -56,6 +60,17 @@ pub struct AreaEffectCloudEntity {
 }
 
 impl AreaEffectCloudEntity {
+    pub fn set_owner(&self, owner: &crate::entity::living::LivingEntity) {
+        self.owner.store(Some(owner.entity.entity_uuid));
+    }
+
+    fn owner(&self) -> Option<Arc<dyn EntityBase>> {
+        self.owner
+            .load()
+            .and_then(|id| self.entity.world.load().get_entity_by_uuid(id))
+            .filter(|owner| owner.get_living_entity().is_some())
+    }
+
     fn tick_victims(victims: &mut HashMap<i32, i32>, age: i32) -> bool {
         if age % 5 != 0 {
             return false;
@@ -83,6 +98,7 @@ impl AreaEffectCloudEntity {
             .store(true, std::sync::atomic::Ordering::Relaxed);
         let cloud = Self {
             entity,
+            owner: AtomicCell::new(None),
             item_stack: Mutex::new(ItemStack::new(0, &pumpkin_data::item::Item::GLASS_BOTTLE)),
             custom_particle: Mutex::new(None),
             effects: Mutex::new(Vec::new()),
@@ -117,6 +133,7 @@ impl AreaEffectCloudEntity {
             .store(true, std::sync::atomic::Ordering::Relaxed);
         let cloud = Self {
             entity,
+            owner: AtomicCell::new(None),
             item_stack: Mutex::new(item_stack),
             custom_particle: Mutex::new(None),
             effects: Mutex::new(effects_in),
@@ -151,6 +168,16 @@ impl AreaEffectCloudEntity {
 }
 
 impl EntityBase for AreaEffectCloudEntity {
+    fn write_custom_nbt(&self, nbt: &mut NbtCompound) {
+        if let Some(owner) = self.owner.load() {
+            nbt.put_uuid("Owner", owner);
+        }
+    }
+
+    fn read_custom_nbt(&self, nbt: &NbtCompound) {
+        self.owner.store(nbt.get_uuid("Owner"));
+    }
+
     fn init_data_tracker(&self) {
         // Send initial radius and particle (color) so clients render correctly
         let radius = *self
@@ -250,7 +277,7 @@ impl EntityBase for AreaEffectCloudEntity {
 
     #[allow(clippy::too_many_lines)]
     #[allow(clippy::semicolon_outside_block)]
-    fn tick(&self, _caller: &dyn EntityBase, _server: &Server) {
+    fn tick(&self, caller: &dyn EntityBase, _server: &Server) {
         // Age & duration handling
         {
             let mut age = self
@@ -347,6 +374,7 @@ impl EntityBase for AreaEffectCloudEntity {
             candidates.push(p.clone() as Arc<dyn EntityBase>);
         }
 
+        let owner = self.owner();
         for cand in candidates {
             let cand_clone = cand.clone();
 
@@ -419,13 +447,15 @@ impl EntityBase for AreaEffectCloudEntity {
                 continue;
             }
 
-            // Apply scaled effects inside a spawned task
+            // Apply the cloud as the direct source and its living owner as the cause.
             if let Some(living) = cand_clone.get_living_entity() {
-                crate::item::potion::PotionContents::apply_effects_to(
+                crate::item::potion::PotionContents::apply_effects_with_context(
                     living,
                     effs_clone,
                     scale,
                     crate::item::potion::PotionApplicationSource::AreaEffectCloud,
+                    Some(caller),
+                    owner.as_deref(),
                 );
             }
 

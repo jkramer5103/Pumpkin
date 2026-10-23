@@ -107,6 +107,11 @@ impl DragonFireballEntity {
             0,
         );
         if let Some(cloud) = cloud.cast_any().downcast_ref::<AreaEffectCloudEntity>() {
+            if let Some(owner) = self.owner()
+                && let Some(living) = owner.get_living_entity()
+            {
+                cloud.set_owner(living);
+            }
             cloud.set_custom_particle(Particle::DragonBreath, Box::new(1.0f32.to_be_bytes()));
             *cloud
                 .radius_on_tick

@@ -138,6 +138,18 @@ impl PotionContents {
         scale: f32,
         source: PotionApplicationSource,
     ) {
+        Self::apply_effects_with_context(target, effects, scale, source, None, None);
+    }
+
+    /// Applies effects with the direct entity source and its responsible owner.
+    pub fn apply_effects_with_context(
+        target: &LivingEntity,
+        effects: Vec<(&'static StatusEffect, i32, u8, bool, bool, bool)>,
+        scale: f32,
+        source: PotionApplicationSource,
+        direct_source: Option<&dyn EntityBase>,
+        owner: Option<&dyn EntityBase>,
+    ) {
         for (effect_type, duration, amplifier, ambient, show_particles, show_icon) in effects {
             // Instant effects should apply immediately
             let is_instant = effect_type.id
@@ -155,10 +167,18 @@ impl PotionContents {
                 } else if effect_type.id == pumpkin_data::effect::StatusEffect::INSTANT_DAMAGE.id {
                     let amount = 6.0 * (1 << amplifier) as f32 * instant_scale;
 
-                    let _ = target.damage(
+                    let damage_type = if direct_source.is_some() {
+                        pumpkin_data::damage::DamageType::INDIRECT_MAGIC
+                    } else {
+                        pumpkin_data::damage::DamageType::MAGIC
+                    };
+                    let _ = target.damage_with_context(
                         target.get_entity(),
                         amount,
-                        pumpkin_data::damage::DamageType::MAGIC,
+                        damage_type,
+                        None,
+                        direct_source,
+                        owner,
                     );
                 }
 

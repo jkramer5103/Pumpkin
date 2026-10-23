@@ -156,6 +156,7 @@ impl super::Phase for SitBreathingPhase {
             );
             // Sitting dragon flames keep their radius instead of shrinking like potions.
             if let Some(flame) = cloud.cast_any().downcast_ref::<AreaEffectCloudEntity>() {
+                flame.set_owner(&dragon.mob_entity.living_entity);
                 flame.set_custom_particle(
                     pumpkin_data::particle::Particle::DragonBreath,
                     Box::new(1.0f32.to_be_bytes()),

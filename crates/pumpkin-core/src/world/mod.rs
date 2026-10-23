@@ -717,14 +717,30 @@ impl World {
         cause_entity_id: Option<i32>,
         position: Option<Vector3<f64>>,
     ) {
-        let je_packet = CDamageEvent::new(
-            entity.entity_id.into(),
-            damage_type_id.into(),
-            source_entity_id.map(Into::into),
-            cause_entity_id.map(Into::into),
+        let je_packet = Self::damage_event_packet(
+            entity.entity_id,
+            damage_type_id,
+            source_entity_id,
+            cause_entity_id,
             position,
         );
         self.send_to_tracking_players_and_self(entity, &je_packet);
+    }
+
+    fn damage_event_packet(
+        entity_id: i32,
+        damage_type_id: i32,
+        source_entity_id: Option<i32>,
+        cause_entity_id: Option<i32>,
+        position: Option<Vector3<f64>>,
+    ) -> CDamageEvent {
+        CDamageEvent::new(
+            entity_id.into(),
+            damage_type_id.into(),
+            cause_entity_id.map(Into::into),
+            source_entity_id.map(Into::into),
+            position,
+        )
     }
 
     /// Sends an entity status update to all players tracking the specified entity.
@@ -7428,6 +7444,25 @@ mod tests {
         World, bedrock_block_breaking_rate, bedrock_chest_block_actor, global_world_event_position,
         merge_entity_records,
     };
+
+    #[test]
+    fn cloud_damage_packet_keeps_the_owner_and_direct_source_in_vanilla_order() {
+        use pumpkin_protocol::ClientPacket;
+        use pumpkin_util::version::JavaMinecraftVersion;
+
+        // Official 26.3 packet: sheep 13, indirect magic 23, dragon 2, cloud 12.
+        for (owner, expected) in [
+            (Some(2), vec![13, 23, 3, 13, 0]),
+            (None, vec![13, 23, 0, 13, 0]),
+        ] {
+            let packet = World::damage_event_packet(13, 23, Some(12), owner, None);
+            let mut bytes = Vec::new();
+            packet
+                .write_packet_data(&mut bytes, &JavaMinecraftVersion::V_26_3)
+                .expect("damage event should encode");
+            assert_eq!(bytes, expected);
+        }
+    }
 
     #[test]
     fn global_world_events_project_to_each_listener_and_respect_the_gamerule() {
