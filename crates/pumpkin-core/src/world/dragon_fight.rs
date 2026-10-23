@@ -452,12 +452,13 @@ impl DragonFight {
         let uuid = Uuid::new_v4();
         let spawn_y = self.origin.0.y + DRAGON_SPAWN_Y;
         let position = Vector3::new(
-            self.origin.0.x as f64 + 0.5,
+            self.origin.0.x as f64,
             spawn_y as f64,
-            self.origin.0.z as f64 + 0.5,
+            self.origin.0.z as f64,
         );
         let dragon =
             crate::entity::r#type::from_type(&EntityType::ENDER_DRAGON, position, world, uuid);
+        dragon.get_entity().yaw.store(rand::random::<f32>() * 360.0);
 
         if let Some(dragon_entity) = dragon
             .cast_any()
