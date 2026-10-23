@@ -1,0 +1,29 @@
+{
+  "description": "Only the tracked fight dragon may activate the exit portal on death. Extra command-summoned dragons are removed without completing the fight.",
+  "trials": [
+    {
+      "name": "untracked_while_alive",
+      "marker_preserved": true,
+      "portal_active": false,
+      "tracked_alive": true
+    },
+    {
+      "name": "tracked_death",
+      "marker_preserved": false,
+      "portal_active": true,
+      "tracked_alive": false
+    },
+    {
+      "name": "untracked_after_death_1",
+      "marker_preserved": true,
+      "portal_active": false,
+      "tracked_alive": false
+    },
+    {
+      "name": "untracked_after_death_2",
+      "marker_preserved": true,
+      "portal_active": false,
+      "tracked_alive": false
+    }
+  ]
+}

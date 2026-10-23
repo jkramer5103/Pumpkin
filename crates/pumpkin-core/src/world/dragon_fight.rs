@@ -516,7 +516,7 @@ impl DragonFight {
     }
 
     pub fn set_dragon_killed(&mut self, world: &Arc<World>, killed_uuid: Uuid) {
-        if self.dragon_uuid.is_some() && Some(killed_uuid) != self.dragon_uuid {
+        if Some(killed_uuid) != self.dragon_uuid {
             return;
         }
 
