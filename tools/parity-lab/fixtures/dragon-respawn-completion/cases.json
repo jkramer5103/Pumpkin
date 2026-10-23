@@ -1,0 +1,9 @@
+{
+  "description": "Kill the natural dragon in an isolated End, remove initial crystals, place three portal crystals and use the actual crystal item at the fourth position. Observe 31 steps of20 ticks, then check pillar vulnerability and continued world ticks.",
+  "steps": 31,
+  "ticks_per_step": 20,
+  "portal_crystals": 4,
+  "pillar_crystals": 10,
+  "dragon_health": 200,
+  "continuation_ticks": 40
+}
