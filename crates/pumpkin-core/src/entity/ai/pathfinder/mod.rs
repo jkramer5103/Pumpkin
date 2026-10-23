@@ -898,7 +898,11 @@ impl PathNavigation {
     }
 
     #[must_use]
-    pub fn should_target_next_node_in_direction(mob_pos: Vector3<f64>, path: &Path) -> bool {
+    pub fn should_target_next_node_in_direction(
+        mob_pos: Vector3<f64>,
+        path: &Path,
+        can_move_directly: impl FnOnce() -> bool,
+    ) -> bool {
         if path.get_next_node_index() + 1 >= path.get_node_count() {
             return false;
         }
@@ -913,8 +917,11 @@ impl PathNavigation {
         let dx = mob_pos.x - current_node.x;
         let dy = mob_pos.y - current_node.y;
         let dz = mob_pos.z - current_node.z;
-        if dx * dx + dy * dy + dz * dz > 4.0 {
+        if dx * dx + dy * dy + dz * dz >= 4.0 {
             return false;
+        }
+        if can_move_directly() {
+            return true;
         }
 
         let next_idx = path.get_next_node_index() + 1;
@@ -1114,11 +1121,12 @@ impl PathNavigation {
                 let close_enough = horizontal_dist < f64::from(self.max_distance_to_waypoint)
                     && dy.abs() < NODE_REACH_Y;
 
-                let corner_cut = path.get_next_node().is_some_and(|n| {
-                    n.path_type != PathType::DangerFire
-                        && n.path_type != PathType::DamageFire
-                        && n.path_type != PathType::WalkableDoor
-                }) && Self::should_target_next_node_in_direction(mob_pos, path);
+                let corner_cut =
+                    path.get_next_node().is_some_and(|n| {
+                        n.path_type != PathType::DangerFire
+                            && n.path_type != PathType::DamageFire
+                            && n.path_type != PathType::WalkableDoor
+                    }) && Self::should_target_next_node_in_direction(mob_pos, path, || false);
 
                 if close_enough || corner_cut {
                     path.advance();
@@ -1416,7 +1424,35 @@ impl FlyingPathNavigation {
         }
     }
 
-    fn follow_the_path(&mut self, mob_pos: Vector3<f64>, mob_width: f32) {
+    fn can_move_directly(
+        entity: &LivingEntity,
+        start_pos: Vector3<f64>,
+        stop_pos: Vector3<f64>,
+    ) -> bool {
+        let to = Vector3::new(
+            stop_pos.x,
+            stop_pos.y + f64::from(entity.entity.height()) * 0.5,
+            stop_pos.z,
+        );
+        entity
+            .entity
+            .world
+            .load()
+            .clip(&pumpkin_world::clip::ClipContext::new(
+                start_pos,
+                to,
+                pumpkin_world::clip::ClipBlock::Collider,
+                pumpkin_world::clip::ClipFluid::Any,
+            ))
+            .is_miss
+    }
+
+    fn follow_the_path(
+        &mut self,
+        mob_pos: Vector3<f64>,
+        mob_width: f32,
+        can_move_directly: impl FnOnce(Vector3<f64>) -> bool,
+    ) {
         self.inner.max_distance_to_waypoint = if mob_width > 0.75 {
             mob_width * 0.5
         } else {
@@ -1429,14 +1465,19 @@ impl FlyingPathNavigation {
             let close_enough = (mob_pos.x - (f64::from(pos.0.x) + 0.5)).abs() < margin
                 && (mob_pos.z - (f64::from(pos.0.z) + 0.5)).abs() < margin
                 && (mob_pos.y - f64::from(pos.0.y)).abs() < NODE_REACH_Y;
-            let corner_cut =
-                path.get_next_node().is_some_and(|node| {
-                    !matches!(
-                        node.path_type,
-                        PathType::DangerFire | PathType::DangerOther | PathType::WalkableDoor
-                    )
-                }) && PathNavigation::should_target_next_node_in_direction(mob_pos, path);
-            if close_enough || corner_cut {
+            let can_cut_corner = path.get_next_node().is_some_and(|node| {
+                !matches!(
+                    node.path_type,
+                    PathType::DangerFire | PathType::DangerOther | PathType::WalkableDoor
+                )
+            });
+            if close_enough
+                || can_cut_corner
+                    && PathNavigation::should_target_next_node_in_direction(mob_pos, path, || {
+                        path.get_next_entity_pos(mob_width)
+                            .is_some_and(can_move_directly)
+                    })
+            {
                 path.advance();
             }
         }
@@ -1528,7 +1569,9 @@ impl PathNavigationTrait for FlyingPathNavigation {
         if self.is_done() {
             self.inner.finish_navigation(entity);
         } else {
-            self.follow_the_path(mob_pos, entity.entity.width());
+            self.follow_the_path(mob_pos, entity.entity.width(), |stop_pos| {
+                Self::can_move_directly(entity, mob_pos, stop_pos)
+            });
 
             if !self.is_done()
                 && let Some(path) = &self.inner.path
@@ -2664,7 +2707,7 @@ mod tests {
             BlockPos::new(7, 89, 15),
             true,
         ));
-        navigation.follow_the_path(Vector3::new(5.5, 90.5, 15.5), 0.9);
+        navigation.follow_the_path(Vector3::new(5.5, 90.5, 15.5), 0.9, |_| false);
         assert_eq!(
             navigation
                 .inner
@@ -2684,6 +2727,67 @@ mod tests {
     }
 
     #[test]
+    fn flying_navigation_advances_reachable_descending_waypoints() {
+        for (clear, expected_index) in [(true, 1), (false, 0)] {
+            let mut navigation = FlyingPathNavigation::new();
+            navigation.inner.path = Some(Path::new(
+                vec![
+                    Node::new(BlockPos::new(7, 99, 15)),
+                    Node::new(BlockPos::new(8, 98, 15)),
+                ],
+                BlockPos::new(30, 90, 15),
+                true,
+            ));
+            // Captured Wither position immediately before the baseline reverses yaw.
+            navigation.follow_the_path(
+                Vector3::new(7.692684128689536, 100.36509317314851, 15.5),
+                0.9,
+                |stop_pos| {
+                    assert_eq!(stop_pos, Vector3::new(7.5, 99.0, 15.5));
+                    clear
+                },
+            );
+            assert_eq!(
+                navigation.get_path().map(Path::get_next_node_index),
+                Some(expected_index),
+                "clear={clear}"
+            );
+        }
+    }
+
+    #[test]
+    fn flying_direct_movement_preserves_waypoint_guards() {
+        use super::PathType;
+
+        for (height, successor, path_type) in [
+            (101.0, true, PathType::Open),
+            (100.5, false, PathType::Open),
+            (100.5, true, PathType::DangerFire),
+            (100.5, true, PathType::DangerOther),
+            (100.5, true, PathType::WalkableDoor),
+        ] {
+            let mut navigation = FlyingPathNavigation::new();
+            let mut node = Node::new(BlockPos::new(7, 99, 15));
+            node.path_type = path_type;
+            let mut nodes = vec![node];
+            if successor {
+                nodes.push(Node::new(BlockPos::new(8, 98, 15)));
+            }
+            navigation.inner.path = Some(Path::new(nodes, BlockPos::new(30, 90, 15), true));
+            let mut queried = false;
+            navigation.follow_the_path(Vector3::new(7.5, height, 15.5), 0.9, |_| {
+                queried = true;
+                true
+            });
+            assert!(!queried);
+            assert_eq!(
+                navigation.get_path().map(Path::get_next_node_index),
+                Some(0)
+            );
+        }
+    }
+
+    #[test]
     fn flying_waypoint_arrival_uses_strict_axis_bounds() {
         for (width, position, expected_index) in [
             (0.9, Vector3::new(5.9, 90.1, 15.9), 1),
@@ -2699,7 +2803,7 @@ mod tests {
                 BlockPos::new(5, 91, 15),
                 true,
             ));
-            navigation.follow_the_path(position, width);
+            navigation.follow_the_path(position, width, |_| false);
             assert_eq!(
                 navigation
                     .inner
