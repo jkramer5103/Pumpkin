@@ -1410,6 +1410,32 @@ impl FlyingPathNavigation {
             inner: PathNavigation::new(EvaluatorKind::Fly(FlyNodeEvaluator::default())),
         }
     }
+
+    fn follow_the_path(&mut self, mob_pos: Vector3<f64>, mob_width: f32) {
+        self.inner.max_distance_to_waypoint = if mob_width > 0.75 {
+            mob_width * 0.5
+        } else {
+            0.75 - mob_width * 0.5
+        };
+        if let Some(path) = &mut self.inner.path
+            && let Some(pos) = path.get_next_node_pos()
+        {
+            let margin = f64::from(self.inner.max_distance_to_waypoint);
+            let close_enough = (mob_pos.x - (f64::from(pos.0.x) + 0.5)).abs() < margin
+                && (mob_pos.z - (f64::from(pos.0.z) + 0.5)).abs() < margin
+                && (mob_pos.y - f64::from(pos.0.y)).abs() < NODE_REACH_Y;
+            let corner_cut =
+                path.get_next_node().is_some_and(|node| {
+                    !matches!(
+                        node.path_type,
+                        PathType::DangerFire | PathType::DangerOther | PathType::WalkableDoor
+                    )
+                }) && PathNavigation::should_target_next_node_in_direction(mob_pos, path);
+            if close_enough || corner_cut {
+                path.advance();
+            }
+        }
+    }
 }
 
 impl PathNavigationTrait for FlyingPathNavigation {
@@ -1497,34 +1523,12 @@ impl PathNavigationTrait for FlyingPathNavigation {
         if self.is_done() {
             self.inner.finish_navigation(entity);
         } else {
-            if let Some(path) = &mut self.inner.path
-                && let Some(pos) = path.get_next_node_pos()
-            {
-                let target_pos = Vector3::new(
-                    f64::from(pos.0.x) + 0.5,
-                    f64::from(pos.0.y) + 0.5,
-                    f64::from(pos.0.z) + 0.5,
-                );
-                let current_pos = entity.entity.pos.load();
-                let dx = target_pos.x - current_pos.x;
-                let dy = target_pos.y - current_pos.y;
-                let dz = target_pos.z - current_pos.z;
-                let dist_sq = dx * dx + dy * dy + dz * dz;
-
-                if dist_sq < 0.5 * 0.5 {
-                    path.advance();
-                }
-            }
+            self.follow_the_path(mob_pos, entity.entity.width());
 
             if !self.is_done()
                 && let Some(path) = &self.inner.path
-                && let Some(next_block) = path.get_next_node_pos()
+                && let Some(target_pos) = path.get_next_entity_pos(entity.entity.width())
             {
-                let target_pos = Vector3::new(
-                    f64::from(next_block.0.x) + 0.5,
-                    f64::from(next_block.0.y) + 0.5,
-                    f64::from(next_block.0.z) + 0.5,
-                );
                 let current_pos = entity.entity.pos.load();
                 let dx = target_pos.x - current_pos.x;
                 let dy = target_pos.y - current_pos.y;
@@ -2576,5 +2580,71 @@ impl Deref for Navigator {
 impl DerefMut for Navigator {
     fn deref_mut(&mut self) -> &mut Self::Target {
         &mut *self.inner
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::{FlyingPathNavigation, Node, Path};
+    use pumpkin_util::math::{position::BlockPos, vector3::Vector3};
+
+    #[test]
+    fn flying_navigation_leaves_the_start_node_when_descending() {
+        let mut navigation = FlyingPathNavigation::new();
+        navigation.inner.path = Some(Path::new(
+            vec![
+                Node::new(BlockPos::new(5, 91, 15)),
+                Node::new(BlockPos::new(6, 90, 15)),
+                Node::new(BlockPos::new(7, 89, 15)),
+            ],
+            BlockPos::new(7, 89, 15),
+            true,
+        ));
+        navigation.follow_the_path(Vector3::new(5.5, 90.5, 15.5), 0.9);
+        assert_eq!(
+            navigation
+                .inner
+                .path
+                .as_ref()
+                .map(Path::get_next_node_index),
+            Some(1)
+        );
+        assert_eq!(
+            navigation
+                .inner
+                .path
+                .as_ref()
+                .and_then(|path| path.get_next_entity_pos(0.9)),
+            Some(Vector3::new(6.5, 90.0, 15.5))
+        );
+    }
+
+    #[test]
+    fn flying_waypoint_arrival_uses_strict_axis_bounds() {
+        for (width, position, expected_index) in [
+            (0.9, Vector3::new(5.9, 90.1, 15.9), 1),
+            (0.9, Vector3::new(6.0, 91.0, 15.5), 0),
+            (0.9, Vector3::new(5.5, 90.0, 15.5), 0),
+            (0.9, Vector3::new(5.5, 92.0, 15.5), 0),
+            (2.0, Vector3::new(6.4, 90.1, 16.4), 1),
+            (2.0, Vector3::new(6.5, 91.0, 15.5), 0),
+        ] {
+            let mut navigation = FlyingPathNavigation::new();
+            navigation.inner.path = Some(Path::new(
+                vec![Node::new(BlockPos::new(5, 91, 15))],
+                BlockPos::new(5, 91, 15),
+                true,
+            ));
+            navigation.follow_the_path(position, width);
+            assert_eq!(
+                navigation
+                    .inner
+                    .path
+                    .as_ref()
+                    .map(Path::get_next_node_index),
+                Some(expected_index),
+                "width={width}, position={position:?}"
+            );
+        }
     }
 }
