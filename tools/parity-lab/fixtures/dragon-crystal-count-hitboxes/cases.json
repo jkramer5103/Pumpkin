@@ -1,0 +1,91 @@
+{
+  "description": "Frozen isolated End fight: one crystal around pillar x42 z0, 101 ticks of count refresh while dragon NoAI, then one takeoff tick from40,120,0 yaw180 beside an elevated middle/inner flight route. Crystal counts select low outer nodes versus high middle nodes. Coordinates resolve against actual pillar bounds; numeric .5 values on X/Z are offsets from pillar center. Set natural dragon PersistenceRequired:1b before waits; verify its UUID is unchanged in every trial.",
+  "cases": [
+    {
+      "name": "none",
+      "position": null,
+      "counted": false
+    },
+    {
+      "name": "center",
+      "position": [
+        0.5,
+        120,
+        0.5
+      ],
+      "counted": true
+    },
+    {
+      "name": "min_x_overlap",
+      "position": [
+        "min_x-.5",
+        120,
+        0.5
+      ],
+      "counted": true
+    },
+    {
+      "name": "max_x_overlap",
+      "position": [
+        "max_x+.5",
+        120,
+        0.5
+      ],
+      "counted": true
+    },
+    {
+      "name": "min_x_touch",
+      "position": [
+        "min_x-1",
+        120,
+        0.5
+      ],
+      "counted": false
+    },
+    {
+      "name": "max_x_touch",
+      "position": [
+        "max_x+1",
+        120,
+        0.5
+      ],
+      "counted": false
+    },
+    {
+      "name": "min_z_overlap",
+      "position": [
+        0.5,
+        120,
+        "min_z-.5"
+      ],
+      "counted": true
+    },
+    {
+      "name": "max_z_overlap",
+      "position": [
+        0.5,
+        120,
+        "max_z+.5"
+      ],
+      "counted": true
+    },
+    {
+      "name": "min_z_touch",
+      "position": [
+        0.5,
+        120,
+        "min_z-1"
+      ],
+      "counted": false
+    },
+    {
+      "name": "max_z_touch",
+      "position": [
+        0.5,
+        120,
+        "max_z+1"
+      ],
+      "counted": false
+    }
+  ]
+}

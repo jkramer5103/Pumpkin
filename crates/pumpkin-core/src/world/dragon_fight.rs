@@ -525,22 +525,15 @@ impl DragonFight {
         self.alive_crystals = 0;
 
         let spikes = Self::get_spikes();
-        let entities = world.entities.load();
-
         for spike in &spikes {
             let (min_x, min_y, min_z, max_x, max_y, max_z) = spike.top_bounding_box();
-            for entity in entities.iter() {
+            let bounds = BoundingBox::new(
+                Vector3::new(min_x, min_y, min_z),
+                Vector3::new(max_x, max_y, max_z),
+            );
+            for entity in world.get_entities_at_box(&bounds) {
                 if entity.get_entity().entity_type == &EntityType::END_CRYSTAL {
-                    let pos = entity.get_entity().pos.load();
-                    if pos.x >= min_x
-                        && pos.x <= max_x
-                        && pos.y >= min_y
-                        && pos.y <= max_y
-                        && pos.z >= min_z
-                        && pos.z <= max_z
-                    {
-                        self.alive_crystals += 1;
-                    }
+                    self.alive_crystals += 1;
                 }
             }
         }
