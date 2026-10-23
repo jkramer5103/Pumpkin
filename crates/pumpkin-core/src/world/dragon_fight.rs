@@ -959,22 +959,16 @@ impl DragonFight {
 
     pub fn spawn_crystals(&mut self, world: &Arc<World>) {
         let spikes = Self::get_spikes();
-        let entities = world.entities.load();
         for spike in &spikes {
-            let bb = spike.top_bounding_box();
-            let already_has_crystal = entities.iter().any(|e| {
-                if e.get_entity().entity_type == &EntityType::END_CRYSTAL {
-                    let pos = e.get_entity().pos.load();
-                    pos.x >= bb.0
-                        && pos.x <= bb.3
-                        && pos.y >= bb.1
-                        && pos.y <= bb.4
-                        && pos.z >= bb.2
-                        && pos.z <= bb.5
-                } else {
-                    false
-                }
-            });
+            let (min_x, min_y, min_z, max_x, max_y, max_z) = spike.top_bounding_box();
+            let bounds = BoundingBox::new(
+                Vector3::new(min_x, min_y, min_z),
+                Vector3::new(max_x, max_y, max_z),
+            );
+            let already_has_crystal = world
+                .get_entities_at_box(&bounds)
+                .iter()
+                .any(|entity| entity.get_entity().entity_type == &EntityType::END_CRYSTAL);
 
             if already_has_crystal {
                 continue;

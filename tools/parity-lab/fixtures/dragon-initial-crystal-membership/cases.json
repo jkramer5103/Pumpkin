@@ -1,0 +1,47 @@
+{
+  "description": "Fresh End, frozen before first fight tick. Replace natural crystals with tagged crystals at Y120. Offsets min/max put centers0.5blocks beyond pillar query boundary, retaining0.5block hitbox overlap. Enter first scan and require no duplicate in each local pillar box.",
+  "cases": [
+    [
+      "center",
+      42,
+      0,
+      0,
+      0
+    ],
+    [
+      "max_x_overlap",
+      33,
+      24,
+      "max",
+      0
+    ],
+    [
+      "min_x_overlap",
+      12,
+      39,
+      "min",
+      0
+    ],
+    [
+      "max_z_overlap",
+      -13,
+      39,
+      0,
+      "max"
+    ],
+    [
+      "min_z_overlap",
+      -34,
+      24,
+      0,
+      "min"
+    ],
+    [
+      "second_center",
+      -42,
+      -1,
+      0,
+      0
+    ]
+  ]
+}
