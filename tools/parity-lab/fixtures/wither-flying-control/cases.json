@@ -1,0 +1,53 @@
+{
+  "trials": 2,
+  "ticks": 10,
+  "setup": [
+    "gamemode creative @a",
+    "difficulty easy",
+    "gamerule mob_griefing false",
+    "gamerule spawn_mobs false",
+    "fill 0 79 0 31 79 31 minecraft:bedrock",
+    "tp @a 15 84 15"
+  ],
+  "cases": [
+    {
+      "id": "climb",
+      "invul": 0,
+      "noai": false,
+      "health": 300,
+      "target_y": 105.5,
+      "flying": true
+    },
+    {
+      "id": "descend",
+      "invul": 0,
+      "noai": false,
+      "health": 100,
+      "target_y": 80.5,
+      "flying": true
+    },
+    {
+      "id": "charging",
+      "invul": 20,
+      "noai": false,
+      "health": 300,
+      "target_y": 105.5,
+      "flying": false
+    },
+    {
+      "id": "noai",
+      "invul": 0,
+      "noai": true,
+      "health": 300,
+      "target_y": 105.5,
+      "flying": false
+    }
+  ],
+  "target_x": 30.5,
+  "boss_position": [
+    5.5,
+    90.5,
+    15.5
+  ],
+  "target_z": 15.5
+}

@@ -1315,6 +1315,9 @@ impl LivingEntity {
     }
 
     fn get_effective_gravity(&self, caller: &dyn EntityBase) -> f64 {
+        if self.entity.has_no_gravity() {
+            return 0.0;
+        }
         let final_gravity = caller.get_gravity();
 
         if self.entity.velocity.load().y <= 0.0 && self.has_effect(&StatusEffect::SLOW_FALLING) {
