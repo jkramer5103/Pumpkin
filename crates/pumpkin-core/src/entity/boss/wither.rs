@@ -373,7 +373,6 @@ impl WitherEntity {
 
     fn update_bossbar(&self, world: &Arc<crate::world::World>, progress: f32) {
         self.bossbar_progress.store(progress);
-        self.update_bossbar_players(world, progress);
         let players = world.players.load();
         let bossbar_players = self
             .bossbar_players
@@ -823,6 +822,9 @@ impl Mob for WitherEntity {
             if !self.dropped_loot.swap(true, Ordering::SeqCst) {
                 self.drop_nether_star();
             }
+        } else {
+            // Tracking continues even when NoAI suppresses progress updates.
+            self.update_bossbar_players(&entity.world.load(), self.bossbar_progress.load());
         }
     }
 

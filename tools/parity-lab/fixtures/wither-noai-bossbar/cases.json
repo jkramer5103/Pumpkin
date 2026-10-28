@@ -1,0 +1,25 @@
+{
+  "trials": 2,
+  "cases": [
+    {
+      "id": "noai-active",
+      "invul": 0,
+      "noai": 1
+    },
+    {
+      "id": "noai-charging",
+      "invul": 200,
+      "noai": 1
+    },
+    {
+      "id": "ai-active",
+      "invul": 0,
+      "noai": 0
+    },
+    {
+      "id": "ai-charging",
+      "invul": 200,
+      "noai": 0
+    }
+  ]
+}
